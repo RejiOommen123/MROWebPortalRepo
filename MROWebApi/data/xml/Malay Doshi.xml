@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<patientdetails>
+	<location>
+		Location 1
+	</location>
+	<ispatient>
+		Yes
+	</ispatient>
+	<rname>
+		Malay Doshi
+	</rname>
+	<relationwithpatient>
+		Brother
+	</relationwithpatient>
+	<emailID>
+		malay.doshi@atidan.com
+	</emailID>
+	<formrequested>
+		Not Opted
+	</formrequested>
+	<fname>
+		Malay
+	</fname>
+	<mname>
+		P
+	</mname>
+	<lname>
+		Doshi
+	</lname>
+	<deceased>
+		No
+	</deceased>
+	<postalcode>
+		401107
+	</postalcode>
+	<streetarea>
+		Mira Road East
+	</streetarea>
+	<birthdate>
+		12/20/1997
+	</birthdate>
+</patientdetails>

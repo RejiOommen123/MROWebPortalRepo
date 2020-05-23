@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<patientdetails>
+  <location>Location 1</location>
+  <ispatient>Yes</ispatient>
+  <rname />
+  <relationwithpatient />
+  <emailID>Sid@gmail.com</emailID>
+  <formrequested>Opted to be mailed to registered Email ID</formrequested>
+  <fname>Sid</fname>
+  <mname>N</mname>
+  <lname>Lad</lname>
+  <deceased>No</deceased>
+  <postalcode>400703</postalcode>
+  <streetarea>mg road</streetarea>
+  <birthdate>11/06/1997</birthdate>
+</patientdetails>
