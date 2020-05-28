@@ -15,54 +15,54 @@ namespace MROWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    public class CustomerController : ControllerBase
+    public class FacilityController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public CustomerController(ApplicationDbContext context)
+        public FacilityController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Customers
+        // GET: api/Facility
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<Facility>>> GetFacility()
         {
-            return await _context.Customer.ToListAsync();
+            return await _context.Facility.ToListAsync();
         }
 
-        // GET: api/Customers/5
-        [HttpGet("GetCustomers/{id}")]
+        // GET: api/Facility/5
+        [HttpGet("GetFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Customer>> GetCustomers(string id)
+        public async Task<ActionResult<Facility>> GetFacility(string id)
         {
-            var customer = await _context.Customer.FindAsync(int.Parse(id));
+            var facility = await _context.Facility.FindAsync(int.Parse(id));
 
-            if (customer == null)
+            if (facility == null)
             {
                 return NotFound();
             }
 
-            return customer;
+            return facility;
         }
 
-        // PUT: api/Customers/5
+        // PUT: api/Facility/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("EditCustomer/{id}")]
+        [HttpPost("EditFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditCustomer(int id, Customer customer)
+        public async Task<IActionResult> EditFacility(int id, Facility facility)
         {
-            if (id != customer.CustomerId)
+            if (id != facility.FacilityId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+            _context.Entry(facility).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +70,7 @@ namespace MROWebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerExists(id))
+                if (!FacilityExists(id))
                 {
                     return NotFound();
                 }
@@ -83,92 +83,97 @@ namespace MROWebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Customers
+        // POST: api/Facility
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Customer>> AddCustomer(Customer customer)
+        public async Task<ActionResult<Facility>> AddFacility(Facility facility)
         {
-            _context.Customer.Add(customer);
+            _context.Facility.Add(facility);
             await _context.SaveChangesAsync();
-            int id = customer.CustomerId;
-            List<FieldCustomerMap> fieldCustomerMaps= new List<FieldCustomerMap>();
+            int id = facility.FacilityId;
+            List<FieldFacilityMap> fieldFacilityMaps= new List<FieldFacilityMap>();
             foreach (Field field in _context.Field)
             {
-                fieldCustomerMaps.Add(new FieldCustomerMap
+                fieldFacilityMaps.Add(new FieldFacilityMap
                 {
                     FieldId = field.FieldId,
-                    CustomerId = id,
-                    IsEnable = true
+                    WizardId = field.WizardId,
+                    FacilityId = id,
+                    IsEnable = true,
+                    CreatedBy = 1,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 1,
+                    UpdatedDate = DateTime.Now
                 });
             }
-            _context.UpdateRange(fieldCustomerMaps);
+            _context.UpdateRange(fieldFacilityMaps);
 
-            List<WizardCustomerMap> wizardCustomerMaps = new List<WizardCustomerMap>();
-            foreach (Wizard wizard in _context.Wizard)
-            {
-                wizardCustomerMaps.Add(new WizardCustomerMap
-                {
-                    WizardId = wizard.WizardId,
-                    CustomerId = id,
-                    IsEnable = true
-                });
-            }
-            _context.UpdateRange(wizardCustomerMaps);
+            //List<WizardFacilityMap> wizardFacilityMaps = new List<WizardFacilityMap>();
+            //foreach (Wizard wizard in _context.Wizard)
+            //{
+            //    wizardFacilityMaps.Add(new WizardFacilityMap
+            //    {
+            //        WizardId = wizard.WizardId,
+            //        FacilityId = id,
+            //        IsEnable = true
+            //    });
+            //}
+            //_context.UpdateRange(wizardFacilityMaps);
             _context.SaveChanges();
             return Ok("success");
         }
 
-        // DELETE: api/Customers/5
+        // DELETE: api/Facility/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Customer>> DeleteCustomer(int id)
+        public async Task<ActionResult<Facility>> DeleteFacility(int id)
         {
-            var customer = await _context.Customer.FindAsync(id);
-            if (customer == null)
+            var facility = await _context.Facility.FindAsync(id);
+            if (facility == null)
             {
                 return NotFound();
             }
 
-            _context.Customer.Remove(customer);
+            _context.Facility.Remove(facility);
             await _context.SaveChangesAsync();
 
-            return customer;
+            return facility;
         }
 
-        private bool CustomerExists(int id)
+        private bool FacilityExists(int id)
         {
-            return _context.Customer.Any(e => e.CustomerId == id);
+            return _context.Facility.Any(e => e.FacilityId == id);
         }
         [HttpGet("EditFields/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
         public async Task<IActionResult> EditFields(int id)
         {
-           var wizards= (from fcm in _context.FieldCustomerMap
+           var wizards= (from fcm in _context.FieldFacilityMap
                          join f in _context.Field
                          on fcm.FieldId.ToString() equals f.FieldId.ToString()
-                         where fcm.CustomerId == id
+                         where fcm.FacilityId == id
                          select new
                          {
-                             FieldCustomerMapId = fcm.FieldCustomerMapId,
+                             FieldFacilityMapId = fcm.FieldFacilityMapId,
                              FieldId = fcm.FieldId,
-                             CustomerId = fcm.CustomerId,
+                             FacilityId = fcm.FacilityId,
                              IsEnable = fcm.IsEnable,
                              FieldName = f.FieldName,
                              WizardId = f.WizardId                            
                          }).ToList();
-            Customer cust = _context.Customer.Where(c => c.CustomerId == id).FirstOrDefault();
-            var custName = cust.CustomerName;
-            return Ok(new { wizards, custName });
+            Facility faci = _context.Facility.Where(c => c.FacilityId == id).FirstOrDefault();
+            var faciName = faci.FacilityName;
+            return Ok(new { wizards, faciName });
         }
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFields([FromBody]FieldCustomerMap[] fieldCustomerMaps)
+        public async Task<IActionResult> EditFields([FromBody]FieldFacilityMap[] fieldFacilityMaps)
         {
-            _context.UpdateRange(fieldCustomerMaps);
+            _context.UpdateRange(fieldFacilityMaps);
             _context.SaveChanges();
             return Ok();
         }

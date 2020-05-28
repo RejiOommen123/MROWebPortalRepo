@@ -10,8 +10,8 @@
                     <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
                     </span>
                 </th>
-                <th>Edit Customer</th>
-                <th>Edit Fields</th>
+                <th>Manage Facility</th>
+                <th>Manage Fields</th>
             </tr>
         </thead>
         <tbody>
@@ -19,8 +19,8 @@
                 <td v-for="key in columns" :key=key>
                     {{entry[key]}}
                 </td>
-                <td><router-link class="btn btn-primary" :to="'/EditCustomer/' + entry['customerId']" tag='button'>Edit Customer</router-link></td>
-                <td><router-link class="btn btn-primary" :to="'/EditFields/' + entry['customerId']" tag='button'>Edit Fields</router-link></td>
+                <td><router-link class="btn btn-primary" :to="'/EditFacility/' + entry['facilityId']" tag='button'>Facility</router-link></td>
+                <td><router-link class="btn btn-primary" :to="'/EditFields/' + entry['facilityId']" tag='button'>Fields</router-link></td>
             </tr>
         </tbody>
     </table>

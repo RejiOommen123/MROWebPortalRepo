@@ -4,14 +4,16 @@ using CodeFirstMigration.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MROWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200525133534_AddedCommonModel")]
+    partial class AddedCommonModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,17 +55,17 @@ namespace MROWebApi.Migrations
                         {
                             AdminUserId = 1,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 141, DateTimeKind.Local).AddTicks(3526),
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 413, DateTimeKind.Local).AddTicks(5293),
                             Email = "admin@razor-tech.com",
                             Password = "admin",
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 143, DateTimeKind.Local).AddTicks(3827)
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 414, DateTimeKind.Local).AddTicks(6701)
                         });
                 });
 
-            modelBuilder.Entity("MROWebAPI.Context.Facility", b =>
+            modelBuilder.Entity("MROWebAPI.Context.Customer", b =>
                 {
-                    b.Property<int>("FacilityId")
+                    b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -80,6 +82,12 @@ namespace MROWebApi.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -90,12 +98,6 @@ namespace MROWebApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FTPUsername")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacilityAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacilityName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumOfInstitution")
@@ -116,30 +118,30 @@ namespace MROWebApi.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("FacilityId");
+                    b.HasKey("CustomerId");
 
-                    b.ToTable("Facility");
+                    b.ToTable("Customer");
 
                     b.HasData(
                         new
                         {
-                            FacilityId = 1,
+                            CustomerId = 1,
                             ActiveStatus = true,
                             ConfigFileUrl = "https://www.cleveland.com/data",
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 148, DateTimeKind.Local).AddTicks(9609),
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(2853),
+                            CustomerAddress = "Cleveland",
+                            CustomerName = "Cleveland Clinic",
                             Description = "Info about Cleveland",
                             FTPPassword = "Cleveland@101",
                             FTPUrl = "ftp://ftp.cleveland.com/",
                             FTPUsername = "Cleveland101",
-                            FacilityAddress = "Cleveland",
-                            FacilityName = "Cleveland Clinic",
                             NumOfInstitution = "Cleveland Clinic,Cleveland Hospital",
                             SMTPPassword = "Cleveland@101",
                             SMTPUrl = "smtp.cleveland.com",
                             SMTPUsername = "Cleveland101",
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 148, DateTimeKind.Local).AddTicks(9666)
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(2898)
                         });
                 });
 
@@ -243,9 +245,9 @@ namespace MROWebApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MROWebAPI.Context.FieldFacilityMap", b =>
+            modelBuilder.Entity("MROWebAPI.Context.FieldCustomerMap", b =>
                 {
-                    b.Property<int>("FieldFacilityMapId")
+                    b.Property<int>("FieldCustomerMapId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -256,7 +258,7 @@ namespace MROWebApi.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FacilityId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<int>("FieldId")
@@ -274,141 +276,141 @@ namespace MROWebApi.Migrations
                     b.Property<int>("WizardId")
                         .HasColumnType("int");
 
-                    b.HasKey("FieldFacilityMapId");
+                    b.HasKey("FieldCustomerMapId");
 
-                    b.ToTable("FieldFacilityMap");
+                    b.ToTable("FieldCustomerMap");
 
                     b.HasData(
                         new
                         {
-                            FieldFacilityMapId = 1,
+                            FieldCustomerMapId = 1,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6356),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7441),
+                            CustomerId = 1,
                             FieldId = 1,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6376),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7458),
                             WizardId = 2
                         },
                         new
                         {
-                            FieldFacilityMapId = 2,
+                            FieldCustomerMapId = 2,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6497),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7527),
+                            CustomerId = 1,
                             FieldId = 2,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6500),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7529),
                             WizardId = 3
                         },
                         new
                         {
-                            FieldFacilityMapId = 3,
+                            FieldCustomerMapId = 3,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6504),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7531),
+                            CustomerId = 1,
                             FieldId = 3,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6507),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7533),
                             WizardId = 4
                         },
                         new
                         {
-                            FieldFacilityMapId = 4,
+                            FieldCustomerMapId = 4,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6510),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7535),
+                            CustomerId = 1,
                             FieldId = 4,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6512),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7536),
                             WizardId = 4
                         },
                         new
                         {
-                            FieldFacilityMapId = 5,
+                            FieldCustomerMapId = 5,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6515),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7538),
+                            CustomerId = 1,
                             FieldId = 5,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6517),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7539),
                             WizardId = 5
                         },
                         new
                         {
-                            FieldFacilityMapId = 6,
+                            FieldCustomerMapId = 6,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6521),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7541),
+                            CustomerId = 1,
                             FieldId = 6,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6523),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7542),
                             WizardId = 5
                         },
                         new
                         {
-                            FieldFacilityMapId = 7,
+                            FieldCustomerMapId = 7,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6526),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7544),
+                            CustomerId = 1,
                             FieldId = 7,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6528),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7546),
                             WizardId = 5
                         },
                         new
                         {
-                            FieldFacilityMapId = 8,
+                            FieldCustomerMapId = 8,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6531),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7548),
+                            CustomerId = 1,
                             FieldId = 8,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6533),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7549),
                             WizardId = 5
                         },
                         new
                         {
-                            FieldFacilityMapId = 9,
+                            FieldCustomerMapId = 9,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6537),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7551),
+                            CustomerId = 1,
                             FieldId = 9,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6539),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7552),
                             WizardId = 6
                         },
                         new
                         {
-                            FieldFacilityMapId = 10,
+                            FieldCustomerMapId = 10,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6542),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7554),
+                            CustomerId = 1,
                             FieldId = 10,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6545),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7555),
                             WizardId = 7
                         },
                         new
                         {
-                            FieldFacilityMapId = 11,
+                            FieldCustomerMapId = 11,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6550),
-                            FacilityId = 1,
+                            CreatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7557),
+                            CustomerId = 1,
                             FieldId = 11,
                             IsEnable = true,
                             UpdatedBy = 1,
-                            UpdatedDate = new DateTime(2020, 5, 28, 11, 35, 39, 149, DateTimeKind.Local).AddTicks(6553),
+                            UpdatedDate = new DateTime(2020, 5, 25, 19, 5, 33, 417, DateTimeKind.Local).AddTicks(7559),
                             WizardId = 8
                         });
                 });

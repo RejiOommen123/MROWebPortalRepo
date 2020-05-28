@@ -1,77 +1,77 @@
 <template>
     <div>
-        <h1 style="text-align:center">Edit Customer</h1>
-        <div class="editcustomer-form">
+        <h1 style="text-align:center">Add Facility</h1>
+        <div class="addfacility-form">
             <form @submit.prevent="onSubmit">
                 <div class="form-group row">
-                    <label class="col-md-4" for="customerName">Customer Name:</label>
+                    <label class="col-md-4" for="facilityName">Facility Name:</label>
                     <input type="text"
-                           id="customerName"
+                           id="facilityName"
                            class="form-control col-md-6"
-                           placeholder="Customer Name"
-                           v-model="customer.customerName">
-                    <label class="col-md-4" for="customerAddress">Customer Address:</label>
+                           placeholder="Facility Name"
+                           v-model="facility.facilityName">
+                    <label class="col-md-4" for="facilityAddress">Facility Address:</label>
                     <input type="text"
-                           id="customerAddress"
+                           id="facilityAddress"
                            class="form-control col-md-6"
                            placeholder="Detail Address"
-                           v-model="customer.customerAddress">
-                    <label class="col-md-4" for="description">Customer Description:</label>
+                           v-model="facility.facilityAddress">
+                    <label class="col-md-4" for="description">Facility Description:</label>
                     <input type="text"
                            id="description"
                            class="form-control col-md-6"
                            placeholder="General Description"
-                           v-model="customer.description">
+                           v-model="facility.description">
                     <label class="col-md-4" for="numOfInstitution">Number of Institute:</label>
                     <input type="text"
                            id="numOfInstitution"
                            class="form-control col-md-6"
                            placeholder="Comma Seperated eg. NYU Hospital, NYU Clinic"
-                           v-model="customer.numOfInstitution">
+                           v-model="facility.numOfInstitution">
                     <label class="col-md-4" for="smtpUsername">SMTP Username:</label>
                     <input type="text"
                            id="smtpUsername"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP Username"
-                           v-model="customer.smtpUsername">
+                           v-model="facility.smtpUsername">
                     <label class="col-md-4" for="smtpPassword">SMTP Password:</label>
                     <input type="text"
                            id="smtpPassword"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP Password"
-                           v-model="customer.smtpPassword">
+                           v-model="facility.smtpPassword">
                     <label class="col-md-4" for="smtpUrl">SMTP URL:</label>
                     <input type="text"
                            id="smtpUrl"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP URL"
-                           v-model="customer.smtpUrl">
+                           v-model="facility.smtpUrl">
                     <label class="col-md-4" for="ftpUsername">FTP Username:</label>
                     <input type="text"
                            id="ftpUsername"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Username"
-                           v-model="customer.ftpUsername">
+                           v-model="facility.ftpUsername">
                     <label class="col-md-4" for="ftpPassword">FTP Password:</label>
                     <input type="text"
                            id="ftpPassword"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Password"
-                           v-model="customer.ftpPassword">
+                           v-model="facility.ftpPassword">
                     <label class="col-md-4" for="ftpUrl">FTP URL:</label>
                     <input type="text"
                            id="ftpUrl"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Password"
-                           v-model="customer.ftpUrl">
+                           v-model="facility.ftpUrl">
                     <label class="col-md-4" for="configFileUrl">Configuration File URL:</label>
                     <input type="text"
                            id="configFileUrl"
                            class="form-control col-md-6"
                            placeholder="Enter Path to Config File"
-                           v-model="customer.configFileUrl">
+                           v-model="facility.configFileUrl">
                     <div class="col-md-4 offset-md-3 submit">
-                        <button type="submit">Save</button>
+                        <button type="submit">Submit</button>
                     </div>
                 </div>
             </form>
@@ -81,13 +81,13 @@
 
 <script>
     export default {
-        name: "EditCustomer",
+        name: "AddFacility",
         data() {
             return {
-                customer: {
-                    customerId: 0,
-                    customerName: '',
-                    customerAddress: '',
+                facility: {
+                    facilityId: 0,
+                    facilityName: '',
+                    facilityAddress: '',
                     description: '',
                     numOfInstitution: '',
                     smtpUsername: '',
@@ -99,22 +99,11 @@
                     configFileUrl: '',
                     activeStatus: true
                 }
-                
             };
-        },
-        mounted() {
-            this.$http.get('http://localhost:57364/api/customer/GetCustomers/' + this.$route.params.id).then(response => {
-                // get body data
-                this.customer = JSON.parse(response.bodyText);
-
-            }, response => {
-                // error callback
-                this.gridData = response.body;
-            });
         },
         methods: {
             onSubmit() {
-                this.$http.post('http://localhost:61379/api/customer/EditCustomer/' + this.customer.customerId, this.customer)
+                this.$http.post('http://localhost:57364/api/facility/AddFacility', this.facility)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/dashboard')
@@ -129,8 +118,7 @@
     * {
         margin: 10px;
     }
-
-    .editcustomer-form {
+    .addfacility-form {
         width: 700px;
         margin: 30px auto;
         border: 1px solid #eee;

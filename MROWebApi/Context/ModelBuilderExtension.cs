@@ -2,6 +2,7 @@
 using MROPOC.Context;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -17,7 +18,11 @@ namespace MROWebAPI.Context
                 {
                     AdminUserId = 1,
                     Email = "admin@razor-tech.com",
-                    Password = "admin"
+                    Password = "admin",
+                    CreatedBy = 1,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 1,
+                    UpdatedDate = DateTime.Now
                 }
             );
             modelBuilder.Entity<Wizard>().HasData(
@@ -141,12 +146,12 @@ namespace MROWebAPI.Context
                      NormalizedFieldName = "BDay"
                  }
              );
-            modelBuilder.Entity<Customer>().HasData(
-                new Customer
+            modelBuilder.Entity<Facility>().HasData(
+                new Facility
                 {
-                    CustomerId = 1,
-                    CustomerName = "Cleveland Clinic",
-                    CustomerAddress = "Cleveland",
+                    FacilityId = 1,
+                    FacilityName = "Cleveland Clinic",
+                    FacilityAddress = "Cleveland",
                     Description = "Info about Cleveland",
                     NumOfInstitution = "Cleveland Clinic,Cleveland Hospital",
                     SMTPUsername = "Cleveland101",
@@ -156,146 +161,147 @@ namespace MROWebAPI.Context
                     FTPPassword = "Cleveland@101",
                     FTPUrl = "ftp://ftp.cleveland.com/",
                     ConfigFileUrl = "https://www.cleveland.com/data",
-                    ActiveStatus = true
+                    ActiveStatus = true,
+                    CreatedBy = 1,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 1,
+                    UpdatedDate = DateTime.Now
                 }
             );
-            modelBuilder.Entity<FieldCustomerMap>().HasData(
-               new FieldCustomerMap
+            modelBuilder.Entity<FieldFacilityMap>().HasData(
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 1,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 1,
+                   FacilityId = 1,
                    FieldId = 1,
-                   IsEnable = true
+                   WizardId = 2,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 2,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 2,
+                   FacilityId = 1,
                    FieldId = 2,
-                   IsEnable = true
+                   WizardId = 3,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 3,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 3,
+                   FacilityId = 1,
                    FieldId = 3,
-                   IsEnable = true
+                   WizardId = 4,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 4,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 4,
+                   FacilityId = 1,
                    FieldId = 4,
-                   IsEnable = true
+                   WizardId = 4,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 5,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 5,
+                   FacilityId = 1,
                    FieldId = 5,
-                   IsEnable = true
+                   WizardId = 5,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 6,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 6,
+                   FacilityId = 1,
                    FieldId = 6,
-                   IsEnable = true
+                   WizardId = 5,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 7,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 7,
+                   FacilityId = 1,
                    FieldId = 7,
-                   IsEnable = true
+                   WizardId = 5,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 8,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 8,
+                   FacilityId = 1,
                    FieldId = 8,
-                   IsEnable = true
+                   WizardId = 5,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-                new FieldCustomerMap
+                new FieldFacilityMap
                 {
-                    FieldCustomerMapId = 9,
-                    CustomerId = 1,
+                    FieldFacilityMapId = 9,
+                    FacilityId = 1,
                     FieldId = 9,
-                    IsEnable = true
+                    WizardId = 6,
+                    IsEnable = true,
+                    CreatedBy = 1,
+                    CreatedDate = DateTime.Now,
+                    UpdatedBy = 1,
+                    UpdatedDate = DateTime.Now
                 },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 10,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 10,
+                   FacilityId = 1,
                    FieldId = 10,
-                   IsEnable = true
+                   WizardId = 7,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                },
-               new FieldCustomerMap
+               new FieldFacilityMap
                {
-                   FieldCustomerMapId = 11,
-                   CustomerId = 1,
+                   FieldFacilityMapId = 11,
+                   FacilityId = 1,
                    FieldId = 11,
-                   IsEnable = true
+                   WizardId = 8,
+                   IsEnable = true,
+                   CreatedBy = 1,
+                   CreatedDate = DateTime.Now,
+                   UpdatedBy = 1,
+                   UpdatedDate = DateTime.Now
                }
            );
-            modelBuilder.Entity<WizardCustomerMap>().HasData(
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 1,
-                  CustomerId = 1,
-                  WizardId = 1,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 2,
-                  CustomerId = 1,
-                  WizardId = 2,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 3,
-                  CustomerId = 1,
-                  WizardId = 3,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 4,
-                  CustomerId = 1,
-                  WizardId = 4,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 5,
-                  CustomerId = 1,
-                  WizardId = 5,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 6,
-                  CustomerId = 1,
-                  WizardId = 6,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 7,
-                  CustomerId = 1,
-                  WizardId = 7,
-                  IsEnable = true
-              },
-              new WizardCustomerMap
-              {
-                  WizardCustomerMapId = 8,
-                  CustomerId = 1,
-                  WizardId = 8,
-                  IsEnable = true
-              }
-          );
         }
     }
 }

@@ -5,9 +5,9 @@ import WelcomePage from './components/welcome/welcome.vue'
 import DashboardPage from './components/dashboard/dashboard.vue'
 import SignupPage from './components/auth/signup.vue'
 import SigninPage from './components/auth/signin.vue'
-import EditField from './components/customer/Fields/EditFields.vue';
-import AddCustomer from './components/customer/AddCustomer.vue';
-import EditCustomer from './components/customer/EditCustomer.vue';
+import EditField from './components/facility/Fields/EditFields.vue';
+import AddFacility from './components/facility/AddFacility.vue';
+import EditFacility from './components/facility/EditFacility.vue';
 import store from './store'
 
 Vue.use(VueRouter)
@@ -28,8 +28,8 @@ const routes = [
         }
     },
     { path: '/EditFields/:id', component: EditField },
-    { path: '/AddCustomer', component: AddCustomer },
-    { path: '/EditCustomer/:id', component: EditCustomer }
+    { path: '/AddFacility', component: AddFacility },
+    { path: '/EditFacility/:id', component: EditFacility }
 ]
 
 export default new VueRouter({mode: 'history', routes})

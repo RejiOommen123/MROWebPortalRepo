@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MROWebApi.Context;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -6,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace MROWebAPI.Context
 {
-    public class Customer
+
+    public class Facility : CommonModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CustomerId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerAddress { get; set; }
+        public int FacilityId { get; set; }
+        public string FacilityName { get; set; }
+        public string FacilityAddress { get; set; }
         public string Description { get; set; }
         public string NumOfInstitution { get; set; }
         public string SMTPUsername { get; set; }

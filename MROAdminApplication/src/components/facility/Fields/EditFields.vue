@@ -1,6 +1,6 @@
 <template>
     <div id="demo">
-        <h2>Manage Fields For Customer - {{custName}}</h2>
+        <h2>Manage Fields For Facility - {{faciName}}</h2>
         <h2></h2>
         <form id="search">
             <div>
@@ -27,15 +27,15 @@
                 searchQuery: "",
                 gridColumns: ["fieldName"],
                 gridData: null,
-                custName : ''
+                faciName : ''
             }
         },
         mounted() {
-            this.$http.get('http://localhost:57364/api/customer/EditFields/' + this.$route.params.id).then(response => {
+            this.$http.get('http://localhost:57364/api/facility/EditFields/' + this.$route.params.id).then(response => {
 
                 // get body data
                 this.gridData = JSON.parse(response.bodyText)["wizards"];
-                this.custName = JSON.parse(response.bodyText)["custName"];
+                this.faciName = JSON.parse(response.bodyText)["faciName"];
 
             }, response => {
                 // error callback

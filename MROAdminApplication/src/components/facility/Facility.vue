@@ -1,12 +1,12 @@
 <template>
     <div id="demo">
-        <h1>Customers List</h1>
+        <h1>Facilities List</h1>
         <form id="search">
             <div>
             Search <input name="query" v-model="searchQuery" /> 
             <button class="btn btn-primary">Search</button>
                 </div><br>
-            <router-link class="btn btn-success" to='/AddCustomer' tag='button'>Add Customer</router-link>
+            <router-link class="btn btn-success" to='/AddFacility' tag='button'>Add Facility</router-link>
         </form>
         <demo-grid id="griddemo"
                    :heroes="gridData"
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import GridComp from "./CustomersGrid.vue";
+    import GridComp from "./FacilitiesGrid.vue";
     export default {
         components: {
             'demo-grid': GridComp
@@ -25,12 +25,12 @@
         data() {
             return {
                 searchQuery: "",
-                gridColumns: ["customerName", "customerAddress", "activeStatus"],
+                gridColumns: ["facilityName", "facilityAddress", "activeStatus"],
                 gridData: null
             }
         },
         mounted() {
-            this.$http.get('http://localhost:57364/api/customer/GetCustomers').then(response => {
+            this.$http.get('http://localhost:57364/api/facility/GetFacility').then(response => {
               
                 // get body data
                 this.gridData = JSON.parse(response.bodyText);

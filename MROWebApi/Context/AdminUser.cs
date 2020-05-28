@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using MROWebApi.Context;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MROPOC.Context
 {
-    public class AdminUser
+    public class AdminUser : CommonModel 
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AdminUserId { get; set; }

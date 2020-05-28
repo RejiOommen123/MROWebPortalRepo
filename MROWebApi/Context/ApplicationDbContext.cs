@@ -14,11 +14,10 @@ namespace CodeFirstMigration.Context
             modelBuilder.seed();
         }
 
-        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Facility> Facility { get; set; }
         public DbSet<Field> Field { get; set; }
-        public DbSet<FieldCustomerMap> FieldCustomerMap { get; set; }
+        public DbSet<FieldFacilityMap> FieldFacilityMap { get; set; }
         public DbSet<Wizard> Wizard { get; set; }
-        public DbSet<WizardCustomerMap> WizardCustomerMap { get; set; }
         public DbSet<AdminUser> AdminUser { get; set; }
 
     }

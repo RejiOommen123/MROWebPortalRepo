@@ -102,12 +102,12 @@
             },
             onSubmit() {
                 
-                var WizardsCustomerMapObjList = this.heroes.map(function (item) {
+                var WizardsFacilityMapObjList = this.heroes.map(function (item) {
                     delete item.fieldName;
                     delete item.pageId;
                     return item;
                 });
-                this.$http.post('http://localhost:57364/api/customer/EditFields/', WizardsCustomerMapObjList)
+                this.$http.post('http://localhost:57364/api/facility/EditFields/', WizardsFacilityMapObjList)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/dashboard')

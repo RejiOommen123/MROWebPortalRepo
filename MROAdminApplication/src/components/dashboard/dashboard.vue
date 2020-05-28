@@ -3,13 +3,14 @@
     <!--<h1>That's the dashboard!</h1>
     <p>You should only get here if you're authenticated!</p>
     <p>Your email address: {{ email }}</p>-->
-      <customers/>
+      <facility/>
 </div>
 </template>
 
 <script>
     //import axios from 'axios';
-    import Customers from "../customer/customers.vue";
+    import Facility from "../facility/Facility";
+  
   export default {
     data () {
       return {
@@ -17,7 +18,7 @@
       }
     },
    components: {
-       'customers': Customers
+       'facility': Facility
         },
     created () {
     //  axios.get('/users.json')
