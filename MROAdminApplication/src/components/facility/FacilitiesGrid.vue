@@ -19,8 +19,8 @@
                 <td v-for="key in columns" :key=key>
                     {{entry[key]}}
                 </td>
-                <td><router-link class="btn btn-primary" :to="'/EditFacility/' + entry['facilityId']" tag='button'>Facility</router-link></td>
-                <td><router-link class="btn btn-primary" :to="'/EditFields/' + entry['facilityId']" tag='button'>Fields</router-link></td>
+                <td><router-link class="btn btn-primary" :to="'/EditFacility/' + entry['nROIFacilityID']" tag='button'>Facility</router-link></td>
+                <td><router-link class="btn btn-primary" :to="'/EditFields/' + entry['nROIFacilityID']" tag='button'>Fields</router-link></td>
             </tr>
         </tbody>
     </table>

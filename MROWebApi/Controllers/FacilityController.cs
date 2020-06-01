@@ -9,6 +9,7 @@ using CodeFirstMigration.Context;
 using MROWebAPI.Context;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using MROWebApi.Context;
 
 namespace MROWebAPI.Controllers
 {
@@ -28,18 +29,18 @@ namespace MROWebAPI.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<IEnumerable<Facility>>> GetFacility()
+        public async Task<ActionResult<IEnumerable<tblROIFacilities>>> GetFacility()
         {
-            return await _context.Facility.ToListAsync();
+            return await _context.tblROIFacilities.ToListAsync();
         }
 
         // GET: api/Facility/5
         [HttpGet("GetFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Facility>> GetFacility(string id)
+        public async Task<ActionResult<tblROIFacilities>> GetFacility(string id)
         {
-            var facility = await _context.Facility.FindAsync(int.Parse(id));
+            var facility = await _context.tblROIFacilities.FindAsync(int.Parse(id));
 
             if (facility == null)
             {
@@ -55,9 +56,9 @@ namespace MROWebAPI.Controllers
         [HttpPost("EditFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacility(int id, Facility facility)
+        public async Task<IActionResult> EditFacility(int id, tblROIFacilities facility)
         {
-            if (id != facility.FacilityId)
+            if (id != facility.nROIFacilityID)
             {
                 return BadRequest();
             }
@@ -89,24 +90,23 @@ namespace MROWebAPI.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Facility>> AddFacility(Facility facility)
+        public async Task<ActionResult<tblROIFacilities>> AddFacility(tblROIFacilities facility)
         {
-            _context.Facility.Add(facility);
+            _context.tblROIFacilities.Add(facility);
             await _context.SaveChangesAsync();
-            int id = facility.FacilityId;
-            List<FieldFacilityMap> fieldFacilityMaps= new List<FieldFacilityMap>();
-            foreach (Field field in _context.Field)
+            int id = facility.nROIFacilityID;
+            List<lnkROIFacilityFieldMaps> fieldFacilityMaps= new List<lnkROIFacilityFieldMaps>();
+            foreach (lstFields field in _context.lstFields)
             {
-                fieldFacilityMaps.Add(new FieldFacilityMap
+                fieldFacilityMaps.Add(new lnkROIFacilityFieldMaps
                 {
-                    FieldId = field.FieldId,
-                    WizardId = field.WizardId,
-                    FacilityId = id,
-                    IsEnable = true,
-                    CreatedBy = 1,
-                    CreatedDate = DateTime.Now,
-                    UpdatedBy = 1,
-                    UpdatedDate = DateTime.Now
+                    nFieldID = field.nFieldID,
+                    nROIFacilityID = id,
+                    bShow = true,
+                    sCreatedBy = 1,
+                    dtCreatedDate = DateTime.Now,
+                    sUpdatedBy = 1,
+                    dtUpdatedDate = DateTime.Now
                 });
             }
             _context.UpdateRange(fieldFacilityMaps);
@@ -128,15 +128,15 @@ namespace MROWebAPI.Controllers
 
         // DELETE: api/Facility/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Facility>> DeleteFacility(int id)
+        public async Task<ActionResult<tblROIFacilities>> DeleteFacility(int id)
         {
-            var facility = await _context.Facility.FindAsync(id);
+            var facility = await _context.tblROIFacilities.FindAsync(id);
             if (facility == null)
             {
                 return NotFound();
             }
 
-            _context.Facility.Remove(facility);
+            _context.tblROIFacilities.Remove(facility);
             await _context.SaveChangesAsync();
 
             return facility;
@@ -144,34 +144,33 @@ namespace MROWebAPI.Controllers
 
         private bool FacilityExists(int id)
         {
-            return _context.Facility.Any(e => e.FacilityId == id);
+            return _context.tblROIFacilities.Any(e => e.nROIFacilityID == id);
         }
         [HttpGet("EditFields/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
         public async Task<IActionResult> EditFields(int id)
         {
-           var wizards= (from fcm in _context.FieldFacilityMap
-                         join f in _context.Field
-                         on fcm.FieldId.ToString() equals f.FieldId.ToString()
-                         where fcm.FacilityId == id
+           var wizards= (from fcm in _context.lnkROIFacilityFieldMaps
+                         join f in _context.lstFields
+                         on fcm.nFieldID.ToString() equals f.nFieldID.ToString()
+                         where fcm.nROIFacilityID == id
                          select new
                          {
-                             FieldFacilityMapId = fcm.FieldFacilityMapId,
-                             FieldId = fcm.FieldId,
-                             FacilityId = fcm.FacilityId,
-                             IsEnable = fcm.IsEnable,
-                             FieldName = f.FieldName,
-                             WizardId = f.WizardId                            
+                             FieldFacilityMapId = fcm.nROIFacilityFieldMapID,
+                             FieldId = fcm.nFieldID,
+                             FacilityId = fcm.nROIFacilityID,
+                             IsEnable = fcm.bShow,
+                             FieldName = f.sFieldName,                         
                          }).ToList();
-            Facility faci = _context.Facility.Where(c => c.FacilityId == id).FirstOrDefault();
-            var faciName = faci.FacilityName;
+            tblROIFacilities faci = _context.tblROIFacilities.Where(c => c.nROIFacilityID == id).FirstOrDefault();
+            var faciName = faci.sFacilityName;
             return Ok(new { wizards, faciName });
         }
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFields([FromBody]FieldFacilityMap[] fieldFacilityMaps)
+        public async Task<IActionResult> EditFields([FromBody]lnkROIFacilityFieldMaps[] fieldFacilityMaps)
         {
             _context.UpdateRange(fieldFacilityMaps);
             _context.SaveChanges();

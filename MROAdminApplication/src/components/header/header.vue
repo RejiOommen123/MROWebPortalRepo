@@ -5,16 +5,16 @@
     </div>
     <nav>
         <ul>
-            <li v-if="!auth">
+            <li>
                 <router-link to="/signup">Sign Up</router-link>
             </li>
-            <li v-if="!auth">
+            <li>
                 <router-link to="/signin">Sign In</router-link>
             </li>
-            <li v-if="auth">
+            <li>
                 <router-link to="/dashboard">Dashboard</router-link>
             </li>
-            <li v-if="auth">
+            <li>
                 <button @click="onLogout" class="logout">Logout</button>
             </li>
         </ul>

@@ -7,9 +7,9 @@ namespace MROWebApi.Context
 {
     public class CommonModel
     {
-        public int CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public int UpdatedBy { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public int sCreatedBy { get; set; }
+        public DateTime dtCreatedDate { get; set; }
+        public int sUpdatedBy { get; set; }
+        public DateTime dtUpdatedDate { get; set; }
     }
 }

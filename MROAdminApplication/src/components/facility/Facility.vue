@@ -25,7 +25,7 @@
         data() {
             return {
                 searchQuery: "",
-                gridColumns: ["facilityName", "facilityAddress", "activeStatus"],
+                gridColumns: ["sFacilityName", "sDescription", "bActiveStatus"],
                 gridData: null
             }
         },
