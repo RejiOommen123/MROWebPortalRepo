@@ -522,7 +522,7 @@ namespace MROWebAPI.Context
             modelBuilder.Entity<lnkROIFacilitySensitiveInfo>().HasData(
              new lnkROIFacilitySensitiveInfo
              {
-                 nROIFacilitySensitiveInfo = 1, 
+                 nROIFacilitySensitiveInfoID = 1, 
                  nSensitiveInfoID = 1,
                  nROIFacilityID = 1,
                  sSensitiveInfoName= "HIV Test Results",
@@ -533,7 +533,7 @@ namespace MROWebAPI.Context
              },
               new lnkROIFacilitySensitiveInfo
              {
-                 nROIFacilitySensitiveInfo = 2, 
+                 nROIFacilitySensitiveInfoID = 2, 
                  nSensitiveInfoID = 2,
                  nROIFacilityID = 1,
                  sSensitiveInfoName= "Behavioural/Mental Health Records",
@@ -544,7 +544,7 @@ namespace MROWebAPI.Context
              },
                new lnkROIFacilitySensitiveInfo
              {
-                 nROIFacilitySensitiveInfo = 3, 
+                 nROIFacilitySensitiveInfoID = 3, 
                  nSensitiveInfoID = 3,
                  nROIFacilityID = 1,
                  sSensitiveInfoName= "Substance Abuse Information",
@@ -555,7 +555,7 @@ namespace MROWebAPI.Context
              },
                 new lnkROIFacilitySensitiveInfo
              {
-                 nROIFacilitySensitiveInfo = 4, 
+                 nROIFacilitySensitiveInfoID = 4, 
                  nSensitiveInfoID = 4,
                  nROIFacilityID = 1,
                  sSensitiveInfoName= "Sexually Transmitted Dieases",

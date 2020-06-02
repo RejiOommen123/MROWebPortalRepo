@@ -5,7 +5,7 @@ namespace MROWebApi.Context
 {
     public partial class lnkROIFacilitySensitiveInfo : CommonModel
     {
-        public int nROIFacilitySensitiveInfo { get; set; }
+        public int nROIFacilitySensitiveInfoID { get; set; }
         public int nSensitiveInfoID { get; set; }
         public int nROIFacilityID { get; set; }
         public string sSensitiveInfoName { get; set; }

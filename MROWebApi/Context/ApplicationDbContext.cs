@@ -94,7 +94,7 @@ namespace CodeFirstMigration.Context
             {
                 entity.HasKey(e => new { e.nROIFacilityID, e.nSensitiveInfoID });
 
-                entity.Property(e => e.nROIFacilitySensitiveInfo).ValueGeneratedOnAdd();
+                entity.Property(e => e.nROIFacilitySensitiveInfoID).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.sSensitiveInfoName).HasMaxLength(50);
 

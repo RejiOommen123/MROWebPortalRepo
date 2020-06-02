@@ -188,11 +188,13 @@ namespace MROWebAPI.Controllers
                     return BadRequest();
                 }
 
+                facility.sUpdatedBy = 1;
+                facility.dtUpdatedDate = DateTime.Now;
                 _context.Entry(facility).State = EntityState.Modified;
 
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!FacilityExists(id))
                 {
@@ -200,7 +202,7 @@ namespace MROWebAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    throw ex;
                 }
             }
             catch (Exception ex)
