@@ -17,15 +17,15 @@ const routes = [
   { path: '/signup', component: SignupPage },
   { path: '/signin', component: SigninPage },
     {
-        path: '/dashboard', component: DashboardPage,
-        beforeEnter(to, from, next) {
-            if (store.state.IsSignIn) {
-                next()
-            }
-            else {
-                next('/signin');
-            }
-        }
+        path: '/dashboard', component: DashboardPage
+        //beforeEnter(to, from, next) {
+        //    if (store.state.IsSignIn) {
+        //        next()
+        //    }
+        //    else {
+        //        next('/signin');
+        //    }
+        //}
     },
     { path: '/EditFields/:id', component: EditField },
     { path: '/AddFacility', component: AddFacility },
