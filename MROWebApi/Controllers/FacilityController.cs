@@ -92,24 +92,34 @@ namespace MROWebAPI.Controllers
         [Route("[action]")]
         public async Task<ActionResult<tblROIFacilities>> AddFacility(tblROIFacilities facility)
         {
+            //Data which not present in data coming from UI
+            facility.bActiveStatus = true;
+            facility.sCreatedBy = 1;
+            facility.dtCreatedDate = DateTime.Now;
+            facility.sUpdatedBy = 1;
+            facility.dtUpdatedDate = DateTime.Now;
+            facility.sConfigShowFields = "test data";
             _context.tblROIFacilities.Add(facility);
+
             await _context.SaveChangesAsync();
             int id = facility.nROIFacilityID;
-            List<lnkROIFacilityFieldMaps> fieldFacilityMaps= new List<lnkROIFacilityFieldMaps>();
+
+            //Add data in FcilityFieldMap table 
+            List<lnkROIFacilityFieldMaps> facilityFieldMaps= new List<lnkROIFacilityFieldMaps>();
             foreach (lstFields field in _context.lstFields)
             {
-                fieldFacilityMaps.Add(new lnkROIFacilityFieldMaps
+                facilityFieldMaps.Add(new lnkROIFacilityFieldMaps
                 {
                     nFieldID = field.nFieldID,
                     nROIFacilityID = id,
-                    bShow = true,
+                    bShow = true,               
                     sCreatedBy = 1,
                     dtCreatedDate = DateTime.Now,
                     sUpdatedBy = 1,
                     dtUpdatedDate = DateTime.Now
                 });
             }
-            _context.UpdateRange(fieldFacilityMaps);
+            _context.AddRange(facilityFieldMaps);
 
             //List<WizardFacilityMap> wizardFacilityMaps = new List<WizardFacilityMap>();
             //foreach (Wizard wizard in _context.Wizard)
@@ -126,20 +136,37 @@ namespace MROWebAPI.Controllers
             return Ok("success");
         }
 
-        // DELETE: api/Facility/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<tblROIFacilities>> DeleteFacility(int id)
+        // DELETE: api/Facility/
+        [HttpPost("DeleteFacility")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<tblROIFacilities>> DeleteFacility([FromBody] int id)
         {
-            var facility = await _context.tblROIFacilities.FindAsync(id);
-            if (facility == null)
+            tblROIFacilities facility = await _context.tblROIFacilities.FindAsync(id);
+            if (id != facility.nROIFacilityID)
             {
-                return NotFound();
+                return BadRequest();
+            }
+            facility.bActiveStatus = false;
+            _context.Entry(facility).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FacilityExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            _context.tblROIFacilities.Remove(facility);
-            await _context.SaveChangesAsync();
-
-            return facility;
+            return NoContent();
         }
 
         private bool FacilityExists(int id)

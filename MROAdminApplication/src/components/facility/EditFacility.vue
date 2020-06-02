@@ -23,7 +23,7 @@
                            placeholder="Enter SMTP Username"
                            v-model="facility.sSMTPUsername">
                     <label class="col-md-4" for="sSMTPPassword">SMTP Password:</label>
-                    <input type="text"
+                    <input type="password"
                            id="sSMTPPassword"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP Password"
@@ -41,7 +41,7 @@
                            placeholder="Enter FTP Username"
                            v-model="facility.sFTPUsername">
                     <label class="col-md-4" for="sFTPPassword">FTP Password:</label>
-                    <input type="text"
+                    <input type="password"
                            id="sFTPPassword"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Password"
@@ -83,7 +83,7 @@
                     sFTPPassword: '',
                     sFTPUrl: '',
                     sOutboundEmail: '',
-                    activeStatus: true
+                    bActiveStatus: true
                 }
                 
             };

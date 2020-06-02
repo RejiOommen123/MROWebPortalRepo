@@ -12,6 +12,7 @@
                 </th>
                 <th>Manage Facility</th>
                 <th>Manage Fields</th>
+                <th>Delete Facility</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +22,8 @@
                 </td>
                 <td><router-link class="btn btn-primary" :to="'/EditFacility/' + entry['nROIFacilityID']" tag='button'>Facility</router-link></td>
                 <td><router-link class="btn btn-primary" :to="'/EditFields/' + entry['nROIFacilityID']" tag='button'>Fields</router-link></td>
+                <td v-if ="!entry['bActiveStatus']"><button class="btn btn-primary" @click="deleteFacility(entry['nROIFacilityID'])" disabled>Delete</button></td>
+                <td v-else><button class="btn btn-primary" @click="deleteFacility(entry['nROIFacilityID'])">Delete</button></td>
             </tr>
         </tbody>
     </table>
@@ -84,6 +87,14 @@
             sortBy: function (key) {
                 this.sortKey = key;
                 this.sortOrders[key] = this.sortOrders[key] * -1;
+            },
+            deleteFacility: function (id) {
+                this.$http.post('http://localhost:57364/api/facility/DeleteFacility/', id)
+                    .then(response => {
+                        if (response.ok == true) {
+                            this.$router.go()
+                        }
+                    });
             }
         }
     }

@@ -4,72 +4,60 @@
         <div class="addfacility-form">
             <form @submit.prevent="onSubmit">
                 <div class="form-group row">
-                    <label class="col-md-4" for="facilityName">Facility Name:</label>
+                    <label class="col-md-4" for="sFacilityName">Facility Name:</label>
                     <input type="text"
-                           id="facilityName"
+                           id="sFacilityName"
                            class="form-control col-md-6"
                            placeholder="Facility Name"
-                           v-model="facility.facilityName">
-                    <label class="col-md-4" for="facilityAddress">Facility Address:</label>
+                           v-model="facility.sFacilityName">
+                    <label class="col-md-4" for="sDescription">Facility Description:</label>
                     <input type="text"
-                           id="facilityAddress"
-                           class="form-control col-md-6"
-                           placeholder="Detail Address"
-                           v-model="facility.facilityAddress">
-                    <label class="col-md-4" for="description">Facility Description:</label>
-                    <input type="text"
-                           id="description"
+                           id="sDescription"
                            class="form-control col-md-6"
                            placeholder="General Description"
-                           v-model="facility.description">
-                    <label class="col-md-4" for="numOfInstitution">Number of Institute:</label>
+                           v-model="facility.sDescription">
+                    <label class="col-md-4" for="sSMTPUsername">SMTP Username:</label>
                     <input type="text"
-                           id="numOfInstitution"
-                           class="form-control col-md-6"
-                           placeholder="Comma Seperated eg. NYU Hospital, NYU Clinic"
-                           v-model="facility.numOfInstitution">
-                    <label class="col-md-4" for="smtpUsername">SMTP Username:</label>
-                    <input type="text"
-                           id="smtpUsername"
+                           id="sSMTPUsername"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP Username"
-                           v-model="facility.smtpUsername">
-                    <label class="col-md-4" for="smtpPassword">SMTP Password:</label>
-                    <input type="text"
-                           id="smtpPassword"
+                           v-model="facility.sSMTPUsername">
+                    <label class="col-md-4" for="sSMTPPassword">SMTP Password:</label>
+                    <input type="password"
+                           id="sSMTPPassword"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP Password"
-                           v-model="facility.smtpPassword">
-                    <label class="col-md-4" for="smtpUrl">SMTP URL:</label>
+                           v-model="facility.sSMTPPassword">
+                    <label class="col-md-4" for="sSMTPUrl">SMTP URL:</label>
                     <input type="text"
-                           id="smtpUrl"
+                           id="sSMTPUrl"
                            class="form-control col-md-6"
                            placeholder="Enter SMTP URL"
-                           v-model="facility.smtpUrl">
-                    <label class="col-md-4" for="ftpUsername">FTP Username:</label>
+                           v-model="facility.sSMTPUrl">
+                    <label class="col-md-4" for="sFTPUsername">FTP Username:</label>
                     <input type="text"
-                           id="ftpUsername"
+                           id="sFTPUsername"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Username"
-                           v-model="facility.ftpUsername">
-                    <label class="col-md-4" for="ftpPassword">FTP Password:</label>
-                    <input type="text"
-                           id="ftpPassword"
+                           v-model="facility.sFTPUsername">
+                    <label class="col-md-4" for="sFTPPassword">FTP Password:</label>
+                    <input type="password"
+                           id="sFTPPassword"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Password"
-                           v-model="facility.ftpPassword">
-                    <label class="col-md-4" for="ftpUrl">FTP URL:</label>
+                           v-model="facility.sFTPPassword">
+                    <label class="col-md-4" for="sFTPUrl">FTP URL:</label>
                     <input type="text"
-                           id="ftpUrl"
+                           id="sFTPUrl"
                            class="form-control col-md-6"
                            placeholder="Enter FTP Password"
-                           v-model="facility.ftpUrl">
-                    <label class="col-md-4" for="configFileUrl">Configuration File URL:</label>
+                           v-model="facility.sFTPUrl">
+                    <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
                     <input type="text"
-                           id="configFileUrl"
+                           id="sOutboundEmail"
                            class="form-control col-md-6"
-                           placeholder="Enter Path to Config File"
-                           v-model="facility.configFileUrl">
+                           placeholder="Enter Outbound Email"
+                           v-model="facility.sOutboundEmail">
                     <div class="col-md-4 offset-md-3 submit">
                         <button type="submit">Submit</button>
                     </div>
@@ -85,19 +73,17 @@
         data() {
             return {
                 facility: {
-                    facilityId: 0,
-                    facilityName: '',
-                    facilityAddress: '',
-                    description: '',
-                    numOfInstitution: '',
-                    smtpUsername: '',
-                    smtpPassword: '',
-                    smtpUrl: '',
-                    ftpUsername: '',
-                    ftpPassword: '',
-                    ftpUrl: '',
-                    configFileUrl: '',
-                    activeStatus: true
+                    nROIFacilityID: 0,
+                    sFacilityName: '',
+                    sDescription: '',
+                    sSMTPUsername: '',
+                    sSMTPPassword: '',
+                    sSMTPUrl: '',
+                    sFTPUsername: '',
+                    sFTPPassword: '',
+                    sFTPUrl: '',
+                    sOutboundEmail: '',
+                    bActiveStatus: true
                 }
             };
         },
