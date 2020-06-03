@@ -15,13 +15,16 @@ namespace CodeFirstMigration.Context
         public virtual DbSet<lnkROIFacilityPrimaryReasons> lnkROIFacilityPrimaryReasons { get; set; }
         public virtual DbSet<lnkROIFacilityRecordTypes> lnkROIFacilityRecordTypes { get; set; }
         public virtual DbSet<lnkROIFacilitySensitiveInfo> lnkROIFacilitySensitiveInfo { get; set; }
+        public virtual DbSet<lnkROIFacilityWayOfSendRecord> lnkROIFacilityWayOfSendRecord { get; set; }
         public virtual DbSet<lstFields> lstFields { get; set; }
         public virtual DbSet<lstPrimaryReasons> lstPrimaryReasons { get; set; }
         public virtual DbSet<lstRecordTypes> lstRecordTypes { get; set; }
         public virtual DbSet<lstSensitiveInfo> lstSensitiveInfo { get; set; }
+        public virtual DbSet<lstWayOfSendRecord> lstWayOfSendRecord { get; set; }
+        public virtual DbSet<lnkROIFacilityConnection> lnkROIFacilityConnection { get; set; }
         public virtual DbSet<lstWizards> lstWizards { get; set; }
         public virtual DbSet<tblROIFacilities> tblROIFacilities { get; set; }
-        public virtual DbSet<tblROILocations> tblROILocations { get; set; }
+        public virtual DbSet<lnkROIFacilityLocations> lnkROIFacilityLocations { get; set; }
         public virtual DbSet<tblRequestors> tblRequestors { get; set; }
         public virtual DbSet<tblTempRequestors> tblTempRequestors { get; set; }
 
@@ -110,7 +113,37 @@ namespace CodeFirstMigration.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tbl_lnkROIFacilitySensitiveInfo_nSensitiveInfoID");
             });
+            modelBuilder.Entity<lnkROIFacilityWayOfSendRecord>(entity =>
+            {
+                entity.HasKey(e => new { e.nWayOfSendRecordID, e.nROIFacilityID });
 
+                entity.Property(e => e.nROIFacilityWayOfSendRecordID).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.sWayOfSendRecordName).HasMaxLength(50);
+
+                entity.HasOne(d => d.nWayOfSendRecord)
+                    .WithMany(p => p.lnkROIFacilityWayOfSendRecord)
+                    .HasForeignKey(d => d.nWayOfSendRecordID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_lnkROIFacilityWayOfSendRecord_nWayOfSendRecordID");
+
+                entity.HasOne(d => d.nROIFacility)
+                    .WithMany(p => p.lnkROIFacilityWayOfSendRecord)
+                    .HasForeignKey(d => d.nROIFacilityID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_lnkROIFacilityWayOfSendRecord_nROIFacilityID");
+            });
+            modelBuilder.Entity<lnkROIFacilityConnection>(entity =>
+            {
+                entity.HasKey(e => e.nROIFacilityConnectionID)
+                    .HasName("PK_ROIFacilityConnectionID");
+
+                entity.HasOne(d => d.nROIFacility)
+                    .WithMany(p => p.lnkROIFacilityConnection)
+                    .HasForeignKey(d => d.nROIFacilityID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_lnkROIFacilityConnection_nROIFacilityID");
+            });
             modelBuilder.Entity<lstFields>(entity =>
             {
                 entity.HasKey(e => e.nFieldID)
@@ -146,6 +179,13 @@ namespace CodeFirstMigration.Context
 
                 entity.Property(e => e.sSensitiveInfoName).HasMaxLength(50);
             });
+            modelBuilder.Entity<lstWayOfSendRecord>(entity =>
+            {
+                entity.HasKey(e => e.nWayOfSendRecordID)
+                    .HasName("PK_lst_WayOfSendRecord");
+
+                entity.Property(e => e.sWayOfSendRecordName).HasMaxLength(50);
+            });
 
             modelBuilder.Entity<lstWizards>(entity =>
             {
@@ -156,12 +196,10 @@ namespace CodeFirstMigration.Context
             modelBuilder.Entity<tblROIFacilities>(entity =>
             {
                 entity.HasKey(e => e.nROIFacilityID)
-                    .HasName("PK_Customer");
-
-                entity.Property(e => e.sConfigShowFields).IsRequired();
+                    .HasName("PK_Customer");           
             });
 
-            modelBuilder.Entity<tblROILocations>(entity =>
+            modelBuilder.Entity<lnkROIFacilityLocations>(entity =>
             {
                 entity.HasKey(e => new { e.nROIFacilityID, e.nLocationID })
                     .HasName("PK_Location");
@@ -173,7 +211,7 @@ namespace CodeFirstMigration.Context
                 entity.Property(e => e.sLocationName).HasMaxLength(30);
 
                 entity.HasOne(d => d.nROIFacility)
-                    .WithMany(p => p.tblROILocations)
+                    .WithMany(p => p.lnkROIFacilityLocations)
                     .HasForeignKey(d => d.nROIFacilityID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Location_Facility");
@@ -235,7 +273,7 @@ namespace CodeFirstMigration.Context
                     .HasForeignKey(d => d.nROIFacilityID)
                     .HasConstraintName("FK_tblRequestors_nROIFacilityID");
 
-                entity.HasOne(d => d.n)
+                entity.HasOne(d => d.nROIFacilityLocations)
                     .WithMany(p => p.tblRequestors)
                     .HasForeignKey(d => new { d.nROIFacilityID, d.nLocationID })
                     .HasConstraintName("FK_tblRequestors_nLocationID");

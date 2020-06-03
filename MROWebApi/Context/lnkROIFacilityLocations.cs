@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace MROWebApi.Context
 {
-    public partial class tblROILocations : CommonModel
+    public partial class lnkROIFacilityLocations : CommonModel
     {
-        public tblROILocations()
+        public lnkROIFacilityLocations()
         {
             tblRequestors = new HashSet<tblRequestors>();
         }
@@ -17,6 +17,8 @@ namespace MROWebApi.Context
         public string sLocationAddress { get; set; }
         public int? nPhoneNo { get; set; }
         public int? nFaxNo { get; set; }
+        public string sConfigFacilityLogo { get; set; }
+        public string sConfigBackgroundImg { get; set; }
 
         public virtual tblROIFacilities nROIFacility { get; set; }
         public virtual ICollection<tblRequestors> tblRequestors { get; set; }

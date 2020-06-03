@@ -27,7 +27,6 @@ namespace MROWebAPI.Context
                     sFTPUrl = "ftp://ftp.cleveland.com/",
                     bActiveStatus = true,
                     sOutboundEmail = "noreply@cleveland.com",
-                    sConfigFacilityLogo = "data:image/png;base64,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",
                     sConfigShowFields = "TestFields",
                     sConfigShowWizards = "Test Wizards",
                     sCreatedBy = 1,
@@ -565,8 +564,88 @@ namespace MROWebAPI.Context
                  dtUpdatedDate = DateTime.Now
              }
          );
-            modelBuilder.Entity<tblROILocations>().HasData(
-                new tblROILocations 
+            modelBuilder.Entity<lstWayOfSendRecord>().HasData(
+              new lstWayOfSendRecord
+              {
+                  nWayOfSendRecordID = 1,
+                  sWayOfSendRecordName = "Patient Portal"
+              },
+              new lstWayOfSendRecord
+              {
+                  nWayOfSendRecordID = 2,
+                  sWayOfSendRecordName = "Secure Email"
+              },
+              new lstWayOfSendRecord
+              {
+                  nWayOfSendRecordID = 3,
+                  sWayOfSendRecordName = "Email"
+              },
+              new lstWayOfSendRecord
+              {
+                  nWayOfSendRecordID = 4,
+                  sWayOfSendRecordName = "In-Person"
+              }
+          );
+            modelBuilder.Entity<lnkROIFacilityWayOfSendRecord>().HasData(
+            new lnkROIFacilityWayOfSendRecord
+            {
+                nROIFacilityWayOfSendRecordID = 1,
+                nWayOfSendRecordID = 1,
+                nROIFacilityID = 1,
+                sWayOfSendRecordName = "Patient Portal",
+                sCreatedBy = 1,
+                dtCreatedDate = DateTime.Now,
+                sUpdatedBy = 1,
+                dtUpdatedDate = DateTime.Now
+            },
+             new lnkROIFacilityWayOfSendRecord
+             {
+                 nROIFacilityWayOfSendRecordID = 2,
+                 nWayOfSendRecordID = 2,
+                 nROIFacilityID = 1,
+                 sWayOfSendRecordName = "Secure Email",
+                 sCreatedBy = 1,
+                 dtCreatedDate = DateTime.Now,
+                 sUpdatedBy = 1,
+                 dtUpdatedDate = DateTime.Now
+             },
+              new lnkROIFacilityWayOfSendRecord
+              {
+                  nROIFacilityWayOfSendRecordID = 3,
+                  nWayOfSendRecordID = 3,
+                  nROIFacilityID = 1,
+                  sWayOfSendRecordName = "Email",
+                  sCreatedBy = 1,
+                  dtCreatedDate = DateTime.Now,
+                  sUpdatedBy = 1,
+                  dtUpdatedDate = DateTime.Now
+              },
+               new lnkROIFacilityWayOfSendRecord
+               {
+                   nROIFacilityWayOfSendRecordID = 4,
+                   nWayOfSendRecordID = 4,
+                   nROIFacilityID = 1,
+                   sWayOfSendRecordName = "In-Person",
+                   sCreatedBy = 1,
+                   dtCreatedDate = DateTime.Now,
+                   sUpdatedBy = 1,
+                   dtUpdatedDate = DateTime.Now
+               }
+        );
+        modelBuilder.Entity<lnkROIFacilityConnection>().HasData(
+                new lnkROIFacilityConnection
+                {
+                    nROIFacilityConnectionID = 1,
+                    nROIFacilityID = 1,
+                    sGUID="Test GUID",
+                    sCreatedBy = 1,
+                    dtCreatedDate = DateTime.Now,
+                    sUpdatedBy = 1,
+                    dtUpdatedDate = DateTime.Now
+                }
+            );
+            modelBuilder.Entity<lnkROIFacilityLocations>().HasData(
+                new lnkROIFacilityLocations
                 {
                     nLocationID = 1,
                     nROIFacilityID = 1,
@@ -580,7 +659,7 @@ namespace MROWebAPI.Context
                     sUpdatedBy = 1,
                     dtUpdatedDate = DateTime.Now
                 },
-                   new tblROILocations
+                   new lnkROIFacilityLocations
                    {
                        nLocationID = 2,
                        nROIFacilityID = 1,

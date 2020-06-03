@@ -11,7 +11,9 @@ namespace MROWebApi.Context
             lnkROIFacilityPrimaryReasons = new HashSet<lnkROIFacilityPrimaryReasons>();
             lnkROIFacilityRecordTypes = new HashSet<lnkROIFacilityRecordTypes>();
             lnkROIFacilitySensitiveInfo = new HashSet<lnkROIFacilitySensitiveInfo>();
-            tblROILocations = new HashSet<tblROILocations>();
+            lnkROIFacilityWayOfSendRecord = new HashSet<lnkROIFacilityWayOfSendRecord>();
+            lnkROIFacilityConnection = new HashSet<lnkROIFacilityConnection>();
+            lnkROIFacilityLocations = new HashSet<lnkROIFacilityLocations>();
             tblRequestors = new HashSet<tblRequestors>();
             tblTempRequestors = new HashSet<tblTempRequestors>();
         }
@@ -29,13 +31,15 @@ namespace MROWebApi.Context
         public bool bActiveStatus { get; set; }
         public string sConfigShowFields { get; set; }
         public string sConfigShowWizards { get; set; }
-        public string sConfigFacilityLogo { get; set; }
+       
 
         public virtual ICollection<lnkROIFacilityFieldMaps> lnkROIFacilityFieldMaps { get; set; }
         public virtual ICollection<lnkROIFacilityPrimaryReasons> lnkROIFacilityPrimaryReasons { get; set; }
         public virtual ICollection<lnkROIFacilityRecordTypes> lnkROIFacilityRecordTypes { get; set; }
         public virtual ICollection<lnkROIFacilitySensitiveInfo> lnkROIFacilitySensitiveInfo { get; set; }
-        public virtual ICollection<tblROILocations> tblROILocations { get; set; }
+        public virtual ICollection<lnkROIFacilityWayOfSendRecord> lnkROIFacilityWayOfSendRecord { get; set; } 
+        public virtual ICollection<lnkROIFacilityConnection> lnkROIFacilityConnection { get; set; }
+        public virtual ICollection<lnkROIFacilityLocations> lnkROIFacilityLocations { get; set; }
         public virtual ICollection<tblRequestors> tblRequestors { get; set; }
         public virtual ICollection<tblTempRequestors> tblTempRequestors { get; set; }
     }

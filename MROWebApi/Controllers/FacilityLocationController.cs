@@ -30,18 +30,18 @@ namespace MROWebApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<IEnumerable<tblROILocations>>> GetFacilityLocation()
+        public async Task<ActionResult<IEnumerable<lnkROIFacilityLocations>>> GetFacilityLocation()
         {
-            return await _context.tblROILocations.ToListAsync();
+            return await _context.lnkROIFacilityLocations.ToListAsync();
         }
 
         // GET: api/FacilityLocation/5
         [HttpGet("GetFacilityLocation/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<tblROILocations>> GetFacilityLocation(string id)
+        public async Task<ActionResult<lnkROIFacilityLocations>> GetFacilityLocation(string id)
         {
-            var facilityLocation = await _context.tblROILocations.FindAsync(int.Parse(id));
+            var facilityLocation = await _context.lnkROIFacilityLocations.FindAsync(int.Parse(id));
 
             if (facilityLocation == null)
             {
@@ -59,8 +59,8 @@ namespace MROWebApi.Controllers
         {
             try
             {
-                var locations = (from fln in _context.tblROILocations
-                               join f in _context.tblROIFacilities
+                var locations = (from fln in _context.lnkROIFacilityLocations
+                                 join f in _context.tblROIFacilities
                                on fln.nROIFacilityID.ToString() equals f.nROIFacilityID.ToString()
                                where fln.nROIFacilityID == facilityID
                                select new
@@ -76,7 +76,7 @@ namespace MROWebApi.Controllers
                                    FacilityDescription = f.sDescription,
 
                                }).ToList();
-                tblROILocations falo = _context.tblROILocations.Where(c => c.nROIFacilityID == facilityID).FirstOrDefault();
+                lnkROIFacilityLocations falo = _context.lnkROIFacilityLocations.Where(c => c.nROIFacilityID == facilityID).FirstOrDefault();
                 var faloName = falo.nROIFacility.sFacilityName;
                 return Ok(new { locations, faloName });
 
@@ -95,7 +95,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<tblROILocations>> AddFacilityLocation(tblROILocations facilityLocation)
+        public async Task<ActionResult<lnkROIFacilityLocations>> AddFacilityLocation(lnkROIFacilityLocations facilityLocation)
         {
             try
             {
@@ -105,7 +105,7 @@ namespace MROWebApi.Controllers
                 facilityLocation.sUpdatedBy = 1;
                 facilityLocation.dtUpdatedDate = DateTime.Now;
 
-                _context.tblROILocations.Add(facilityLocation);
+                _context.lnkROIFacilityLocations.Add(facilityLocation);
 
                 await _context.SaveChangesAsync();
                 int id = facilityLocation.nLocationID;
@@ -129,7 +129,7 @@ namespace MROWebApi.Controllers
         [HttpPost("EditFacilityLocation/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityLocation(int id, tblROILocations facilityLocation)
+        public async Task<IActionResult> EditFacilityLocation(int id, lnkROIFacilityLocations facilityLocation)
         {
             try
             {
@@ -168,11 +168,11 @@ namespace MROWebApi.Controllers
         [HttpPost("DeleteFacilityLocation")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<tblROILocations>> DeleteFacilityLocation([FromBody] int id)
+        public async Task<ActionResult<lnkROIFacilityLocations>> DeleteFacilityLocation([FromBody] int id)
         {
             try
             {
-                tblROILocations facilityLocation = await _context.tblROILocations.FindAsync(id);
+                lnkROIFacilityLocations facilityLocation = await _context.lnkROIFacilityLocations.FindAsync(id);
                 if (id != facilityLocation.nROIFacilityID)
                 {
                     return BadRequest();
@@ -202,7 +202,7 @@ namespace MROWebApi.Controllers
         //To check the Facility Location Exisit
         private bool FacilityLocationExists(int id)
         {
-            return _context.tblROILocations.Any(e => e.nLocationID == id);
+            return _context.lnkROIFacilityLocations.Any(e => e.nLocationID == id);
         }
         #endregion
 

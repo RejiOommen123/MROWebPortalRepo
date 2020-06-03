@@ -71,7 +71,7 @@ namespace MROWebAPI.Controllers
                 facility.sUpdatedBy = 1;
                 facility.dtUpdatedDate = DateTime.Now;
                 //TODO: Adding sConfigShowFields, sConfigShowWizard and Logo Image is pending
-                //facility.sConfigShowFields = "test data";
+                facility.sConfigShowFields = "test data";
                 _context.tblROIFacilities.Add(facility);
 
                 await _context.SaveChangesAsync();

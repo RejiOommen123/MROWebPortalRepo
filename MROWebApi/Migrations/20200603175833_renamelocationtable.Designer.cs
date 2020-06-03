@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MROWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200601122446_CodeFirstTest")]
-    partial class CodeFirstTest
+    [Migration("20200603175833_renamelocationtable")]
+    partial class renamelocationtable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,51 @@ namespace MROWebApi.Migrations
                 .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityConnection", b =>
+                {
+                    b.Property<int>("nROIFacilityConnectionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("dtCreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("dtUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("nROIFacilityID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("sCreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sGUID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("sUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("nROIFacilityConnectionID")
+                        .HasName("PK_ROIFacilityConnectionID");
+
+                    b.HasIndex("nROIFacilityID");
+
+                    b.ToTable("lnkROIFacilityConnection");
+
+                    b.HasData(
+                        new
+                        {
+                            nROIFacilityConnectionID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(6611),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(6621),
+                            nROIFacilityID = 1,
+                            sCreatedBy = 1,
+                            sGUID = "Test GUID",
+                            sUpdatedBy = 1
+                        });
+                });
 
             modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityFieldMaps", b =>
                 {
@@ -62,8 +107,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 1,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(201),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(243),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5244),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5306),
                             nROIFacilityFieldMapID = 1,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -73,8 +118,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 2,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(302),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(304),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5401),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5404),
                             nROIFacilityFieldMapID = 2,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -84,8 +129,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 3,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(306),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(307),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5407),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5410),
                             nROIFacilityFieldMapID = 3,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -95,8 +140,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 4,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(310),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(311),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5413),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5415),
                             nROIFacilityFieldMapID = 4,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -106,8 +151,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 5,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(313),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(314),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5578),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5581),
                             nROIFacilityFieldMapID = 5,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -117,8 +162,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 6,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(315),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(317),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5584),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5586),
                             nROIFacilityFieldMapID = 6,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -128,8 +173,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 7,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(319),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(320),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5589),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5591),
                             nROIFacilityFieldMapID = 7,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -139,8 +184,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 8,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(322),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(323),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5594),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5596),
                             nROIFacilityFieldMapID = 8,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -150,8 +195,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 9,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(325),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(326),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5600),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5602),
                             nROIFacilityFieldMapID = 9,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -161,8 +206,8 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 10,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(328),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(329),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5606),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5608),
                             nROIFacilityFieldMapID = 10,
                             sCreatedBy = 1,
                             sUpdatedBy = 1
@@ -172,10 +217,90 @@ namespace MROWebApi.Migrations
                             nROIFacilityID = 1,
                             nFieldID = 11,
                             bShow = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(331),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(332),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5611),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5613),
                             nROIFacilityFieldMapID = 11,
                             sCreatedBy = 1,
+                            sUpdatedBy = 1
+                        });
+                });
+
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityLocations", b =>
+                {
+                    b.Property<int>("nROIFacilityID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("nLocationID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("dtCreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("dtUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("nFaxNo")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("nPhoneNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sConfigBackgroundImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sConfigFacilityLogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("sCreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sLocationAddress")
+                        .HasColumnType("nchar(50)")
+                        .IsFixedLength(true)
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("sLocationCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sLocationName")
+                        .HasColumnType("nvarchar(30)")
+                        .HasMaxLength(30);
+
+                    b.Property<int>("sUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("nROIFacilityID", "nLocationID")
+                        .HasName("PK_Location");
+
+                    b.ToTable("lnkROIFacilityLocations");
+
+                    b.HasData(
+                        new
+                        {
+                            nROIFacilityID = 1,
+                            nLocationID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1226),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1238),
+                            nFaxNo = 4026,
+                            nPhoneNo = 4026,
+                            sCreatedBy = 1,
+                            sLocationAddress = "Cleverland Clinic Address",
+                            sLocationCode = 101,
+                            sLocationName = "Cleverland Clinic",
+                            sUpdatedBy = 1
+                        },
+                        new
+                        {
+                            nROIFacilityID = 1,
+                            nLocationID = 2,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1353),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1355),
+                            nFaxNo = 4026,
+                            nPhoneNo = 4026,
+                            sCreatedBy = 1,
+                            sLocationAddress = "Cleverland Hospital Address",
+                            sLocationCode = 102,
+                            sLocationName = "Cleverland Hospital",
                             sUpdatedBy = 1
                         });
                 });
@@ -220,8 +345,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 1,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5043),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5051),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3138),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3155),
                             nROIFacilityPrimaryReasonID = 1,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "Continued Care",
@@ -231,8 +356,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 2,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5111),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5113),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3285),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3287),
                             nROIFacilityPrimaryReasonID = 2,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "Patient Request",
@@ -242,8 +367,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 3,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5115),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5116),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3291),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3293),
                             nROIFacilityPrimaryReasonID = 3,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "Insurance",
@@ -253,8 +378,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 4,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5118),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5119),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3295),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3298),
                             nROIFacilityPrimaryReasonID = 4,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "Social Security Benifits/Claims",
@@ -264,8 +389,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 5,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5121),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5122),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3300),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3302),
                             nROIFacilityPrimaryReasonID = 5,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "OtherReason",
@@ -275,8 +400,8 @@ namespace MROWebApi.Migrations
                         {
                             nPrimaryReasonID = 6,
                             nROIFacilityID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5124),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(5125),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3307),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3309),
                             nROIFacilityPrimaryReasonID = 6,
                             sCreatedBy = 1,
                             sPrimaryReasonName = "Continued Care",
@@ -324,8 +449,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9700),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9711),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(485),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(501),
                             nROIFacilityRecordTypeID = 1,
                             sCreatedBy = 1,
                             sRecordTypeName = "Abstract",
@@ -335,8 +460,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 2,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9756),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9757),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(582),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(585),
                             nROIFacilityRecordTypeID = 2,
                             sCreatedBy = 1,
                             sRecordTypeName = "Discharge Summary",
@@ -346,8 +471,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 3,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9759),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9760),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(588),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(589),
                             nROIFacilityRecordTypeID = 3,
                             sCreatedBy = 1,
                             sRecordTypeName = "Operative Reports",
@@ -357,8 +482,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 4,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9762),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9763),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(593),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(595),
                             nROIFacilityRecordTypeID = 4,
                             sCreatedBy = 1,
                             sRecordTypeName = "History and Physical",
@@ -368,8 +493,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 5,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9765),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9766),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(598),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(600),
                             nROIFacilityRecordTypeID = 5,
                             sCreatedBy = 1,
                             sRecordTypeName = "Laboratory Report",
@@ -379,8 +504,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 6,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9768),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9769),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(603),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(605),
                             nROIFacilityRecordTypeID = 6,
                             sCreatedBy = 1,
                             sRecordTypeName = "Radiology Report",
@@ -390,8 +515,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nRecordTypeID = 7,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9771),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 432, DateTimeKind.Local).AddTicks(9772),
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(608),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(610),
                             nROIFacilityRecordTypeID = 7,
                             sCreatedBy = 1,
                             sRecordTypeName = "Other",
@@ -413,7 +538,7 @@ namespace MROWebApi.Migrations
                     b.Property<DateTime>("dtUpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("nROIFacilitySensitiveInfo")
+                    b.Property<int>("nROIFacilitySensitiveInfoID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -439,9 +564,9 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nSensitiveInfoID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4490),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4499),
-                            nROIFacilitySensitiveInfo = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8227),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8242),
+                            nROIFacilitySensitiveInfoID = 1,
                             sCreatedBy = 1,
                             sSensitiveInfoName = "HIV Test Results",
                             sUpdatedBy = 1
@@ -450,9 +575,9 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nSensitiveInfoID = 2,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4559),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4561),
-                            nROIFacilitySensitiveInfo = 2,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8312),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8314),
+                            nROIFacilitySensitiveInfoID = 2,
                             sCreatedBy = 1,
                             sSensitiveInfoName = "Behavioural/Mental Health Records",
                             sUpdatedBy = 1
@@ -461,9 +586,9 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nSensitiveInfoID = 3,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4563),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4564),
-                            nROIFacilitySensitiveInfo = 3,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8318),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8321),
+                            nROIFacilitySensitiveInfoID = 3,
                             sCreatedBy = 1,
                             sSensitiveInfoName = "Substance Abuse Information",
                             sUpdatedBy = 1
@@ -472,12 +597,94 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             nSensitiveInfoID = 4,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4566),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(4567),
-                            nROIFacilitySensitiveInfo = 4,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8323),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8326),
+                            nROIFacilitySensitiveInfoID = 4,
                             sCreatedBy = 1,
                             sSensitiveInfoName = "Sexually Transmitted Dieases",
                             sUpdatedBy = 1
+                        });
+                });
+
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityWayOfSendRecord", b =>
+                {
+                    b.Property<int>("nWayOfSendRecordID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("nROIFacilityID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("dtCreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("dtUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("nROIFacilityWayOfSendRecordID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("sCreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("sUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sWayOfSendRecordName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("nWayOfSendRecordID", "nROIFacilityID");
+
+                    b.HasIndex("nROIFacilityID");
+
+                    b.ToTable("lnkROIFacilityWayOfSendRecord");
+
+                    b.HasData(
+                        new
+                        {
+                            nWayOfSendRecordID = 1,
+                            nROIFacilityID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4487),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4507),
+                            nROIFacilityWayOfSendRecordID = 1,
+                            sCreatedBy = 1,
+                            sUpdatedBy = 1,
+                            sWayOfSendRecordName = "Patient Portal"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 2,
+                            nROIFacilityID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4560),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4562),
+                            nROIFacilityWayOfSendRecordID = 2,
+                            sCreatedBy = 1,
+                            sUpdatedBy = 1,
+                            sWayOfSendRecordName = "Secure Email"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 3,
+                            nROIFacilityID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4564),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4565),
+                            nROIFacilityWayOfSendRecordID = 3,
+                            sCreatedBy = 1,
+                            sUpdatedBy = 1,
+                            sWayOfSendRecordName = "Email"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 4,
+                            nROIFacilityID = 1,
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4567),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4568),
+                            nROIFacilityWayOfSendRecordID = 4,
+                            sCreatedBy = 1,
+                            sUpdatedBy = 1,
+                            sWayOfSendRecordName = "In-Person"
                         });
                 });
 
@@ -726,6 +933,45 @@ namespace MROWebApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MROWebApi.Context.lstWayOfSendRecord", b =>
+                {
+                    b.Property<int>("nWayOfSendRecordID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("sWayOfSendRecordName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("nWayOfSendRecordID")
+                        .HasName("PK_lst_WayOfSendRecord");
+
+                    b.ToTable("lstWayOfSendRecord");
+
+                    b.HasData(
+                        new
+                        {
+                            nWayOfSendRecordID = 1,
+                            sWayOfSendRecordName = "Patient Portal"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 2,
+                            sWayOfSendRecordName = "Secure Email"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 3,
+                            sWayOfSendRecordName = "Email"
+                        },
+                        new
+                        {
+                            nWayOfSendRecordID = 4,
+                            sWayOfSendRecordName = "In-Person"
+                        });
+                });
+
             modelBuilder.Entity("MROWebApi.Context.lstWizards", b =>
                 {
                     b.Property<int>("nWizardID")
@@ -800,11 +1046,7 @@ namespace MROWebApi.Migrations
                     b.Property<DateTime>("dtUpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("sConfigFacilityLogo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("sConfigShowFields")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("sConfigShowWizards")
@@ -853,9 +1095,8 @@ namespace MROWebApi.Migrations
                         {
                             nROIFacilityID = 1,
                             bActiveStatus = true,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 428, DateTimeKind.Local).AddTicks(6717),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 429, DateTimeKind.Local).AddTicks(6990),
-                            sConfigFacilityLogo = "data:image/png;base64,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",
+                            dtCreatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 488, DateTimeKind.Local).AddTicks(1958),
+                            dtUpdatedDate = new DateTime(2020, 6, 3, 23, 28, 32, 489, DateTimeKind.Local).AddTicks(8142),
                             sConfigShowFields = "TestFields",
                             sConfigShowWizards = "Test Wizards",
                             sCreatedBy = 1,
@@ -868,80 +1109,6 @@ namespace MROWebApi.Migrations
                             sSMTPPassword = "Cleveland@101",
                             sSMTPUrl = "smtp.cleveland.com",
                             sSMTPUsername = "Cleveland101",
-                            sUpdatedBy = 1
-                        });
-                });
-
-            modelBuilder.Entity("MROWebApi.Context.tblROILocations", b =>
-                {
-                    b.Property<int>("nROIFacilityID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("nLocationID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("dtCreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("dtUpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("nFaxNo")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("nPhoneNo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("sCreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("sLocationAddress")
-                        .HasColumnType("nchar(50)")
-                        .IsFixedLength(true)
-                        .HasMaxLength(50);
-
-                    b.Property<int?>("sLocationCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("sLocationName")
-                        .HasColumnType("nvarchar(30)")
-                        .HasMaxLength(30);
-
-                    b.Property<int>("sUpdatedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("nROIFacilityID", "nLocationID")
-                        .HasName("PK_Location");
-
-                    b.ToTable("tblROILocations");
-
-                    b.HasData(
-                        new
-                        {
-                            nROIFacilityID = 1,
-                            nLocationID = 1,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(9260),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(9268),
-                            nFaxNo = 4026,
-                            nPhoneNo = 4026,
-                            sCreatedBy = 1,
-                            sLocationAddress = "Cleverland Clinic Address",
-                            sLocationCode = 101,
-                            sLocationName = "Cleverland Clinic",
-                            sUpdatedBy = 1
-                        },
-                        new
-                        {
-                            nROIFacilityID = 1,
-                            nLocationID = 2,
-                            dtCreatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(9351),
-                            dtUpdatedDate = new DateTime(2020, 6, 1, 17, 54, 45, 433, DateTimeKind.Local).AddTicks(9352),
-                            nFaxNo = 4026,
-                            nPhoneNo = 4026,
-                            sCreatedBy = 1,
-                            sLocationAddress = "Cleverland Hospital Address",
-                            sLocationCode = 102,
-                            sLocationName = "Cleverland Hospital",
                             sUpdatedBy = 1
                         });
                 });
@@ -1233,6 +1400,15 @@ namespace MROWebApi.Migrations
                     b.ToTable("tblTempRequestors");
                 });
 
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityConnection", b =>
+                {
+                    b.HasOne("MROWebApi.Context.tblROIFacilities", "nROIFacility")
+                        .WithMany("lnkROIFacilityConnection")
+                        .HasForeignKey("nROIFacilityID")
+                        .HasConstraintName("FK_lnkROIFacilityConnection_nROIFacilityID")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityFieldMaps", b =>
                 {
                     b.HasOne("MROWebApi.Context.lstFields", "nField")
@@ -1245,6 +1421,15 @@ namespace MROWebApi.Migrations
                         .WithMany("lnkROIFacilityFieldMaps")
                         .HasForeignKey("nROIFacilityID")
                         .HasConstraintName("FK_lnkROIFacilityFieldMaps_tblROIFacilities")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityLocations", b =>
+                {
+                    b.HasOne("MROWebApi.Context.tblROIFacilities", "nROIFacility")
+                        .WithMany("lnkROIFacilityLocations")
+                        .HasForeignKey("nROIFacilityID")
+                        .HasConstraintName("FK_Location_Facility")
                         .IsRequired();
                 });
 
@@ -1293,21 +1478,27 @@ namespace MROWebApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MROWebApi.Context.lnkROIFacilityWayOfSendRecord", b =>
+                {
+                    b.HasOne("MROWebApi.Context.tblROIFacilities", "nROIFacility")
+                        .WithMany("lnkROIFacilityWayOfSendRecord")
+                        .HasForeignKey("nROIFacilityID")
+                        .HasConstraintName("FK_lnkROIFacilityWayOfSendRecord_nROIFacilityID")
+                        .IsRequired();
+
+                    b.HasOne("MROWebApi.Context.lstWayOfSendRecord", "nWayOfSendRecord")
+                        .WithMany("lnkROIFacilityWayOfSendRecord")
+                        .HasForeignKey("nWayOfSendRecordID")
+                        .HasConstraintName("FK_lnkROIFacilityWayOfSendRecord_nWayOfSendRecordID")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MROWebApi.Context.lstFields", b =>
                 {
                     b.HasOne("MROWebApi.Context.lstWizards", "nWizard")
                         .WithMany("lstFields")
                         .HasForeignKey("nWizardID")
                         .HasConstraintName("FK_Field_Wizard")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MROWebApi.Context.tblROILocations", b =>
-                {
-                    b.HasOne("MROWebApi.Context.tblROIFacilities", "nROIFacility")
-                        .WithMany("tblROILocations")
-                        .HasForeignKey("nROIFacilityID")
-                        .HasConstraintName("FK_Location_Facility")
                         .IsRequired();
                 });
 
@@ -1318,7 +1509,7 @@ namespace MROWebApi.Migrations
                         .HasForeignKey("nROIFacilityID")
                         .HasConstraintName("FK_tblRequestors_nROIFacilityID");
 
-                    b.HasOne("MROWebApi.Context.tblROILocations", "n")
+                    b.HasOne("MROWebApi.Context.lnkROIFacilityLocations", "nROIFacilityLocations")
                         .WithMany("tblRequestors")
                         .HasForeignKey("nROIFacilityID", "nLocationID")
                         .HasConstraintName("FK_tblRequestors_nLocationID");
