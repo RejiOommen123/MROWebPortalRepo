@@ -7,7 +7,6 @@ namespace MROWebApi.Context
     {
         public lnkROIFacilityLocations()
         {
-            tblRequestors = new HashSet<tblRequestors>();
         }
 
         public int nROIFacilityID { get; set; }
@@ -21,6 +20,6 @@ namespace MROWebApi.Context
         public string sConfigBackgroundImg { get; set; }
 
         public virtual tblROIFacilities nROIFacility { get; set; }
-        public virtual ICollection<tblRequestors> tblRequestors { get; set; }
+   
     }
 }

@@ -273,10 +273,6 @@ namespace CodeFirstMigration.Context
                     .HasForeignKey(d => d.nROIFacilityID)
                     .HasConstraintName("FK_tblRequestors_nROIFacilityID");
 
-                entity.HasOne(d => d.nROIFacilityLocations)
-                    .WithMany(p => p.tblRequestors)
-                    .HasForeignKey(d => new { d.nROIFacilityID, d.nLocationID })
-                    .HasConstraintName("FK_tblRequestors_nLocationID");
             });
 
             modelBuilder.Entity<tblTempRequestors>(entity =>

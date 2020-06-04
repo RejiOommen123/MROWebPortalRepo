@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MROWebApi.Migrations
 {
-    public partial class renamelocationtable : Migration
+    public partial class removelocationrequestorfk : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -299,6 +299,61 @@ namespace MROWebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tblRequestors",
+                columns: table => new
+                {
+                    nRequestorID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    sCreatedBy = table.Column<int>(nullable: false),
+                    dtCreatedDate = table.Column<DateTime>(nullable: false),
+                    sUpdatedBy = table.Column<int>(nullable: false),
+                    dtUpdatedDate = table.Column<DateTime>(nullable: false),
+                    nROIFacilityID = table.Column<int>(nullable: true),
+                    nLocationID = table.Column<int>(nullable: true),
+                    bAreYouPatient = table.Column<bool>(nullable: true),
+                    sRelativeName = table.Column<string>(maxLength: 30, nullable: true),
+                    sRelationship = table.Column<string>(maxLength: 20, nullable: true),
+                    sEmailId = table.Column<string>(maxLength: 30, nullable: true),
+                    sPatientFirstName = table.Column<string>(maxLength: 20, nullable: true),
+                    sPatientLastName = table.Column<string>(maxLength: 50, nullable: true),
+                    sPatientMiddleInitial = table.Column<string>(maxLength: 50, nullable: true),
+                    bIsPatientDeceased = table.Column<bool>(nullable: true),
+                    sPatientZip = table.Column<string>(unicode: false, fixedLength: true, maxLength: 10, nullable: true),
+                    sPatientStreetAddress = table.Column<string>(maxLength: 20, nullable: true),
+                    dtPatientDOB = table.Column<DateTime>(type: "date", nullable: true),
+                    dtRecordTimeFrameStart = table.Column<DateTime>(type: "date", nullable: true),
+                    dtRecordTimeFrameEnd = table.Column<DateTime>(type: "date", nullable: true),
+                    sRecordType = table.Column<string>(nullable: true),
+                    sRecordTypeOther = table.Column<string>(nullable: true),
+                    sSensitiveData = table.Column<string>(nullable: true),
+                    dtAuthExpireDate = table.Column<DateTime>(type: "date", nullable: true),
+                    bRequestDeadline = table.Column<bool>(nullable: true),
+                    dtRequestDeadlineDate = table.Column<DateTime>(type: "date", nullable: true),
+                    sWhomReleaseRecord = table.Column<string>(maxLength: 30, nullable: true),
+                    sWayOfSendRecord = table.Column<string>(maxLength: 30, nullable: true),
+                    sWhomReleaseRecordName = table.Column<string>(maxLength: 30, nullable: true),
+                    sWhomReleaseRecordZip = table.Column<string>(unicode: false, fixedLength: true, maxLength: 5, nullable: true),
+                    sWhomReleaseRecordStreetAdd = table.Column<string>(maxLength: 30, nullable: true),
+                    sAdditionalData = table.Column<string>(nullable: true),
+                    sPhoneNo = table.Column<string>(unicode: false, fixedLength: true, maxLength: 10, nullable: true),
+                    sPhotoIdentity = table.Column<string>(nullable: true),
+                    sSignature = table.Column<string>(nullable: true),
+                    sPDF = table.Column<string>(nullable: true),
+                    bToolEasyToUse = table.Column<bool>(nullable: true),
+                    sToolTextFeedback = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblRequestors", x => x.nRequestorID);
+                    table.ForeignKey(
+                        name: "FK_tblRequestors_nROIFacilityID",
+                        column: x => x.nROIFacilityID,
+                        principalTable: "tblROIFacilities",
+                        principalColumn: "nROIFacilityID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tblTempRequestors",
                 columns: table => new
                 {
@@ -383,67 +438,6 @@ namespace MROWebApi.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "tblRequestors",
-                columns: table => new
-                {
-                    nRequestorID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    sCreatedBy = table.Column<int>(nullable: false),
-                    dtCreatedDate = table.Column<DateTime>(nullable: false),
-                    sUpdatedBy = table.Column<int>(nullable: false),
-                    dtUpdatedDate = table.Column<DateTime>(nullable: false),
-                    nROIFacilityID = table.Column<int>(nullable: true),
-                    nLocationID = table.Column<int>(nullable: true),
-                    bAreYouPatient = table.Column<bool>(nullable: true),
-                    sRelativeName = table.Column<string>(maxLength: 30, nullable: true),
-                    sRelationship = table.Column<string>(maxLength: 20, nullable: true),
-                    sEmailId = table.Column<string>(maxLength: 30, nullable: true),
-                    sPatientFirstName = table.Column<string>(maxLength: 20, nullable: true),
-                    sPatientLastName = table.Column<string>(maxLength: 50, nullable: true),
-                    sPatientMiddleInitial = table.Column<string>(maxLength: 50, nullable: true),
-                    bIsPatientDeceased = table.Column<bool>(nullable: true),
-                    sPatientZip = table.Column<string>(unicode: false, fixedLength: true, maxLength: 10, nullable: true),
-                    sPatientStreetAddress = table.Column<string>(maxLength: 20, nullable: true),
-                    dtPatientDOB = table.Column<DateTime>(type: "date", nullable: true),
-                    dtRecordTimeFrameStart = table.Column<DateTime>(type: "date", nullable: true),
-                    dtRecordTimeFrameEnd = table.Column<DateTime>(type: "date", nullable: true),
-                    sRecordType = table.Column<string>(nullable: true),
-                    sRecordTypeOther = table.Column<string>(nullable: true),
-                    sSensitiveData = table.Column<string>(nullable: true),
-                    dtAuthExpireDate = table.Column<DateTime>(type: "date", nullable: true),
-                    bRequestDeadline = table.Column<bool>(nullable: true),
-                    dtRequestDeadlineDate = table.Column<DateTime>(type: "date", nullable: true),
-                    sWhomReleaseRecord = table.Column<string>(maxLength: 30, nullable: true),
-                    sWayOfSendRecord = table.Column<string>(maxLength: 30, nullable: true),
-                    sWhomReleaseRecordName = table.Column<string>(maxLength: 30, nullable: true),
-                    sWhomReleaseRecordZip = table.Column<string>(unicode: false, fixedLength: true, maxLength: 5, nullable: true),
-                    sWhomReleaseRecordStreetAdd = table.Column<string>(maxLength: 30, nullable: true),
-                    sAdditionalData = table.Column<string>(nullable: true),
-                    sPhoneNo = table.Column<string>(unicode: false, fixedLength: true, maxLength: 10, nullable: true),
-                    sPhotoIdentity = table.Column<string>(nullable: true),
-                    sSignature = table.Column<string>(nullable: true),
-                    sPDF = table.Column<string>(nullable: true),
-                    bToolEasyToUse = table.Column<bool>(nullable: true),
-                    sToolTextFeedback = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblRequestors", x => x.nRequestorID);
-                    table.ForeignKey(
-                        name: "FK_tblRequestors_nROIFacilityID",
-                        column: x => x.nROIFacilityID,
-                        principalTable: "tblROIFacilities",
-                        principalColumn: "nROIFacilityID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_tblRequestors_nLocationID",
-                        columns: x => new { x.nROIFacilityID, x.nLocationID },
-                        principalTable: "lnkROIFacilityLocations",
-                        principalColumns: new[] { "nROIFacilityID", "nLocationID" },
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.InsertData(
                 table: "lstPrimaryReasons",
                 columns: new[] { "nPrimaryReasonID", "sPrimaryReasonName" },
@@ -511,20 +505,20 @@ namespace MROWebApi.Migrations
             migrationBuilder.InsertData(
                 table: "tblROIFacilities",
                 columns: new[] { "nROIFacilityID", "bActiveStatus", "dtCreatedDate", "dtUpdatedDate", "sConfigShowFields", "sConfigShowWizards", "sCreatedBy", "sDescription", "sFTPPassword", "sFTPUrl", "sFTPUsername", "sFacilityName", "sOutboundEmail", "sSMTPPassword", "sSMTPUrl", "sSMTPUsername", "sUpdatedBy" },
-                values: new object[] { 1, true, new DateTime(2020, 6, 3, 23, 28, 32, 488, DateTimeKind.Local).AddTicks(1958), new DateTime(2020, 6, 3, 23, 28, 32, 489, DateTimeKind.Local).AddTicks(8142), "TestFields", "Test Wizards", 1, "Info about Cleveland", "Cleveland@101", "ftp://ftp.cleveland.com/", "Cleveland101", "Cleveland Clinic", "noreply@cleveland.com", "Cleveland@101", "smtp.cleveland.com", "Cleveland101", 1 });
+                values: new object[] { 1, true, new DateTime(2020, 6, 4, 15, 41, 24, 713, DateTimeKind.Local).AddTicks(9174), new DateTime(2020, 6, 4, 15, 41, 24, 714, DateTimeKind.Local).AddTicks(9569), "TestFields", "Test Wizards", 1, "Info about Cleveland", "Cleveland@101", "ftp://ftp.cleveland.com/", "Cleveland101", "Cleveland Clinic", "noreply@cleveland.com", "Cleveland@101", "smtp.cleveland.com", "Cleveland101", 1 });
 
             migrationBuilder.InsertData(
                 table: "lnkROIFacilityConnection",
                 columns: new[] { "nROIFacilityConnectionID", "dtCreatedDate", "dtUpdatedDate", "nROIFacilityID", "sCreatedBy", "sGUID", "sUpdatedBy" },
-                values: new object[] { 1, new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(6611), new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(6621), 1, 1, "Test GUID", 1 });
+                values: new object[] { 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(3055), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(3061), 1, 1, "Test GUID", 1 });
 
             migrationBuilder.InsertData(
                 table: "lnkROIFacilityLocations",
                 columns: new[] { "nROIFacilityID", "nLocationID", "dtCreatedDate", "dtUpdatedDate", "nFaxNo", "nPhoneNo", "sConfigBackgroundImg", "sConfigFacilityLogo", "sCreatedBy", "sLocationAddress", "sLocationCode", "sLocationName", "sUpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 2, new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1353), new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1355), 4026, 4026, null, null, 1, "Cleverland Hospital Address", 102, "Cleverland Hospital", 1 },
-                    { 1, 1, new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1226), new DateTime(2020, 6, 3, 23, 28, 32, 497, DateTimeKind.Local).AddTicks(1238), 4026, 4026, null, null, 1, "Cleverland Clinic Address", 101, "Cleverland Clinic", 1 }
+                    { 1, 2, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(6841), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(6842), 4026, 4026, null, null, 1, "Cleverland Hospital Address", 102, "Cleverland Hospital", 1 },
+                    { 1, 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(6740), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(6746), 4026, 4026, null, null, 1, "Cleverland Clinic Address", 101, "Cleverland Clinic", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -532,12 +526,12 @@ namespace MROWebApi.Migrations
                 columns: new[] { "nPrimaryReasonID", "nROIFacilityID", "dtCreatedDate", "dtUpdatedDate", "nROIFacilityPrimaryReasonID", "sCreatedBy", "sPrimaryReasonName", "sUpdatedBy" },
                 values: new object[,]
                 {
-                    { 4, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3295), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3298), 4, 1, "Social Security Benifits/Claims", 1 },
-                    { 6, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3307), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3309), 6, 1, "Continued Care", 1 },
-                    { 5, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3300), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3302), 5, 1, "OtherReason", 1 },
-                    { 3, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3291), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3293), 3, 1, "Insurance", 1 },
-                    { 2, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3285), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3287), 2, 1, "Patient Request", 1 },
-                    { 1, 1, new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3138), new DateTime(2020, 6, 3, 23, 28, 32, 494, DateTimeKind.Local).AddTicks(3155), 1, 1, "Continued Care", 1 }
+                    { 4, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6906), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6907), 4, 1, "Social Security Benifits/Claims", 1 },
+                    { 6, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6912), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6913), 6, 1, "Continued Care", 1 },
+                    { 5, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6909), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6910), 5, 1, "OtherReason", 1 },
+                    { 3, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6903), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6904), 3, 1, "Insurance", 1 },
+                    { 2, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6900), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6901), 2, 1, "Patient Request", 1 },
+                    { 1, 1, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6834), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(6842), 1, 1, "Continued Care", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -545,13 +539,13 @@ namespace MROWebApi.Migrations
                 columns: new[] { "nROIFacilityID", "nRecordTypeID", "dtCreatedDate", "dtUpdatedDate", "nROIFacilityRecordTypeID", "sCreatedBy", "sRecordTypeName", "sUpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 3, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(588), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(589), 3, 1, "Operative Reports", 1 },
-                    { 1, 4, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(593), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(595), 4, 1, "History and Physical", 1 },
-                    { 1, 5, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(598), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(600), 5, 1, "Laboratory Report", 1 },
-                    { 1, 6, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(603), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(605), 6, 1, "Radiology Report", 1 },
-                    { 1, 7, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(608), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(610), 7, 1, "Other", 1 },
-                    { 1, 1, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(485), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(501), 1, 1, "Abstract", 1 },
-                    { 1, 2, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(582), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(585), 2, 1, "Discharge Summary", 1 }
+                    { 1, 3, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1821), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1822), 3, 1, "Operative Reports", 1 },
+                    { 1, 4, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1824), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1825), 4, 1, "History and Physical", 1 },
+                    { 1, 5, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1827), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1828), 5, 1, "Laboratory Report", 1 },
+                    { 1, 6, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1830), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1831), 6, 1, "Radiology Report", 1 },
+                    { 1, 7, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1833), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1834), 7, 1, "Other", 1 },
+                    { 1, 1, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1762), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1770), 1, 1, "Abstract", 1 },
+                    { 1, 2, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1817), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(1819), 2, 1, "Discharge Summary", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -559,10 +553,10 @@ namespace MROWebApi.Migrations
                 columns: new[] { "nROIFacilityID", "nSensitiveInfoID", "dtCreatedDate", "dtUpdatedDate", "nROIFacilitySensitiveInfoID", "sCreatedBy", "sSensitiveInfoName", "sUpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8227), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8242), 1, 1, "HIV Test Results", 1 },
-                    { 1, 2, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8312), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8314), 2, 1, "Behavioural/Mental Health Records", 1 },
-                    { 1, 3, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8318), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8321), 3, 1, "Substance Abuse Information", 1 },
-                    { 1, 4, new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8323), new DateTime(2020, 6, 3, 23, 28, 32, 495, DateTimeKind.Local).AddTicks(8326), 4, 1, "Sexually Transmitted Dieases", 1 }
+                    { 1, 1, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6507), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6514), 1, 1, "HIV Test Results", 1 },
+                    { 1, 2, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6559), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6560), 2, 1, "Behavioural/Mental Health Records", 1 },
+                    { 1, 3, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6563), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6564), 3, 1, "Substance Abuse Information", 1 },
+                    { 1, 4, new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6566), new DateTime(2020, 6, 4, 15, 41, 24, 718, DateTimeKind.Local).AddTicks(6567), 4, 1, "Sexually Transmitted Dieases", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -570,10 +564,10 @@ namespace MROWebApi.Migrations
                 columns: new[] { "nWayOfSendRecordID", "nROIFacilityID", "dtCreatedDate", "dtUpdatedDate", "nROIFacilityWayOfSendRecordID", "sCreatedBy", "sUpdatedBy", "sWayOfSendRecordName" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4487), new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4507), 1, 1, 1, "Patient Portal" },
-                    { 2, 1, new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4560), new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4562), 2, 1, 1, "Secure Email" },
-                    { 4, 1, new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4567), new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4568), 4, 1, 1, "In-Person" },
-                    { 3, 1, new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4564), new DateTime(2020, 6, 3, 23, 28, 32, 496, DateTimeKind.Local).AddTicks(4565), 3, 1, 1, "Email" }
+                    { 1, 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1048), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1055), 1, 1, 1, "Patient Portal" },
+                    { 2, 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1120), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1121), 2, 1, 1, "Secure Email" },
+                    { 4, 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1127), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1128), 4, 1, 1, "In-Person" },
+                    { 3, 1, new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1124), new DateTime(2020, 6, 4, 15, 41, 24, 719, DateTimeKind.Local).AddTicks(1125), 3, 1, 1, "Email" }
                 });
 
             migrationBuilder.InsertData(
@@ -599,17 +593,17 @@ namespace MROWebApi.Migrations
                 columns: new[] { "nROIFacilityID", "nFieldID", "bShow", "dtCreatedDate", "dtUpdatedDate", "nROIFacilityFieldMapID", "sCreatedBy", "sUpdatedBy" },
                 values: new object[,]
                 {
-                    { 1, 1, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5244), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5306), 1, 1, 1 },
-                    { 1, 2, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5401), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5404), 2, 1, 1 },
-                    { 1, 3, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5407), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5410), 3, 1, 1 },
-                    { 1, 4, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5413), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5415), 4, 1, 1 },
-                    { 1, 5, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5578), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5581), 5, 1, 1 },
-                    { 1, 6, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5584), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5586), 6, 1, 1 },
-                    { 1, 7, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5589), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5591), 7, 1, 1 },
-                    { 1, 8, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5594), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5596), 8, 1, 1 },
-                    { 1, 9, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5600), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5602), 9, 1, 1 },
-                    { 1, 10, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5606), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5608), 10, 1, 1 },
-                    { 1, 11, true, new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5611), new DateTime(2020, 6, 3, 23, 28, 32, 493, DateTimeKind.Local).AddTicks(5613), 11, 1, 1 }
+                    { 1, 1, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1831), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1867), 1, 1, 1 },
+                    { 1, 2, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1912), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1913), 2, 1, 1 },
+                    { 1, 3, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1916), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1917), 3, 1, 1 },
+                    { 1, 4, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1919), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1920), 4, 1, 1 },
+                    { 1, 5, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1922), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1923), 5, 1, 1 },
+                    { 1, 6, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1925), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1926), 6, 1, 1 },
+                    { 1, 7, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1928), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(1929), 7, 1, 1 },
+                    { 1, 8, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2028), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2030), 8, 1, 1 },
+                    { 1, 9, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2032), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2033), 9, 1, 1 },
+                    { 1, 10, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2037), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2038), 10, 1, 1 },
+                    { 1, 11, true, new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2040), new DateTime(2020, 6, 4, 15, 41, 24, 717, DateTimeKind.Local).AddTicks(2041), 11, 1, 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -648,9 +642,9 @@ namespace MROWebApi.Migrations
                 column: "nWizardID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblRequestors_nROIFacilityID_nLocationID",
+                name: "IX_tblRequestors_nROIFacilityID",
                 table: "tblRequestors",
-                columns: new[] { "nROIFacilityID", "nLocationID" });
+                column: "nROIFacilityID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblTempRequestors_nROIFacilityID",
@@ -665,6 +659,9 @@ namespace MROWebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "lnkROIFacilityFieldMaps");
+
+            migrationBuilder.DropTable(
+                name: "lnkROIFacilityLocations");
 
             migrationBuilder.DropTable(
                 name: "lnkROIFacilityPrimaryReasons");
@@ -700,13 +697,10 @@ namespace MROWebApi.Migrations
                 name: "lstWayOfSendRecord");
 
             migrationBuilder.DropTable(
-                name: "lnkROIFacilityLocations");
+                name: "tblROIFacilities");
 
             migrationBuilder.DropTable(
                 name: "lstWizards");
-
-            migrationBuilder.DropTable(
-                name: "tblROIFacilities");
         }
     }
 }

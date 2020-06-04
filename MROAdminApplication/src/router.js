@@ -8,7 +8,6 @@ import SigninPage from './components/auth/signin.vue'
 import EditField from './components/facility/Fields/EditFields.vue';
 import AddFacility from './components/facility/AddFacility.vue';
 import EditFacility from './components/facility/EditFacility.vue';
-import store from './store'
 
 Vue.use(VueRouter)
 

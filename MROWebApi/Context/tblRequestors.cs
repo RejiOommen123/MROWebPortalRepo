@@ -40,7 +40,7 @@ namespace MROWebApi.Context
         public bool? bToolEasyToUse { get; set; }
         public string sToolTextFeedback { get; set; }
 
-        public virtual lnkROIFacilityLocations nROIFacilityLocations { get; set; }
+        
         public virtual tblROIFacilities nROIFacility { get; set; }
     }
 }
