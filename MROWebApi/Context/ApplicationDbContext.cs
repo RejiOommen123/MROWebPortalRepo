@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using MROWebApi.Context;
 using MROWebAPI.Context;
 
@@ -37,6 +38,7 @@ namespace CodeFirstMigration.Context
                     .HasName("PK_lnkROIFacilityFieldMaps_1");
 
                 entity.Property(e => e.nROIFacilityFieldMapID).ValueGeneratedOnAdd();
+                entity.Property(e => e.nROIFacilityFieldMapID).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
                 entity.HasOne(d => d.nField)
                     .WithMany(p => p.lnkROIFacilityFieldMaps)
@@ -271,8 +273,7 @@ namespace CodeFirstMigration.Context
                 entity.HasOne(d => d.nROIFacility)
                     .WithMany(p => p.tblRequestors)
                     .HasForeignKey(d => d.nROIFacilityID)
-                    .HasConstraintName("FK_tblRequestors_nROIFacilityID");
-
+                    .HasConstraintName("FK_tblRequestors_nROIFacilityID");               
             });
 
             modelBuilder.Entity<tblTempRequestors>(entity =>

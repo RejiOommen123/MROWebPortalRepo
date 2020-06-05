@@ -67,8 +67,9 @@
                         v-model="facility.sOutboundEmail"
                         solo>
           </v-text-field>
-          <div class="col-md-4 offset-md-3 submit">
+          <div class="col-md-6 offset-md-3 submit">
             <v-btn type="submit" color="primary" >Save</v-btn>
+            <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
           </div>
         </div>
       </form>

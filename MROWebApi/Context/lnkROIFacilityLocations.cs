@@ -11,13 +11,15 @@ namespace MROWebApi.Context
 
         public int nROIFacilityID { get; set; }
         public int nLocationID { get; set; }
-        public int? sLocationCode { get; set; }
+        public string sLocationCode { get; set; }
         public string sLocationName { get; set; }
         public string sLocationAddress { get; set; }
-        public int? nPhoneNo { get; set; }
-        public int? nFaxNo { get; set; }
-        public string sConfigFacilityLogo { get; set; }
-        public string sConfigBackgroundImg { get; set; }
+        public string sPhoneNo { get; set; }
+        public string sFaxNo { get; set; }
+        public string sConfigLogoName { get; set; }
+        public string sConfigLogoData { get; set; }
+        public string sConfigBackgroundName { get; set; }
+        public string sConfigBackgroundData { get; set; }
 
         public virtual tblROIFacilities nROIFacility { get; set; }
    

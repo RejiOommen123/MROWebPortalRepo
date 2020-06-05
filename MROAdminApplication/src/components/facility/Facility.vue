@@ -4,7 +4,7 @@
         <v-row no-gutters>
           <v-col cols="2" sm="2" md="3">
             <div class="my-2">
-              <v-btn color="primary" to="/AddFacility">Add Facility</v-btn>
+              <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn>
             </div>
           </v-col>
         </v-row>
@@ -31,7 +31,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link :to="'/EditFacility/'+item.nROIFacilityID">             
+              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.nROIFacilityID">             
                 <v-icon v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
@@ -44,21 +44,25 @@
             </template>
             <span>Delete Facility</span>
           </v-tooltip>
-          <!-- TODO - pending because pages are not implemented
+      
            <v-tooltip top>
-            <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium >mdi-hospital-marker</v-icon>            
+            <template v-slot:activator="{ on }">   
+               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nROIFacilityID">               
+                <v-icon v-on="on" medium >mdi-hospital-marker</v-icon>   
+                </router-link>             
             </template>
             <span>Facility Locations</span>
           </v-tooltip>
           
           <v-tooltip top>
-            <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium >mdi-format-list-checks</v-icon>            
+            <template v-slot:activator="{ on }">       
+              <router-link class="mrorouterlink" :to="'/EditFields/'+item.nROIFacilityID">          
+                <v-icon v-on="on" medium >mdi-format-list-checks</v-icon> 
+              </router-link>            
             </template>
             <span>Manage Fields</span>
-          </v-tooltip> -->
-          
+          </v-tooltip> 
+
         </template>
 
       </v-data-table>
@@ -143,6 +147,15 @@ export default {
 </script>
 
 <style scoped>
+.mrorouterlink{
+  text-decoration: none;
+}
+#addfacility{
+  margin-bottom:20px ;
+}
+#facilitylocation{
+  margin-right: 10px;  
+}
 button {
   margin: 10px;
 }

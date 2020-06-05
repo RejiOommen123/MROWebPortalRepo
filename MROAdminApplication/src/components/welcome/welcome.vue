@@ -1,10 +1,10 @@
 <template>
   <div id="welcome">
     <h1>MRO Admin Application</h1>
-    <div class="cta">
+    <!-- <div class="cta">
       <router-link to="/signup">Sign Up</router-link>
       <router-link to="/signin">Sign In</router-link>
-    </div>
+    </div> -->
   </div>
 </template>
 

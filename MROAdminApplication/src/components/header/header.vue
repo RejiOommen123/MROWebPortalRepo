@@ -5,14 +5,17 @@
     </div>
     <nav>
         <ul>
-            <li>
+            <!-- <li>
                 <router-link to="/signup">Sign Up</router-link>
             </li>
             <li>
                 <router-link to="/signin">Sign In</router-link>
+            </li> -->
+            <li>
+                <router-link to="/index">Dashboard</router-link>
             </li>
             <li>
-                <router-link to="/dashboard">Dashboard</router-link>
+                <router-link to="/facility">Manage Facility</router-link>
             </li>
             <li>
                 <button @click="onLogout" class="logout">Logout</button>

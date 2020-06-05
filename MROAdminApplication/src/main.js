@@ -6,6 +6,8 @@ import VueResource from 'vue-resource'
 import vuetify from './plugins/vuetify';
 
 Vue.use(VueResource);
+// TODO
+// Vue.http.options.root = "http://localhost:57364/api";
 Vue.use(store);
 
 Vue.config.productionTip = false

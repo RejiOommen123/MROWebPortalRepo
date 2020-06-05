@@ -68,11 +68,11 @@ namespace MROWebApi.Controllers
                                where fcm.nROIFacilityID == facilityID
                                select new
                                {
-                                   FieldFacilityMapId = fcm.nROIFacilityFieldMapID,
-                                   FieldId = fcm.nFieldID,
-                                   FacilityId = fcm.nROIFacilityID,
-                                   IsEnable = fcm.bShow,
-                                   FieldName = f.sFieldName,
+                                   nROIFacilityFieldMapID = fcm.nROIFacilityFieldMapID,
+                                   nFieldID = fcm.nFieldID,
+                                   nROIFacilityID = fcm.nROIFacilityID,
+                                   bShow = fcm.bShow,
+                                   sFieldName = f.sFieldName,
                                }).ToList();
                 tblROIFacilities faci = _context.tblROIFacilities.Where(c => c.nROIFacilityID == facilityID).FirstOrDefault();
                 var faciName = faci.sFacilityName;
@@ -106,8 +106,6 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
-
-
 
 
     }

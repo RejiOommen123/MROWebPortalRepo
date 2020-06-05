@@ -41,7 +41,8 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public async Task<ActionResult<lnkROIFacilityLocations>> GetFacilityLocation(string id)
         {
-            var facilityLocation = await _context.lnkROIFacilityLocations.FindAsync(int.Parse(id));
+            int LocationId = Int32.Parse(id);
+            var facilityLocation =  _context.lnkROIFacilityLocations.First(x => x.nLocationID == LocationId);
 
             if (facilityLocation == null)
             {
@@ -69,8 +70,8 @@ namespace MROWebApi.Controllers
                                    LocationCode = fln.sLocationCode,
                                    LocationName = fln.sLocationName,
                                    LocationAddress = fln.sLocationAddress,
-                                   PhoneNo = fln.nPhoneNo,
-                                   FaxNo = fln.nFaxNo,
+                                   PhoneNo = fln.sPhoneNo,
+                                   FaxNo = fln.sFaxNo,
                                    FacilityId = fln.nROIFacilityID,
                                    FacilityName = f.sFacilityName,
                                    FacilityDescription = f.sDescription,
@@ -171,9 +172,9 @@ namespace MROWebApi.Controllers
         public async Task<ActionResult<lnkROIFacilityLocations>> DeleteFacilityLocation([FromBody] int id)
         {
             try
-            {
-                lnkROIFacilityLocations facilityLocation = await _context.lnkROIFacilityLocations.FindAsync(id);
-                if (id != facilityLocation.nROIFacilityID)
+            {              
+                lnkROIFacilityLocations facilityLocation = _context.lnkROIFacilityLocations.First(x => x.nLocationID == id);
+                if (id != facilityLocation.nLocationID)
                 {
                     return BadRequest();
                 }
