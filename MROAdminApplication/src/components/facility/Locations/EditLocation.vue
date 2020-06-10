@@ -12,12 +12,12 @@
             v-model="location.sLocationName"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="nLocationID">Location Id:</label>
+          <label class="col-md-4" for="nROILocationID">Location Id:</label>
           <v-text-field
             type="number"
-            id="nLocationID"
+            id="nROILocationID"
             placeholder="Enter Location Id"
-            v-model="location.nLocationID"
+            v-model="location.nROILocationID"
             solo
           ></v-text-field>
           <label class="col-md-4" for="sLocationCode">Location Code:</label>
@@ -75,7 +75,7 @@
           ></v-file-input>
           <div class="col-md-6 offset-md-3 submit">
             <v-btn type="submit" color="primary" >Save</v-btn>
-            <v-btn :to="'/locations/'+this.location.nROIFacilityID" type="submit" color="primary" >Cancel</v-btn>
+            <v-btn :to="'/locations/'+this.location.nFacilityLocationID" type="submit" color="primary" >Cancel</v-btn>
           </div>
         </div>
       </form>
@@ -90,7 +90,7 @@ export default {
     return {      
       location: {
         nROIFacilityID: null,
-        nLocationID: null,
+        nFacilityLocationID: null,
         sLocationCode: "",
         sLocationName: "",
         sLocationAddress: "",
@@ -99,13 +99,14 @@ export default {
         sConfigLogoName: "",
         sConfigLogoData: "",
         sConfigBackgroundName: "",
-        sConfigBackgroundData: ""
+        sConfigBackgroundData: "",
+        // nROILocationID:""
       }
     };
   },
   mounted() {
               // API to get single facility
-            this.$http.get('http://localhost:57364/api/FacilityLocation/GetFacilityLocation/' + this.$route.params.id).then(response => {
+            this.$http.get('http://localhost:57364/api/FacilityLocations/GetFacilityLocationSingle/' + this.$route.params.id).then(response => {
                 // get body data 
                 this.location = JSON.parse(response.bodyText);          
 
@@ -137,8 +138,8 @@ export default {
     },
     // API to add location
     onSubmit() {
-          this.location.nLocationID=parseInt( this.location.nLocationID);
-                this.$http.post('http://localhost:57364/api/facility/EditFacility/' + this.facility.nROIFacilityID, this.facility)
+          this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
+                this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/dashboard')

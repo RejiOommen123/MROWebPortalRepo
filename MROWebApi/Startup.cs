@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MRODBL.Entities;
 using Wizard_Demo.Models;
 
 namespace MROWebApi
@@ -37,6 +38,14 @@ namespace MROWebApi
             {
                 c.AddPolicy("AllowOrigin", options => options.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod());
             });
+            #region
+            //Region for Code for DI Purpose using DBConnection class
+            services.AddSingleton<IConfiguration>(Configuration);
+            var config = new DBConnectionInfo();
+            config.ConnectionString = Configuration.GetConnectionString("myconn");
+            services.AddSingleton(config);
+            //Region Ends
+            #endregion
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             services.AddControllers();
             services.AddDbContext<ApplicationDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));

@@ -31,7 +31,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.nROIFacilityID">             
+              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.nFacilityID">             
                 <v-icon v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
@@ -40,14 +40,14 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium @click="deleteItem(item.nROIFacilityID,item.sFacilityName)">mdi-delete</v-icon>            
+                <v-icon v-on="on" medium @click="deleteItem(item.nFacilityID,item.sFacilityName)">mdi-delete</v-icon>            
             </template>
             <span>Delete Facility</span>
           </v-tooltip>
       
            <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nROIFacilityID">               
+               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID">               
                 <v-icon v-on="on" medium >mdi-hospital-marker</v-icon>   
                 </router-link>             
             </template>
@@ -56,7 +56,7 @@
           
           <v-tooltip top>
             <template v-slot:activator="{ on }">       
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.nROIFacilityID">          
+              <router-link class="mrorouterlink" :to="'/EditFields/'+item.nFacilityID">          
                 <v-icon v-on="on" medium >mdi-format-list-checks</v-icon> 
               </router-link>            
             </template>
@@ -81,7 +81,7 @@
 
           <v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
 
-          <v-btn color="green darken-1" text @click="deleteFacility(editedItem.nROIFacilityID)">Agree</v-btn>
+          <v-btn color="green darken-1" text @click="deleteFacility(editedItem.nFacilityID)">Agree</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -106,7 +106,7 @@ export default {
       ],
       gridData: this.getGridData(),
       editedItem: {
-        nROIFacilityID:0,
+        nFacilityID:0,
         sFacilityName: ''
       },
     };
@@ -126,8 +126,8 @@ export default {
       );
     },
     //Method to pass nROIFacilityID & sFacilityName to dialog box
-     deleteItem(nROIFacilityID,sFacilityName) {
-        this.editedItem.nROIFacilityID=nROIFacilityID;
+     deleteItem(nFacilityID,sFacilityName) {
+        this.editedItem.nFacilityID=nFacilityID;
         this.editedItem.sFacilityName=sFacilityName;
         this.dialog = true;
     },

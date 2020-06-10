@@ -12,12 +12,12 @@
             v-model="location.sLocationName"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="nLocationID">Location Id:</label>
+          <label class="col-md-4" for="nROILocationID">Location Id:</label>
           <v-text-field
             type="number"
-            id="nLocationID"
+            id="nROILocationID"
             placeholder="Enter Location Id"
-            v-model="location.nLocationID"
+            v-model="location.nROILocationID"
             solo
           ></v-text-field>
           <label class="col-md-4" for="sLocationCode">Location Code:</label>
@@ -86,8 +86,8 @@ export default {
   data() {
     return {      
       location: {
-        nROIFacilityID: parseInt(this.$route.params.id),
-        nLocationID: null,
+        nFacilityID:parseInt(this.$route.params.id),
+        nFacilityLocationID: 0,
         sLocationCode: "",
         sLocationName: "",
         sLocationAddress: "",
@@ -96,7 +96,8 @@ export default {
         sConfigLogoName: "",
         sConfigLogoData: "",
         sConfigBackgroundName: "",
-        sConfigBackgroundData: ""
+        sConfigBackgroundData: "",
+        nROILocationID:""
       }
     };
   },
@@ -123,11 +124,11 @@ export default {
     },
     // API to add location
     onSubmit() {
-        this.location.nLocationID=parseInt( this.location.nLocationID);
+        this.location.nROILocationID=parseInt( this.location.nROILocationID);
         console.log(this.location)
       this.$http
         .post(
-          "http://localhost:57364/api/FacilityLocation/AddFacilityLocation/",
+          "http://localhost:57364/api/FacilityLocations/AddFacilityLocation/",
           this.location
         )
         .then(response => {

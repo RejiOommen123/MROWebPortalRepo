@@ -84,7 +84,7 @@
         data() {
             return {
                 facility: {
-                    nROIFacilityID: 0,
+                    nFacilityID: 0,
                     sFacilityName: '',                    
                     sDescription: '',
                     sSMTPUsername: '',
@@ -113,7 +113,7 @@
         methods: {
             // API to post single facility (edit facility)
             onSubmit() {
-                this.$http.post('http://localhost:57364/api/facility/EditFacility/' + this.facility.nROIFacilityID, this.facility)
+                this.$http.post('http://localhost:57364/api/facility/EditFacility/' + this.facility.nFacilityID, this.facility)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/dashboard')

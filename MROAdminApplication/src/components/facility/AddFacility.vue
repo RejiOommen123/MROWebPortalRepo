@@ -83,6 +83,7 @@ export default {
   data() {
     return {
       facility: {
+        nFacilityID:0,
         nROIFacilityID: 0,
         sFacilityName: "",
         sDescription: "",

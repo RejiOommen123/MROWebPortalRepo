@@ -13,6 +13,7 @@
                    :columns="gridColumns"
                    :filter-key="searchQuery">
     </demo-grid>-->
+            <form @submit.prevent="onSubmit">
 
     <v-card>
       <v-card-title>
@@ -31,7 +32,7 @@
       <v-data-table :headers="headers" :items="gridData" :search="search">
         <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
         <template v-slot:item.actions="{ item }">
-         <input type="checkbox" @click="toggleCheck(item.fieldId)" v-model="item.bShow" :value="item.bShow" />
+         <input type="checkbox" @click="toggleCheck(item.nFieldID)" v-model="item.bShow" :value="item.bShow" />
         </template>
       </v-data-table>
       <!-- End Facility List DataTable  -->
@@ -40,6 +41,7 @@
             <v-btn type="submit" color="primary" >Save</v-btn>
             <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
     </div>
+            </form>
   </div>
 </template>
 
@@ -74,7 +76,7 @@ export default {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["fields"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
-            console.log(this.gridData + "    " + this.faciName);
+            //console.log(this.gridData + "    " + this.faciName);
           },
           response => {
             // error callback
@@ -92,11 +94,11 @@ export default {
             },
     onSubmit() {
         
-        var lnkROIFacilityFieldMapsList = this.gridData.map(function (item) {
+        var FacilityFieldMapsList = this.gridData.map(function (item) {
             delete item.sFieldName;
             return item;
         });
-        this.$http.post('http://localhost:57364/api/facilityfieldmaps/EditFacilityFields/', lnkROIFacilityFieldMapsList)
+        this.$http.post('http://localhost:57364/api/facilityfieldmaps/EditFacilityFields/', FacilityFieldMapsList)
             .then(response => {
                 if (response.ok == true) {
                     this.$router.push('/dashboard')

@@ -31,7 +31,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nLocationID">             
+              <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nFacilityLocationID">             
                 <v-icon  v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
@@ -40,7 +40,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium @click="deleteItem(item.nLocationID,item.sLocationName)">mdi-delete</v-icon>            
+                <v-icon v-on="on" medium @click="deleteItem(item.nFacilityLocationID,item.sLocationName)">mdi-delete</v-icon>            
             </template>
             <span>Delete Location</span>
           </v-tooltip>   
@@ -62,7 +62,7 @@
 
           <v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
 
-          <v-btn color="green darken-1" text @click="deleteLocation(editedItem.nLocationID)">Agree</v-btn>
+          <v-btn color="green darken-1" text @click="deleteLocation(editedItem.nFacilityLocationID)">Agree</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -87,7 +87,7 @@ export default {
       ],
       gridData: this.getGridData(),
       editedItem: {
-        nLocationID:0,
+        nFacilityLocationID:0,
         sLocationName: ''
       },
     };
@@ -95,7 +95,7 @@ export default {
   methods: {
     // API to Get all Facilities
     getGridData() {
-      this.$http.get("http://localhost:57364/api/FacilityLocation/GetFacilityLocation/").then(
+      this.$http.get("http://localhost:57364/api/FacilityLocations/GetFacilityLocation/"+this.$route.params.id).then(
         response => {
           // get body data
           this.gridData = JSON.parse(response.bodyText);
@@ -107,8 +107,8 @@ export default {
       );
     },
     //Method to pass nLocationID & sLocationName to dialog box
-     deleteItem(nLocationID,sLocationName) {
-        this.editedItem.nLocationID=nLocationID;
+     deleteItem(nFacilityLocationID,sLocationName) {
+        this.editedItem.nFacilityLocationID=nFacilityLocationID;
         this.editedItem.sLocationName=sLocationName;
         this.dialog = true;
     },
@@ -116,7 +116,7 @@ export default {
     deleteLocation(id) {
       this.dialog = false;
       this.$http
-        .post("http://localhost:57364/api/FacilityLocation/DeleteFacilityLocation/", id)
+        .post("http://localhost:57364/api/FacilityLocations/DeleteFacilityLocation/", id)
         .then(response => {
           if (response.ok == true) {
             this.$router.go();
