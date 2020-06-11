@@ -116,7 +116,7 @@
                 this.$http.post('http://localhost:57364/api/facility/EditFacility/' + this.facility.nFacilityID, this.facility)
                     .then(response => {
                         if (response.ok == true) {
-                            this.$router.push('/dashboard')
+                            this.$router.push('/Facility')
                         }
                     });
             }

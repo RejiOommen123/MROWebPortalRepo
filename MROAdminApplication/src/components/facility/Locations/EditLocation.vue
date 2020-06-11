@@ -90,6 +90,7 @@ export default {
     return {      
       location: {
         nROIFacilityID: null,
+        nFacilityID:null,
         nFacilityLocationID: null,
         sLocationCode: "",
         sLocationName: "",
@@ -99,7 +100,7 @@ export default {
         sConfigLogoName: "",
         sConfigLogoData: "",
         sConfigBackgroundName: "",
-        sConfigBackgroundData: "",
+        sConfigBackgroundData: ""
         // nROILocationID:""
       }
     };
@@ -142,7 +143,7 @@ export default {
                 this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
                         if (response.ok == true) {
-                            this.$router.push('/dashboard')
+                            this.$router.push('/Locations/'+this.location.nFacilityID)
                         }
                     });
             } 
