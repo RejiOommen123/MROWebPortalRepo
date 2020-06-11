@@ -14,5 +14,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MRODBL\MRODBL.csproj" />
+  </ItemGroup>
+
 
 </Project>
