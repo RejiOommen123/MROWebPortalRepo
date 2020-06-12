@@ -2,7 +2,7 @@
   <div>
     <!-- <h1 style="text-align:center">Add Facility</h1> -->
     <div class="addfacility-form">
-      <div style="margin-top:-25px;margin-left:-20px"><span style="font-size:14px"><i>All the fields are mandatory</i></span></div>
+      <div style="margin-top:-15px;margin-left:-20px"><span style="font-size:14px"><i>All the fields are mandatory</i></span></div>
       <form @submit.prevent="onSubmit">
         <div class="form-group row">
           <label class="col-md-4" for="sFacilityName">Facility Name:</label>
