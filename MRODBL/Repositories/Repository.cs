@@ -165,5 +165,13 @@ namespace MRODBL.Repositories
                 return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
             }
         }
+        //public async Task<int> GetlatestROIID()
+        //{
+        //    using (SqlConnection db = new SqlConnection(sConnect))
+        //    {
+        //        string SqlString = "SELECT  FROM " + sTableName + " WHERE " + paramKeyName + " = @ID";
+        //        return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
+        //    }
+        //}
     }
 }

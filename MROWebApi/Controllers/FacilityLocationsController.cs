@@ -111,15 +111,16 @@ namespace MROWebApi.Controllers
         {
             try
             {
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+
                 //Data which not present in data coming from UI
                 facilityLocation.sAuthTemplate = "T Template";
                 facilityLocation.nCreatedAdminUserID = 1;
                 facilityLocation.dtCreated = DateTime.Now;
                 facilityLocation.nUpdatedAdminUserID = 1;
                 facilityLocation.dtLastUpdate = DateTime.Now;
+                //facilityLocation.nROILocationID = (facilityLocationsRepository.GetLatestId())
 
-
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
                 if (facilityLocationsRepository.Insert(facilityLocation) != null)
                 {
                     IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", facilityLocation.nFacilityID);

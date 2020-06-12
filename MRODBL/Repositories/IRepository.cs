@@ -51,6 +51,6 @@ namespace MRODBL.Repositories
         Task<bool> UpdateMany(List<T> ourModels);
         Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue);
         Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue);
-
+        //Task<int> GetLatestROIID();
     }
 }

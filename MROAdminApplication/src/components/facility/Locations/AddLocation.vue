@@ -11,18 +11,18 @@
             placeholder="Enter Location Name"
             v-model="location.sLocationName"
             @input="$v.location.sLocationName.$touch()"
-            @blur="$v.ocation.sLocationName.$touch()"
+            @blur="$v.location.sLocationName.$touch()"
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="nROILocationID">Location Id:</label>
+          <label class="col-md-4" for="nROILocationID">ROI Location Id:</label>
           <v-text-field
             type="number"
             id="nROILocationID"
             placeholder="Enter Location Id"
             v-model="location.nROILocationID"
             @input="$v.location.nROILocationID.$touch()"
-            @blur="$v.ocation.nROILocationID.$touch()"
+            @blur="$v.location.nROILocationID.$touch()"
             :error-messages="nROILocationIDErrors"
             solo
           ></v-text-field>
@@ -33,7 +33,7 @@
             placeholder="Enter Location Code"
             v-model="location.sLocationCode"
             @input="$v.location.sLocationCode.$touch()"
-            @blur="$v.ocation.sLocationCode.$touch()"
+            @blur="$v.location.sLocationCode.$touch()"
             :error-messages="sLocationCodeErrors"
             solo
           ></v-text-field>
@@ -44,7 +44,7 @@
             placeholder="Enter Address"
             v-model="location.sLocationAddress"
             @input="$v.location.sLocationAddress.$touch()"
-            @blur="$v.ocation.sLocationAddress.$touch()"
+            @blur="$v.location.sLocationAddress.$touch()"
             :error-messages="sLocationAddressErrors"
             solo
           ></v-text-field>
@@ -56,7 +56,7 @@
             v-model="location.sPhoneNo"
             solo
             @input="$v.location.sPhoneNo.$touch()"
-            @blur="$v.ocation.sPhoneNo.$touch()"
+            @blur="$v.location.sPhoneNo.$touch()"
             :error-messages="sPhoneNoErrors"
           ></v-text-field>
           <label class="col-md-4" for="sFaxNo">Fax No:</label>
@@ -66,7 +66,7 @@
             placeholder="Enter Fax No"
             v-model="location.sFaxNo"
             @input="$v.location.sFaxNo.$touch()"
-            @blur="$v.ocation.sFaxNo.$touch()"
+            @blur="$v.location.sFaxNo.$touch()"
             :error-messages="sFaxNoErrors"
             solo
           ></v-text-field>
@@ -113,7 +113,7 @@ export default {
   mixins: [validationMixin],
   validations: {
       location:{
-          sLocationName: { required, maxLength: maxLength(25) },
+          sLocationName: { required, maxLength:maxLength(40),minLength:minLength(2) },
           nROILocationID:{required,numeric},
           sLocationCode:{ required, maxLength: maxLength(20) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
@@ -127,8 +127,8 @@ export default {
     const errors = [];
     if (!this.$v.location.sLocationName.$dirty) 
       return errors;
-          // !this.$v.location.sLocationName.minLength && errors.push('Location Name must be at least 5 characters long')
-          !this.$v.location.sLocationName.maxLength && errors.push('Location Name must be at most 25 characters long')
+          !this.$v.location.sLocationName.minLength && errors.push('Location Name must be at least 2 characters long')
+          !this.$v.location.sLocationName.maxLength && errors.push('Location Name must be at most 40 characters long')
           !this.$v.location.sLocationName.required && errors.push('Location Name is required.')
           return errors;
     },
@@ -196,24 +196,14 @@ export default {
         sConfigBackgroundName: "",
         sConfigBackgroundData: "",
         nROILocationID:"",
-        sAuthTemplate:""
+        // sAuthTemplate:""
       }
     };
   },
   methods: {
-    //         @change="onPDFFileChanged"
+   
 
-    // onLogoFileChanged(file) {
-    //   if (file) {
-    //     const reader = new FileReader();        
-    //     reader.addEventListener("load",() => {
-    //       this.location.sConfigLogoData=reader.result; //base64encoded string
-    //     })
-    //     reader.readAsDataURL(file);
-    //     this.location.sConfigLogoName=file.name;
-    //   }
-    // },
-    onPDFFileChanged(file) {
+    onLogoFileChanged(file) {
       if (file) {
         const reader = new FileReader();        
         reader.addEventListener("load",() => {
@@ -223,6 +213,17 @@ export default {
         this.location.sConfigLogoName=file.name;
       }
     },
+     //@change="onPDFFileChanged"
+    // onPDFFileChanged(file) {
+    //   if (file) {
+    //     const reader = new FileReader();        
+    //     reader.addEventListener("load",() => {
+    //       this.location.sConfigLogoData=reader.result; //base64encoded string
+    //     })
+    //     reader.readAsDataURL(file);
+    //     this.location.sConfigLogoName=file.name;
+    //   }
+    // },
     onBackgroundFileChanged(file) {
       if (file) {
         const reader = new FileReader();        

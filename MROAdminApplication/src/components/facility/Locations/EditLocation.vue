@@ -15,7 +15,7 @@
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="nROILocationID">Location Id:</label>
+          <label class="col-md-4" for="nROILocationID">ROI Location Id:</label>
           <v-text-field
             type="number"
             id="nROILocationID"
@@ -76,7 +76,6 @@
             label="Upload PDF"
             filled
             prepend-icon="mdi-pdf-box"
-            
             accept=".pdf"
           ></v-file-input>
           <label class="col-md-4" for="sConfigFacilityLogo">Logo Image:</label>
@@ -117,7 +116,7 @@ export default {
   mixins: [validationMixin],
   validations: {
       location:{
-          sLocationName: { required, maxLength: maxLength(25) },
+          sLocationName: { required, maxLength: maxLength(40),minLength:minLength(2) },
           nROILocationID:{required,numeric},
           sLocationCode:{ required, maxLength: maxLength(20) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
@@ -131,8 +130,8 @@ export default {
     const errors = [];
     if (!this.$v.location.sLocationName.$dirty) 
       return errors;
-          // !this.$v.location.sLocationName.minLength && errors.push('Location Name must be at least 5 characters long')
-          !this.$v.location.sLocationName.maxLength && errors.push('Location Name must be at most 25 characters long')
+          !this.$v.location.sLocationName.minLength && errors.push('Location Name must be at least 2 characters long')
+          !this.$v.location.sLocationName.maxLength && errors.push('Location Name must be at most 40 characters long')
           !this.$v.location.sLocationName.required && errors.push('Location Name is required.')
           return errors;
     },

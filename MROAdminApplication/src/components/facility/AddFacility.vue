@@ -112,8 +112,8 @@ export default
   mixins: [validationMixin],
   validations: {
       facility:{
-          sFacilityName: { required, maxLength: maxLength(20),minLength:minLength(2) },
-          sDescription:{ required, maxLength: maxLength(40),minLength:minLength(2) },
+          sFacilityName: { required, maxLength: maxLength(40),minLength:minLength(2) },
+          sDescription:{ required, maxLength: maxLength(80),minLength:minLength(2) },
           sSMTPUsername:{ required },
           sSMTPPassword:{ required, maxLength: maxLength(20),minLength:minLength(5) },
           sSMTPUrl:{required},
@@ -130,7 +130,7 @@ export default
     if (!this.$v.facility.sFacilityName.$dirty) 
       return errors;
           !this.$v.facility.sFacilityName.minLength && errors.push('Facility Name must be at least 2 characters long')
-          !this.$v.facility.sFacilityName.maxLength && errors.push('Facility Name must be at most 20 characters long')
+          !this.$v.facility.sFacilityName.maxLength && errors.push('Facility Name must be at most 40 characters long')
           !this.$v.facility.sFacilityName.required && errors.push('Facility Name is required.')
           return errors;
     },
@@ -139,7 +139,7 @@ export default
     if (!this.$v.facility.sDescription.$dirty) 
       return errors;
           !this.$v.facility.sDescription.minLength && errors.push('Facility Description must be at least 2 characters long')
-          !this.$v.facility.sDescription.maxLength && errors.push('Facility Description must be at most 40 characters long')
+          !this.$v.facility.sDescription.maxLength && errors.push('Facility Description must be at most 80 characters long')
           !this.$v.facility.sDescription.required && errors.push('Facility Description is required.')
           return errors;
     },
