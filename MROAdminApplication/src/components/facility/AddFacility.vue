@@ -2,6 +2,7 @@
   <div>
     <!-- <h1 style="text-align:center">Add Facility</h1> -->
     <div class="addfacility-form">
+      <div style="margin-top:-25px;margin-left:-20px"><span style="font-size:14px"><i>All the fields are mandatory</i></span></div>
       <form @submit.prevent="onSubmit">
         <div class="form-group row">
           <label class="col-md-4" for="sFacilityName">Facility Name:</label>
@@ -12,6 +13,7 @@
                         @input="$v.facility.sFacilityName.$touch()"
                         @blur="$v.facility.sFacilityName.$touch()"
                         :error-messages="sFacilityNameErrors"
+                        
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sDescription">Facility Description:</label>
@@ -22,6 +24,8 @@
                         @input="$v.facility.sDescription.$touch()"
                         @blur="$v.facility.sDescription.$touch()"
                         :error-messages="sDescriptionErrors"
+                        
+
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sSMTPUsername">SMTP Username:</label>
@@ -32,6 +36,7 @@
                         @input="$v.facility.sSMTPUsername.$touch()"
                         @blur="$v.facility.sSMTPUsername.$touch()"
                         :error-messages="sSMTPUsernameErrors"
+
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sSMTPPassword">SMTP Password:</label>
@@ -94,9 +99,10 @@
                         :error-messages="sOutboundEmailErrors"
                         solo>
           </v-text-field>
-          <div class="col-md-6 offset-md-3 submit">
+          <div class="col-md-10 moffset-md-2 submit">
             <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
             <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
+            <v-btn @click="goToLoc" type="submit" :disabled="this.$v.$invalid" color="primary">Save & Add Location</v-btn>
           </div>
         </div>
       </form>
@@ -208,6 +214,7 @@ export default
   name: "AddFacility",
   data() {
     return {
+      genFacId:'',
       facility: {
         nFacilityID:0,
         nROIFacilityID: 0,
@@ -226,6 +233,16 @@ export default
   },
   methods: {
     // API to add facility
+    goToLoc() {
+      // this.$v.$touch()
+      this.$http
+        .post("http://localhost:57364/api/facility/AddFacility", this.facility)
+        .then(response => {
+          if (response.ok == true) {
+            this.$router.push("/location/"+response.body.nFacilityId);
+          }
+        });
+    },
     onSubmit() {
       // this.$v.$touch()
       this.$http
@@ -236,6 +253,7 @@ export default
           }
         });
     }
+    
   }
 };
 </script>
@@ -310,5 +328,11 @@ export default
   background-color: transparent;
   color: #ccc;
   cursor: not-allowed;
+}
+i{
+  color:rgb(40,40,40)
+}
+label{
+  margin-top:4px
 }
 </style>

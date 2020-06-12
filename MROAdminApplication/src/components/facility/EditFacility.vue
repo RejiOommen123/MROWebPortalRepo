@@ -2,6 +2,8 @@
     <div>
         <!-- <h1 style="text-align:center">Edit Facility</h1> -->
         <div class="editfacility-form">
+      <div style="margin-top:-25px;margin-left:-20px"><span style="font-size:14px"><i>All the fields are mandatory</i></span></div>
+
             <form @submit.prevent="onSubmit">
                 <div class="form-group row">
                     <label class="col-md-4" for="sFacilityName">Facility Name:</label>
@@ -322,4 +324,10 @@ import { required, minLength,maxLength,email } from 'vuelidate/lib/validators'
             color: #ccc;
             cursor: not-allowed;
         }
+        i{
+  color:rgb(40,40,40)
+}
+label{
+  margin-top:4px
+}
 </style>
