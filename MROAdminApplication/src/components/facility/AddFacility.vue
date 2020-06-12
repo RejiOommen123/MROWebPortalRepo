@@ -232,7 +232,7 @@ export default
         .post("http://localhost:57364/api/facility/AddFacility", this.facility)
         .then(response => {
           if (response.ok == true) {
-            this.$router.push("/dashboard");
+            this.$router.push("/facility");
           }
         });
     }
