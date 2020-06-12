@@ -13,11 +13,10 @@
                    :columns="gridColumns"
                    :filter-key="searchQuery">
     </demo-grid>-->
-            <form @submit.prevent="onSubmit">
-
+    <form @submit.prevent="onSubmit">
     <v-card>
       <v-card-title>
-        Manage Fields For Facility - {{facilityName}}
+        Edit Fields For Facility - {{facilityName}}
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"

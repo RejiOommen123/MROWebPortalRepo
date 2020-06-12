@@ -4,7 +4,8 @@ import router from './router'
 import store from './store'
 import VueResource from 'vue-resource'
 import vuetify from './plugins/vuetify';
-
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 Vue.use(VueResource);
 // TODO
 // Vue.http.options.root = "http://localhost:57364/api";

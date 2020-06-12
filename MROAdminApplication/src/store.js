@@ -9,12 +9,16 @@ Vue.use(Vuex)
  });
 export default new Vuex.Store({
   state: {
-        IsSignIn: false
+        IsSignIn: false,
+        pageheader:'malay'
   },
   mutations: {
       mutateIsSignIn(state, payload) {
           state.IsSignIn = payload;
-      }
+      },
+      mutatepageHeader(state, payload) {
+        state.pageheader = payload;
+    }
   },
   actions: {
 

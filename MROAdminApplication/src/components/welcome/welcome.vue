@@ -1,10 +1,11 @@
 <template>
   <div id="welcome">
-    <h1>MRO Admin Application</h1>
-    <!-- <div class="cta">
-      <router-link to="/signup">Sign Up</router-link>
-      <router-link to="/signin">Sign In</router-link>
-    </div> -->
+    <br>
+    <!-- <h1>Administration Module</h1> -->
+    <div>
+      <!-- <v-img src="./assets/MRO-Web.png" alt="MRO WEB" width="500" height="600"></v-img> -->
+      <!-- <img src="./assets/MRO-Web.png"> -->
+    </div>
   </div>
 </template>
 

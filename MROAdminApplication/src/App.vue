@@ -13,7 +13,15 @@
     name: 'app',
     components: {
       'app-header': Header
-    }
+    },
+     mounted: function() {
+    let elHtml = document.getElementsByTagName('html')[0]
+    elHtml.style.overflowY = 'auto'
+  },
+  destroyed: function() {
+    let elHtml = document.getElementsByTagName('html')[0]
+    elHtml.style.overflowY = null
+  },
   }
 </script>
 
@@ -21,5 +29,7 @@
   body, html {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+     
   }
+  html { overflow-y: auto }
 </style>

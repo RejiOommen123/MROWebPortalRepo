@@ -12,7 +12,7 @@
     <!-- Vuetify Card with Location List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
-        Locations List
+        Locations List For Facility - {{facilityName}}
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -24,7 +24,7 @@
       </v-card-title>
 
       <!-- Location List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search">
+      <v-data-table :headers="headers" :items="gridData" :search="search" class="body-1">
 
         <!-- Location List Actions (Edit & Delete)  -->
         <template v-slot:item.actions="{ item }">
@@ -53,16 +53,15 @@
     <!-- Dialog box for delete Location  -->
     <v-dialog v-model="dialog" max-width="360">
       <v-card>
-        <v-card-title class="headline">Are you sure do you want to delete '{{editedItem.sLocationName}}' Location?</v-card-title>
+        <v-card-title class="headline">Are you sure do you want to <br> delete '{{editedItem.sLocationName}}' <br> Location?</v-card-title>
 
-        <v-card-text>Selecting Agree will change Active Status to false.</v-card-text>
-
+        <!-- <v-card-text class="red--text">Clicking Agree will Permanently Delete the Location</v-card-text>
+        <v-card-text class="blue--text">Clicking Disagree will close the Modal</v-card-text> -->
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="green darken-1" text @click="dialog = false">Disagree</v-btn>
-
-          <v-btn color="green darken-1" text @click="deleteLocation(editedItem.nFacilityLocationID)">Agree</v-btn>
+          <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
+          <v-btn color="red darken-1" text @click="deleteLocation(editedItem.nFacilityLocationID)">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -86,6 +85,7 @@ export default {
         { text: "Actions", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
+      facilityName:"",
       editedItem: {
         nFacilityLocationID:0,
         sLocationName: ''
@@ -95,10 +95,14 @@ export default {
   methods: {
     // API to Get all Facilities
     getGridData() {
-      this.$http.get("http://localhost:57364/api/FacilityLocations/GetFacilityLocation/"+this.$route.params.id).then(
+      this.$http.get("http://localhost:57364/api/FacilityLocations/GetFacilityLocationByFacilityID/"+this.$route.params.id).then(
         response => {
           // get body data
           this.gridData = JSON.parse(response.bodyText);
+            this.gridData = JSON.parse(response.bodyText)["locations"];
+
+          this.facilityName = JSON.parse(response.bodyText)["faciName"];
+
         },
         response => {
           // error callback

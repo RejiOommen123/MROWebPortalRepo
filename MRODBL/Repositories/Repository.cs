@@ -157,5 +157,13 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString,new { ID = paramValue });
             }
         }
+        public async Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT COUNT(nFacilityID) FROM " + sTableName + " WHERE " + paramKeyName + " = @ID";
+                return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
+            }
+        }
     }
 }

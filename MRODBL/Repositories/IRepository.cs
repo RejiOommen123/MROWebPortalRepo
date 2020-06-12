@@ -50,5 +50,7 @@ namespace MRODBL.Repositories
         Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB);
         Task<bool> UpdateMany(List<T> ourModels);
         Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue);
+        Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue);
+
     }
 }

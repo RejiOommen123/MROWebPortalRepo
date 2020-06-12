@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 style="text-align:center">Edit Facility</h1>
+        <!-- <h1 style="text-align:center">Edit Facility</h1> -->
         <div class="editfacility-form">
             <form @submit.prevent="onSubmit">
                 <div class="form-group row">
@@ -8,7 +8,10 @@
           <v-text-field type="text"
                         id="sFacilityName"
                         placeholder="Facility Name"
-                        v-model="facility.sFacilityName" 
+                        v-model="facility.sFacilityName"
+                        @input="$v.facility.sFacilityName.$touch()"
+                        @blur="$v.facility.sFacilityName.$touch()"
+                        :error-messages="sFacilityNameErrors" 
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sDescription">Facility Description:</label>
@@ -16,6 +19,9 @@
                         id="sDescription"
                         placeholder="General Description"
                         v-model="facility.sDescription"
+                        @input="$v.facility.sDescription.$touch()"
+                        @blur="$v.facility.sDescription.$touch()"
+                        :error-messages="sDescriptionErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sSMTPUsername">SMTP Username:</label>
@@ -23,6 +29,9 @@
                         id="sSMTPUsername"
                         placeholder="Enter SMTP Username"
                         v-model="facility.sSMTPUsername"
+                        @input="$v.facility.sSMTPUsername.$touch()"
+                        @blur="$v.facility.sSMTPUsername.$touch()"
+                        :error-messages="sSMTPUsernameErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sSMTPPassword">SMTP Password:</label>
@@ -30,6 +39,9 @@
                         id="sSMTPPassword"
                         placeholder="Enter SMTP Password"
                         v-model="facility.sSMTPPassword"
+                        @input="$v.facility.sSMTPPassword.$touch()"
+                        @blur="$v.facility.sSMTPPassword.$touch()"
+                        :error-messages="sSMTPPasswordErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sSMTPUrl">SMTP URL:</label>
@@ -37,6 +49,9 @@
                         id="sSMTPUrl"
                         placeholder="Enter SMTP URL"
                         v-model="facility.sSMTPUrl" 
+                        @input="$v.facility.sSMTPUrl.$touch()"
+                        @blur="$v.facility.sSMTPUrl.$touch()"
+                        :error-messages="sSMTPUrlErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sFTPUsername">FTP Username:</label>
@@ -44,6 +59,9 @@
                         id="sFTPUsername"
                         placeholder="Enter FTP Username"
                         v-model="facility.sFTPUsername"
+                        @input="$v.facility.sFTPUsername.$touch()"
+                        @blur="$v.facility.sFTPUsername.$touch()"
+                        :error-messages="sFTPUsernameErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sFTPPassword">FTP Password:</label>
@@ -51,6 +69,9 @@
                         id="sFTPPassword"
                         placeholder="Enter FTP Password"
                         v-model="facility.sFTPPassword"
+                        @input="$v.facility.sFTPPassword.$touch()"
+                        @blur="$v.facility.sFTPPassword.$touch()"
+                        :error-messages="sFTPPasswordErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sFTPUrl">FTP URL:</label>
@@ -58,6 +79,9 @@
                         id="sFTPUrl"
                         placeholder="Enter FTP URL"
                         v-model="facility.sFTPUrl"
+                        input="$v.facility.sFTPUrl.$touch()"
+                        @blur="$v.facility.sFTPUrl.$touch()"
+                        :error-messages="sFTPUrlErrors"
                         solo>
           </v-text-field>
           <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
@@ -65,11 +89,14 @@
                         id="sOutboundEmail"
                         placeholder="Enter Outbound Email"
                         v-model="facility.sOutboundEmail"
+                        @input="$v.facility.sOutboundEmail.$touch()"
+                        @blur="$v.facility.sOutboundEmail.$touch()"
+                        :error-messages="sOutboundEmailErrors"
                         solo>
           </v-text-field>
          
                     <div class="col-md-6 offset-md-3 submit">
-                    <v-btn type="submit" color="primary" >Save</v-btn>
+                    <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
                      <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
                     </div>
                 </div>
@@ -79,7 +106,105 @@
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate'
+import { required, minLength,maxLength,email } from 'vuelidate/lib/validators'
     export default {
+        mixins: [validationMixin],
+        validations: {
+            facility:{
+                sFacilityName: { required, maxLength: maxLength(30),minLength:minLength(5) },
+                sDescription:{ required, maxLength: maxLength(40),minLength:minLength(5) },
+                sSMTPUsername:{ required },
+                sSMTPPassword:{ required, maxLength: maxLength(20),minLength:minLength(5) },
+                sSMTPUrl:{required},
+                sFTPUsername:{ required },
+                sFTPPassword:{ required, maxLength: maxLength(20),minLength:minLength(5) },
+                sFTPUrl:{required},
+                sOutboundEmail:{required,email}
+            }
+        },
+        computed:
+        {
+            sFacilityNameErrors(){
+            const errors = [];
+            if (!this.$v.facility.sFacilityName.$dirty) 
+            return errors;
+                !this.$v.facility.sFacilityName.minLength && errors.push('Facility Name must be at least 5 characters long')
+                !this.$v.facility.sFacilityName.maxLength && errors.push('Facility Name must be at most 30 characters long')
+                !this.$v.facility.sFacilityName.required && errors.push('Facility Name is required.')
+                return errors;
+            },
+            sDescriptionErrors(){
+            const errors = [];
+            if (!this.$v.facility.sDescription.$dirty) 
+            return errors;
+                !this.$v.facility.sDescription.minLength && errors.push('Facility Description must be at least 5 characters long')
+                !this.$v.facility.sDescription.maxLength && errors.push('Facility Description must be at most 40 characters long')
+                !this.$v.facility.sDescription.required && errors.push('Facility Description is required.')
+                return errors;
+            },
+            sSMTPUsernameErrors(){
+            const errors = [];
+            if (!this.$v.facility.sSMTPUsername.$dirty) 
+            return errors;
+                // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
+                // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+                !this.$v.facility.sSMTPUsername.required && errors.push('SMTP Username is required.')
+                return errors;
+            },
+            sSMTPPasswordErrors(){
+            const errors = [];
+            if (!this.$v.facility.sSMTPPassword.$dirty) 
+            return errors
+                !this.$v.facility.sSMTPPassword.minLength && errors.push('SMTP Password must be at least 5 characters long')
+                !this.$v.facility.sSMTPPassword.maxLength && errors.push('SMTP Password must be at most 20 characters long')
+                !this.$v.facility.sSMTPPassword.required && errors.push('SMTP Password is required.')
+                return errors;
+            },
+            sSMTPUrlErrors(){
+            const errors = [];
+
+            if (!this.$v.facility.sSMTPUrl.$dirty) 
+            return errors
+                // !this.$v.facility.sSMTPUrl.url && errors.push('Please provide a proper URl')
+                !this.$v.facility.sSMTPUrl.required && errors.push('SMTP Url is required.')
+                return errors;
+            },
+            sFTPUsernameErrors(){
+            const errors = [];
+            if (!this.$v.facility.sFTPUsername.$dirty) 
+            return errors;
+                // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
+                // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+                !this.$v.facility.sFTPUsername.required && errors.push('FTP Username is required.')
+                return errors;
+            },
+            sFTPPasswordErrors(){
+            const errors = [];
+            if (!this.$v.facility.sFTPPassword.$dirty) 
+            return errors
+                !this.$v.facility.sFTPPassword.minLength && errors.push('FTP Password must be at least 5 characters long')
+                !this.$v.facility.sFTPPassword.maxLength && errors.push('FTP Password must be at most 20 characters long')
+                !this.$v.facility.sFTPPassword.required && errors.push('FTP Password is required.')
+                return errors;
+            },
+            sFTPUrlErrors(){
+            const errors = [];
+            if (!this.$v.facility.sFTPUrl.$dirty) 
+            return errors
+                // !this.$v.facility.sFTPUrl.url && errors.push('Please provide a proper URl')
+                !this.$v.facility.sFTPUrl.required && errors.push('FTP Url is required.')
+                return errors;
+            },
+            sOutboundEmailErrors(){
+            const errors = [];
+                if (!this.$v.facility.sOutboundEmail.$dirty) 
+                return errors
+                    !this.$v.facility.sOutboundEmail.email && errors.push('Please provide a proper Email ID')
+                    !this.$v.facility.sOutboundEmail.required && errors.push('Email is required.')
+                    return errors;
+            }
+        },
         name: "EditFacility",
         data() {
             return {

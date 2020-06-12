@@ -1,21 +1,18 @@
 <template>
   <header id="header">
     <div class="logo">
-     <h3><router-link to="/">MRO</router-link></h3>
+     <h3><router-link to="/">MRO Portal Administration</router-link></h3>
+    </div>
+    <div class="pageheader">     
+      <h1 style="color:white">{{this.pageHeader}}</h1>
     </div>
     <nav>
         <ul>
-            <!-- <li>
-                <router-link to="/signup">Sign Up</router-link>
-            </li>
-            <li>
-                <router-link to="/signin">Sign In</router-link>
-            </li> -->
             <li>
                 <router-link to="/index">Dashboard</router-link>
             </li>
             <li>
-                <router-link to="/facility">Manage Facility</router-link>
+                <router-link to="/facility">Manage Facilities</router-link>
             </li>
             <li>
                 <button @click="onLogout" class="logout">Logout</button>
@@ -30,6 +27,11 @@
         computed: {
             auth() {
                 return this.$store.state.IsSignIn
+            },
+            pageHeader(){
+
+             return this.$store.state.pageheader;
+
             }
         },
         methods: {
@@ -42,13 +44,15 @@
 </script>
 
 <style scoped>
+
+
   #header {
     height: 56px;
     display: flex;
     flex-flow: row;
     justify-content: space-between;
     align-items: center;
-    background-color: #521751;
+    background-color:rgb(0, 91, 168);
     padding: 0 20px;
   }
 
@@ -88,7 +92,7 @@
   li a:hover,
   li a:active,
   li a.router-link-active {
-    color: #fa923f;
+    color: #fba437;
   }
     .logout {
         background-color: transparent;
@@ -97,4 +101,11 @@
         color: white;
         cursor: pointer;
     }
+    #pageheader{
+  width:62%;text-align:center;
+  
+}
+#pagheader h1{
+  color:white !important;
+}
 </style>

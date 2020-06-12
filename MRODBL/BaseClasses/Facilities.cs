@@ -2,7 +2,7 @@
 using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MRODBL.BaseClasses
 {
@@ -23,5 +23,6 @@ namespace MRODBL.BaseClasses
         public bool bActiveStatus { get; set; }
         public string sConfigShowFields { get; set; }
         public string sConfigShowWizards { get; set; }
+        public int nFacLocCount { get; set; }
     }
 }
