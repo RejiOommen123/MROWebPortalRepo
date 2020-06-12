@@ -101,7 +101,7 @@
           ></v-file-input>
           <div class="col-md-6 offset-md-3 submit">
             <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
-            <v-btn :to="'/locations/'+this.location.nFacilityLocationID" type="submit" color="primary" >Cancel</v-btn>
+            <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary" >Cancel</v-btn>
           </div>
         </div>
       </form>
@@ -246,12 +246,13 @@ export default {
           this.location.sConfigBackgroundData=reader.result; //base64encoded string
         })
         reader.readAsDataURL(file);
-        this.location.sConfigLogoName=file.name;
+        this.location.sConfigBackgroundName=file.name;
       }
     },
     // API to add location
     onSubmit() {
           this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
+          console.log(this.location);
                 this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
                         if (response.ok == true) {
