@@ -56,13 +56,14 @@ namespace MROWebApi.Controllers
         }
 
 
-        [HttpGet("GetFacilityLocationByFacilityID/{facilityID}")]
+        [HttpGet("GetFacilityLocationByFacilityID/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityID(int facilityID)
+        public async Task<IActionResult> GetFacilityLocationByFacilityID(string id)
         {
             try
             {
+                bool result = int.TryParse(id, out int facilityID);
                 //var locations = (from fln in _context.lnkROIFacilityLocations
                 //                 join f in _context.tblROIFacilities
                 //               on fln.nROIFacilityID.ToString() equals f.nROIFacilityID.ToString()
@@ -85,11 +86,12 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
                 IEnumerable<dynamic> locations = await facilityLocationsRepository.InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities");
                 locations = locations.Where(c => c.nFacilityID == facilityID);
-                FacilityLocations facilityLoc = await facilityLocationsRepository.Select(facilityID);
-                if (facilityLoc == null)
+                FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
+                Facilities facility = await facilityRepo.Select(facilityID);
+                if (facility == null)
                     return NotFound();
-                var faloName = facilityLoc.sLocationName;
-                return Ok(new { locations, faloName });
+                var faciName = facility.sFacilityName;
+                return Ok(new { locations, faciName });
             }
             catch (Exception ex)
             {

@@ -38,7 +38,15 @@ namespace MROWebAPI.Controllers
         {
             #region Dapper Code Get 1000 Rows
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-            return await rpFac.GetAll(1000, "nROIFacilityID");
+            IEnumerable<Facilities> facilities = await rpFac.GetAll(1000, "nROIFacilityID");
+            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+            //IEnumerable<int> facLocCount;
+            foreach (Facilities fac in facilities) {
+                fac.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
+            }
+
+            return facilities;
+
             #endregion
         }
 
@@ -81,6 +89,7 @@ namespace MROWebAPI.Controllers
                 facility.dtLastUpdate = DateTime.Now;
                 facility.sConfigShowFields = "T Data";
                 facility.sConfigShowWizards = "T Data";
+                facility.nFacLocCount = 0;
                 #endregion
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 int GeneratedID = (int)rpFac.Insert(facility);
