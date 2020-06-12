@@ -98,7 +98,7 @@
           ></v-file-input>
           <div class="col-md-6 offset-md-3 submit">
             <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
-            <v-btn :to="'/locations/'+this.$route.params.id" type="submit" color="primary" >Cancel</v-btn>
+            <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary" >Cancel</v-btn>
           </div>
         </div>
       </form>

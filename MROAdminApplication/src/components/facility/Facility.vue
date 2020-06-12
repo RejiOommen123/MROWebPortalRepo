@@ -32,7 +32,7 @@
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" v-on="on">               
+               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" color='rgb(0, 91, 168)' v-on="on">               
                {{item.nFacLocCount}}
                 </router-link>            
     
@@ -52,7 +52,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditFields/'+item.nFacilityID">             
-                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">mdi-wysiwg</v-icon>
+                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">assignment</v-icon>
                 <!-- <v-img src="https://lh3.googleusercontent.com/proxy/2OQpbPrMGARzRvE92n73NNqOQIOTQ1R8iGPY17bOkNc-Kis_cEthPSttMw4975yUnOafbw44sOUffD42Yn2x3yrVqmd6YoQbqZQvpHT2kTM" v-on="on" medium class="mr-2" width=30 height=29></v-img> -->
 
               </router-link>

@@ -1,6 +1,8 @@
 <template>
   <div id="demo">
-    <!-- <h2>Manage Fields For Facility - {{faciName}}</h2>
+    <v-row>
+      <v-col cols="8" offset-md="2">
+        <!-- <h2>Manage Fields For Facility - {{faciName}}</h2>
         <h2></h2>
         <form id="search">
             <div>
@@ -12,35 +14,42 @@
                    :heroes="gridData"
                    :columns="gridColumns"
                    :filter-key="searchQuery">
-    </demo-grid>-->
-    <form @submit.prevent="onSubmit">
-    <v-card>
-      <v-card-title>
-        Edit Fields For Facility - {{facilityName}}
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-card-title>
+        </demo-grid>-->
+        <form @submit.prevent="onSubmit">
+          <v-card>
+            <v-card-title style="padding-top:0px">
+              Edit Fields For Facility - {{facilityName}}
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-card-title>
 
-      <!-- Facility List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search">
-        <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
-        <template v-slot:item.actions="{ item }">
-         <input type="checkbox" @click="toggleCheck(item.nFieldID)" v-model="item.bShow" :value="item.bShow" />
-        </template>
-      </v-data-table>
-      <!-- End Facility List DataTable  -->
-    </v-card>
-    <div class="col-md-6 offset-md-3 submit">
-            <v-btn type="submit" color="primary" >Save</v-btn>
-            <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
-    </div>
-            </form>
+            <!-- Facility List DataTable  -->
+            <v-data-table :headers="headers" :items="gridData" :search="search">
+              <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
+              <template v-slot:item.actions="{ item }">
+                <input
+                  type="checkbox"
+                  @click="toggleCheck(item.nFieldID)"
+                  v-model="item.bShow"
+                  :value="item.bShow"
+                />
+              </template>
+            </v-data-table>
+            <!-- End Facility List DataTable  -->
+          </v-card>
+          <div class="col-md-6 offset-md-4 submit" style="padding-top:5px">
+            <v-btn type="submit" color="primary">Save</v-btn>
+            <v-btn to="/facility" type="submit" color="primary">Cancel</v-btn>
+          </div>
+        </form>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -83,26 +92,28 @@ export default {
           }
         );
     },
-    toggleCheck: function(id){
-                for (var i = 0; i < this.gridData.length; i++) {
-                    if (this.gridData[i].nFieldID == id) {
-              
-                        this.gridData[i].bShow = !this.gridData[i].bShow;
-                    }
-                }
-            },
+    toggleCheck: function(id) {
+      for (var i = 0; i < this.gridData.length; i++) {
+        if (this.gridData[i].nFieldID == id) {
+          this.gridData[i].bShow = !this.gridData[i].bShow;
+        }
+      }
+    },
     onSubmit() {
-        
-        var FacilityFieldMapsList = this.gridData.map(function (item) {
-            delete item.sFieldName;
-            return item;
+      var FacilityFieldMapsList = this.gridData.map(function(item) {
+        delete item.sFieldName;
+        return item;
+      });
+      this.$http
+        .post(
+          "http://localhost:57364/api/facilityfieldmaps/EditFacilityFields/",
+          FacilityFieldMapsList
+        )
+        .then(response => {
+          if (response.ok == true) {
+            this.$router.push("/dashboard");
+          }
         });
-        this.$http.post('http://localhost:57364/api/facilityfieldmaps/EditFacilityFields/', FacilityFieldMapsList)
-            .then(response => {
-                if (response.ok == true) {
-                    this.$router.push('/dashboard')
-                }
-            });
     }
   }
 };
