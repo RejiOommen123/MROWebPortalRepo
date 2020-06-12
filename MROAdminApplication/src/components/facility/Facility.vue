@@ -5,7 +5,7 @@
           <v-col cols="6" sm="2" md="6">
             
               <!-- <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn> -->
-               <v-btn small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
+               <v-btn small class="mx-2" fab dark color='#1AA260' id="addfacility" to="/AddFacility">
                   <v-icon>mdi-plus</v-icon> 
               </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
             
@@ -32,14 +32,14 @@
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <!-- <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID">               
-               <v-btn text v-on="on">{{item.nFacLocCount}}</v-btn>
-                </router-link>              -->
+               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" v-on="on">               
+               {{item.nFacLocCount}}
+                </router-link>            
     
                 <!-- <v-btn :to="'/Locations/'+item.nFacilityID">{{item.nFacLocCount}}</v-btn> -->
-            <v-btn :to="'/Locations/'+item.nFacilityID" fab small dark v-on="on" color='rgb(0, 91, 168)'>
+            <!-- <v-btn :to="'/Locations/'+item.nFacilityID" v-on="on" color='rgb(0, 91, 168)'>
            {{item.nFacLocCount}}
-            </v-btn>
+            </v-btn> -->
 
             </template>
             <span>Manage Locations</span>
@@ -52,12 +52,12 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditFields/'+item.nFacilityID">             
-                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">mdi-format-list-checks</v-icon>
+                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">mdi-wysiwg</v-icon>
                 <!-- <v-img src="https://lh3.googleusercontent.com/proxy/2OQpbPrMGARzRvE92n73NNqOQIOTQ1R8iGPY17bOkNc-Kis_cEthPSttMw4975yUnOafbw44sOUffD42Yn2x3yrVqmd6YoQbqZQvpHT2kTM" v-on="on" medium class="mr-2" width=30 height=29></v-img> -->
 
               </router-link>
             </template>
-            <span>Edit Fields</span>
+            <span>Patient Form</span>
           </v-tooltip>
 
         </template>
@@ -145,9 +145,9 @@ export default {
         },
         { text: "Description", value: "sDescription" , width:'50%'},
         { text: "Locations", value: "nFacLocCount" ,align:'center'},
-        { text: "Fields", value: "Fields" ,align:'center'},
+        { text: "Patient Form", value: "Fields" ,align:'center'},
         { text: "Active", value: "bActiveStatus" ,align:'center'},
-        { text: "Actions", value: "actions", sortable: false ,align:'center'}
+        { text: "Edit", value: "actions", sortable: false ,align:'center'}
       ],
       gridData: this.getGridData(),
       editedItem: {
@@ -227,5 +227,8 @@ button {
 }
 #addfacility{
   margin-top:15px
+}
+#addUnderline{
+  text-decoration:underline
 }
 </style>

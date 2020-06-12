@@ -2,12 +2,24 @@
   <div id="demo">
     <!-- Add Location Button which will redirect to AddLocation Page -->
         <v-row no-gutters>
-          <v-col cols="2" sm="2" md="3">
+          <v-col cols="6" sm="2" md="6">
             <div class="my-2">
-              <v-btn id="addlocation" color="primary" :to="'/AddLocation/'+this.$route.params.id">Add Location</v-btn>
+              <!-- <v-btn id="addlocation" color="primary" :to="'/AddLocation/'+this.$route.params.id">Add Location</v-btn> -->
+              <v-btn id="addlocation" small class="mx-2" fab dark color='rgb(0, 91, 168)' :to="'/AddLocation/'+this.$route.params.id">
+              <v-icon>mdi-plus</v-icon></v-btn><span>Add Location</span>
             </div>
           </v-col>
         </v-row>
+
+
+        <!-- <v-row no-gutters>
+          <v-col cols="6" sm="2" md="6">
+               <v-btn small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
+                  <v-icon>mdi-plus</v-icon> 
+              </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
+            
+          </v-col>
+        </v-row> -->
 
     <!-- Vuetify Card with Location List Title and Search Text Box  -->
     <v-card>
@@ -150,5 +162,11 @@ button {
 }
 #search {
   padding-bottom: 30px;
+}
+#AddLoc{
+  font-size:24px
+}
+#addlocation{
+  margin-top:15px
 }
 </style>

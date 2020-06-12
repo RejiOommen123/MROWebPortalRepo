@@ -47,7 +47,7 @@
 
 
   #header {
-    height: 56px;
+    height: 70px;
     display: flex;
     flex-flow: row;
     justify-content: space-between;
