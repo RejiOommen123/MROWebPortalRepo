@@ -11,7 +11,7 @@
             placeholder="Enter Location Name"
             v-model="location.sLocationName"
             @input="$v.location.sLocationName.$touch()"
-            @blur="$v.ocation.sLocationName.$touch()"
+            @blur="$v.location.sLocationName.$touch()"
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
@@ -22,7 +22,7 @@
             placeholder="Enter Location Id"
             v-model="location.nROILocationID"
             @input="$v.location.nROILocationID.$touch()"
-            @blur="$v.ocation.nROILocationID.$touch()"
+            @blur="$v.location.nROILocationID.$touch()"
             :error-messages="nROILocationIDErrors"
             solo
           ></v-text-field>
@@ -33,7 +33,7 @@
             placeholder="Enter Location Code"
             v-model="location.sLocationCode"
             @input="$v.location.sLocationCode.$touch()"
-            @blur="$v.ocation.sLocationCode.$touch()"
+            @blur="$v.location.sLocationCode.$touch()"
             :error-messages="sLocationCodeErrors"
             solo
           ></v-text-field>
@@ -44,7 +44,7 @@
             placeholder="Enter Address"
             v-model="location.sLocationAddress"
             @input="$v.location.sLocationAddress.$touch()"
-            @blur="$v.ocation.sLocationAddress.$touch()"
+            @blur="$v.location.sLocationAddress.$touch()"
             :error-messages="sLocationAddressErrors"
             solo
           ></v-text-field>
@@ -55,7 +55,7 @@
             placeholder="Enter Phone No"
             v-model="location.sPhoneNo"
             @input="$v.location.sPhoneNo.$touch()"
-            @blur="$v.ocation.sPhoneNo.$touch()"
+            @blur="$v.location.sPhoneNo.$touch()"
             :error-messages="sPhoneNoErrors"
             solo
           ></v-text-field>
@@ -66,7 +66,7 @@
             placeholder="Enter Fax No"
             v-model="location.sFaxNo"
             @input="$v.location.sFaxNo.$touch()"
-            @blur="$v.ocation.sFaxNo.$touch()"
+            @blur="$v.location.sFaxNo.$touch()"
             :error-messages="sFaxNoErrors"
             solo
           ></v-text-field>          
@@ -200,8 +200,8 @@ export default {
         sConfigLogoData: "",
         sConfigBackgroundName: "",
         sConfigBackgroundData: "",
-        sAuthTemplate:""
-        // nROILocationID:""
+        sAuthTemplate:"",
+        nROILocationID:""
       }
     };
   },
@@ -251,6 +251,7 @@ export default {
     },
     // API to add location
     onSubmit() {
+          this.location.nROIFacilityID=parseInt( this.location.nROIFacilityID);
           this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
                 this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {

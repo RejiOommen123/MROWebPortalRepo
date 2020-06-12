@@ -5,8 +5,8 @@
           <v-col cols="6" sm="2" md="6">
             <div class="my-2">
               <!-- <v-btn id="addlocation" color="primary" :to="'/AddLocation/'+this.$route.params.id">Add Location</v-btn> -->
-              <v-btn id="addlocation" small class="mx-2" fab dark color='rgb(0, 91, 168)' :to="'/AddLocation/'+this.$route.params.id">
-              <v-icon>mdi-plus</v-icon></v-btn><span>Add Location</span>
+              <v-btn color='rgb(0, 91, 168)' id="addlocation" small class="mx-2" fab dark :to="'/AddLocation/'+this.$route.params.id">
+              <v-icon>mdi-plus</v-icon></v-btn><span id="AddLoc" style="font-size:24px">Add Location</span>
             </div>
           </v-col>
         </v-row>
@@ -44,7 +44,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nFacilityLocationID">             
-                <v-icon  v-on="on" medium class="mr-2">mdi-pencil</v-icon>
+                <v-icon color='rgb(0, 91, 168)'  v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
             <span>Edit Location</span>
@@ -52,7 +52,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium @click="deleteItem(item.nFacilityLocationID,item.sLocationName)">mdi-delete</v-icon>            
+                <v-icon color='red' v-on="on" medium @click="deleteItem(item.nFacilityLocationID,item.sLocationName)">mdi-delete</v-icon>            
             </template>
             <span>Delete Location</span>
           </v-tooltip>   
@@ -88,12 +88,12 @@ export default {
       search: "",
       headers: [
         {
-          text: "Location Name",
+          text: "location Name",
           align: "start",
           value: "sLocationName"
         },
         { text: "Location Code", value: "sLocationCode" },
-        { text: "Location Address", value: "sLocationAddress" },
+        { text: "location Address", value: "sLocationAddress" },
         { text: "Actions", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),

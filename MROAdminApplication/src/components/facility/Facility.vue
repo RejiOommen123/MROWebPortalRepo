@@ -5,7 +5,7 @@
           <v-col cols="6" sm="2" md="6">
             
               <!-- <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn> -->
-               <v-btn small class="mx-2" fab dark color='#1AA260' id="addfacility" to="/AddFacility">
+               <v-btn small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
                   <v-icon>mdi-plus</v-icon> 
               </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
             
@@ -64,7 +64,7 @@
 
 <template v-slot:item.bActiveStatus="{ item }">
       <!-- <v-chip :color="getColor(item.bActiveStatus)">{{ getStatus(item.bActiveStatus) }}</v-chip> -->
-      <v-switch style="padding-left:35px" @click="deleteItem(item.nFacilityID,item.sFacilityName)" v-model="item.bActiveStatus"></v-switch>
+      <v-switch color='#1AA260' style="padding-left:35px" @click="deleteItem(item.nFacilityID,item.sFacilityName)" v-model="item.bActiveStatus"></v-switch>
     </template>
 
 
