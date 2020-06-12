@@ -88,12 +88,12 @@ export default {
       search: "",
       headers: [
         {
-          text: "location Name",
+          text: "Name",
           align: "start",
           value: "sLocationName"
         },
-        { text: "Location Code", value: "sLocationCode" },
-        { text: "location Address", value: "sLocationAddress" },
+        { text: "Code", value: "sLocationCode" },
+        { text: "Address", value: "sLocationAddress" },
         { text: "Actions", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),

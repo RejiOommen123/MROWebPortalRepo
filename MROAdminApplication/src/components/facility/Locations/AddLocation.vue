@@ -1,10 +1,11 @@
 <template>
   <div>
     <!-- <h1 style="text-align:center">Add Location</h1> -->
+
     <div class="addlocation-form">
       <form @submit.prevent="onSubmit">
         <div class="form-group row">
-          <label class="col-md-4" for="sLocationName">Location Name:</label>
+          <label class="col-md-4 required" for="sLocationName">Location Name:</label>
           <v-text-field
             type="text"
             id="sLocationName"
@@ -15,7 +16,7 @@
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="nROILocationID">ROI Location Id:</label>
+          <label class="col-md-4 required" for="nROILocationID">ROI Location Id:</label>
           <v-text-field
             type="number"
             id="nROILocationID"
@@ -26,7 +27,7 @@
             :error-messages="nROILocationIDErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="sLocationCode">Location Code:</label>
+          <label class="col-md-4 required" for="sLocationCode">Location Code:</label>
           <v-text-field
             type="text"
             id="sLocationCode"
@@ -37,7 +38,7 @@
             :error-messages="sLocationCodeErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="sLocationAddress">Location Address:</label>
+          <label class="col-md-4 required" for="sLocationAddress">Location Address:</label>
           <v-text-field
             type="text"
             id="sLocationAddress"
@@ -48,7 +49,7 @@
             :error-messages="sLocationAddressErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="sPhoneNo">Phone No:</label>
+          <label class="col-md-4 required" for="sPhoneNo">Phone No:</label>
           <v-text-field
             type="text"
             id="nPhoneNo"
@@ -59,7 +60,7 @@
             @blur="$v.location.sPhoneNo.$touch()"
             :error-messages="sPhoneNoErrors"
           ></v-text-field>
-          <label class="col-md-4" for="sFaxNo">Fax No:</label>
+          <label class="col-md-4 required" for="sFaxNo">Fax No:</label>
           <v-text-field
             type="text"
             id="nFaxNo"
@@ -323,5 +324,12 @@ export default {
   background-color: transparent;
   color: #ccc;
   cursor: not-allowed;
+}
+  .required:after {
+    content:" *";
+    color: red;
+  }
+  label{
+  margin-top:4px
 }
 </style>
