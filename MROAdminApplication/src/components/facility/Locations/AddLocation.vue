@@ -118,7 +118,7 @@ export default {
           sLocationCode:{ required, maxLength: maxLength(20) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
-          sFaxNo:{required,maxLength: maxLength(11),minLength:minLength(11),numeric},
+          sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10)},
       }
   },
   computed:
@@ -174,9 +174,9 @@ export default {
       const errors = [];
     if (!this.$v.location.sFaxNo.$dirty) 
       return errors;
-          !this.$v.location.sFaxNo.numeric && errors.push('Fax Number can only have numbers')
-          !this.$v.location.sFaxNo.minLength && errors.push('Fax Number must be at least 11 characters long')
-          !this.$v.location.sFaxNo.maxLength && errors.push('Fax Number must be at most 11 characters long')
+          // !this.$v.location.sFaxNo.numeric && errors.push('Fax Number can only have numbers')
+          !this.$v.location.sFaxNo.minLength && errors.push('Fax Number must be at least 10 characters long')
+          !this.$v.location.sFaxNo.maxLength && errors.push('Fax Number must be at most 10 characters long')
           !this.$v.location.sFaxNo.required && errors.push('Fax No is required.')
           return errors;
     }
