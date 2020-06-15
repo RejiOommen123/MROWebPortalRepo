@@ -29,7 +29,5 @@
   body, html {
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-     
   }
-  html { overflow-y: auto }
 </style>

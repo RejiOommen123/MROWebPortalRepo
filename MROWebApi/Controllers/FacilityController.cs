@@ -36,17 +36,14 @@ namespace MROWebAPI.Controllers
         [Route("[action]")]
         public async Task<IEnumerable<Facilities>> GetFacility()
         {
-            #region Dapper Code Get 1000 Rows
+            #region Dapper Code Get 1000 Rows Ascending Order
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-            IEnumerable<Facilities> facilities = await rpFac.GetAll(1000, "nROIFacilityID");
+            IEnumerable<Facilities> facilities = await rpFac.GetAllASC(1000, "nROIFacilityID");
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-            //IEnumerable<int> facLocCount;
             foreach (Facilities fac in facilities) {
                 fac.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
             }
-
             return facilities;
-
             #endregion
         }
 
@@ -96,7 +93,7 @@ namespace MROWebAPI.Controllers
                 Facilities dbFacility = await rpFac.Select(GeneratedID);
 
                 FieldsRepository fRep = new FieldsRepository(_info);
-                IEnumerable<Fields> fieldList = await fRep.GetAll(1000, "nFieldID");
+                IEnumerable<Fields> fieldList = await fRep.GetAllASC(1000, "nFieldID");
                 FacilityFieldMapsRepository fmRepo = new FacilityFieldMapsRepository(_info);
 
                 //Add data in FacilityFieldMap table for the current Facility
@@ -119,7 +116,7 @@ namespace MROWebAPI.Controllers
 
                 //Add data in FacilityPrimaryReasons table for the current Facility
                 PrimaryReasonsRepository prRepo = new PrimaryReasonsRepository(_info);
-                IEnumerable<PrimaryReasons> prList = await prRepo.GetAll(1000, "nPrimaryReasonID");
+                IEnumerable<PrimaryReasons> prList = await prRepo.GetAllASC(1000, "nPrimaryReasonID");
                 FacilityPrimaryReasonsRepository rPRRepo = new FacilityPrimaryReasonsRepository(_info);
                 List<FacilityPrimaryReasons> facilityPrimaryReasons = new List<FacilityPrimaryReasons>();
                 foreach (PrimaryReasons pReason in prList)
@@ -136,7 +133,7 @@ namespace MROWebAPI.Controllers
 
                 //Add data in FacilityRecordTypes table for the current Facility
                 RecordTypesRepository rTypeRepo = new RecordTypesRepository(_info);
-                IEnumerable<RecordTypes> rTypeList = await rTypeRepo.GetAll(1000, "nRecordTypeID");
+                IEnumerable<RecordTypes> rTypeList = await rTypeRepo.GetAllASC(1000, "nRecordTypeID");
                 FacilityRecordTypesRepository facilityRecordTypeRep = new FacilityRecordTypesRepository(_info);
                 List<FacilityRecordTypes> facilityRecordTypes = new List<FacilityRecordTypes>();
 
@@ -153,7 +150,7 @@ namespace MROWebAPI.Controllers
                 await facilityRecordTypeRep.InsertMany(facilityRecordTypes);
 
                 SensitiveInfoRepository sIRepo = new SensitiveInfoRepository(_info);
-                IEnumerable<SensitiveInfo> sInfoList = await sIRepo.GetAll(1000, "nSensitiveInfoID");
+                IEnumerable<SensitiveInfo> sInfoList = await sIRepo.GetAllASC(1000, "nSensitiveInfoID");
                 //Add data in FacilitySensitiveInfo table for the current Facility
                 FacilitySensitiveInfoRepository facilitySensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
                 List<FacilitySensitiveInfo> facilitySensitiveInfo = new List<FacilitySensitiveInfo>();
@@ -170,7 +167,7 @@ namespace MROWebAPI.Controllers
                 await facilitySensitiveInfoRepo.InsertMany(facilitySensitiveInfo);
 
                 ShipmentTypesRepository sTRepo = new ShipmentTypesRepository(_info);
-                IEnumerable<ShipmentTypes> sTList = await sTRepo.GetAll(1000, "nShipmentTypeID");
+                IEnumerable<ShipmentTypes> sTList = await sTRepo.GetAllASC(1000, "nShipmentTypeID");
                 FacilityShipmentTypesRepository facilityShipmentTypesRepo = new FacilityShipmentTypesRepository(_info);
                 List<FacilityShipmentTypes> facilityShipmentTypes = new List<FacilityShipmentTypes>();
                 foreach (ShipmentTypes shipmentTypes in sTList) {

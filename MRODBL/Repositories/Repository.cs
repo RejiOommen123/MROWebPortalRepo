@@ -58,7 +58,7 @@ namespace MRODBL.Repositories
         }
 
 
-        public async Task<IEnumerable<T>> GetAll(int rows, string sort)
+        public async Task<IEnumerable<T>> GetAllASC(int rows, string sort)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
@@ -66,7 +66,19 @@ namespace MRODBL.Repositories
                     sort = sKeyName;
                 string SqlString = "SELECT TOP " + rows + @" *
                                     FROM " + sTableName + @"
-                                    Order by " + sort;
+                                    Order by " + sort + " ASC";
+                return await db.QueryAsync<T>(SqlString);
+            }
+        }
+        public async Task<IEnumerable<T>> GetAllDESC(int rows, string sort)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                if (string.IsNullOrEmpty(sort))
+                    sort = sKeyName;
+                string SqlString = "SELECT TOP " + rows + @" *
+                                    FROM " + sTableName + @"
+                                    Order by " + sort + " DESC";
                 return await db.QueryAsync<T>(SqlString);
             }
         }
@@ -133,7 +145,7 @@ namespace MRODBL.Repositories
 
         public async Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB)
         {
-            string SqlString = "SELECT * FROM "+tA+" INNER JOIN "+tB+" ON "+tA+"."+cA+" = "+tB+"."+cB;
+            string SqlString = "SELECT * FROM " + tA + " INNER JOIN " + tB + " ON " + tA + "." + cA + " = " + tB + "." + cB;
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
@@ -149,12 +161,12 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName,dynamic paramValue)
+        public async Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                string SqlString = "SELECT * FROM " + sTableName +" WHERE "+paramKeyName+" = @ID";
-                return await db.QueryAsync<T>(SqlString,new { ID = paramValue });
+                string SqlString = "SELECT * FROM " + sTableName + " WHERE " + paramKeyName + " = @ID";
+                return await db.QueryAsync<T>(SqlString, new { ID = paramValue });
             }
         }
         public async Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue)

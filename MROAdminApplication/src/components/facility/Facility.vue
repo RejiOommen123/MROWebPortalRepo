@@ -32,7 +32,7 @@
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" color='rgb(0, 91, 168)' v-on="on">               
+               <router-link class="mrorouterlink"  v-on="on" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" color='rgb(0, 91, 168)'>               
                {{item.nFacLocCount}}
                 </router-link>            
     
@@ -57,7 +57,7 @@
 
               </router-link>
             </template>
-            <span>Patient Form</span>
+            <span>Edit Form</span>
           </v-tooltip>
 
         </template>

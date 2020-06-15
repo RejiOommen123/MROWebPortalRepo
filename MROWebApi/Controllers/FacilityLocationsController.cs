@@ -50,7 +50,7 @@ namespace MROWebApi.Controllers
         {
             bool result = int.TryParse(id, out int nId);
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-            var facilityLocations = await facilityLocationsRepository.GetAll(1000, "nFacilityLocationID");
+            var facilityLocations = await facilityLocationsRepository.GetAllASC(1000, "nFacilityLocationID");
             facilityLocations = facilityLocations.Where(c => c.nFacilityID == nId);
             return facilityLocations;
         }

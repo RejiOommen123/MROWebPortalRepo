@@ -37,7 +37,7 @@ namespace MROWebApi.Controllers
         public async Task<IEnumerable<FacilityFieldMaps>> GetFacilityFieldMaps()
         {
             FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
-            return await facilityFeldMapsRepository.GetAll(1000, "nFacilityFieldMapID");
+            return await facilityFeldMapsRepository.GetAllASC(1000, "nFacilityFieldMapID");
         }
 
         // GET: api/Facility/5

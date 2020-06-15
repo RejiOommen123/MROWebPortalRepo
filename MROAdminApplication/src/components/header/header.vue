@@ -45,7 +45,6 @@
 
 <style scoped>
 
-
   #header {
     height: 70px;
     display: flex;

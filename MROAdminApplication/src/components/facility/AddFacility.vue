@@ -100,8 +100,8 @@
                         solo>
           </v-text-field>
           <div class="col-md-10 moffset-md-2 submit">
-            <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
             <v-btn to="/facility" type="submit" color="primary" >Cancel</v-btn>
+            <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
             <v-btn @click="goToLoc" type="submit" :disabled="this.$v.$invalid" color="primary">Save & Add Location</v-btn>
           </div>
         </div>
