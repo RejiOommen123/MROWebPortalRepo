@@ -78,6 +78,7 @@
             filled
             prepend-icon="mdi-pdf-box"
             accept=".pdf"
+            @change="onPDFFileChanged"
           ></v-file-input>
           <label class="col-md-4" for="sConfigFacilityLogo">Logo Image:</label>
           <v-file-input
@@ -197,7 +198,8 @@ export default {
         sConfigBackgroundName: "",
         sConfigBackgroundData: "",
         nROILocationID:"",
-        // sAuthTemplate:""
+        sAuthTemplate:"",
+        sAuthTemplateName:""
       }
     };
   },
@@ -214,17 +216,16 @@ export default {
         this.location.sConfigLogoName=file.name;
       }
     },
-     //@change="onPDFFileChanged"
-    // onPDFFileChanged(file) {
-    //   if (file) {
-    //     const reader = new FileReader();        
-    //     reader.addEventListener("load",() => {
-    //       this.location.sConfigLogoData=reader.result; //base64encoded string
-    //     })
-    //     reader.readAsDataURL(file);
-    //     this.location.sConfigLogoName=file.name;
-    //   }
-    // },
+    onPDFFileChanged(file) {
+      if (file) {
+        const reader = new FileReader();        
+        reader.addEventListener("load",() => {
+          this.location.sAuthTemplate=reader.result; //base64encoded string
+        })
+        reader.readAsDataURL(file);
+        this.location.sAuthTemplateName=file.name;
+      }
+    },
     onBackgroundFileChanged(file) {
       if (file) {
         const reader = new FileReader();        

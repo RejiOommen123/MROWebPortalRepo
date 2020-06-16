@@ -35,12 +35,15 @@ namespace MRODBL.Repositories
             {
                 var parameters = (object)Mapping(item);
                 cn.Open();
-                T returnedItem = cn.Insert<T>(sTableName, parameters, sKeyName);
-                object obj = returnedItem.GetType().GetProperty(sKeyName).GetValue(returnedItem, null);
-                int nId;
-                if (!Int32.TryParse(obj + "", out nId))
-                    return null;
-                Id = nId;
+                using (var trans = cn.BeginTransaction())
+                {
+                    T returnedItem = cn.Insert<T>(sTableName, parameters, sKeyName, trans);
+                    object obj = returnedItem.GetType().GetProperty(sKeyName).GetValue(returnedItem, null);
+                    //int nId;
+                    if (!Int32.TryParse(obj + "", out int nId))
+                        return null;
+                    Id = nId;
+                }
             }
             return Id;
         }
@@ -49,10 +52,15 @@ namespace MRODBL.Repositories
             int rowsAffected = 0;
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                rowsAffected = db.Execute(
+                db.Open();
+                using (var trans = db.BeginTransaction())
+                {
+                    rowsAffected = db.Execute(
                                     "DELETE " + sTableName + @" 
                                     WHERE " + sKeyName + @" =@ID",
-                                    new { ID = ID });
+                                    new { ID = ID }, trans);
+                    trans.Commit();
+                }
             }
             return rowsAffected > 0;
         }
@@ -102,7 +110,10 @@ namespace MRODBL.Repositories
             {
                 var parameters = (object)Mapping(ourModel);
                 cn.Open();
-                rowsAffected = cn.Update(sTableName, parameters, sKeyName);
+                using (var trans = cn.BeginTransaction())
+                {
+                    rowsAffected = cn.Update(sTableName, parameters, sKeyName, trans);
+                }
             }
             return rowsAffected > 0;
         }
@@ -112,7 +123,12 @@ namespace MRODBL.Repositories
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                int count = await db.InsertAsync(ourModels);
+                int count =0;
+                using (var trans = db.BeginTransaction())
+                {
+                    count = await db.InsertAsync(ourModels,trans);
+                    trans.Commit();
+                }
                 if (count > 0) { return true; }
                 else { return false; }
             }
@@ -157,7 +173,13 @@ namespace MRODBL.Repositories
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                return await db.UpdateAsync(ourModels);
+                bool continueAhead = false;
+                using (var trans = db.BeginTransaction())
+                {
+                     continueAhead = await db.UpdateAsync(ourModels,trans);
+                    trans.Commit();
+                }
+                return continueAhead;
             }
         }
 

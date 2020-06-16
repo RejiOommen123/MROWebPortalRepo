@@ -4,6 +4,13 @@
     <app-header />
     <router-view></router-view>  
     </v-content>
+    <v-footer padless>
+    <v-col
+      class="text-right"
+      cols="12"
+    >&copy;{{ new Date().getFullYear() }} — <strong>Razor Technology</strong>
+    </v-col>
+  </v-footer>
    </v-app>
 </template>
 

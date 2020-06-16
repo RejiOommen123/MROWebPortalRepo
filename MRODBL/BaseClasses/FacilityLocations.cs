@@ -22,5 +22,7 @@ namespace MRODBL.BaseClasses
         public string sConfigBackgroundName { get; set; }
         public string sConfigBackgroundData { get; set; }
         public string sAuthTemplate { get; set; }
+        public string sAuthTemplateName { get; set; }
+        public bool bActiveStatus { get; set; }
     }
 }

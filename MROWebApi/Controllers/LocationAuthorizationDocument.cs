@@ -10,7 +10,7 @@ namespace MROWebApi.Controllers
 {
     public class LocationAuthorizationDocument
     {
-        static private Dictionary<string, string> FieldList =
+        static private Dictionary<string, string> _FieldList =
                         new Dictionary<string, string>();
         #region Constructor
 
@@ -20,6 +20,7 @@ namespace MROWebApi.Controllers
         public LocationAuthorizationDocument()
         {
             SetLicense();
+            //GetValidationFieldSet();
         }
 
         #endregion
@@ -28,8 +29,8 @@ namespace MROWebApi.Controllers
         /// <summary>
         /// Patient Web Portal - Replace Pre-defined Field Keywords with Values
         /// </summary>
-        /// <param name="PDFFile"></param>
-        /// <returns></returns>
+        /// <param name="PDFFile">PDF - Byte Array</param>
+        /// <returns>Byte Array - PDF (Replaced with values)</returns>
         public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile)
         {
             //Get Pre-defined Field set from DB
@@ -44,38 +45,37 @@ namespace MROWebApi.Controllers
         ///  Validate Authorization Document
         /// </summary>
         /// <param name="PDFFile"></param>
-        /// <returns></returns>
+        /// <returns>Bool</returns>
 
-        public bool ValidateAuthorizationDocument(byte[] PDFFile,out string sValidationText)
+        public bool ValidateAuthorizationDocument(byte[] PDFFile, IEnumerable<ValidateAuthorizationDoc> validationRules, out string sValidationText)
         {
-            //string 
             sValidationText = "";
-
+            bool bValidation = true;
             if (PDFFile != null)
             {
-                Doc theDoc = new Doc();
-                theDoc.Read(PDFFile);
-
-                foreach (Field frm in theDoc.Form.Fields)
+                Doc authPdfDocument = new Doc();
+                authPdfDocument.Read(PDFFile);
+                var pdfFormFields = authPdfDocument.Form.Fields;
+                foreach (ValidateAuthorizationDoc rules in validationRules)
                 {
-                    string sFileKeyword = frm.Name;
-                    string sFromList;
-                    if (FieldList.TryGetValue(sFileKeyword, out sFromList))
-                    {
+                    Field field = pdfFormFields.FirstOrDefault(c=>c.Name==rules.sKeyword);
+                    if (field != null) {
+                        //sKeyword is Present
                         continue;
                     }
-                    else
-                    {
-                        sValidationText += sFileKeyword + " Not found! <br />";
+                    else {
+                        //sKeyword is Not Present
+                        sValidationText += rules.sKeyword + " Not found! <br />";
+                        bValidation = false;
                     }
                 }
-                return true;
             }
             else
             {
-                return false;
+               bValidation = false;
             }
-
+            _FieldList.Clear();
+            return bValidation;
         }
 
         /// <summary>
@@ -85,11 +85,11 @@ namespace MROWebApi.Controllers
         public Dictionary<string, string> GetValidationFieldSet()
         {
             
-            FieldList.Add("Destination", "");
-            FieldList.Add("RecordType=1", "");
-            FieldList.Add("DOB", "");
-            FieldList.Add("Patient", "");
-            return FieldList;
+            _FieldList.Add("MROPatientFullName", "MROPatientFullName");
+            _FieldList.Add("MROPatientAddress", "MROPatientAddress");
+            _FieldList.Add("MROPatientDOB", "MROPatientDOB");
+            _FieldList.Add("MROPatientTelephoneNo", "MROPatientTelephoneNo");
+            return _FieldList;
         }
         #endregion
 
