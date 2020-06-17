@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using WebSupergoo.ABCpdf11;
 using WebSupergoo.ABCpdf11.Objects;
 using MRODBL.BaseClasses;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MROWebApi.Controllers
 {
@@ -31,11 +33,57 @@ namespace MROWebApi.Controllers
         /// </summary>
         /// <param name="PDFFile">PDF - Byte Array</param>
         /// <returns>Byte Array - PDF (Replaced with values)</returns>
-        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile)
+        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, IEnumerable<ValidateAuthorizationDoc> authorizationDocFeilds, out string sReplaceFieldsList)
         {
-            //Get Pre-defined Field set from DB
-            //TODO: fetch the details from DB 
+            //Get Pre-defined Field set (Dictionary Data) from DB
+            GetFieldSetValueFromAuthorizationDocFields(authorizationDocFeilds);
+            Doc thePDFAuthDoc = new Doc();
+            thePDFAuthDoc.Read(PDFFile);
+
+            //To insert each value in fields
+            foreach (Field frm in thePDFAuthDoc.Form.Fields)
+            {
+                string sValue = null;
+                string sName = frm.Name;
+                string sNewValue;
+                if (InList(sName, out sNewValue))
+                    sValue += sNewValue + " ";
+            }
+
+            //To check and verify Document save the PDF in folder
+            string sAppRoot = GetApplicationRoot();
+
+
+
+            sReplaceFieldsList = "";
             return PDFFile;
+        }
+        static bool InList(string sField, out string sValue)
+        {
+            sValue = sField;
+            string sFromList;
+            if (_FieldList.TryGetValue(sField, out sFromList))
+                sValue = sFromList;
+            else if (_FieldList.TryGetValue(sField + "=1", out sFromList))
+                sValue = sFromList;
+
+            return true;
+        }
+        public static string GetApplicationRoot()
+        {
+            var exePath = Path.GetDirectoryName(System.Reflection
+                              .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
+        }
+
+        private Dictionary<string, string> GetFieldSetValueFromAuthorizationDocFields(IEnumerable<ValidateAuthorizationDoc> authorizationDocFeilds)
+        {
+            //Get all values to dictionary and update the 
+            _FieldList = authorizationDocFeilds.ToDictionary(sADF => sADF.sKeyword, sADF => sADF.sFieldname);
+
+            return _FieldList;
         }
         #endregion
 
@@ -82,7 +130,7 @@ namespace MROWebApi.Controllers
         /// To get Field set for validating Authorization 
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, string> GetValidationFieldSet()
+        private Dictionary<string, string> GetValidationFieldSet()
         {
             
             _FieldList.Add("MROPatientFullName", "MROPatientFullName");
