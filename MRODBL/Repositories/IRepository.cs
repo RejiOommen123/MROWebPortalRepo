@@ -105,5 +105,12 @@ namespace MRODBL.Repositories
         /// <param name="paramValue">Condition Column Value</param>
         /// <returns>Count of Matching Rows</returns>
         Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue);
+
+        /// <summary>
+        /// Get Edit Fields Form
+        /// </summary>
+        /// <param name="ID">Facility ID</param>
+        /// <returns>IEnumerable<dynamic<</returns>
+        Task<IEnumerable<dynamic>> EdiftFields(int ID);
     }
 }

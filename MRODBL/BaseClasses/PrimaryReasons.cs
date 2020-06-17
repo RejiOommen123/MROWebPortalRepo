@@ -10,5 +10,6 @@ namespace MRODBL.BaseClasses
         public int nPrimaryReasonID { get; set; }
         public string sPrimaryReasonName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        public int nWizardID { get; set; }
     }
 }

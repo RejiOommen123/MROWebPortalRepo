@@ -5,7 +5,7 @@
           <v-col cols="6" sm="2" md="6">
             
               <!-- <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn> -->
-               <v-btn small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
+               <v-btn depressed small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
                   <v-icon>mdi-plus</v-icon> 
               </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
             
@@ -28,6 +28,10 @@
 
       <!-- Facility List DataTable  -->
       <v-data-table :headers="headers" :items="gridData" :search="search"
+      :footer-props="{
+    'items-per-page-options': [5,8]
+  }"
+  :items-per-page="5"
       class="body-1">
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
@@ -135,11 +139,15 @@ export default {
   data() {
     return {
       // facLocCount:null,
+      // rowsPerPageItems: [5,8,10],
+      // pagination: {
+      //     rowsPerPage: 8
+      // },
       dialog: false,
       search: "",
       headers: [
         {
-          text: "Facility Name",
+          text: "Name",
           align: "start",
           value: "sFacilityName"
         },
@@ -150,6 +158,7 @@ export default {
         { text: "Edit", value: "actions", sortable: false ,align:'center'}
       ],
       gridData: this.getGridData(),
+      //nFacLocCount:[],
       editedItem: {
         nFacilityID:0,
         sFacilityName: ''
@@ -162,10 +171,9 @@ export default {
       this.$http.get("http://localhost:57364/api/facility/GetFacility").then(
         response => {
           // get body data
-          // this.facLocCount = JSON.parse(response.bodyText)['facLocCount'];
+          //this.nFacLocCount = JSON.parse(response.bodyText)["nFacLocCount"];
           this.gridData = JSON.parse(response.bodyText);
-         
-
+          //this.gridData.push(this.nFacLocCount);
         },
         response => {
           // error callback

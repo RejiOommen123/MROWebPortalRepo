@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <!-- <h1 style="text-align:center">Add Location</h1> -->
-
-    <div class="addlocation-form">
-      <form @submit.prevent="onSubmit">
-        <div class="form-group row">
-          <label class="col-md-4 required" for="sLocationName">Location Name:</label>
+<div>
+    <div id="box">
+      <form @submit.prevent="onSubmit" class="addlocation-form">
+           <v-row >
+          <v-col cols="12" offset-md="1" md="5">
+          <label class="required" for="sLocationName">Location Name:</label>
           <v-text-field
             type="text"
             id="sLocationName"
@@ -16,7 +15,7 @@
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="nROILocationID">ROI Location Id:</label>
+          <label class="required" for="nROILocationID">ROI Location Id:</label>
           <v-text-field
             type="number"
             id="nROILocationID"
@@ -27,7 +26,7 @@
             :error-messages="nROILocationIDErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sLocationCode">Location Code:</label>
+          <label class="required" for="sLocationCode">Location Code:</label>
           <v-text-field
             type="text"
             id="sLocationCode"
@@ -38,7 +37,7 @@
             :error-messages="sLocationCodeErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sLocationAddress">Location Address:</label>
+          <label class="required" for="sLocationAddress">Location Address:</label>
           <v-text-field
             type="text"
             id="sLocationAddress"
@@ -49,18 +48,21 @@
             :error-messages="sLocationAddressErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sPhoneNo">Phone No:</label>
+         
+          <label class="required" for="sPhoneNo">Phone No:</label>
           <v-text-field
             type="text"
             id="nPhoneNo"
             placeholder="Enter Phone No"
             v-model="location.sPhoneNo"
-            solo
             @input="$v.location.sPhoneNo.$touch()"
             @blur="$v.location.sPhoneNo.$touch()"
             :error-messages="sPhoneNoErrors"
+            solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sFaxNo">Fax No:</label>
+           
+          
+          <label class="required" for="sFaxNo">Fax No:</label>
           <v-text-field
             type="text"
             id="nFaxNo"
@@ -71,40 +73,83 @@
             :error-messages="sFaxNoErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4" for="sAuthTemplate">Authorization Template:</label>
+          </v-col>
+          <v-col cols="12" md="5">
+          <label for="sAuthTemplate">Authorization Template:</label>
           <v-file-input
-            class="col-md-2"
+            chips
+            show-size
+            dense
+            hint="Upload Authorization Document"
+            rounded
             label="Upload PDF"
             filled
-            prepend-icon="mdi-pdf-box"
+            prepend-icon="mdi-file-pdf"
             accept=".pdf"
             @change="onPDFFileChanged"
           ></v-file-input>
-          <label class="col-md-4" for="sConfigFacilityLogo">Logo Image:</label>
+
+
+          <label for="sConfigFacilityLogo">Logo Image:</label>
+          <v-img :src="location.sConfigLogoData" width="20%"></v-img><br>
           <v-file-input
-            class="col-md-2"
+            lazy-src
+            chips
+            show-size
+            dense
+            hint="Upload Logo Image"
+            rounded
+            
             label="Logo Image"
             filled
             prepend-icon="mdi-camera"
             @change="onLogoFileChanged"
             accept="image/png, image/jpeg, image/bmp"
-          ></v-file-input>
-          <label class="col-md-4" for="sConfigBackgroundImg">Background Image:</label>
+          >
+          <v-tooltip slot="append" top>
+            <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color='rgb(0, 91, 168)' top>
+                  mdi-information
+                </v-icon>
+              </template>
+            <span>Please upload logo with height 50px</span>
+          </v-tooltip>
+          </v-file-input>
+          
+          
+          <label for="sConfigBackgroundImg">Background Image:</label>
+          <v-img :src="location.sConfigBackgroundData" width="20%"></v-img><br>
           <v-file-input
-            class="col-md-2"
+            chips
+            show-size
+            dense
+            hint="Upload Background Image"
+            rounded
+            
             label="Background Image"
             filled
             prepend-icon="mdi-camera"
             @change="onBackgroundFileChanged"
             accept="image/png, image/jpeg, image/bmp"
-          ></v-file-input>
-          <div class="col-md-6 offset-md-3 submit">
+          >
+          <v-tooltip slot="append" top>
+            <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color='rgb(0, 91, 168)' top>
+                  mdi-information
+                </v-icon>
+              </template>
+            <span>Please upload logo with height 50px</span>
+          </v-tooltip>
+          </v-file-input>
+          </v-col>
+          </v-row>
+          <div class="submit">
             <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
             <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary" >Cancel</v-btn>
           </div>
-        </div>
+          <br>
       </form>
-    </div>
+  </div>
   </div>
 </template>
 
@@ -120,7 +165,7 @@ export default {
           sLocationCode:{ required, maxLength: maxLength(20) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
-          sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10)},
+          sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10),numeric},
       }
   },
   computed:
@@ -176,7 +221,7 @@ export default {
       const errors = [];
     if (!this.$v.location.sFaxNo.$dirty) 
       return errors;
-          // !this.$v.location.sFaxNo.numeric && errors.push('Fax Number can only have numbers')
+          !this.$v.location.sFaxNo.numeric && errors.push('Fax Number can only have numbers')
           !this.$v.location.sFaxNo.minLength && errors.push('Fax Number must be at least 10 characters long')
           !this.$v.location.sFaxNo.maxLength && errors.push('Fax Number must be at most 10 characters long')
           !this.$v.location.sFaxNo.required && errors.push('Fax No is required.')
@@ -189,6 +234,7 @@ export default {
       location: {
         nFacilityID:parseInt(this.$route.params.id),
         nFacilityLocationID: 0,
+        sLocationName:"",
         sLocationCode: "",
         sLocationAddress: "",
         sPhoneNo: null,
@@ -233,7 +279,7 @@ export default {
           this.location.sConfigBackgroundData=reader.result; //base64encoded string
         })
         reader.readAsDataURL(file);
-        this.location.sConfigLogoName=file.name;
+        this.location.sConfigBackgroundName=file.name;
       }
     },
     // API to add location
@@ -256,25 +302,36 @@ export default {
 </script>
 
 <style scoped>
-* {
-  margin: 10px;
+/* *{
+  margin:0.5px;
+} */
+.submit{
+  text-align: center;
+}
+#box{
+  margin-left:25px;
+  margin-right:25px;
+  margin-bottom:25px;
+  margin-top:15px
+}
+button {
+  margin-right: 25px;
 }
 .addlocation-form {
-  width: 700px;
-  margin: 30px auto;
-  border: 1px solid #eee;
-  padding: 20px;
-  box-shadow: 0 2px 3px #ccc;
+  /* margin: 10px auto; */
+  border: 3px solid #eee;
+  /* padding: 20px; */
+  box-shadow: 0 4px 6px #ccc;
 }
 
-.input {
-  margin: 10px auto;
-}
+/* .input {
+  margin: 5px auto;
+} */
 
 .input label {
   display: block;
   color: #4e4e4e;
-  margin-bottom: 6px;
+  /* margin-bottom: 6px; */
 }
 
 .input.inline label {
@@ -284,7 +341,7 @@ export default {
 .input input {
   font: inherit;
   width: 100%;
-  padding: 6px 12px;
+  /* padding: 6px 12px; */
   box-sizing: border-box;
   border: 1px solid #ccc;
 }
@@ -307,7 +364,7 @@ export default {
 .submit button {
   border: 1px solid #521751;
   color: #521751;
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   font: inherit;
   cursor: pointer;
 }
@@ -330,7 +387,10 @@ export default {
     content:" *";
     color: red;
   }
-  label{
+  /* label{
   margin-top:4px
+} */
+.row{
+margin:1px
 }
 </style>

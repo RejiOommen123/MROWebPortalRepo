@@ -123,10 +123,10 @@ namespace MRODBL.Repositories
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                int count =0;
+                int count = 0;
                 using (var trans = db.BeginTransaction())
                 {
-                    count = await db.InsertAsync(ourModels,trans);
+                    count = await db.InsertAsync(ourModels, trans);
                     trans.Commit();
                 }
                 if (count > 0) { return true; }
@@ -169,16 +169,15 @@ namespace MRODBL.Repositories
             }
         }
         public async Task<bool> UpdateMany(List<T> ourModels)
+
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
                 bool continueAhead = false;
-                using (var trans = db.BeginTransaction())
-                {
-                     continueAhead = await db.UpdateAsync(ourModels,trans);
-                    trans.Commit();
-                }
+
+                continueAhead = await db.UpdateAsync(ourModels);
+
                 return continueAhead;
             }
         }
@@ -197,6 +196,17 @@ namespace MRODBL.Repositories
             {
                 string SqlString = "SELECT COUNT(nFacilityID) FROM " + sTableName + " WHERE " + paramKeyName + " = @ID";
                 return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> EdiftFields(int ID)
+        {
+            string SqlString = "spGetPatientFormBynfacilityID";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                IEnumerable<dynamic> a=  await db.QueryAsync(SqlString, new { @ID = ID },commandType: CommandType.StoredProcedure);
+                return a;
             }
         }
         //public async Task<int> GetlatestROIID()

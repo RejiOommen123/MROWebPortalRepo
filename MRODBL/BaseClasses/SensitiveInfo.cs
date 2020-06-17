@@ -10,5 +10,7 @@ namespace MRODBL.BaseClasses
         public int nSensitiveInfoID { get; set; }
         public string sSensitiveInfoName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        public int nWizardID { get; set; }
+
     }
 }

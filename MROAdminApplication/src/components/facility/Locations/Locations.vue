@@ -5,8 +5,8 @@
           <v-col cols="6" sm="2" md="6">
             <div class="my-2">
               <!-- <v-btn id="addlocation" color="primary" :to="'/AddLocation/'+this.$route.params.id">Add Location</v-btn> -->
-              <v-btn color='rgb(0, 91, 168)' id="addlocation" small class="mx-2" fab dark :to="'/AddLocation/'+this.$route.params.id">
-              <v-icon>mdi-plus</v-icon></v-btn><span id="AddLoc" style="font-size:24px">Add Location</span>
+              <v-btn depressed color='rgb(0, 91, 168)' id="addlocation" small class="mx-2" fab dark :to="'/AddLocation/'+this.$route.params.id">
+              <v-icon box-shadow:none>mdi-plus</v-icon></v-btn><span id="AddLoc" style="font-size:24px">Add Location</span>
             </div>
           </v-col>
         </v-row>
@@ -36,12 +36,19 @@
       </v-card-title>
 
       <!-- Location List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search" class="body-1">
+      <v-data-table :headers="headers" :items="gridData" :search="search" class="body-1" :footer-props="{
+    'items-per-page-options': [5,8]
+  }"
+  :items-per-page="5">
+
+
+
+
+
 
         <!-- Location List Actions (Edit & Delete)  -->
         <template v-slot:item.actions="{ item }">
-
-          <v-tooltip top>
+<v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nFacilityLocationID">             
                 <v-icon color='rgb(0, 91, 168)'  v-on="on" medium class="mr-2">mdi-pencil</v-icon>
@@ -50,14 +57,19 @@
             <span>Edit Location</span>
           </v-tooltip>
 
-          <v-tooltip top>
+             
+        </template>
+
+<template v-slot:item.bLocationActiveStatus="{ item }">
+  <!-- <v-tooltip top>
             <template v-slot:activator="{ on }">              
                 <v-icon color='red' v-on="on" medium @click="deleteItem(item.nFacilityLocationID,item.sLocationName)">mdi-delete</v-icon>            
             </template>
             <span>Delete Location</span>
-          </v-tooltip>   
-        </template>
+          </v-tooltip> -->
+      <v-switch v-model="item.bLocationActiveStatus" color='#1AA260' @click="deleteItem(item.nFacilityLocationID,item.sLocationName)"></v-switch>
 
+  </template>
       </v-data-table>
        <!-- End Location List DataTable  -->
     </v-card>
@@ -90,11 +102,13 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "sLocationName"
+          value: "sLocationName",
+          width:'20%'
         },
-        { text: "Code", value: "sLocationCode" },
-        { text: "Address", value: "sLocationAddress" },
-        { text: "Actions", value: "actions", sortable: false }
+        { text: "Address", value: "sLocationAddress",width:'50%' },
+        { text: "Code", value: "sLocationCode",align:'center',width:'15%'},
+        { text: "Active", value: "bLocationActiveStatus"},
+        { text: "Edit", value: "actions", sortable: false,align:'center' }
       ],
       gridData: this.getGridData(),
       facilityName:"",
@@ -110,9 +124,10 @@ export default {
       this.$http.get("http://localhost:57364/api/FacilityLocations/GetFacilityLocationByFacilityID/"+this.$route.params.id).then(
         response => {
           // get body data
-          this.gridData = JSON.parse(response.bodyText);
-            this.gridData = JSON.parse(response.bodyText)["locations"];
+          //this.gridData = JSON.parse(response.bodyText);
+    //console.log(JSON.parse(response.bodyText)["locations"]);
 
+            this.gridData = JSON.parse(response.bodyText)["locations"];
           this.facilityName = JSON.parse(response.bodyText)["faciName"];
 
         },
@@ -138,7 +153,15 @@ export default {
             this.$router.go();
           }
         });
-    }
+    },
+    getStatus (status) {
+        if(status) return 'Active'
+        else return 'Inactive'
+      },
+      getColor (status) {
+        if(status) return 'green'
+        else return 'red'
+      }
   }
 };
 </script>

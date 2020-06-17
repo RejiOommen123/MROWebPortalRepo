@@ -8,7 +8,7 @@
     <v-col
       class="text-right"
       cols="12"
-    >&copy;{{ new Date().getFullYear() }} — <strong>Razor Technology</strong>
+    >&copy;{{ new Date().getFullYear() }} — Powered by <strong><a href="https://mrocorp.com/">MRO</a></strong>
     </v-col>
   </v-footer>
    </v-app>

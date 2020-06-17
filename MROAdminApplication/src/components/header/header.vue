@@ -14,9 +14,9 @@
             <li>
                 <router-link to="/facility">Manage Facilities</router-link>
             </li>
-            <li>
+            <!-- <li>
                 <button @click="onLogout" class="logout">Logout</button>
-            </li>
+            </li> -->
         </ul>
     </nav>
   </header>

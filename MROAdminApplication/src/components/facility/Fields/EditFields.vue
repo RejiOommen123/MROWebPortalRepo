@@ -1,20 +1,7 @@
 <template>
   <div id="demo">
     <v-row>
-      <v-col cols="8" offset-md="2">
-        <!-- <h2>Manage Fields For Facility - {{faciName}}</h2>
-        <h2></h2>
-        <form id="search">
-            <div>
-                Search <input name="query" v-model="searchQuery" />
-                <button class="btn btn-primary">Search</button>
-            </div><br>
-        </form>
-        <demo-grid id="griddemo"
-                   :heroes="gridData"
-                   :columns="gridColumns"
-                   :filter-key="searchQuery">
-        </demo-grid>-->
+      <v-col cols="12">
         <form @submit.prevent="onSubmit">
           <v-card>
             <v-card-title style="padding-top:0px">
@@ -30,12 +17,15 @@
             </v-card-title>
 
             <!-- Facility List DataTable  -->
-            <v-data-table :headers="headers" :items="gridData" :search="search">
+            <v-data-table :headers="headers" :items="gridData" :search="search" :footer-props="{
+    'items-per-page-options': [5,8]
+  }"
+  :items-per-page="5">
               <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
               <template v-slot:item.actions="{ item }">
                 <input
                   type="checkbox"
-                  @click="toggleCheck(item.nFieldID)"
+                  @click="toggleCheck(item.nFacilityFieldMapID)"
                   v-model="item.bShow"
                   :value="item.bShow"
                 />
@@ -43,7 +33,7 @@
             </v-data-table>
             <!-- End Facility List DataTable  -->
           </v-card>
-          <div class="col-md-6 offset-md-4 submit" style="padding-top:5px">
+          <div class="submit">
             <v-btn type="submit" color="primary">Save</v-btn>
             <v-btn to="/facility" type="submit" color="primary">Cancel</v-btn>
           </div>
@@ -60,11 +50,11 @@ export default {
       search: "",
       headers: [
         {
-          text: "Field Name",
+          text: "Name",
           align: "start",
           value: "sFieldName"
         },
-        { text: "Actions", value: "actions", sortable: false }
+        { text: "Action", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
       facilityName: ""
@@ -94,7 +84,7 @@ export default {
     },
     toggleCheck: function(id) {
       for (var i = 0; i < this.gridData.length; i++) {
-        if (this.gridData[i].nFieldID == id) {
+        if (this.gridData[i].nFacilityFieldMapID == id) {
           this.gridData[i].bShow = !this.gridData[i].bShow;
         }
       }
@@ -111,7 +101,7 @@ export default {
         )
         .then(response => {
           if (response.ok == true) {
-            this.$router.push("/dashboard");
+            this.$router.push("/facility");
           }
         });
     }
@@ -121,10 +111,14 @@ export default {
 
 <style scoped>
 * {
-  margin: 10px;
+  margin: 5px;
 }
 
 #demo {
   margin: 0 100px;
+}
+
+.submit{
+  text-align: center;
 }
 </style>
