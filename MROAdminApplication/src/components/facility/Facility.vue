@@ -132,6 +132,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Dialog Alert for 0 Locations -->
+    <v-dialog
+      v-model="facilityAlert"
+      max-width="360"
+      width="350"
+    >
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>
+          Add Location to Active Facility
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="facilityAlert = false"
+          >
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -145,6 +168,7 @@ export default {
       //     rowsPerPage: 8
       // },
       dialog: false,
+      facilityAlert:false,
       search: "",
       headers: [
         {
@@ -196,9 +220,13 @@ export default {
         .then(response => {
           if (response.ok == true) {
             if(response.body=="Cannot Activate Facility, Location Count = 0"){
-              alert("Add Location to Activate Facility");
+              this.facilityAlert=true;
           }
+          else
+          {
             this.$router.go();
+          }
+            
           }
         });
     },

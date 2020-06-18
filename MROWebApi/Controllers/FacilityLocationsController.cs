@@ -115,6 +115,7 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
 
                 //Data which not present in data coming from UI
+                //Added Lin efor Checkout
                 bool checkPDF = false;
                 string sValidationTextGlobal = "";
                 facilityLocation.bLocationActiveStatus = false;

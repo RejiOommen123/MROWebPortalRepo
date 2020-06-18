@@ -89,6 +89,28 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="locationAlert"
+      max-width="360"
+      width="350"
+    >
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>
+          Upload Authorization PDF to Activate Location
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="locationAlert = false"
+          >Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -97,6 +119,7 @@ export default {
   data() {
     return {
       dialog: false,
+      locationAlert:false,
       search: "",
       headers: [
         {
@@ -151,8 +174,9 @@ export default {
         .then(response => {
           if (response.ok == true) {
             if(response.body=="Please Provide Authorization PDF"){
-              alert("Please Provide Authorization PDF");
+              this.locationAlert = true
           }
+          else
             this.$router.go();
           }
         });
