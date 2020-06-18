@@ -271,7 +271,7 @@ export default {
     // API to get single facility
     this.$http
       .get(
-        "http://localhost:57364/api/facility/GetFacility/" +
+        "facility/GetFacility/" +
           this.$route.params.id
       )
       .then(
@@ -290,7 +290,7 @@ export default {
     onSubmit() {
       this.$http
         .post(
-          "http://localhost:57364/api/facility/EditFacility/" +
+          "facility/EditFacility/" +
             this.facility.nFacilityID,
           this.facility
         )

@@ -251,7 +251,7 @@ export default {
   },
   mounted() {
               // API to get single facility
-            this.$http.get('http://localhost:57364/api/FacilityLocations/GetFacilityLocationSingle/' + this.$route.params.id).then(response => {
+            this.$http.get('FacilityLocations/GetFacilityLocationSingle/' + this.$route.params.id).then(response => {
                 // get body data 
                 this.location = JSON.parse(response.bodyText);          
 
@@ -296,7 +296,7 @@ export default {
           this.location.nROIFacilityID=parseInt( this.location.nROIFacilityID);
           this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
           console.log(this.location);
-                this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
+                this.$http.post('FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/Locations/'+this.location.nFacilityID)

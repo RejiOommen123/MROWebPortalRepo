@@ -144,7 +144,7 @@ export default {
   methods: {
     // API to Get all Facilities
     getGridData() {
-      this.$http.get("http://localhost:57364/api/FacilityLocations/GetFacilityLocationByFacilityID/"+this.$route.params.id).then(
+      this.$http.get("FacilityLocations/GetFacilityLocationByFacilityID/"+this.$route.params.id).then(
         response => {
           // get body data
           //this.gridData = JSON.parse(response.bodyText);
@@ -170,7 +170,7 @@ export default {
     deleteLocation(id) {
       this.dialog = false;
       this.$http
-        .post("http://localhost:57364/api/FacilityLocations/DeleteFacilityLocation/", id)
+        .post("FacilityLocations/DeleteFacilityLocation/", id)
         .then(response => {
           if (response.ok == true) {
             if(response.body=="Please Provide Authorization PDF"){

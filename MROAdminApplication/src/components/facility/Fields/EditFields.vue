@@ -66,7 +66,7 @@ export default {
     getGridData() {
       this.$http
         .get(
-          "http://localhost:57364/api/facilityfieldmaps/GetFieldsByFacilityID/" +
+          "facilityfieldmaps/GetFieldsByFacilityID/" +
             this.$route.params.id
         )
         .then(
@@ -96,7 +96,7 @@ export default {
       });
       this.$http
         .post(
-          "http://localhost:57364/api/facilityfieldmaps/EditFacilityFields/",
+          "facilityfieldmaps/EditFacilityFields/",
           FacilityFieldMapsList
         )
         .then(response => {

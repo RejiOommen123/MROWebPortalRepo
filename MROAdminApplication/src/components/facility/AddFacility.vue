@@ -280,7 +280,7 @@ export default {
     goToLoc() {
       // this.$v.$touch()
       this.$http
-        .post("http://localhost:57364/api/facility/AddFacility", this.facility)
+        .post("facility/AddFacility", this.facility)
         .then(response => {
           if (response.ok == true) {
             this.$router.push("/location/" + response.body.nFacilityId);
@@ -290,7 +290,7 @@ export default {
     onSubmit() {
       // this.$v.$touch()
       this.$http
-        .post("http://localhost:57364/api/facility/AddFacility", this.facility)
+        .post("facility/AddFacility", this.facility)
         .then(response => {
           if (response.ok == true) {
             this.$router.push("/facility");

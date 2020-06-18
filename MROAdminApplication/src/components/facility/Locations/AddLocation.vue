@@ -250,7 +250,7 @@ export default {
     };
   },
   mounted(){
-      this.$http.get("http://localhost:57364/api/FacilityLocations/GetROILocationID/"+this.$route.params.id).then(resp=>{
+      this.$http.get("FacilityLocations/GetROILocationID/"+this.$route.params.id).then(resp=>{
         if(resp.ok==true){
             this.location.nROILocationID = resp.body;
             this.location.nROILocationID++;
@@ -294,7 +294,7 @@ export default {
         console.log(this.location)
       this.$http
         .post(
-          "http://localhost:57364/api/FacilityLocations/AddFacilityLocation/",
+          "FacilityLocations/AddFacilityLocation/",
           this.location
         )
         .then(response => {

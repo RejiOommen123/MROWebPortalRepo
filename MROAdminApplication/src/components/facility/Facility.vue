@@ -145,11 +145,13 @@
           Add Location to Active Facility
         </v-card-text>
         <v-card-actions>
+          <v-spacer></v-spacer>
           <v-btn
             color="green darken-1"
             text
             @click="facilityAlert = false"
           >
+          
             Ok
           </v-btn>
         </v-card-actions>
@@ -193,7 +195,7 @@ export default {
   methods: {
     // API to Get all Facilities
     getGridData() {
-      this.$http.get("http://localhost:57364/api/facility/GetFacility").then(
+      this.$http.get("facility/GetFacility").then(
         response => {
           // get body data
           //this.nFacLocCount = JSON.parse(response.bodyText)["nFacLocCount"];
@@ -216,7 +218,7 @@ export default {
     deleteFacility(id) {
       this.dialog = false;
       this.$http
-        .post("http://localhost:57364/api/facility/DeleteFacility/", id)
+        .post("facility/DeleteFacility/", id)
         .then(response => {
           if (response.ok == true) {
             if(response.body=="Cannot Activate Facility, Location Count = 0"){
