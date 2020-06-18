@@ -112,5 +112,13 @@ namespace MRODBL.Repositories
         /// <param name="ID">Facility ID</param>
         /// <returns>IEnumerable<dynamic<</returns>
         Task<IEnumerable<dynamic>> EdiftFields(int ID);
+
+        /// <summary>
+        /// Get Latest ROI ID
+        /// </summary>
+        /// <param name="paramKeyName">Facility ID</param>
+        /// <param name="paramValue">Facility ID Value</param>
+        /// <returns></returns>
+        int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
     }
 }

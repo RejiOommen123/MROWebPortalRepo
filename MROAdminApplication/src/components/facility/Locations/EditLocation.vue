@@ -161,7 +161,7 @@ export default {
       location:{
           sLocationName: { required, maxLength: maxLength(40),minLength:minLength(2) },
           nROILocationID:{required,numeric},
-          sLocationCode:{ required, maxLength: maxLength(20) },
+          sLocationCode:{ required, maxLength: maxLength(4),minLength:minLength(4) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
           sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10),numeric},
@@ -191,8 +191,8 @@ export default {
       const errors = [];
     if (!this.$v.location.sLocationCode.$dirty) 
       return errors;
-          // !this.$v.location.sLocationCode.minLength && errors.push('Location Code must be at least 5 characters long')
-          !this.$v.location.sLocationCode.maxLength && errors.push('Location Code must be at most 20 characters long')
+          !this.$v.location.sLocationCode.minLength && errors.push('Location Code must be at least 4 characters long')
+          !this.$v.location.sLocationCode.maxLength && errors.push('Location Code must be at most 4 characters long')
           !this.$v.location.sLocationCode.required && errors.push('Location Code is required.')
           return errors;
     },

@@ -37,7 +37,7 @@
 
       <!-- Location List DataTable  -->
       <v-data-table :headers="headers" :items="gridData" :search="search" class="body-1" :footer-props="{
-    'items-per-page-options': [5,8]
+    'items-per-page-options': [5,10]
   }"
   :items-per-page="5">
 
@@ -77,7 +77,7 @@
     <!-- Dialog box for delete Location  -->
     <v-dialog v-model="dialog" max-width="360">
       <v-card>
-        <v-card-title class="headline">Are you sure do you want to <br> delete '{{editedItem.sLocationName}}' <br> Location?</v-card-title>
+        <v-card-title class="headline">Are you sure you want to <br/>change the active status?</v-card-title>
 
         <!-- <v-card-text class="red--text">Clicking Agree will Permanently Delete the Location</v-card-text>
         <v-card-text class="blue--text">Clicking Disagree will close the Modal</v-card-text> -->
@@ -150,6 +150,9 @@ export default {
         .post("http://localhost:57364/api/FacilityLocations/DeleteFacilityLocation/", id)
         .then(response => {
           if (response.ok == true) {
+            if(response.body=="Please Provide Authorization PDF"){
+              alert("Please Provide Authorization PDF");
+          }
             this.$router.go();
           }
         });

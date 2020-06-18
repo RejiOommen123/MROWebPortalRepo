@@ -318,16 +318,27 @@ namespace MROWebAPI.Controllers
         public async Task<ActionResult<Facilities>> DeleteFacility([FromBody] int id)
         {
 
+            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+            IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", id);
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities facilityDB = await rpFac.Select(id);
             if (id != facilityDB.nFacilityID)
             {
                 return BadRequest();
             }
-            if (await rpFac.ToggleSoftDelete("bActiveStatus", id))
-            { return NoContent(); }
-            else
-            { return NotFound(); }
+
+
+            //Validate Facility
+            if (await ValidateFacility(facilityDB, locationList,_info))
+            {
+                if (await rpFac.ToggleSoftDelete("bActiveStatus", id))
+                { return Ok(); }
+                else
+                { return NotFound(); }
+            }
+            else {
+                return Content("Cannot Activate Facility, Location Count = 0");
+            }
         }
         #endregion
 
@@ -341,6 +352,24 @@ namespace MROWebAPI.Controllers
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities f = await rpFac.Select(id);
             return f == null;
+        }
+        #endregion
+
+        #region Validate Facility
+        private async static Task<bool> ValidateFacility(Facilities facility,IEnumerable<FacilityLocations> locationList,DBConnectionInfo _info) {
+            //FacilitiesRepository fRepo = new FacilitiesRepository(_info);
+
+            if (facility.bActiveStatus) {
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                foreach (FacilityLocations location in locationList) {
+                    location.bLocationActiveStatus = false;
+                }
+                await facilityLocationsRepository.UpdateMany(locationList.ToList());
+                return true;
+            }
+            else {
+                return facility.nFacLocCount >0;
+            }
         }
         #endregion
     }

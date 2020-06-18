@@ -217,5 +217,13 @@ namespace MRODBL.Repositories
         //        return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
         //    }
         //}
+        public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT TOP(1) nROILocationID FROM " +sTableName+ " WHERE "+paramKeyName+" ="+paramValue+" ORDER BY nROILocationID DESC";
+                return  db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
+            }
+        }
     }
 }

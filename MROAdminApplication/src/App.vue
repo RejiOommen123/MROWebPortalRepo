@@ -6,8 +6,8 @@
     </v-content>
     <v-footer padless>
     <v-col
-      class="text-right"
-      cols="12"
+      class="text-center"
+      cols="12" id="footer"
     >&copy;{{ new Date().getFullYear() }} — Powered by <strong><a href="https://mrocorp.com/">MRO</a></strong>
     </v-col>
   </v-footer>
@@ -37,4 +37,7 @@
     margin: 0;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
+#footer{
+  margin-top:-25px
+}
 </style>

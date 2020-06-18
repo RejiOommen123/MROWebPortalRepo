@@ -115,35 +115,45 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
 
                 //Data which not present in data coming from UI
+                bool checkPDF = false;
+                string sValidationTextGlobal = "";
+                facilityLocation.bLocationActiveStatus = false;
                 facilityLocation.nCreatedAdminUserID = 1;
                 facilityLocation.dtCreated = DateTime.Now;
                 facilityLocation.nUpdatedAdminUserID = 1;
                 facilityLocation.dtLastUpdate = DateTime.Now;
-                facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-                byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
-                ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
-                IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000,"nFieldID");
-                LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
-                bool continueAhead= locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out string sValidationText);
-                if (continueAhead)//check for pdf fields
+                if (facilityLocation.sAuthTemplate != "")
                 {
-                    if (facilityLocationsRepository.Insert(facilityLocation) != null)
-                    {
-                        IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", facilityLocation.nFacilityID);
+                    facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+                    byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
+                    ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
+                    IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
+                    LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
+                     checkPDF = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
 
-                        if (locationList.Count() == 1)
-                        {
-                            //Making BActive to True
-                            FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
-                            await facilitiesRepository.ToggleSoftDelete("bActiveStatus", facilityLocation.nFacilityID);
-                        }
-                        return Ok("Success");
+                }
+
+                if (facilityLocationsRepository.Insert(facilityLocation) != null)
+                {
+                    if (checkPDF) {
+                        await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", facilityLocation.nFacilityLocationID);
                     }
-                    else
-                        return Content(sValidationText);
+                    FacilitiesRepository fRepo = new FacilitiesRepository(_info);
+                    Facilities facility = new Facilities();
+                    facility = await fRepo.Select(facilityLocation.nFacilityID);
+                    IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", facilityLocation.nFacilityID);
+                    facility.nFacLocCount = locationList.Count();
+                    fRepo.Update(facility);
+                    if (locationList.Count() == 1)
+                    {
+                        //Making BActive to True
+                        FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
+                        await facilitiesRepository.ToggleSoftDelete("bActiveStatus", facilityLocation.nFacilityID);
+                    }
+                    return Ok("Success");
                 }
                 else
-                    return Content(sValidationText);
+                    return NoContent();
             }
             catch (Exception ex)
             {
@@ -168,13 +178,18 @@ namespace MROWebApi.Controllers
                 {
                     return BadRequest();
                 }
-                facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-                byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
-                ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
-                IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
-                bool continueAhead = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out string sValidationText);
-                if (continueAhead) 
+                bool continueAhead = true;
+                string sValidationTextGlobal = "";
+                if (facilityLocation.sAuthTemplate != "")
+                {
+                    facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+                    byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
+                    ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
+                    IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
+                    LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
+                    continueAhead = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
+                }
+                if (continueAhead)
                 {
                     facilityLocation.nUpdatedAdminUserID = 1;
                     facilityLocation.dtLastUpdate = DateTime.Now;
@@ -182,7 +197,7 @@ namespace MROWebApi.Controllers
                     return facilityLocationsRepository.Update(facilityLocation) ? Ok("Sucess") : (IActionResult)NoContent();
                 }
                 else
-                    return Content(sValidationText);
+                    return Content(sValidationTextGlobal);
 
             }
             catch (DbUpdateConcurrencyException ex)
@@ -218,23 +233,23 @@ namespace MROWebApi.Controllers
                 {
                     return BadRequest();
                 }
-                
-
 
                 IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", location.nFacilityID);
-                locationList = locationList.Where(c => c.nFacilityID == location.nFacilityID);
-                if (locationList.Count() == 1)//last loc for field
+                locationList = locationList.Where(c => c.bLocationActiveStatus == false);
+                if (await ValidateFacilityLocation(location, locationList, _info))
                 {
-                    FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
-                    await facilitiesRepository.ToggleSoftDelete("bActiveStatus", location.nFacilityID);
-                }
-                if (await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", id))
-                {
-                    return Ok("Success");
+                    if (await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", id))
+                    {
+                        return Ok("Success");
+                    }
+                    else
+                    {
+                        return NoContent();
+                    }
                 }
                 else
                 {
-                    return NoContent();
+                    return Content("Please Provide Authorization PDF");
                 }
             }
             catch (DbUpdateConcurrencyException ex)
@@ -258,6 +273,38 @@ namespace MROWebApi.Controllers
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
             FacilityLocations location = await facilityLocationsRepository.Select(id);
             return location == null;
+        }
+        #endregion
+
+        #region ValidateFacilityLocation
+        private async static Task<bool> ValidateFacilityLocation(FacilityLocations locations, IEnumerable<FacilityLocations> locationList, DBConnectionInfo _info)
+        {
+            if (locations.bLocationActiveStatus)//means user trying to deactivate
+            {
+                //if last location in deactivate state fac as well, else normal
+                if (locationList.Count() == 1)
+                {
+                    FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
+                    await facilitiesRepository.ToggleSoftDelete("bActiveStatus", locations.nFacilityID);
+                }
+                return true;
+            }
+            else //trying to activate
+            {
+                return locations.sAuthTemplate != "";
+            }
+        }
+        #endregion
+
+        #region
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public int GetROILocationID(string id)
+        {
+            FacilityLocationsRepository locationsRepository = new FacilityLocationsRepository(_info);
+            bool reslt = Int32.TryParse(id, out int number);
+            int nROILocationID = locationsRepository.GetROILocationID("nFacilityID", number);
+            return nROILocationID;
         }
         #endregion
 

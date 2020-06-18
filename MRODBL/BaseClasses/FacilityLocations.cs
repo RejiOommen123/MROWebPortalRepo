@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 
 namespace MRODBL.BaseClasses
-{
+{   [Table("tblFacilityLocations")]
     public partial class FacilityLocations : CommonModel
     {
-        //[Key]
+        [Key]
         public int nFacilityLocationID { get; set; }
-        [Key]
+        //[Key]
         public int nFacilityID { get; set; }
-        [Key]
+        //[Key]
         public int nROILocationID { get; set; }
         public string? sLocationCode { get; set; }
         public string sLocationName { get; set; }

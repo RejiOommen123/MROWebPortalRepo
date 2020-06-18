@@ -27,9 +27,9 @@
       </v-card-title>
 
       <!-- Facility List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search"
+      <v-data-table :headers="headers" :items="gridData" :search="search" 
       :footer-props="{
-    'items-per-page-options': [5,8]
+    'items-per-page-options': [5,10]
   }"
   :items-per-page="5"
       class="body-1">
@@ -113,6 +113,7 @@
 
       </v-data-table>
        <!-- End Facility List DataTable  -->
+       
     </v-card>
 
     <!-- Dialog box for delete facility  -->
@@ -194,6 +195,9 @@ export default {
         .post("http://localhost:57364/api/facility/DeleteFacility/", id)
         .then(response => {
           if (response.ok == true) {
+            if(response.body=="Cannot Activate Facility, Location Count = 0"){
+              alert("Add Location to Activate Facility");
+          }
             this.$router.go();
           }
         });

@@ -18,9 +18,9 @@
 
             <!-- Facility List DataTable  -->
             <v-data-table :headers="headers" :items="gridData" :search="search" :footer-props="{
-    'items-per-page-options': [5,8]
+    'items-per-page-options': [5,10,20]
   }"
-  :items-per-page="5">
+  :items-per-page="10">
               <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
               <template v-slot:item.actions="{ item }">
                 <input
@@ -115,7 +115,11 @@ export default {
 }
 
 #demo {
-  margin: 0 100px;
+  margin: 0 125px;
+}
+button, a{
+  margin-top: 10px;
+  margin-right: 20px;
 }
 
 .submit{
