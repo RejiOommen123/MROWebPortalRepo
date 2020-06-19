@@ -98,7 +98,7 @@
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>
-          Upload Authorization PDF to Activate Location
+          Provide Valid Authorization Document to Activate Location
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -173,7 +173,7 @@ export default {
         .post("FacilityLocations/DeleteFacilityLocation/", id)
         .then(response => {
           if (response.ok == true) {
-            if(response.body=="Please Provide Authorization PDF"){
+            if(response.body=="Provide Valid Authorization PDF"){
               this.locationAlert = true
           }
           else

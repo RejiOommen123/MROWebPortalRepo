@@ -142,7 +142,7 @@
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>
-          Add Location to Active Facility
+          To Active Facility atleast 1 Location must be Present
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -151,7 +151,6 @@
             text
             @click="facilityAlert = false"
           >
-          
             Ok
           </v-btn>
         </v-card-actions>

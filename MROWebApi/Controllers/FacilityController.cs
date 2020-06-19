@@ -37,7 +37,7 @@ namespace MROWebAPI.Controllers
             try {
                 //throw new Exception();
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                IEnumerable<Facilities> facilities = await rpFac.GetAllDESC(1000, "nROIFacilityID");
+                IEnumerable<Facilities> facilities = await rpFac.GetAllDESC(1000, "nFacilityID");
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
                 //IList<int> nFacLocCount = new List<int>();
                 foreach (Facilities fac in facilities)

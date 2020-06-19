@@ -293,8 +293,8 @@ export default {
     },
     // API to add location
     onSubmit() {
-          this.location.nROIFacilityID=parseInt( this.location.nROIFacilityID);
-          this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
+          this.location.nROILocationID=parseInt( this.location.nROILocationID);
+          this.location.nFacilityLocationID=parseInt(this.location.nFacilityLocationID);
           console.log(this.location);
                 this.$http.post('FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
