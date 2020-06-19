@@ -1,10 +1,6 @@
-﻿//appmodule
-const state = {
-    QID:[1,2,3,4,5,6,7,8,9],
+﻿//requestermodule
+const state = {    
     askPatientDeceased:false,
-    selectedPageNumber:1,
-    selectedPage: 'page-1',
-    showBackBtn:false,
     selectedLocation:"",
     notPatient:false,
     rname:'',
@@ -16,21 +12,21 @@ const state = {
     lname:'',
     minitial:'',
     isPatientDeceased:false,
-    postalCode:'',
-    streetArea:'',
+    isPatientMinor:false,
+    zipcode:'',
+    cityName:'',
+    stateName:'',
+    streetAdd:'',
     bDay: '',
     imgdata: ''
 }
 const mutations = {
+    mutateaskPatientMinor(state,payload){
+        state.askPatientMinor = payload
+    },
     mutateaskPatientDeceased(state,payload){
         state.askPatientDeceased = payload
-    },
-    mutatepageNumerical(state,payload){
-        state.selectedPageNumber = payload
-    },
-    mutateCurrentPage(state,payload){
-        state.selectedPage = payload;
-    },
+    },   
     mutateSelectedLocation(state,payload){
         state.selectedLocation = payload;
     },
@@ -63,12 +59,18 @@ const mutations = {
     },
     mutateisPatientDeceased(state,payload){
         state.isPatientDeceased = payload;
+    },   
+    mutatezipcode(state,payload){
+        state.zipcode = payload;
     },
-    mutatepostalCode(state,payload){
-        state.postalCode = payload;
+    mutatecityName(state,payload){
+        state.cityName = payload;
     },
-    mutatestreetArea(state,payload){
-        state.streetArea = payload;
+    mutatestateName(state,payload){
+        state.zstateName = payload;
+    },
+    mutatestreetAdd(state,payload){
+        state.streetAdd = payload;
     },
     mutatebDay(state,payload){
         state.bDay = payload;

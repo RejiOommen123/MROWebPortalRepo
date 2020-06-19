@@ -1,8 +1,8 @@
 ﻿import Vue from 'vue';
 import Vuex from 'vuex';
 // import VuexPersist from 'vuex-persist'
-import appmodule from './modules/appmodule'
-import answermodule from './modules/answermodule'
+import requestermodule from './modules/RequesterModule'
+import ConfigModule from './modules/ConfigModule'
 Vue.use(Vuex);
 
 // const vuexPersist = new VuexPersist({
@@ -14,8 +14,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
 
     modules: {
-        appmodule,
-        answermodule
+        requestermodule,
+        ConfigModule
     }
     //plugins: [vuexPersist.plugin]
 

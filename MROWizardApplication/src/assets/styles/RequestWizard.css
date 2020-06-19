@@ -1,0 +1,136 @@
+
+  .v-application {
+      font-family: "Roboto", sans-serif;
+  }
+  
+  /*Styles for images */
+  
+  #logoImg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    height: 70px;
+    width: auto;
+  }
+  #bgImg{
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  
+  /*Styles for Texts*/
+  
+  /* For main heading/question using <h1> tag*/
+  
+  .center {
+    text-align: center;
+  }
+  
+  .disclaimer{
+      font-size: 14px;
+      text-align: center;
+      color: #e2e2e2;
+      margin-bottom: 30px;
+    white-space: normal !important;
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  
+  
+  
+  /* Pages contains Checkbox List */
+  
+  .checkboxBorder {
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: visible;
+    border: 1px solid #f6efef;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    margin-top: 10px;
+    position: relative;
+  }
+  .checkboxBorder:hover {
+    background-color: #53b958;
+  }
+  .checkboxBorder:checked{
+      background-color: #53b958;
+  }
+
+  .locationButton{
+   
+    margin: 10px;  
+   
+    width: 350px;
+    height: 15%;
+    font-size: 22px;
+    /* line-height: 89px; */
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: transparent;
+    background-image: url(/plugins/wizard/gfx/year-selection-bg.png);
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+
+  }
+  button.locationButton:hover{
+    border-color: transparent;
+    background-color: #53b958;
+  }
+  h1{
+    color: white;
+    font-size: 32px;
+  }
+  .subHeadings{
+    font-size: 18px;
+    line-height: 26px;
+    margin-bottom: 30px;
+    white-space: normal !important;
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: white;
+  }
+  #pdfFormLink{
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;   
+  }
+  #contact{
+    position: absolute;
+    bottom: 15px;
+    left: 32%;
+    right: 30%;  
+  }
+  #poweredby {
+    position: absolute;
+    left: 37%;
+    right: 35%;  
+    bottom: 10px;
+  }
+  #letsGoBtn{
+    width: auto;
+    height: 54px;
+    line-height: 54px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .selected{
+    border-color: transparent;
+    background-color: #53b958;
+  }
+
+  /*Using Vuetify Grid system for positioning Components*/
