@@ -5,7 +5,7 @@
           <v-col cols="6" sm="2" md="6">
             
               <!-- <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn> -->
-               <v-btn small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
+               <v-btn depressed small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
                   <v-icon>mdi-plus</v-icon> 
               </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
             
@@ -27,7 +27,11 @@
       </v-card-title>
 
       <!-- Facility List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search"
+      <v-data-table :headers="headers" :items="gridData" :search="search" 
+      :footer-props="{
+    'items-per-page-options': [5,10]
+  }"
+  :items-per-page="5"
       class="body-1">
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
@@ -109,6 +113,7 @@
 
       </v-data-table>
        <!-- End Facility List DataTable  -->
+       
     </v-card>
 
     <!-- Dialog box for delete facility  -->
@@ -127,6 +132,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Dialog Alert for 0 Locations -->
+    <v-dialog
+      v-model="facilityAlert"
+      max-width="360"
+      width="350"
+    >
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>
+          To Active Facility atleast 1 Location must be Present
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="facilityAlert = false"
+          >
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -135,11 +164,16 @@ export default {
   data() {
     return {
       // facLocCount:null,
+      // rowsPerPageItems: [5,8,10],
+      // pagination: {
+      //     rowsPerPage: 8
+      // },
       dialog: false,
+      facilityAlert:false,
       search: "",
       headers: [
         {
-          text: "Facility Name",
+          text: "Name",
           align: "start",
           value: "sFacilityName"
         },
@@ -150,6 +184,7 @@ export default {
         { text: "Edit", value: "actions", sortable: false ,align:'center'}
       ],
       gridData: this.getGridData(),
+      //nFacLocCount:[],
       editedItem: {
         nFacilityID:0,
         sFacilityName: ''
@@ -159,13 +194,12 @@ export default {
   methods: {
     // API to Get all Facilities
     getGridData() {
-      this.$http.get("http://localhost:57364/api/facility/GetFacility").then(
+      this.$http.get("facility/GetFacility").then(
         response => {
           // get body data
-          // this.facLocCount = JSON.parse(response.bodyText)['facLocCount'];
+          //this.nFacLocCount = JSON.parse(response.bodyText)["nFacLocCount"];
           this.gridData = JSON.parse(response.bodyText);
-         
-
+          //this.gridData.push(this.nFacLocCount);
         },
         response => {
           // error callback
@@ -183,10 +217,17 @@ export default {
     deleteFacility(id) {
       this.dialog = false;
       this.$http
-        .post("http://localhost:57364/api/facility/DeleteFacility/", id)
+        .post("facility/DeleteFacility/", id)
         .then(response => {
           if (response.ok == true) {
+            if(response.body=="Cannot Activate Facility, Location Count = 0"){
+              this.facilityAlert=true;
+          }
+          else
+          {
             this.$router.go();
+          }
+            
           }
         });
     },

@@ -1,5 +1,3 @@
-
-
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -10,14 +8,14 @@ import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 Vue.use(VueResource);
 // TODO
-// Vue.http.options.root = "http://localhost:57364/api";
+Vue.http.options.root = "http://localhost:57364/api";
 Vue.use(store);
 
 Vue.config.productionTip = false
 
 new Vue({
-  vuetify,
-  router,
-  store,
-  render: h => h(App)
+    vuetify,
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')

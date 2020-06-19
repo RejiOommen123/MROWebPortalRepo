@@ -1,10 +1,11 @@
 <template>
   <div>
-    <!-- <h1 style="text-align:center">Edit Location</h1> -->
-    <div class="editlocation-form">
-      <form @submit.prevent="onSubmit">
-        <div class="form-group row">
-          <label class="col-md-4 required" for="sLocationName">Location Name:</label>
+      <div id="box">
+      <form @submit.prevent="onSubmit" class="editlocation-form">
+        <v-row >
+           <v-col cols="12" offset-md="1" md="5">
+          <label class="required" for="sLocationName">Location Name:</label>
+          
           <v-text-field
             type="text"
             id="sLocationName"
@@ -15,7 +16,7 @@
             :error-messages="sLocationNameErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="nROILocationID">ROI Location Id:</label>
+          <label class="required" for="nROILocationID">ROI Location Id:</label>
           <v-text-field
             type="number"
             id="nROILocationID"
@@ -26,7 +27,7 @@
             :error-messages="nROILocationIDErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sLocationCode">Location Code:</label>
+          <label class="required" for="sLocationCode">Location Code:</label>
           <v-text-field
             type="text"
             id="sLocationCode"
@@ -37,7 +38,7 @@
             :error-messages="sLocationCodeErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sLocationAddress">Location Address:</label>
+          <label class="required" for="sLocationAddress">Location Address:</label>
           <v-text-field
             type="text"
             id="sLocationAddress"
@@ -48,7 +49,7 @@
             :error-messages="sLocationAddressErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sPhoneNo">Phone No:</label>
+          <label class="required" for="sPhoneNo">Phone No:</label>
           <v-text-field
             type="text"
             id="nPhoneNo"
@@ -59,7 +60,7 @@
             :error-messages="sPhoneNoErrors"
             solo
           ></v-text-field>
-          <label class="col-md-4 required" for="sFaxNo">Fax No:</label>
+          <label class="required" for="sFaxNo">Fax No:</label>
           <v-text-field
             type="text"
             id="nFaxNo"
@@ -69,41 +70,83 @@
             @blur="$v.location.sFaxNo.$touch()"
             :error-messages="sFaxNoErrors"
             solo
-          ></v-text-field>          
-          <label class="col-md-4" for="sAuthTemplate">Authorization Template:</label>
+          ></v-text-field>  
+          </v-col>
+          <v-col cols="12" md="5">        
+          <label for="sAuthTemplate">Authorization Template:</label>
           <v-file-input
-            class="col-md-2"
+            chips
+            show-size
+            dense
+            hint="Upload Authorization Document"
+            rounded
+           
             label="Upload PDF"
             filled
-            prepend-icon="mdi-pdf-box"
+            prepend-icon="mdi-file-pdf"
             accept=".pdf"
+            @change="onPDFFileChanged"
+            :placeholder=location.sAuthTemplateName
           ></v-file-input>
-          <label class="col-md-4" for="sConfigFacilityLogo">Logo Image:</label>
-          <v-img :src="location.sConfigLogoData"></v-img>
+          <label  for="sConfigFacilityLogo">Logo Image:</label>
+          <v-img :src="location.sConfigLogoData" width="20%"></v-img><br>
           <v-file-input
-            class="col-md-2"
+            lazy-src
+            chips
+            show-size
+            dense
+            hint="Upload Logo Image"
+            rounded
+            
             label="Logo Image"
             filled
             prepend-icon="mdi-camera"
             @change="onLogoFileChanged"
+            :placeholder=location.sConfigLogoName
             accept="image/png, image/jpeg, image/bmp"
-          ></v-file-input>
-          <label class="col-md-4" for="sConfigBackgroundImg">Background Image:</label><br />
-          <v-img :src="location.sConfigBackgroundData"></v-img>
+          >
+          <v-tooltip slot="append" top>
+            <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color='rgb(0, 91, 168)' top>
+                  mdi-information
+                </v-icon>
+              </template>
+            <span>Please upload logo with height 50px</span>
+          </v-tooltip>
+          
+          </v-file-input>
+          <label  for="sConfigBackgroundImg">Background Image:</label>
+          <v-img :src="location.sConfigBackgroundData" width="20%"></v-img><br>
           <v-file-input
+            chips
+            show-size
+            dense
+            hint="Upload Background Image"
+            rounded
             class="col-md-2"
             label="Background Image"
             filled
             prepend-icon="mdi-camera"
             @change="onBackgroundFileChanged"
+            :placeholder=location.sConfigBackgroundName
             accept="image/png, image/jpeg, image/bmp"
-           
-          ></v-file-input>
-          <div class="col-md-6 offset-md-3 submit">
+          >
+          <v-tooltip slot="append" top>
+            <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color='rgb(0, 91, 168)' top>
+                  mdi-information
+                </v-icon>
+              </template>
+            <span>Please upload logo with height 50px</span>
+          </v-tooltip>
+          </v-file-input>
+          </v-col>
+        </v-row>
+          <div class="submit">
             <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
             <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary" >Cancel</v-btn>
           </div>
-        </div>
+          <br>
       </form>
     </div>
   </div>
@@ -118,7 +161,7 @@ export default {
       location:{
           sLocationName: { required, maxLength: maxLength(40),minLength:minLength(2) },
           nROILocationID:{required,numeric},
-          sLocationCode:{ required, maxLength: maxLength(20) },
+          sLocationCode:{ required, maxLength: maxLength(4),minLength:minLength(4) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
           sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10),numeric},
@@ -148,8 +191,8 @@ export default {
       const errors = [];
     if (!this.$v.location.sLocationCode.$dirty) 
       return errors;
-          // !this.$v.location.sLocationCode.minLength && errors.push('Location Code must be at least 5 characters long')
-          !this.$v.location.sLocationCode.maxLength && errors.push('Location Code must be at most 20 characters long')
+          !this.$v.location.sLocationCode.minLength && errors.push('Location Code must be at least 4 characters long')
+          !this.$v.location.sLocationCode.maxLength && errors.push('Location Code must be at most 4 characters long')
           !this.$v.location.sLocationCode.required && errors.push('Location Code is required.')
           return errors;
     },
@@ -201,13 +244,14 @@ export default {
         sConfigBackgroundName: "",
         sConfigBackgroundData: "",
         sAuthTemplate:"",
-        nROILocationID:""
+        nROILocationID:"",
+        sAuthTemplateName:""
       }
     };
   },
   mounted() {
               // API to get single facility
-            this.$http.get('http://localhost:57364/api/FacilityLocations/GetFacilityLocationSingle/' + this.$route.params.id).then(response => {
+            this.$http.get('FacilityLocations/GetFacilityLocationSingle/' + this.$route.params.id).then(response => {
                 // get body data 
                 this.location = JSON.parse(response.bodyText);          
 
@@ -217,18 +261,16 @@ export default {
             });
         },
   methods: {
-    //@change="onPDFFileChanged"
-    // onPDFFileChanged(file) {
-
-    //   if (file) {
-    //     const reader = new FileReader();        
-    //     reader.addEventListener("load",() => {
-    //       this.location.sConfigLogoData=reader.result; //base64encoded string
-    //     })
-    //     reader.readAsDataURL(file);
-    //     this.location.sConfigLogoName=file.name;
-    //   }
-    // },
+    onPDFFileChanged(file) {
+      if (file) {
+        const reader = new FileReader();        
+        reader.addEventListener("load",() => {
+          this.location.sAuthTemplate=reader.result; //base64encoded string
+        })
+        reader.readAsDataURL(file);
+        this.location.sAuthTemplateName=file.name;
+      }
+    },
     onLogoFileChanged(file) {
       if (file) {
         const reader = new FileReader();        
@@ -251,10 +293,10 @@ export default {
     },
     // API to add location
     onSubmit() {
-          this.location.nROIFacilityID=parseInt( this.location.nROIFacilityID);
-          this.location.nFacilityLocationID=parseInt( this.location.nFacilityLocationID);
+          this.location.nROILocationID=parseInt( this.location.nROILocationID);
+          this.location.nFacilityLocationID=parseInt(this.location.nFacilityLocationID);
           console.log(this.location);
-                this.$http.post('http://localhost:57364/api/FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
+                this.$http.post('FacilityLocations/EditFacilityLocation/' + this.location.nFacilityLocationID, this.location)
                     .then(response => {
                         if (response.ok == true) {
                             this.$router.push('/Locations/'+this.location.nFacilityID)
@@ -267,25 +309,38 @@ export default {
 
 <style scoped>
 
-* {
-  margin: 10px;
+.submit{
+  text-align: center;
 }
+#box{
+  margin-left:25px;
+  margin-right:25px;
+  margin-bottom:25px;
+  margin-top:15px
+}
+button {
+  margin-right: 25px;
+}
+/* * {
+  margin: 10px;
+} */
 .editlocation-form {
-  width: 700px;
-  margin: 30px auto;
-  border: 1px solid #eee;
-  padding: 20px;
-  box-shadow: 0 2px 3px #ccc;
+  /* width: 1300px; */
+  /* margin: 20px auto; */
+  border: 3px solid #eee;
+   
+  /* padding: 20px; */
+  box-shadow: 0 4px 6px #ccc;
 }
 
-.input {
+/* .input {
   margin: 10px auto;
-}
+} */
 
 .input label {
   display: block;
   color: #4e4e4e;
-  margin-bottom: 6px;
+  /* margin-bottom: 6px; */
 }
 
 .input.inline label {
@@ -295,7 +350,7 @@ export default {
 .input input {
   font: inherit;
   width: 100%;
-  padding: 6px 12px;
+  /* padding: 6px 12px; */
   box-sizing: border-box;
   border: 1px solid #ccc;
 }
@@ -318,7 +373,7 @@ export default {
 .submit button {
   border: 1px solid #521751;
   color: #521751;
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   font: inherit;
   cursor: pointer;
 }
@@ -341,7 +396,10 @@ export default {
     content:" *";
     color: red;
   }
-  label{
+  /* label{
   margin-top:4px
+} */
+.row{
+margin:1px
 }
 </style>

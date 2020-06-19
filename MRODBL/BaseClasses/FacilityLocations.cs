@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 
 namespace MRODBL.BaseClasses
-{
+{   [Table("tblFacilityLocations")]
     public partial class FacilityLocations : CommonModel
     {
-        //[Key]
+        [Key]
         public int nFacilityLocationID { get; set; }
-        [Key]
+        //[Key]
         public int nFacilityID { get; set; }
-        [Key]
+        //[Key]
         public int nROILocationID { get; set; }
         public string? sLocationCode { get; set; }
         public string sLocationName { get; set; }
@@ -22,5 +22,7 @@ namespace MRODBL.BaseClasses
         public string sConfigBackgroundName { get; set; }
         public string sConfigBackgroundData { get; set; }
         public string sAuthTemplate { get; set; }
+        public string sAuthTemplateName { get; set; }
+        public bool bLocationActiveStatus { get; set; }
     }
 }

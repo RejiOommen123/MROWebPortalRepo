@@ -4,11 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CodeFirstMigration.Context;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
-using MROWebApi.Context;
 using MRODBL.Entities;
 using MRODBL.BaseClassRepositories;
 using MRODBL.BaseClasses;
@@ -34,16 +31,27 @@ namespace MROWebAPI.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IEnumerable<Facilities>> GetFacility()
+        public async Task<IActionResult> GetFacility()
         {
-            #region Dapper Code Get 1000 Rows Ascending Order
-            FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-            IEnumerable<Facilities> facilities = await rpFac.GetAllASC(1000, "nROIFacilityID");
-            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-            foreach (Facilities fac in facilities) {
-                fac.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
+            #region Dapper Code Get 1000 Rows Descending Order
+            try {
+                //throw new Exception();
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                IEnumerable<Facilities> facilities = await rpFac.GetAllDESC(1000, "nFacilityID");
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                //IList<int> nFacLocCount = new List<int>();
+                foreach (Facilities fac in facilities)
+                {
+                    fac.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
+                    //nFacLocCount.Add(await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID));
+                }
+                //var facilitiesList = facilities.Select(x=>new {facilities,nFacLocCount });
+                
+                return Ok(facilities);
             }
-            return facilities;
+            catch (Exception exp) {
+                return Content(exp.Message);
+            }
             #endregion
         }
 
@@ -109,78 +117,154 @@ namespace MROWebAPI.Controllers
                         nCreatedAdminUserID = 1,
                         dtCreated = DateTime.Now,
                         nUpdatedAdminUserID = 1,
-                        dtLastUpdate = DateTime.Now
+                        dtLastUpdate = DateTime.Now,
+                        sTableName = "lstFields"
+                        
                     });
                 }
-                await fmRepo.InsertMany(facilityFieldMaps);
-
-                //Add data in FacilityPrimaryReasons table for the current Facility
+                //Primary Reason
                 PrimaryReasonsRepository prRepo = new PrimaryReasonsRepository(_info);
                 IEnumerable<PrimaryReasons> prList = await prRepo.GetAllASC(1000, "nPrimaryReasonID");
-                FacilityPrimaryReasonsRepository rPRRepo = new FacilityPrimaryReasonsRepository(_info);
-                List<FacilityPrimaryReasons> facilityPrimaryReasons = new List<FacilityPrimaryReasons>();
-                foreach (PrimaryReasons pReason in prList)
+                foreach (PrimaryReasons primaryReason in prList)
                 {
-                    facilityPrimaryReasons.Add(new FacilityPrimaryReasons
+                    facilityFieldMaps.Add(new FacilityFieldMaps
                     {
-                        nPrimaryReasonID = pReason.nPrimaryReasonID,
+                        nFieldID = primaryReason.nPrimaryReasonID,
                         nFacilityID = GeneratedID,
-                        sPrimaryReasonName = pReason.sPrimaryReasonName,
-                        dtLastUpdate = DateTime.Now
+                        bShow = true,
+                        nWizardID = primaryReason.nWizardID,
+                        nCreatedAdminUserID = 1,
+                        dtCreated = DateTime.Now,
+                        nUpdatedAdminUserID = 1,
+                        dtLastUpdate = DateTime.Now,
+                        sTableName = "lstPrimaryReasons"
                     });
                 }
-                await rPRRepo.InsertMany(facilityPrimaryReasons);
 
-                //Add data in FacilityRecordTypes table for the current Facility
+                //Record Type
                 RecordTypesRepository rTypeRepo = new RecordTypesRepository(_info);
                 IEnumerable<RecordTypes> rTypeList = await rTypeRepo.GetAllASC(1000, "nRecordTypeID");
-                FacilityRecordTypesRepository facilityRecordTypeRep = new FacilityRecordTypesRepository(_info);
-                List<FacilityRecordTypes> facilityRecordTypes = new List<FacilityRecordTypes>();
-
-                foreach (RecordTypes recordT in rTypeList)
+                foreach (RecordTypes recordType in rTypeList)
                 {
-                    facilityRecordTypes.Add(new FacilityRecordTypes
+                    facilityFieldMaps.Add(new FacilityFieldMaps
                     {
-                        nRecordTypeID = recordT.nRecordTypeID,
+                        nFieldID = recordType.nRecordTypeID,
                         nFacilityID = GeneratedID,
-                        sRecordTypeName = recordT.sRecordTypeName,
-                        dtLastUpdate = DateTime.Now
+                        bShow = true,
+                        nWizardID = recordType.nWizardID,
+                        nCreatedAdminUserID = 1,
+                        dtCreated = DateTime.Now,
+                        nUpdatedAdminUserID = 1,
+                        dtLastUpdate = DateTime.Now,
+                        sTableName = "lstRecordTypes"
                     });
                 }
-                await facilityRecordTypeRep.InsertMany(facilityRecordTypes);
 
+                //Sensitive Info
                 SensitiveInfoRepository sIRepo = new SensitiveInfoRepository(_info);
                 IEnumerable<SensitiveInfo> sInfoList = await sIRepo.GetAllASC(1000, "nSensitiveInfoID");
-                //Add data in FacilitySensitiveInfo table for the current Facility
-                FacilitySensitiveInfoRepository facilitySensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
-                List<FacilitySensitiveInfo> facilitySensitiveInfo = new List<FacilitySensitiveInfo>();
-                foreach (SensitiveInfo sInfo in sInfoList)
+                foreach (SensitiveInfo sensitiveInfo in sInfoList)
                 {
-                    facilitySensitiveInfo.Add(new FacilitySensitiveInfo
+                    facilityFieldMaps.Add(new FacilityFieldMaps
                     {
-                        nSensitiveInfoID = sInfo.nSensitiveInfoID,
+                        nFieldID = sensitiveInfo.nSensitiveInfoID,
                         nFacilityID = GeneratedID,
-                        sSensitiveInfoName = sInfo.sSensitiveInfoName,
-                        dtLastUpdate = DateTime.Now
+                        bShow = true,
+                        nWizardID = sensitiveInfo.nWizardID,
+                        nCreatedAdminUserID = 1,
+                        dtCreated = DateTime.Now,
+                        nUpdatedAdminUserID = 1,
+                        dtLastUpdate = DateTime.Now,
+                        sTableName = "lstSensitiveInfo"
                     });
                 }
-                await facilitySensitiveInfoRepo.InsertMany(facilitySensitiveInfo);
+
+                //Shipment Type
 
                 ShipmentTypesRepository sTRepo = new ShipmentTypesRepository(_info);
                 IEnumerable<ShipmentTypes> sTList = await sTRepo.GetAllASC(1000, "nShipmentTypeID");
-                FacilityShipmentTypesRepository facilityShipmentTypesRepo = new FacilityShipmentTypesRepository(_info);
-                List<FacilityShipmentTypes> facilityShipmentTypes = new List<FacilityShipmentTypes>();
-                foreach (ShipmentTypes shipmentTypes in sTList) {
-                    facilityShipmentTypes.Add(new FacilityShipmentTypes
+                foreach (ShipmentTypes shipmentType in sTList)
+                {
+                    facilityFieldMaps.Add(new FacilityFieldMaps
                     {
-                        nShipmentTypeID = shipmentTypes.nShipmentTypeID,
+                        nFieldID = shipmentType.nShipmentTypeID,
                         nFacilityID = GeneratedID,
-                        sShipmentTypeName = shipmentTypes.sShipmentTypeName,
-                        dtLastUpdate = DateTime.Now
-                    }); 
-                    
+                        bShow = true,
+                        nWizardID = shipmentType.nWizardID,
+                        nCreatedAdminUserID = 1,
+                        dtCreated = DateTime.Now,
+                        nUpdatedAdminUserID = 1,
+                        dtLastUpdate = DateTime.Now,
+                        sTableName = "lstShipmentTypes"
+                    });
                 }
-                await facilityShipmentTypesRepo.InsertMany(facilityShipmentTypes);
+
+                await fmRepo.InsertMany(facilityFieldMaps);
+
+                //Add data in FacilityPrimaryReasons table for the current Facility
+                //FacilityPrimaryReasonsRepository rPRRepo = new FacilityPrimaryReasonsRepository(_info);
+                //List<FacilityFieldMaps> facilityPrimaryReasonsMap = new List<FacilityFieldMaps>();
+                //foreach (PrimaryReasons pReason in prList)
+                //{
+                //    facilityPrimaryReasons.Add(new FacilityPrimaryReasons
+                //    {
+                //        nPrimaryReasonID = pReason.nPrimaryReasonID,
+                //        nFacilityID = GeneratedID,
+                //        sPrimaryReasonName = pReason.sPrimaryReasonName,
+                //        dtLastUpdate = DateTime.Now
+                //    });
+                //}
+                //await fmRepo.InsertMany(facilityPrimaryReasons);
+
+                //Add data in FacilityRecordTypes table for the current Facility
+                
+                //FacilityRecordTypesRepository facilityRecordTypeRep = new FacilityRecordTypesRepository(_info);
+                //List<FacilityRecordTypes> facilityRecordTypes = new List<FacilityRecordTypes>();
+
+                //foreach (RecordTypes recordT in rTypeList)
+                //{
+                //    facilityRecordTypes.Add(new FacilityRecordTypes
+                //    {
+                //        nRecordTypeID = recordT.nRecordTypeID,
+                //        nFacilityID = GeneratedID,
+                //        sRecordTypeName = recordT.sRecordTypeName,
+                //        dtLastUpdate = DateTime.Now
+                //    });
+                //}
+                //await facilityRecordTypeRep.InsertMany(facilityRecordTypes);
+
+                //SensitiveInfoRepository sIRepo = new SensitiveInfoRepository(_info);
+                //IEnumerable<SensitiveInfo> sInfoList = await sIRepo.GetAllASC(1000, "nSensitiveInfoID");
+                ////Add data in FacilitySensitiveInfo table for the current Facility
+                //FacilitySensitiveInfoRepository facilitySensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
+                //List<FacilitySensitiveInfo> facilitySensitiveInfo = new List<FacilitySensitiveInfo>();
+                //foreach (SensitiveInfo sInfo in sInfoList)
+                //{
+                //    facilitySensitiveInfo.Add(new FacilitySensitiveInfo
+                //    {
+                //        nSensitiveInfoID = sInfo.nSensitiveInfoID,
+                //        nFacilityID = GeneratedID,
+                //        sSensitiveInfoName = sInfo.sSensitiveInfoName,
+                //        dtLastUpdate = DateTime.Now
+                //    });
+                //}
+                //await facilitySensitiveInfoRepo.InsertMany(facilitySensitiveInfo);
+
+                //ShipmentTypesRepository sTRepo = new ShipmentTypesRepository(_info);
+                //IEnumerable<ShipmentTypes> sTList = await sTRepo.GetAllASC(1000, "nShipmentTypeID");
+                //FacilityShipmentTypesRepository facilityShipmentTypesRepo = new FacilityShipmentTypesRepository(_info);
+                //List<FacilityShipmentTypes> facilityShipmentTypes = new List<FacilityShipmentTypes>();
+                //foreach (ShipmentTypes shipmentTypes in sTList) {
+                //    facilityShipmentTypes.Add(new FacilityShipmentTypes
+                //    {
+                //        nShipmentTypeID = shipmentTypes.nShipmentTypeID,
+                //        nFacilityID = GeneratedID,
+                //        sShipmentTypeName = shipmentTypes.sShipmentTypeName,
+                //        dtLastUpdate = DateTime.Now
+                //    }); 
+                    
+                //}
+                //await facilityShipmentTypesRepo.InsertMany(facilityShipmentTypes);
                 //TODO: suceess should be an enum
                 return dbFacility;
             }
@@ -234,16 +318,27 @@ namespace MROWebAPI.Controllers
         public async Task<ActionResult<Facilities>> DeleteFacility([FromBody] int id)
         {
 
+            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+            IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", id);
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities facilityDB = await rpFac.Select(id);
             if (id != facilityDB.nFacilityID)
             {
                 return BadRequest();
             }
-            if (await rpFac.ToggleSoftDelete("bActiveStatus", id))
-            { return NoContent(); }
-            else
-            { return NotFound(); }
+
+
+            //Validate Facility
+            if (await ValidateFacility(facilityDB, locationList,_info))
+            {
+                if (await rpFac.ToggleSoftDelete("bActiveStatus", id))
+                { return Ok(); }
+                else
+                { return NotFound(); }
+            }
+            else {
+                return Content("Cannot Activate Facility, Location Count = 0");
+            }
         }
         #endregion
 
@@ -257,6 +352,24 @@ namespace MROWebAPI.Controllers
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities f = await rpFac.Select(id);
             return f == null;
+        }
+        #endregion
+
+        #region Validate Facility
+        private async static Task<bool> ValidateFacility(Facilities facility,IEnumerable<FacilityLocations> locationList,DBConnectionInfo _info) {
+            //FacilitiesRepository fRepo = new FacilitiesRepository(_info);
+
+            if (facility.bActiveStatus) {
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                foreach (FacilityLocations location in locationList) {
+                    location.bLocationActiveStatus = false;
+                }
+                await facilityLocationsRepository.UpdateMany(locationList.ToList());
+                return true;
+            }
+            else {
+                return facility.nFacLocCount >0;
+            }
         }
         #endregion
     }

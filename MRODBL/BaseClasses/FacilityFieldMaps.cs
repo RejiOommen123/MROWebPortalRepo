@@ -13,5 +13,6 @@ namespace MRODBL.BaseClasses
         public int nFieldID { get; set; }
         public int nWizardID { get; set; }
         public bool bShow { get; set; }
+        public string sTableName { get; set; }
     }
 }

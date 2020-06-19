@@ -66,10 +66,34 @@ namespace MROWebApi.Controllers
             {
                 //FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
                 //IEnumerable<FacilityFieldMaps> facilityFeldMapsList = await facilityFeldMapsRepository.GetAll(1000, "nFacilityFieldMapID");
+
+                //FacilityPrimaryReasonsRepository facilityPrimaryReasonsRepository = new FacilityPrimaryReasonsRepository(_info);
+                //IEnumerable<FacilityPrimaryReasons> primaryReasons = await facilityPrimaryReasonsRepository.GetAllASC(1000, "nFacilityPrimaryReasonID");
+                //primaryReasons = primaryReasons.Where(c=>c.nFacilityID==facilityID);
+
+                //FacilityRecordTypesRepository facilityRecordTypesRepository = new FacilityRecordTypesRepository(_info);
+                //IEnumerable<FacilityRecordTypes> recordTypes = await facilityRecordTypesRepository.GetAllASC(1000, "nFacilityRecordTypeID");
+                //recordTypes = recordTypes.Where(c => c.nFacilityID == facilityID);
+
+                //FacilitySensitiveInfoRepository facilitySensitiveInfoRepository = new FacilitySensitiveInfoRepository(_info);
+                //IEnumerable<FacilitySensitiveInfo> sensitiveInfo = await facilitySensitiveInfoRepository.GetAllASC(1000, "nFacilitySensitiveInfoID");
+                //sensitiveInfo = sensitiveInfo.Where(c => c.nFacilityID == facilityID);
+
+                //FacilityShipmentTypesRepository facilityShipmentTypesRepository = new FacilityShipmentTypesRepository(_info);
+                //IEnumerable<FacilityShipmentTypes> shipmentTypes = await facilityShipmentTypesRepository.GetAllASC(1000, "nFacilityShipmentTypeID");
+                //shipmentTypes = shipmentTypes.Where(c => c.nFacilityID == facilityID);
+
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 //IEnumerable<Fields> fieldsList = await fieldsRepository.GetAll(1000, "nFieldID");
-                IEnumerable<dynamic> fields = await fieldsRepository.InnerJoin("nFieldID", "nFieldID", "lstFields", "lnkFacilityFieldMaps");
-                fields = fields.Where(c=>c.nFacilityID == facilityID).ToList();
+                IEnumerable<dynamic> fields = await fieldsRepository.EdiftFields(facilityID);
+
+                //fields = fields.Where(c=>c.nFacilityID == facilityID).ToList();
+
+                //var ie2 = fields.Select(x => new {primaryReasons,recordTypes,sensitiveInfo,shipmentTypes });
+                //fields.ToList().Add(primaryReasons);
+                //fields.ToList().Add(recordTypes);
+                //fields.ToList().Add(sensitiveInfo);
+                //fields.ToList().Add(shipmentTypes);
                 //List<string> fetchFields = new List<string>();
                 //fetchFields.Add("nFacilityFieldMapID");
                 //fetchFields.Add("nFieldID");
@@ -114,6 +138,10 @@ namespace MROWebApi.Controllers
         {
             try
             {
+                foreach (FacilityFieldMaps map in fieldFacilityMaps) {
+                    map.dtCreated = DateTime.Now;
+                    map.dtLastUpdate = DateTime.Now;
+                }
                 FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
                 return await facilityFeldMapsRepository.UpdateMany(fieldFacilityMaps.ToList()) ? Ok() : (IActionResult)NoContent();
             }
