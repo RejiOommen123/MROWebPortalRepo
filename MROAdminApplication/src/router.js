@@ -16,7 +16,7 @@ Vue.use(VueRouter)
 Vue.use(store)
 
 const routes = [
-  {path:'',component:WelcomePage,
+  {path:'',component:DashboardPage,
   beforeEnter(to, from, next) {
        store.commit("mutatepageHeader","Administration Module" );
        next()
