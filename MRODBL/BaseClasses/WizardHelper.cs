@@ -1,18 +1,17 @@
 ﻿using Dapper.Contrib.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MRODBL.BaseClasses
 {
-    public partial class SensitiveInfo
+    public class WizardHelper
     {
         [Key]
-        public int nSensitiveInfoID { get; set; }
-        public string sSensitiveInfoName { get; set; }
-        public string sNormalizedSensitiveInfoName { get; set; }
-
+        public int nWizardHelperID { get; set; }
+        public string sWizardHelperType { get; set; }
+        public string sWizardHelperValue { get; set; }
         public DateTime dtLastUpdate { get; set; }
         public int nWizardID { get; set; }
-
     }
 }

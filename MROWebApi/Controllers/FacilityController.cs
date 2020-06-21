@@ -86,6 +86,7 @@ namespace MROWebAPI.Controllers
                 #region Data Addition !UI
                 //Data which not present in data coming from UI
                 //Initially false
+                facility.bFacilityLogging = true;
                 facility.bActiveStatus = false;
                 facility.nUpdatedAdminUserID = 1;
                 facility.dtCreated = DateTime.Now;

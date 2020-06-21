@@ -10,6 +10,8 @@ namespace MRODBL.BaseClasses
         [Key]
         public int nShipmentTypeID { get; set; }
         public string sShipmentTypeName { get; set; }
+        public string sNormalizedShipmentTypeName { get; set; }
+
         public DateTime dtLastUpdate { get; set; }
         public int nWizardID { get; set; }
 

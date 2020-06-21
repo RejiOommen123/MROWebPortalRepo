@@ -14,6 +14,7 @@ namespace MRODBL.BaseClasses
         public int nROILocationID { get; set; }
         public string? sLocationCode { get; set; }
         public string sLocationName { get; set; }
+        public string sNormalizedLocationName { get; set; }
         public string sLocationAddress { get; set; }
         public string sPhoneNo { get; set; }
         public string sFaxNo { get; set; }
