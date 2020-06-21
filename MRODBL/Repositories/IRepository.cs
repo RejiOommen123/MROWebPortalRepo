@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -111,7 +112,9 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="ID">Facility ID</param>
         /// <returns>IEnumerable<dynamic<</returns>
-        Task<IEnumerable<dynamic>> EdiftFields(int ID);
+        Task<IEnumerable<dynamic>> EditFields(int ID);
+
+        Task<object> GetWizardConfigurationAsync(int nFacilityID);
 
         /// <summary>
         /// Get Latest ROI ID

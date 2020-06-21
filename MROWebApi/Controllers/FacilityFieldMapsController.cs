@@ -85,7 +85,7 @@ namespace MROWebApi.Controllers
 
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 //IEnumerable<Fields> fieldsList = await fieldsRepository.GetAll(1000, "nFieldID");
-                IEnumerable<dynamic> fields = await fieldsRepository.EdiftFields(facilityID);
+                IEnumerable<dynamic> fields = await fieldsRepository.EditFields(facilityID);
 
                 //fields = fields.Where(c=>c.nFacilityID == facilityID).ToList();
 

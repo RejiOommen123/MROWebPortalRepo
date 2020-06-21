@@ -24,5 +24,6 @@ namespace MRODBL.BaseClasses
         public string sConfigShowFields { get; set; }
         public string sConfigShowWizards { get; set; }
         public int nFacLocCount { get; set; }
+        public bool bFacilityLogging { get; set; }
     }
 }

@@ -2,38 +2,36 @@
 <html lang="en">
 
 <head>
-  <style>
-  </style>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.18.0/css/mdb.min.css" rel="stylesheet">
+    <style>
+
+    </style>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.18.0/css/mdb.min.css" rel="stylesheet">
 </head>
 
 <body style="background-color: transparent;">
 
-  <button  id="requestwizard" type="button" class="btn btn-primary">
+    <button id="requestwizard" type="button" class="btn btn-primary">
     Request Medical Records Here
   </button>
 
-  <div id="swellbox_request_container" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 10000000; background-color: transparent; display:none">
-    <iframe id="swellbox_request_frame" name="swellbox_request_frame" title="Request Wizard Frame" src="http://localhost:8080/" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera" style="width: 100%; height: 100%; background-color: transparent; border: 0px;" aria-label="Request Wizard Frame" loaded="1"></iframe>
-  </div>
-  <script
-src="https://code.jquery.com/jquery-3.5.1.js"
-integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-crossorigin="anonymous"></script>
-<script>
-  $( document ).ready(function() {
-    $("#requestwizard").click(function(){
-    $("#swellbox_request_container").show()
-});
-});
+    <div id="swellbox_request_container" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 10000000; background-color: transparent; display:none">
+        <iframe id="swellbox_request_frame" name="swellbox_request_frame" title="Request Wizard Frame" src="http://localhost:8081/" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera" style="width: 100%; height: 100%; background-color: transparent; border: 0px;"
+            aria-label="Request Wizard Frame" loaded="1"></iframe>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            $("#requestwizard").click(function() {
+                $("#swellbox_request_container").show()
+            });
+        });
+    </script>
 
-</script>
-
-  <!-- <div class="container-fluid">
+    <!-- <div class="container-fluid">
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
       Request Medical Records Here
     </button>
