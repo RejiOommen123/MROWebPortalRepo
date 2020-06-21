@@ -6,7 +6,7 @@
     <br>
     <div class="disclaimer">{{this.disclaimer}}</div>
     <div>
-        <v-btn @click.prevent="nextPage" x-large  color="success" class="letsGoBtn">Let's Go!!</v-btn>
+        <v-btn @click.prevent="nextPage" x-large  color="success" class="letsGoBtn">Get Started</v-btn>
     </div>
 
 
