@@ -53,6 +53,49 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
+        #region Logo & BG for Facility
+        [HttpGet("GetLogoAndBackgroundImageforFacility/{nFacilityID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<dynamic> GetLogoAndBackgroundImageforFacility(int nFacilityID)
+        {
+            try
+            {
+                FieldsRepository fieldsRepository = new FieldsRepository(_info);
+                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityAsync(nFacilityID);
+                return LogoAndBackgroundImageforFacility;
+            }
+            catch (Exception ex)
+            {
+                //throw ex;
+                return ex;
+            }
+        }
+        #endregion
+
+
+        #region Logo & Bg for Location
+        [HttpGet("GetLogoAndBackgroundImageforLocation/{nLocationID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<dynamic> GetLogoAndBackgroundImageforLocation(int nLocationID)
+        {
+            try
+            {
+                FieldsRepository fieldsRepository = new FieldsRepository(_info);
+                dynamic LogoAndBackgroundImageforLocation = await fieldsRepository.GetLogoBackGroundforLocationsync(nLocationID);
+                return LogoAndBackgroundImageforLocation;
+            }
+            catch (Exception ex)
+            {
+                return ex;
+            }
+        }
+        #endregion
+
+
+
+
         #region Send Only Required Values
         //private object OptimizeObject(object unoptimized_wizard_config) {
 
