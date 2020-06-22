@@ -129,7 +129,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="nFacilityID">Facility ID</param>
         /// <returns></returns>
-        Task<dynamic> GetLogoBackGroundforFacilityAsync(int nFacilityID);
+        Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID);
 
         /// <summary>
         /// Logo & Backgorund For Location

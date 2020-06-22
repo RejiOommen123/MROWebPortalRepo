@@ -53,16 +53,16 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Logo & BG for Facility
-        [HttpGet("GetLogoAndBackgroundImageforFacility/{nFacilityID}")]
+        #region Logo & BG for Facility using Facility GUID
+        [HttpGet("GetLogoAndBackgroundImageforFacilityGUID/{sGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<dynamic> GetLogoAndBackgroundImageforFacility(int nFacilityID)
+        public async Task<dynamic> GetLogoAndBackgroundImageforFacilityGUID(string sGUID)
         {
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityAsync(nFacilityID);
+                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityByGUIDAsync(sGUID);
                 return LogoAndBackgroundImageforFacility;
             }
             catch (Exception ex)

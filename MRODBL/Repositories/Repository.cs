@@ -277,13 +277,13 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<dynamic> GetLogoBackGroundforFacilityAsync(int nFacilityID)
+        public async Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID)
         {
-            string SqlString = "spGetLogoAndBackgroundImageforFacility";
+            string SqlString = "spGetLogoAndBackgroundImageforFacilityGUID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                dynamic logoBackgroundFacility = await db.QueryFirstAsync(SqlString, new { @nFacilityId = nFacilityID }, commandType: CommandType.StoredProcedure);
+                dynamic logoBackgroundFacility = await db.QueryFirstAsync(SqlString, new { @sGUID = sGUID }, commandType: CommandType.StoredProcedure);
                 return logoBackgroundFacility;
             }
         }
