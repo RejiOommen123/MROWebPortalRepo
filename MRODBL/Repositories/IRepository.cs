@@ -123,5 +123,19 @@ namespace MRODBL.Repositories
         /// <param name="paramValue">Facility ID Value</param>
         /// <returns></returns>
         int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
+
+        /// <summary>
+        /// Logo & Backgorund For Facility
+        /// </summary>
+        /// <param name="nFacilityID">Facility ID</param>
+        /// <returns></returns>
+        Task<dynamic> GetLogoBackGroundforFacilityAsync(int nFacilityID);
+
+        /// <summary>
+        /// Logo & Backgorund For Location
+        /// </summary>
+        /// <param name="nLocationID">Location ID</param>
+        /// <returns></returns>
+        Task<dynamic> GetLogoBackGroundforLocationsync(int nLocationID);
     }
 }

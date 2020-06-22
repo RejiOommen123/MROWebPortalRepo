@@ -263,5 +263,29 @@ namespace MRODBL.Repositories
                 return newObject;
             }
         }
+
+        public async Task<dynamic> GetLogoBackGroundforLocationsync(int nLocationID)
+        {
+            string SqlString = "spGetLogoAndBackgroundImageByLocationId";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                dynamic logoBackgroundLocation = await db.QueryFirstAsync(SqlString, new { @nLocationId = nLocationID }, commandType: CommandType.StoredProcedure);
+                return logoBackgroundLocation;
+
+                
+            }
+        }
+
+        public async Task<dynamic> GetLogoBackGroundforFacilityAsync(int nFacilityID)
+        {
+            string SqlString = "spGetLogoAndBackgroundImageforFacility";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                dynamic logoBackgroundFacility = await db.QueryFirstAsync(SqlString, new { @nFacilityId = nFacilityID }, commandType: CommandType.StoredProcedure);
+                return logoBackgroundFacility;
+            }
+        }
     }
 }
