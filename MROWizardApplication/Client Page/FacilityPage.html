@@ -17,8 +17,8 @@
     Request Medical Records Here
   </button>
 
-  <div id="swellbox_request_container" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 10000000; background-color: transparent; display:none">
-    <iframe id="swellbox_request_frame" name="swellbox_request_frame" title="Request Wizard Frame" src="http://localhost:8080/" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera" style="width: 100%; height: 100%; background-color: transparent; border: 0px;" aria-label="Request Wizard Frame" loaded="1"></iframe>
+  <div id="MRO_request_container" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 10000000; background-color: transparent; display:none">
+    <iframe id="MRO_request_frame" name="MRO_request_frame" title="Request Wizard Frame" src="http://localhost:8080/" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera" style="width: 100%; height: 100%; background-color: transparent; border: 0px;" aria-label="Request Wizard Frame" loaded="1"></iframe>
   </div>
   <script
 src="https://code.jquery.com/jquery-3.5.1.js"
@@ -27,11 +27,14 @@ crossorigin="anonymous"></script>
 <script>
   $( document ).ready(function() {
     $("#requestwizard").click(function(){
-    $("#swellbox_request_container").show()
+    $("#MRO_request_container").show()
 });
 });
-
+function closeIFrame(){
+  $('#MRO_request_container').remove();
+}
 </script>
+
 
   <!-- <div class="container-fluid">
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
@@ -76,7 +79,7 @@ crossorigin="anonymous"></script>
       }
 
     });
-  </script> -->
+   -->
 
 </body>
 

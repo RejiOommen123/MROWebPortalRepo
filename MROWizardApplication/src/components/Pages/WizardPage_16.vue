@@ -4,7 +4,7 @@
     <br />
     <v-row>
     <v-col cols="12" offset-sm="2" sm="6" md="8">
-       <h1>When was the Patient Born ?</h1>
+       <h1>What date do you need your records by?</h1>
         <h4>(MM/DD/YYYY)</h4>
       <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -13,16 +13,16 @@
               placeholder="MM-DD-YYYY"
               :error-messages="dateErrors"
               clearable
-              label="Date of Birth"
+              label="Select Date"
               readonly
               v-bind="attrs"
               v-on="on"
-              @click:clear="date = null"
-              @input="$v.date.$touch()"
-              @blur="$v.date.$touch()"
+              @click:clear="deadlineDate = null"
+              @input="$v.deadlineDate.$touch()"
+              @blur="$v.deadlineDate.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="deadlineDate" @change="menu1 = false"></v-date-picker>
         </v-menu>
     </v-col>
     <v-spacer></v-spacer>
@@ -42,15 +42,15 @@
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_05",
+  name: "WizardPage_16",
   data() {
     return {
-     date: null,//new Date().toISOString().substr(0, 10),
+     deadlineDate: null,//new Date().toISOString().substr(0, 10),
       menu1: false,
     };
   },
   validations: {
-    date: {
+    deadlineDate: {
         required,
         minValue: value => value < new Date().toISOString()
     },
@@ -58,9 +58,9 @@ export default {
   methods: {
     nextPage() {
       //alert("Hello World");
-      console.log(this.date);
+      console.log(this.deadlineDate);
       this.$store.state.ConfigModule.showBackBtn = true;
-      this.$store.commit("requestermodule/mutatebDay", this.bDay);
+      this.$store.commit("requestermodule/mutatedeadlineDate", this.deadlineDate);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 8);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-8");
           this.$store.commit("ConfigModule/mutateNextIndex");
@@ -68,13 +68,13 @@ export default {
   },
   computed: {
     dateFormatted() {
-      return this.date ? moment(this.date).format("MM-DD-YYYY") : "";
+      return this.deadlineDate ? moment(this.deadlineDate).format("MM-DD-YYYY") : "";
     },
     dateErrors(){
       const errors = [];
-      if (!this.$v.date.$dirty) return errors;
-      !this.$v.date.minValue && errors.push("Invalid Date");
-      !this.$v.date.required && errors.push("End Date is required");
+      if (!this.$v.deadlineDate.$dirty) return errors;
+      !this.$v.deadlineDate.minValue && errors.push("Invalid Date");
+      !this.$v.deadlineDate.required && errors.push("End Date is required");
       return errors;
     }
   }

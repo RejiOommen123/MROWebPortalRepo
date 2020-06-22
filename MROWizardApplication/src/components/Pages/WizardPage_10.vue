@@ -1,43 +1,64 @@
 <template>
   <div class="center">
-    <h1>Which types of<br/>records would you like?</h1>
-    
+    <h1>
+      What's the Primary Reason
+      <br />for requesting records?
+    </h1>
+
+    <h6>(This is optional, but may help us better fulfill your request)</h6>
+
     <template>
-      <v-layout v-for="recordType in RecordTypeArray" :key="recordType" row wrap>
-        <v-col cols="12" offset-sm="2" sm="8">
+      <v-layout v-for="primaryReason in primaryReasonArray" :key="primaryReason" row wrap>
+        <v-col cols="12" offset-sm="3" sm="6">
           <v-checkbox
             dark
-            v-model="selectedRecordTypes"
             class="checkboxBorder"
-            :label="recordType"
+            :label="primaryReason"
             color="green"
-            :value="recordType"
+            :value="primaryReason"
+            @change="checkOther(primaryReason)"
           ></v-checkbox>
         </v-col>
       </v-layout>
+      <v-col cols="12" offset-sm="3" sm="6">
+      <div v-if="this.other==true">
+        <v-textarea counter label="Other Reason"></v-textarea>
+      </div>
+      </v-col>
     </template>
     <div>
-      <v-btn @click.prevent="nextPage" color="success">Submit</v-btn>
+      <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "WizardPage_10",
+  name: "WizardPage_08",
   data() {
     return {
-      RecordTypeArray: this.$store.state.ConfigModule.wp10_RecordTypes,
-      selectedRecordTypes: []
+      primaryReasonArray: this.$store.state.ConfigModule.wp08_PrimaryReasons,
+      other: false
     };
   },
   methods: {
     nextPage() {
       //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
-      // this.$store.commit("requestermodule/mutatebDay", this.bDay);
-      this.$store.commit("ConfigModule/mutatepageNumerical", 11);
-      this.$store.commit("ConfigModule/mutateCurrentPage", "page-11");
+      this.$store.commit("requestermodule/mutatebDay", this.bDay);
+      // this.$store.commit("ConfigModule/mutatepageNumerical", 9);
+      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-9");
+       this.$store.commit("ConfigModule/mutateNextIndex");
+    },
+    checkOther(prName) {
+      if (prName == "Other Reason") {
+        this.other= !this.other;
+        // if (this.other == false) {
+        //   this.other = true;
+        // } else {
+        //   this.other = false;
+        // }
+      }
     }
   }
 };
@@ -64,8 +85,5 @@ export default {
 }
 .checkboxBorder:hover {
   background-color: #53b958;
-}
-v-checkbox :checked{
-    background-color: #53b958;
 } */
 </style>
