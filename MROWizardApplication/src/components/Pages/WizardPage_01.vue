@@ -11,11 +11,11 @@
 
 
     <br>
-    <div><a style="cursor: pointer;" href="#" id="pdfFormLink">Want to print, fax or mail in your request? Click here for our PDF form.</a></div>
-     <div><p id="contact">Call 123-456-7890 for assistance</p></div>
+    <div><a style="cursor: pointer;" href="#" id="pdfFormLink">Want to print, fax or mail in your request? Click here for our PDF form.</a></div> 
+     <!-- <div><p id="contact">Call 123-456-7890 for assistance</p></div>
                     <div id="poweredby">
                     <span>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a></span>
-                    </div>
+                    </div>  -->
 
 
   </div>
@@ -32,8 +32,9 @@ export default {
     methods:{
         nextPage(){
             this.$store.state.ConfigModule.showBackBtn = true;
-            this.$store.commit("ConfigModule/mutatepageNumerical",2);
-            this.$store.commit("ConfigModule/mutateCurrentPage","page-2");
+            // this.$store.commit("ConfigModule/mutatepageNumerical",2);
+            // this.$store.commit("ConfigModule/mutateCurrentPage","page-2");
+            this.$store.commit("ConfigModule/mutateNextIndex");
         }
     },
     mounted(){

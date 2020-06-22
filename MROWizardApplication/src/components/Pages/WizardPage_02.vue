@@ -19,8 +19,9 @@ export default {
     },
     methods:{
       locationRequest($event){
-            this.$store.commit("ConfigModule/mutatepageNumerical",3);
-            this.$store.commit("ConfigModule/mutateCurrentPage","page-3");
+            // this.$store.commit("ConfigModule/mutatepageNumerical",3);
+            // this.$store.commit("ConfigModule/mutateCurrentPage","page-3");
+                this.$store.commit("ConfigModule/mutateNextIndex");
             this.$store.commit("requestermodule/mutateSelectedLocation",$event.target.value);          
       }
     }

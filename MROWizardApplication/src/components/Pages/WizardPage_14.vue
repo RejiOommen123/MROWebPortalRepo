@@ -1,115 +1,48 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h2>Current Camera</h2>
-                <code v-if="device">{{ device.label }}</code>
-                <div class="border">
-                    <vue-web-cam
-                        ref="webcam"
-                        :device-id="deviceId"
-                        width="100%"
-                        @started="onStarted"
-                        @stopped="onStopped"
-                        @error="onError"
-                        @cameras="onCameras"
-                        @camera-change="onCameraChange"
-                    />
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <select v-model="camera">
-                            <option>-- Select Device --</option>
-                            <option
-                                v-for="device in devices"
-                                :key="device.deviceId"
-                                :value="device.deviceId"
-                            >{{ device.label }}</option>
-                        </select>
-                    </div>
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>
-                        <button type="button" class="btn btn-danger" @click="onStop">Stop Camera</button>
-                        <button type="button" class="btn btn-success" @click="onStart">Start Camera</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <h2>Captured Image</h2>
-                <figure class="figure">
-                    <img :src="img" class="img-responsive">
-                </figure>
-            </div>
-        </div>
+  <div class="center">
+    <h1>Is there any sensitive info you<br/>would also like to be included?</h1>
+    <template>
+      <v-layout v-for="sensitiveInfo in sensitiveInfoArray" :key="sensitiveInfo" row wrap>
+        <v-col cols="12" offset-sm="2" sm="8">
+          <v-checkbox
+            dark
+            v-model="selectedSensitiveInfo"
+            class="checkboxBorder"
+            :label="sensitiveInfo"
+            color="green"
+            :value="sensitiveInfo"
+          ></v-checkbox>
+        </v-col>
+      </v-layout>
+    </template>
+    <div>
+      <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
     </div>
+  </div>
 </template>
 
 <script>
-import { WebCam } from 'vue-cam-vision'
 export default {
-    name: "App",
-    components: {
-        "vue-web-cam": WebCam
-    },
-    data() {
-        return {
-            img: null,
-            camera: null,
-            deviceId: null,
-            devices: []
-        };
-    },
-    computed: {
-        device: function() {
-            return this.devices.find(n => n.deviceId === this.deviceId);
-        }
-    },
-    watch: {
-        camera: function(id) {
-            this.deviceId = id;
-        },
-        devices: function() {
-            // Once we have a list select the first one
-            const [first] = this.devices;
-            if (first) {
-                this.camera = first.deviceId;
-                this.deviceId = first.deviceId;
-            }
-        }
-    },
-    methods: {
-        onCapture() {
-            var self = this;
-            this.$refs.webcam.capture().then(function (defs){
-                self.img = defs;
-            });
-console.log(this.img);
-        },
-        onStarted(stream) {
-            console.log("On Started Event", stream);
-        },
-        onStopped(stream) {
-            console.log("On Stopped Event", stream);
-        },
-        onStop() {
-            this.$refs.webcam.stop();
-        },
-        onStart() {
-            this.$refs.webcam.start();
-        },
-        onError(error) {
-            console.log("On Error Event", error);
-        },
-        onCameras(cameras) {
-            this.devices = cameras;
-            console.log("On Cameras Event", cameras);
-        },
-        onCameraChange(deviceId) {
-            this.deviceId = deviceId;
-            this.camera = deviceId;
-            console.log("On Camera Change Event", deviceId);
-        }
+  name: "WizardPage_11",
+  data() {
+    return {
+      sensitiveInfoArray: this.$store.state.ConfigModule.wp10_SensitiveInfo,
+      selectedSensitiveInfo: []
+    };
+  },
+  methods: {
+    nextPage() {
+      //alert("Hello World");
+      this.$store.state.ConfigModule.showBackBtn = true;
+      // this.$store.commit("requestermodule/mutatebDay", this.bDay);
+      // this.$store.commit("ConfigModule/mutatepageNumerical", 12);
+      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-12");
+          this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  }
 };
 </script>
+
+<style scoped>
+
+</style>

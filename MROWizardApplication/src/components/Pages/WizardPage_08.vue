@@ -1,60 +1,115 @@
 <template>
   <div class="center">
-    <h1>
-      What's the Primary Reason
-      <br />for requesting records?
-    </h1>
+    <br />
+    <br />
+    <h1>Specify an approximate*<br/>Date Range for records.</h1>
+    
+    <v-row>
+      <v-col cols="12" offset-sm="1" sm="3" md="4">
+        <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              :value="startDateFormatted"
+              :error-messages="startDateErrors"
+              clearable
+              label="Start Date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              @click:clear="startDate = null"
+              @input="$v.startDate.$touch()"
+              @blur="$v.startDate.$touch()"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="startDate" @change="menu1 = false"></v-date-picker>
+        </v-menu>
+      </v-col>
 
-    <h6>(This is optional, but may help us better fulfill your request)</h6>
-
-    <template>
-      <v-layout v-for="primaryReason in primaryReasonArray" :key="primaryReason" row wrap>
-        <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox
-            dark
-            class="checkboxBorder"
-            :label="primaryReason"
-            color="green"
-            :value="primaryReason"
-            @change="checkOther(primaryReason)"
-          ></v-checkbox>
-        </v-col>
-      </v-layout>
-      <div v-if="this.other==true">
-        <v-textarea counter label="Text"></v-textarea>
-      </div>
-    </template>
-    <div>
-      <v-btn @click.prevent="nextPage" color="success">Submit</v-btn>
+      <v-col cols="12" offset-sm="2" sm="3" md="4">
+        <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              :value="endDateFormatted"
+              :error-messages="endDateErrors"
+              clearable
+              label="End Date"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              @click:clear="endDate = null"
+               @input="$v.endDate.$touch()"
+              @blur="$v.endDate.$touch()"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="endDate" @change="menu2 = false"></v-date-picker>
+        </v-menu>
+      </v-col>
+      <br />
+      <v-col cols="12" offset-sm="3" sm="6">
+        <div>
+          <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage" color="success">Next</v-btn>
+        </div>
+        <!-- :disabled="$v.$invalid" -->
+      </v-col>
+    </v-row>
+     <div class="disclaimer">{{this.disclaimer}}</div>
     </div>
-  </div>
 </template>
 
 <script>
+import moment from "moment";
+import { required} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_08",
   data() {
     return {
-      primaryReasonArray: this.$store.state.ConfigModule.wp08_PrimaryReasons,
-      other: false
+      startDate: new Date().toISOString().substr(0, 10),
+      endDate: new Date().toISOString().substr(0, 10),
+      menu1: false,
+      menu2: false,
+      disclaimer : this.$store.state.ConfigModule.wp09_disclaimer
     };
+  },
+  validations: {
+    startDate: {
+        required,
+        minValue: value => value < new Date().toISOString()
+    },
+    endDate: {
+        required,
+        minValue: value => value < new Date().toISOString()
+    },
   },
   methods: {
     nextPage() {
       //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("requestermodule/mutatebDay", this.bDay);
-      this.$store.commit("ConfigModule/mutatepageNumerical", 9);
-      this.$store.commit("ConfigModule/mutateCurrentPage", "page-9");
+      // this.$store.commit("ConfigModule/mutatepageNumerical", 10);
+      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-10");
+       this.$store.commit("ConfigModule/mutateNextIndex");
+    }
+  },
+  computed: {
+    startDateFormatted() {
+      return this.startDate ? moment(this.startDate).format("MM-DD-YYYY") : "";
     },
-    checkOther(prName) {
-      if (prName == "Other Reason") {
-        if (this.other == false) {
-          this.other == true;
-        } else {
-          this.other == false;
-        }
-      }
+    endDateFormatted() {
+      return this.endDate ? moment(this.endDate).format("MM-DD-YYYY") : "";
+    },
+    startDateErrors(){
+      const errors = [];
+      if (!this.$v.startDate.$dirty) return errors;
+      !this.$v.startDate.minValue && errors.push("Invalid Date");
+      !this.$v.startDate.required && errors.push("Start Date is required");
+      return errors;
+    },
+     endDateErrors(){
+      const errors = [];
+      if (!this.$v.endDate.$dirty) return errors;
+      !this.$v.endDate.minValue && errors.push("Invalid Date");
+      !this.$v.endDate.required && errors.push("End Date is required");
+      return errors;
     }
   }
 };
@@ -63,23 +118,5 @@ export default {
 <style scoped>
 /* .center {
   text-align: center;
-}
-.checkboxBorder {
-  height: 40px;
-  line-height: 40px;
-  padding-left: 10px;
-  font-size: 14px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: visible;
-  border: 1px solid #f6efef;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  margin-top: 10px;
-  position: relative;
-}
-.checkboxBorder:hover {
-  background-color: #53b958;
 } */
 </style>

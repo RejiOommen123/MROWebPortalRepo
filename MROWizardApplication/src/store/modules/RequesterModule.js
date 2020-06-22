@@ -2,7 +2,7 @@
 const state = {    
     askPatientDeceased:false,
     selectedLocation:"",
-    notPatient:false,
+    areYouPatient:true,
     rname:'',
     relationToPatient:'',
     emailID:'',
@@ -18,7 +18,17 @@ const state = {
     stateName:'',
     streetAdd:'',
     bDay: '',
-    imgdata: ''
+    imgdata: '',
+    releaseTo:'',
+    authExpireDate : null,
+    authSpecificEvent : '',
+    deadlineStatus:false,
+    deadlineDate:null,
+    additionalData:'',
+    identityId:'',
+    requestAnotherRecord:false,
+    rating:0,
+    feedback:''
 }
 const mutations = {
     mutateaskPatientMinor(state,payload){
@@ -30,8 +40,8 @@ const mutations = {
     mutateSelectedLocation(state,payload){
         state.selectedLocation = payload;
     },
-    mutateNotPatient(state,payload){
-        state.notPatient = payload;
+    mutateareYouPatient(state,payload){
+        state.areYouPatient = payload;
     },
     mutateemailID(state,payload){
         state.emailID = payload;
@@ -77,7 +87,32 @@ const mutations = {
     },
     mutatesignature(state, payload) {
         state.imgdata = payload;
+    },
+    mutatereleaseTo(state, payload) {
+        state.releaseTo = payload;
+    },
+    mutateauthExpireDate(state, payload) {
+        state.authExpireDate = payload;
+    },
+    mutateauthSpecificEvent(state, payload) {
+        state.authSpecificEvent = payload;
+    },
+    mutatedeadlineStatus(state, payload) {
+        state.deadlineStatus = payload;
+    },
+    mutatedeadlineDate(state, payload) {
+        state.deadlineDate = payload;
+    },
+    mutateadditionalData(state, payload) {
+        state.additionalData = payload;
+    },
+    mutateidentityId(state, payload) {
+        state.identityId = payload;
+    },
+    mutaterequestAnotherRecord(state, payload) {
+        state.requestAnotherRecord = payload;
     }
+
 }
 const actions = {
 }

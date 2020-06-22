@@ -1,13 +1,13 @@
 <template>
   <div class="center">
     <div class="form-group">
-      <h1>Are you the Patient ?</h1>
+      <h1>Are you requesting records for yourself?</h1>
       <div class="form-group btn-group-vertical" role="toolbar">
-        <button @click.prevent="setPatient" class="btn btn-success btn-md " width="100%">Yes, I want my medical records.</button>
+        <button @click.prevent="setPatient" class="btn btn-success btn-md locationButton " >Yes, I want my medical records.</button>
         <br />
-        <button @click.prevent="setNotPatient" class="btn btn-success btn-md " width="100%">No, I am requesting records for someone else <br/>(Child, Dependent, Decedent).</button>
+        <button @click.prevent="setNotPatient" class="btn btn-success btn-md locationButton" >No, I am requesting records for someone else <br/>(Child, Dependent, Decedent).</button>
       </div>
-      <div v-show="notPatient">
+      <div v-show="!areYouPatient">
         <form>
           <v-row>
           <v-col cols="6" offset-sm="3" sm="6">
@@ -32,7 +32,7 @@
           </v-row>
         </form>
       </div>
-      <div v-if="!notPatient" class="disclaimer">{{this.disclaimer01}}</div>
+      <div v-if="areYouPatient" class="disclaimer">{{this.disclaimer01}}</div>
       <div v-else class="disclaimer">{{this.disclaimer02}}</div>
     </div>
     
@@ -58,8 +58,8 @@ export default {
     relationToPatient: { required }
   },
   computed: {
-    notPatient() {
-      return this.$store.state.requestermodule.notPatient;
+    areYouPatient() {
+      return this.$store.state.requestermodule.areYouPatient;
     },
     rnameErrors() {
       const errors = [];
@@ -78,12 +78,13 @@ export default {
     setPatient() {
       this.$store.state.requestermodule.isPatientDeceased = false;
       this.$store.commit("requestermodule/mutateaskPatientDeceased", false);
-      this.$store.commit("requestermodule/mutateNotPatient", false);
-      this.$store.commit("ConfigModule/mutatepageNumerical", 4);
-      this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
+      this.$store.commit("requestermodule/mutateareYouPatient", true);
+      // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
+      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
+          this.$store.commit("ConfigModule/mutateNextIndex");
     },
     setNotPatient() {
-      this.$store.commit("requestermodule/mutateNotPatient", true);
+      this.$store.commit("requestermodule/mutateareYouPatient", false);
     },
     continueAhead() {
       this.$store.state.requestermodule.isPatientDeceased = false;
@@ -91,8 +92,10 @@ export default {
 
       this.$store.commit("requestermodule/mutatername", this.rname);
       this.$store.commit("requestermodule/mutaterelationToPatient",this.relationToPatient);
-      this.$store.commit("ConfigModule/mutatepageNumerical", 4);
-      this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
+      // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
+      
+      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
+          this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };

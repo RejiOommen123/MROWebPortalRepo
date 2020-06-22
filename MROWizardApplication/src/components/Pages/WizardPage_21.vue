@@ -1,0 +1,387 @@
+<!--<template>
+ <div class="center">
+     <br>
+     <div class="alert alert-success">You have Successfully Completed the Wizard</div>
+     <div class="alert alert-success">Please Check your EmaiID for the Completely filled Form</div>
+
+    <div class="alert alert-info alert-dismissible">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Click &times;</strong> on Top Right Corner to Exit
+</div>
+     </div>
+
+</template>-->
+<!--<script>
+export default {
+    name:"WizardPage_09",
+    data(){
+        return{}
+    }
+}
+</script>
+<style scoped>
+.center {
+  text-align: center;
+}
+</style>-->
+<!--Signature Pad Code Start
+<template>
+    <div id="app">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mt-2">
+                    <VueSignaturePad id="signature"
+                                     width="100%"
+                                     height="500px"
+                                     ref="signaturePad"
+                                     :options="options" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3 mt-2">
+                    <button class="btn btn-outline-secondary" @click="undo">Undo</button>
+                </div>
+                <div class="col-3 mt-2">
+                    <button class="btn btn-outline-primary" @click="save">Save</button>
+                </div>
+                <div class="col-3 mt-2">
+                    <button class="btn btn-outline-primary" @click="change">Change</button>
+                </div>
+                <div class="col-3 mt-2">
+                    <button class="btn btn-outline-primary" @click="resume">Resume</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "App",
+        data: () => ({
+            options: {
+                penColor: "#c0f"
+            }
+        }),
+        methods: {
+            undo() {
+                this.$refs.signaturePad.undoSignature();
+            },
+            save() {
+                const { data } = this.$refs.signaturePad.saveSignature();
+                this.$store.commit("requestermodule/mutatesignature", data);
+                alert("Open DevTools see the save data.");
+                var patient = {
+                    selectedLocation: this.$store.state.requestermodule.selectedLocation,
+                    notPatient: this.$store.state.requestermodule.notPatient,
+                    rname: this.$store.state.requestermodule.rname,
+                    relationToPatient: this.$store.state.requestermodule.relationToPatient,
+                    emailID: this.$store.state.requestermodule.emailID,
+
+                    confirmReport: this.$store.state.requestermodule.confirmReport,
+                    fname: this.$store.state.requestermodule.fname,
+                    minitial: this.$store.state.requestermodule.minitial,
+                    lname: this.$store.state.requestermodule.lname,
+                    isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,
+                    zipcode: this.$store.state.requestermodule.zipcode,
+                    streetAdd: this.$store.state.requestermodule.streetAdd,
+                    bDay: this.$store.state.requestermodule.bDay,
+                    imgdata: this.$store.state.requestermodule.imgdata
+                };
+                this.$http
+                    .post('http://localhost:57364/api/PDF/GeneratePDF/', patient, { responseType: "arraybuffer" })
+                    .then(response => {
+                        let blobFile = new Blob([response.data], { type: "application/pdf" });
+                        var fileURL = URL.createObjectURL(blobFile);
+                        window.open(fileURL, "_blank", false);
+                    })
+            },
+            change() {
+                this.options = {
+                    penColor: "#00f"
+                };
+            },
+            resume() {
+                this.options = {
+                    penColor: "#c0f"
+                };
+            }
+        }
+    };
+</script>
+
+<style>
+    #signature {
+        border: double 3px transparent;
+        border-radius: 5px;
+        background-image: linear-gradient(white, white), radial-gradient(circle at top left, #4bc5e8, #9f6274);
+        background-origin: border-box;
+        background-clip: content-box, border-box;
+    }
+</style>
+-->
+
+<!--Signature Pad Code End-->
+
+<template>
+  <div>
+    <!-- All Finish Reviewing
+    <button
+      type="button"
+      class="btn btn-info btn-lg"
+      @click="dialog = true"
+    >Sign</button> -->
+    <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
+    <v-dialog v-model="dialog" max-width="500px" style="backgroundColor:white">
+      <v-card id="signatureCard">
+        <v-btn style="fontColor:black, textAlign:right" icon @click="dialog = false">
+            X
+          </v-btn>
+        <v-card-title class="headline">Draw your signature below</v-card-title>
+
+        <v-card-text>
+          <div class="row">
+            <div class="col-12 mt-2">
+              <VueSignaturePad
+                id="signature"
+                width="100%"
+                height="150px"
+                ref="signaturePad"
+                :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
+              />
+              <!--<VueSignaturePad :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}" ref="signaturePad" />-->
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3 mt-2">
+              <button class="btn btn-outline-secondary" @click="undo">Undo</button>
+            </div>
+            <div class="col-3 mt-2">
+              <button class="btn btn-outline-primary" @click="save" data-dismiss="modal">Save</button>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <iframe :src="this.pdf" width="100%" height="1200px"></iframe>
+    <!-- <pdf :src=this.pdf>
+            @num-pages="pageCount = $event"
+            @page-loaded="currentPage = $event">
+    </pdf>-->
+    <div id="modalOpener">
+      <div v-if="recordSubmitted==false">
+        <p id="review">All finished reviewing?</p>
+        <v-btn id="signHere" @click="showDialog" color="white">Sign request</v-btn>
+      </div>
+      <div v-else>
+        <v-btn id="submitRequest" @click="next" color="success">Submit Request</v-btn>
+    </div>
+    </div>
+  </div>
+</template>
+
+<script>
+// import pdf from 'vue-pdf'
+
+export default {
+  components: {
+    // pdf
+  },
+  data() {
+    return {
+      dialog: false,
+      options: {
+        penColor: "#FFF"
+      },
+      currentPage: 0,
+      pageCount: 0,
+      pdf: null,
+      recordSubmitted:false
+    };
+  },
+  mounted() {
+    // var patient = {
+    //     selectedLocation: this.$store.state.requestermodule.selectedLocation,
+    //     notPatient: this.$store.state.requestermodule.,
+    //     rname: this.$store.state.requestermodule.rname,
+    //     relationToPatient: this.$store.state.requestermodule.relationToPatient,
+    //     emailID: this.$store.state.requestermodule.emailID,
+
+    //     confirmReport: this.$store.state.requestermodule.confirmReport,
+    //     fname: this.$store.state.requestermodule.fname,
+    //     minitial: this.$store.state.requestermodule.minitial,
+    //     lname: this.$store.state.requestermodule.lname,
+    //     isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,
+    //     zipcode: this.$store.state.requestermodule.zipcode,
+    //     streetAdd: this.$store.state.requestermodule.streetAdd,
+    //     bDay: this.$store.state.requestermodule.bDay
+    // };
+
+    this.$http
+      .get("http://localhost:57364/api/LocationAuthorizationDocument/getPDF/", {
+        responseType: "arraybuffer"
+      })
+      .then(response => {
+        let blobFile = new Blob([response.data], { type: "application/pdf" });
+        //let link = document.createElement('a');
+
+        var fileURL = URL.createObjectURL(blobFile);
+        this.pdf = fileURL;
+        //window.open(fileURL, "_blank", false);
+        // window.open(fileURL, "popup", "width=600,height=600");
+
+        //Options are:
+        //_blank - URL is loaded into a new window, or tab.This is default
+        //_parent - URL is loaded into the parent frame
+        //_self - URL replaces the current page
+        //_top - URL replaces any framesets that may be loaded
+        //true - URL replaces the current document in the history list
+        //false - URL creates a new entry in the history list
+      });
+  },
+  created(){ 
+    this.$vuetify.theme.dark = false
+  },
+  methods: {
+    undo() {
+      this.$refs.signaturePad.undoSignature();
+    },
+    save() {
+      this.dialog = false;
+      const { data } = this.$refs.signaturePad.saveSignature();
+      this.$store.commit("requestermodule/mutatesignature", data);
+      // alert("Open DevTools see the save data.");
+      //console.log(isEmpty);
+      console.log(data);
+      var patient = {
+        selectedLocation: this.$store.state.requestermodule.selectedLocation,
+        areYouPatient: this.$store.state.requestermodule.areYouPatient,
+        rname: this.$store.state.requestermodule.rname,
+        relationToPatient: this.$store.state.requestermodule.relationToPatient,
+        emailID: this.$store.state.requestermodule.emailID,
+
+        confirmReport: this.$store.state.requestermodule.confirmReport,
+        fname: this.$store.state.requestermodule.fname,
+        minitial: this.$store.state.requestermodule.minitial,
+        lname: this.$store.state.requestermodule.lname,
+        isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,
+        zipcode: this.$store.state.requestermodule.zipcode,
+        streetAdd: this.$store.state.requestermodule.streetAdd,
+        bDay: this.$store.state.requestermodule.bDay,
+        imgdata: this.$store.state.requestermodule.imgdata
+      };
+      //patient.imgdata="data:image/png;base64,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";
+      console.log(typeof data);
+      this.$http
+      
+        .post(
+          "http://localhost:57364/api/LocationAuthorizationDocument/GeneratePDF/",
+          patient,
+          { responseType: "arraybuffer" }
+        )
+        .then(response => {
+          let blobFile = new Blob([response.data], { type: "application/pdf" });
+          //let link = document.createElement('a');
+          this.recordSubmitted=true;
+          var fileURL = URL.createObjectURL(blobFile);
+          this.pdf = fileURL;
+          
+          // window.open(fileURL, "popup", "width=600,height=600");
+
+          //Options are:
+          //_blank - URL is loaded into a new window, or tab.This is default
+          //_parent - URL is loaded into the parent frame
+          //_self - URL replaces the current page
+          //_top - URL replaces any framesets that may be loaded
+          //true - URL replaces the current document in the history list
+          //false - URL creates a new entry in the history list
+        });
+    },
+    change() {
+      this.options = {
+        penColor: "#00f"
+      };
+    },
+    resume() {
+      this.options = {
+        penColor: "#c0f"
+      };
+    },
+    previous(){
+        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        // this.$store.commit("ConfigModule/mutatepageNumerical", 12);
+        // this.$store.commit("ConfigModule/mutateCurrentPage", "page-12");
+         this.$store.commit("ConfigModule/mutatePreviousIndex");
+        this.$vuetify.theme.dark = true;
+    },
+    showDialog(){
+      this.dialog=true;
+
+    //    document.getElementById("signatureCard").removeClass("theme--dark");
+    // document.getElementById("signatureCard").addClass("theme--light");
+    },
+    next(){
+        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+       this.$store.commit("ConfigModule/mutateNextIndex");
+    }
+  }
+};
+</script>
+<style>
+#signature {
+  border: double 3px transparent;
+  border-radius: 5px;
+  background-image: linear-gradient(white, white),
+    radial-gradient(circle at top left, #4bc5e8, #9f6274);
+  /* background-image: url('https://image.shutterstock.com/image-illustration/abstract-gray-background-260nw-508982365.jpg'); */
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+#modalOpener {
+  position: fixed;
+  bottom: 150px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  border-color: #53b958;
+  background-color: #53b958;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+#review {
+  font-size: 18px;
+  display: inline-block;
+  padding: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 16px ;
+}
+#signHere {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  color: #333333;
+  font-size: 18px;
+  display: inline-block;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  width: auto !important;
+  text-decoration: none;
+  margin-right: 15px;
+}
+.page-title{
+    color:black;
+    text-align: center;
+}
+</style>
