@@ -54,14 +54,14 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Send Only Required Values
-        private object OptimizeObject(object unoptimized_wizard_config) {
+        //private object OptimizeObject(object unoptimized_wizard_config) {
 
-            object wizard_config = null;
+        //    object wizard_config = null;
 
-            //var oFields = unoptimized_wizard_config.
+        //    //var oFields = unoptimized_wizard_config.
 
-            return wizard_config;
-        }
+        //    return wizard_config;
+        //}
         #endregion
 
         #region Commented for XML Part
