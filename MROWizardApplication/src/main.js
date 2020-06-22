@@ -8,11 +8,12 @@ import VueSignature from "vue-signature-pad";
 
 Vue.use(VueSignature);
 Vue.use(VueResource);
-Vue.config.productionTip = false
-Vue.use(Vuelidate)
+Vue.http.options.root = "http://localhost:57364/api";
+Vue.config.productionTip = false;
+Vue.use(Vuelidate);
 
 new Vue({
-  vuetify,
-  store,
-  render: h => h(App)
+    vuetify,
+    store,
+    render: h => h(App)
 }).$mount('#app')

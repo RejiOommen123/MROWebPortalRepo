@@ -50,9 +50,42 @@ namespace MROWebApi.Controllers
                     sValue += sNewValue + " ";
             }
 
-            //To check and verify Document save the PDF in folder
-            string sAppRoot = GetApplicationRoot();
+            //adding the Photo of Driving License
+            XImage theDrivingLicense = new XImage();
+            //theImg.SetFile(sAppRoot + @"\download.jpg");
+            //theImg.SetFile("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-577160911.jpg");
 
+            //Adding new page in Authorization PDF
+            thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
+            int theID = 0;
+            string theText = "Creat New Page"; // 
+            thePDFAuthDoc.Width = 4;
+            thePDFAuthDoc.FontSize = 32;
+            thePDFAuthDoc.TextStyle.Justification = 1;
+            thePDFAuthDoc.Rect.Inset(20, 20);
+            thePDFAuthDoc.FrameRect();
+            theID = thePDFAuthDoc.AddTextStyled(theText);
+
+            thePDFAuthDoc.FontSize = 12;
+            thePDFAuthDoc.AddTextStyled("<br /><br /><br /><br /><b>Reji Oommen</b> <br />Lets go to Office <br /><br /><br />" +
+                "<br /><br /><b>Siddesh Lad</b> <br />Lets go to Park<br /><br /><br />");
+
+            //// Image insertion on a specific location on new page
+            //thePDFAuthDoc.Rect.Left = 50;
+            //thePDFAuthDoc.Rect.Bottom = 400;
+            //thePDFAuthDoc.Rect.Width = theImg.Width;
+            //thePDFAuthDoc.Rect.Height = 300;
+            //thePDFAuthDoc.Rect.Height = theImg.Height;
+            //thePDFAuthDoc.AddImageObject(theImg, false);
+            //thePDFAuthDoc.Clear();
+
+
+
+            thePDFAuthDoc.Form.Stamp();
+
+            ////To check and verify Document save the PDF in folder
+            //string sAppRoot = GetApplicationRoot();
+            //thePDFAuthDoc.Save(sAppRoot + @"\Auth_sample.pdf");
 
 
             sReplaceFieldsList = "";

@@ -199,9 +199,14 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> EdiftFields(int ID)
+        /// <summary>
+        /// Get E
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<dynamic>> EditFields(int ID)
         {
-            string SqlString = "spGetPatientFormBynfacilityID";
+            string SqlString = "spGetPatientFormBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
@@ -217,12 +222,45 @@ namespace MRODBL.Repositories
         //        return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
         //    }
         //}
+
+        /// <summary>
+        /// Get Latest ORI ID for a Location
+        /// </summary>
+        /// <param name="paramKeyName">Facility ID</param>
+        /// <param name="paramValue">Facility ID Value</param>
+        /// <returns>int</returns>
         public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 string SqlString = "SELECT TOP(1) nROILocationID FROM " +sTableName+ " WHERE "+paramKeyName+" ="+paramValue+" ORDER BY nROILocationID DESC";
                 return  db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
+            }
+        }
+
+        /// <summary>
+        /// Get Wizard Configuration
+        /// </summary>
+        /// <param name="nFacilityID">Facility ID</param>
+        /// <returns>IEnumerable<dynamic></returns>
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID)
+        {
+            string SqlString = "spGetWizardConfigBynFacilityId";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID }, commandType: CommandType.StoredProcedure);
+                var oFields = wizardConfig.Read().ToList();
+                var oWizards = wizardConfig.Read().ToList();
+                var oPrimaryReason = wizardConfig.Read().ToList();
+                var oRecordTypes = wizardConfig.Read().ToList();
+                var oSensitiveInfo = wizardConfig.Read().ToList();
+                var oShipmentTypes = wizardConfig.Read().ToList();
+                var oWizardHelper = wizardConfig.Read().ToList();
+                var oLocation = wizardConfig.Read().ToList();
+                object newObject = new { oFields, oWizards, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oWizardHelper, oLocation };
+                
+                return newObject;
             }
         }
     }

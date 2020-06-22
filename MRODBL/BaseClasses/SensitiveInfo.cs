@@ -9,6 +9,8 @@ namespace MRODBL.BaseClasses
         [Key]
         public int nSensitiveInfoID { get; set; }
         public string sSensitiveInfoName { get; set; }
+        public string sNormalizedSensitiveInfoName { get; set; }
+
         public DateTime dtLastUpdate { get; set; }
         public int nWizardID { get; set; }
 

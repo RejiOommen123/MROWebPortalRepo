@@ -17,10 +17,15 @@
             </v-card-title>
 
             <!-- Facility List DataTable  -->
-            <v-data-table :headers="headers" :items="gridData" :search="search" :footer-props="{
+            <v-data-table
+              :headers="headers"
+              :items="gridData"
+              :search="search"
+              :footer-props="{
     'items-per-page-options': [5,10,20]
   }"
-  :items-per-page="10">
+              :items-per-page="10"
+            >
               <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
               <template v-slot:item.actions="{ item }">
                 <input
@@ -52,9 +57,10 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "sFieldName"
+          value: "sFieldName",
+          width: "80%"
         },
-        { text: "Action", value: "actions", sortable: false }
+        { text: "Action", value: "actions", width: "20%", sortable: false }
       ],
       gridData: this.getGridData(),
       facilityName: ""
@@ -65,10 +71,7 @@ export default {
     // API to Get all Facilities
     getGridData() {
       this.$http
-        .get(
-          "facilityfieldmaps/GetFieldsByFacilityID/" +
-            this.$route.params.id
-        )
+        .get("facilityfieldmaps/GetFieldsByFacilityID/" + this.$route.params.id)
         .then(
           response => {
             // get body data
@@ -95,10 +98,7 @@ export default {
         return item;
       });
       this.$http
-        .post(
-          "facilityfieldmaps/EditFacilityFields/",
-          FacilityFieldMapsList
-        )
+        .post("facilityfieldmaps/EditFacilityFields/", FacilityFieldMapsList)
         .then(response => {
           if (response.ok == true) {
             this.$router.push("/facility");
@@ -117,12 +117,13 @@ export default {
 #demo {
   margin: 0 125px;
 }
-button, a{
+button,
+a {
   margin-top: 10px;
   margin-right: 20px;
 }
 
-.submit{
+.submit {
   text-align: center;
 }
 </style>

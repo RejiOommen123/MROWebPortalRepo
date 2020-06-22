@@ -15,5 +15,6 @@ namespace MRODBL.BaseClasses
         public DateTime dtCreated { get; set; }
         public int nUpdatedAdminUserID { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        public DateTime dtLastLoggedIn { get; set; }
     }
 }

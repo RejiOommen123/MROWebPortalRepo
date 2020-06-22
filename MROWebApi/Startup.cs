@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeFirstMigration.Context;
-using DinkToPdf;
-using DinkToPdf.Contracts;
+//using DinkToPdf;
+//using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +31,7 @@ namespace MROWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var context = new CustomAssemblyLoadContext();
-            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll"));
+
             var origins = Configuration["AllowedOrigins"].Split(";");
             services.AddCors(c =>
             {
@@ -46,7 +45,6 @@ namespace MROWebApi
             services.AddSingleton(config);
             //Region Ends
             #endregion
-            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             services.AddControllers();
             services.AddDbContext<ApplicationDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
         }
