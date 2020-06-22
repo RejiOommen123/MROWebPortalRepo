@@ -250,16 +250,25 @@ namespace MRODBL.Repositories
             {
                 db.Open();
                 SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID }, commandType: CommandType.StoredProcedure);
-                var oFields = wizardConfig.Read().ToList();
-                var oWizards = wizardConfig.Read().ToList();
+                //var oFields = wizardConfig.Read().ToList();
+                var oFields = wizardConfig.Read().ToDictionary(row => (string)row.sNormalizedFieldName, row => (bool)row.bShow);
+                //var oWizards = wizardConfig.Read().ToList();
+                var sWizards = wizardConfig.Read().Select(d => new object[] { d.sWizardName });
+                List<string> soWizard = new List<string>();
+                foreach (var wiz in sWizards)
+                //for (int i = 0; i<= sWizards.Count(); i++)
+                {
+                    soWizard.Add(wiz[0].ToString());
+                }
+                String[] oWizards = soWizard.ToArray();
                 var oPrimaryReason = wizardConfig.Read().ToList();
                 var oRecordTypes = wizardConfig.Read().ToList();
                 var oSensitiveInfo = wizardConfig.Read().ToList();
                 var oShipmentTypes = wizardConfig.Read().ToList();
-                var oWizardHelper = wizardConfig.Read().ToList();
-                var oLocation = wizardConfig.Read().ToList();
-                object newObject = new { oFields, oWizards, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oWizardHelper, oLocation };
+                //var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row., row => (bool)row.bShow);
                 
+                //var oLocation = wizardConfig.Read().ToList();
+                object newObject = new { oFields, oWizards, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes };
                 return newObject;
             }
         }
@@ -277,14 +286,20 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID)
+        public async Task<object> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID)
         {
             string SqlString = "spGetLogoAndBackgroundImageforFacilityGUID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                dynamic logoBackgroundFacility = await db.QueryFirstAsync(SqlString, new { @sGUID = sGUID }, commandType: CommandType.StoredProcedure);
-                return logoBackgroundFacility;
+                SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID }, commandType: CommandType.StoredProcedure);
+
+                var facilityLogoandBackground = logoBackgroundFacility.Read().ToList();
+                var wizardHelper = logoBackgroundFacility.Read().ToList();
+                var  locationDetails= logoBackgroundFacility.Read().ToList();
+                object newObject = new { facilityLogoandBackground, wizardHelper, locationDetails };
+                return newObject;
+
             }
         }
     }

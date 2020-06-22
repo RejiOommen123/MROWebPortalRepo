@@ -25,5 +25,6 @@ namespace MRODBL.BaseClasses
         public string sAuthTemplate { get; set; }
         public string sAuthTemplateName { get; set; }
         public bool bLocationActiveStatus { get; set; }
+        public int nAuthExpirationMonths { get; set; }
     }
 }

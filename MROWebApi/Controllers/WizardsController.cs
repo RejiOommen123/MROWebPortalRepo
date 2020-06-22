@@ -57,7 +57,7 @@ namespace MROWebApi.Controllers
         [HttpGet("GetLogoAndBackgroundImageforFacilityGUID/{sGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<dynamic> GetLogoAndBackgroundImageforFacilityGUID(string sGUID)
+        public async Task<object> GetLogoAndBackgroundImageforFacilityGUID(string sGUID)
         {
             try
             {

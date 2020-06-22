@@ -12,6 +12,7 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MROWebApi.Controllers
 {
@@ -124,6 +125,11 @@ namespace MROWebApi.Controllers
                 facilityLocation.dtCreated = DateTime.Now;
                 facilityLocation.nUpdatedAdminUserID = 1;
                 facilityLocation.dtLastUpdate = DateTime.Now;
+                string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", ",");
+                string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
+                finalString = "MRO" + finalString;
+                facilityLocation.sNormalizedLocationName = finalString;
+                facilityLocation.nAuthExpirationMonths = 6;
                 if (facilityLocation.sAuthTemplate != "")
                 {
                     facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);

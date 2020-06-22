@@ -200,6 +200,20 @@ namespace MROWebAPI.Controllers
                     });
                 }
 
+                //Add to facility Connections connecitons
+                FacilityConnectionsRepository facilityConnectionsRepository = new FacilityConnectionsRepository(_info);
+                FacilityConnections connection = new FacilityConnections();
+                connection.nCreatedAdminUserID = 1;
+                connection.nFacilityID = dbFacility.nFacilityID;
+                connection.nUpdatedAdminUserID = 1;
+                connection.sConnectionString = _info.ConnectionString;
+                Guid obj = new Guid();
+                connection.sGUID = obj.ToString() ;
+                connection.dtCreated = DateTime.Now;
+                connection.dtLastUpdate = DateTime.Now;
+                
+                int? GeneratedFacilityConnectionID = facilityConnectionsRepository.Insert(connection);
+
                 await fmRepo.InsertMany(facilityFieldMaps);
 
                 //Add data in FacilityPrimaryReasons table for the current Facility
