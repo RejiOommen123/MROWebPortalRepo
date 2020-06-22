@@ -28,5 +28,9 @@
     <NativeLibs Remove="Controllers\WizardsController.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="Controllers\RequestorsController.cs" />
+  </ItemGroup>
+
 
 </Project>
