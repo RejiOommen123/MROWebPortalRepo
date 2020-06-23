@@ -81,7 +81,7 @@ export default {
    
 
     this.$http
-      .get("http://localhost:57364/api/LocationAuthorizationDocument/getPDF/", {
+      .get("LocationAuthorizationDocument/getPDF/", {
         responseType: "arraybuffer"
       })
       .then(response => {
@@ -138,7 +138,7 @@ export default {
       this.$http
       
         .post(
-          "http://localhost:57364/api/LocationAuthorizationDocument/GeneratePDF/",
+          "LocationAuthorizationDocument/GeneratePDF/",
           patient,
           { responseType: "arraybuffer" }
         )

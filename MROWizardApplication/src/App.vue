@@ -116,7 +116,7 @@ export default {
     //API Request get wizard config based on facility id.
     this.$http
       .get(
-        "http://localhost:57364/api/Wizards/GetFacilityDatafromFacilityGUID/" +
+        "Wizards/GetFacilityDatafromFacilityGUID/" +
           guid
       )
       .then(response => {
@@ -137,10 +137,10 @@ export default {
             console.log("Inside Mounted - " + locationLength);
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
-              // http://localhost:57364/api/Wizards/GetWizardConfig/fID=5&lID=2
+              // Wizards/GetWizardConfig/fID=5&lID=2
             this.$http
               .get(
-                "http://localhost:57364/api/Wizards/GetWizardConfig/fID=" +singleLocation.nFacilityID+"&lID="+singleLocation.nFacilityLocationID)
+                "Wizards/GetWizardConfig/fID=" +singleLocation.nFacilityID+"&lID="+singleLocation.nFacilityLocationID)
               .then(response => {
                 var apiLocationResponse = response.body;
                 if (response.body) {

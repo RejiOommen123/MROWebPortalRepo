@@ -33,7 +33,7 @@ export default {
       // this.$store.commit("ConfigModule/mutateCurrentPage","page-3");
       this.$http
         .get(
-          "http://localhost:57364/api/Wizards/GetWizardConfig/fID=" +
+          "Wizards/GetWizardConfig/fID=" +
             location.nFacilityID +
             "&lID=" +
             location.nFacilityLocationID
