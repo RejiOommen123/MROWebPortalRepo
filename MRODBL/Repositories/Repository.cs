@@ -294,7 +294,7 @@ namespace MRODBL.Repositories
                 var facilityLogoandBackground = logoBackgroundFacility.Read().ToList();
                 var sWizards = logoBackgroundFacility.Read().Select(d => new object[] { d.sWizardName });
                 List<string> soWizard = new List<string>();
-                soWizard.Add("Wizard-01");
+                soWizard.Add("Wizard_01");
                 foreach (var wiz in sWizards)
                 {
                     soWizard.Add(wiz[0].ToString());

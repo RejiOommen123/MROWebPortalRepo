@@ -32,10 +32,11 @@ const state = {
     wp22_disclaimer:"We will respond to your request within 30 days. If you entered a deadline by which you need your records, or if you have an upcoming appointment, your request will be prioritized accordingly.",
     wp23_disclaimer:"We'd love your feedback",
     wp24_disclaimer:"Your request is now complete. You may now close this window.",
-    wizardArray:["page-1","page-2","page-3","page-4","page-5","page-6","page-7","page-8","page-9","page-10","page-11","page-12","page-13","page-14","page-15","page-16","page-17","page-18","page-19","page-20","page-21","page-22","page-23","page-24"],
+    // wizardArray:["page-1","page-2","page-3","page-4","page-5","page-6","page-7","page-8","page-9","page-10","page-11","page-12","page-13","page-14","page-15","page-16","page-17","page-18","page-19","page-20","page-21","page-22","page-23","page-24"],
     wizardArrayIndex : 0,
-    selectedWizard:"page-1",
-    LogoAndBackgroundImageforFacility:''
+    selectedWizard:"Wizard_01",
+    apiResponseDataByFacilityGUID:'',
+    apiResponseDataByLocation:''
 }
 const mutations = {
     // mutatepageNumerical(state,payload){
@@ -58,17 +59,20 @@ const mutations = {
     },
     mutateNextIndex(state){
         state.wizardArrayIndex =  state.wizardArrayIndex+1 ;
-        state.selectedWizard=state.wizardArray[state.wizardArrayIndex];
+        state.selectedWizard=state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
     },
     mutatePreviousIndex(state){
         if (state.wizardArrayIndex == 1) {
             state.showBackBtn = false;
           }
         state.wizardArrayIndex =  state.wizardArrayIndex-1 ;
-        state.selectedWizard=state.wizardArray[state.wizardArrayIndex];      
+        state.selectedWizard=state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex]; 
     },
-    LogoAndBackgroundImageforFacility(state,payload){
-        state.LogoAndBackgroundImageforFacility =  payload;
+    apiResponseDataByFacilityGUID(state,payload){
+        state.apiResponseDataByFacilityGUID =  payload;
+    },
+    apiResponseDataByLocation(state,payload){
+        state.apiResponseDataByLocation =  payload;
     }
 }
 const actions = {

@@ -54,7 +54,7 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Logo & BG for Facility using Facility GUID
-        [HttpGet("GetLogoAndBackgroundImageforFacilityGUID/{sGUID}")]
+        [HttpGet("GetFacilityDatafromFacilityGUID/{sGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
         public async Task<object> GetFacilityDatafromFacilityGUID(string sGUID)

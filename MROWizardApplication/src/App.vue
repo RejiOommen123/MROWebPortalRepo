@@ -55,8 +55,12 @@
 
             <v-footer padless class="font-weight-medium" style="background-color:transparent">
               <v-col class="text-center" cols="12">
-                <span>Call 123-456-7890 for assistance</span><br/>
-                <span>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a></span>
+                <span>Call 123-456-7890 for assistance</span>
+                <br />
+                <span>
+                  Powered by
+                  <a href="https://mrocorp.com/" target="_blank">MRO Corp</a>
+                </span>
               </v-col>
             </v-footer>
           </v-card>
@@ -70,60 +74,88 @@
 
 
 <script>
-import WizardPage_01 from "./components/Pages/WizardPage_01";
-import WizardPage_02 from "./components/Pages/WizardPage_02";
-import WizardPage_03 from "./components/Pages/WizardPage_03";
-import WizardPage_04 from "./components/Pages/WizardPage_04";
-import WizardPage_05 from "./components/Pages/WizardPage_05";
-import WizardPage_06 from "./components/Pages/WizardPage_06";
-import WizardPage_07 from "./components/Pages/WizardPage_07";
-import WizardPage_08 from "./components/Pages/WizardPage_08";
-import WizardPage_09 from "./components/Pages/WizardPage_09";
-import WizardPage_10 from "./components/Pages/WizardPage_10";
-import WizardPage_11 from "./components/Pages/WizardPage_11";
-import WizardPage_12 from "./components/Pages/WizardPage_12";
-import WizardPage_13 from "./components/Pages/WizardPage_13";
-import WizardPage_14 from "./components/Pages/WizardPage_14";
-import WizardPage_15 from "./components/Pages/WizardPage_15";
-import WizardPage_16 from "./components/Pages/WizardPage_16";
-import WizardPage_17 from "./components/Pages/WizardPage_17";
-import WizardPage_18 from "./components/Pages/WizardPage_18";
-import WizardPage_19 from "./components/Pages/WizardPage_19";
-import WizardPage_20 from "./components/Pages/WizardPage_20";
-import WizardPage_21 from "./components/Pages/WizardPage_21";
-import WizardPage_22 from "./components/Pages/WizardPage_22";
-import WizardPage_23 from "./components/Pages/WizardPage_23";
-import WizardPage_24 from "./components/Pages/WizardPage_24";
+import Wizard_01 from "./components/Pages/WizardPage_01";
+import Wizard_02 from "./components/Pages/WizardPage_02";
+import Wizard_03 from "./components/Pages/WizardPage_03";
+import Wizard_04 from "./components/Pages/WizardPage_04";
+import Wizard_05 from "./components/Pages/WizardPage_05";
+import Wizard_06 from "./components/Pages/WizardPage_06";
+import Wizard_07 from "./components/Pages/WizardPage_07";
+import Wizard_08 from "./components/Pages/WizardPage_08";
+import Wizard_09 from "./components/Pages/WizardPage_09";
+import Wizard_10 from "./components/Pages/WizardPage_10";
+import Wizard_11 from "./components/Pages/WizardPage_11";
+import Wizard_12 from "./components/Pages/WizardPage_12";
+import Wizard_13 from "./components/Pages/WizardPage_13";
+import Wizard_14 from "./components/Pages/WizardPage_14";
+import Wizard_15 from "./components/Pages/WizardPage_15";
+import Wizard_16 from "./components/Pages/WizardPage_16";
+import Wizard_17 from "./components/Pages/WizardPage_17";
+import Wizard_18 from "./components/Pages/WizardPage_18";
+import Wizard_19 from "./components/Pages/WizardPage_19";
+import Wizard_20 from "./components/Pages/WizardPage_20";
+import Wizard_21 from "./components/Pages/WizardPage_21";
+import Wizard_22 from "./components/Pages/WizardPage_22";
+import Wizard_23 from "./components/Pages/WizardPage_23";
+import Wizard_24 from "./components/Pages/WizardPage_24";
 export default {
   name: "App",
   data() {
     return {
       dialog: true,
       logo: this.$store.state.ConfigModule.wizardLogo,
-      backgroundImg: this.$store.state.ConfigModule.wizardBackground
+      backgroundImg: this.$store.state.ConfigModule.wizardBackground,
+      phoneNo:0
     };
   },
-  beforeCreate(){
-  let urlParams = new URLSearchParams(window.location.search);
-  let guid=urlParams.get('guid');
-  console.log(window.location.search);
-  console.log('GUID Value:-'+guid); 
-    
+  created() {
+    let urlParams = new URLSearchParams(window.location.search);
+    let guid = urlParams.get("guid");
+    console.log(window.location.search);
+    console.log("GUID Value:-" + guid);
+    //API Request get wizard config based on facility id.
     this.$http
-      .get("http://localhost:57364/api/Wizards/GetLogoAndBackgroundImageforFacilityGUID/"+guid)
+      .get(
+        "http://localhost:57364/api/Wizards/GetFacilityDatafromFacilityGUID/" +
+          guid
+      )
       .then(response => {
-        var apiResponse = response.body;
-        this.logo=apiResponse.facilityLogoandBackground[0].sConfigLogoData;
-        this.backgroundImg=apiResponse.facilityLogoandBackground[0].sConfigBackgroundData;
-        console.log(apiResponse)
-         this.$store.commit("ConfigModule/LogoAndBackgroundImageforFacility",apiResponse); 
+        var apiFacilityResponse = response.body;
+        if (response.body) {
+          this.$store.commit("ConfigModule/apiResponseDataByFacilityGUID",apiFacilityResponse);
+          this.logo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigLogoData;
+          this.backgroundImg = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigBackgroundData;
+          this.phoneNo=this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
+          console.log("This Logo" + this.logo);
+          console.log("This BG" + this.backgroundImg);
+
+          //Check for number of locations in facility
+          let locationLength = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.locationDetails.length;
+
+          //API request to get wizard config data based on location id.
+          if (locationLength == 1) {
+            console.log("Inside Mounted - " + locationLength);
+            let singleLocation = this.$store.state.ConfigModule
+              .apiResponseDataByFacilityGUID.locationDetails[0];
+              // http://localhost:57364/api/Wizards/GetWizardConfig/fID=5&lID=2
+            this.$http
+              .get(
+                "http://localhost:57364/api/Wizards/GetWizardConfig/fID=" +singleLocation.nFacilityID+"&lID="+singleLocation.nFacilityLocationID)
+              .then(response => {
+                var apiLocationResponse = response.body;
+                if (response.body) {
+                  this.$store.commit("ConfigModule/apiResponseDataByLocation",apiLocationResponse);
+                  this.$store.commit("requestermodule/mutateSelectedLocation", singleLocation.sNormalizedLocationName);
+                  console.log('apiResponseDataByLocation    '+this.$store.state.ConfigModule.apiResponseDataByLocation);
+                }
+              });
+          }
+        }
       });
   },
   computed: {
-    // selectedPage() {
-    //   return this.$store.state.ConfigModule.selectedPage;
-    // },
-     selectedWizard() {
+ 
+    selectedWizard() {
       return this.$store.state.ConfigModule.selectedWizard;
     },
     showBackBtn() {
@@ -173,49 +205,36 @@ export default {
       //   this.$store.state.ConfigModule.selectedPage
 
       this.$store.commit("ConfigModule/mutatePreviousIndex");
-      
     }
   },
   components: {
-    "page-1": WizardPage_01,
-    "page-2": WizardPage_02,
-    "page-3": WizardPage_03,
-    "page-4": WizardPage_04,
-    "page-5": WizardPage_05,
-    "page-6": WizardPage_06,
-    "page-7": WizardPage_07,
-    "page-8": WizardPage_08,
-    "page-9": WizardPage_09,
-    "page-10": WizardPage_10,
-    "page-11": WizardPage_11,
-    "page-12": WizardPage_12,
-    "page-13": WizardPage_13,
-    "page-14": WizardPage_14,
-    "page-15": WizardPage_15,
-    "page-16": WizardPage_16,
-    "page-17": WizardPage_17,
-    "page-18": WizardPage_18,
-    "page-19": WizardPage_19,
-    "page-20": WizardPage_20,
-    "page-21": WizardPage_21,
-    "page-22": WizardPage_22,
-    "page-23": WizardPage_23,
-    "page-24": WizardPage_24
+    "Wizard_01": Wizard_01,
+    "Wizard_02": Wizard_02,
+    "Wizard_03": Wizard_03,
+    "Wizard_04": Wizard_04,
+    "Wizard_05": Wizard_05,
+    "Wizard_06": Wizard_06,
+    "Wizard_07": Wizard_07,
+    "Wizard_08": Wizard_08,
+    "Wizard_09": Wizard_09,
+    "Wizard_10": Wizard_10,
+    "Wizard_11": Wizard_11,
+    "Wizard_12": Wizard_12,
+    "Wizard_13": Wizard_13,
+    "Wizard_14": Wizard_14,
+    "Wizard_15": Wizard_15,
+    "Wizard_16": Wizard_16,
+    "Wizard_17": Wizard_17,
+    "Wizard_18": Wizard_18,
+    "Wizard_19": Wizard_19,
+    "Wizard_20": Wizard_20,
+    "Wizard_21": Wizard_21,
+    "Wizard_22": Wizard_22,
+    "Wizard_23": Wizard_23,
+    "Wizard_24": Wizard_24
   }
 };
 </script>
 <style scoped>
 @import "./assets/styles/RequestWizard.css";
-/* #logoImg {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
-  height: 70px;
-  width: auto;
-}
-#bgImg{
-  background-repeat: no-repeat;
-  background-size: cover;
-} */
 </style>

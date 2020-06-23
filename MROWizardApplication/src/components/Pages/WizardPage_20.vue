@@ -106,8 +106,8 @@ export default {
         },
         onError(error) {
             console.log("On Error Event", error.name);
-            
-
+           if(error.name=="NotFoundError")
+           alert("Camera Not Found");
         },
         onCameras(cameras) {
             this.devices = cameras;
