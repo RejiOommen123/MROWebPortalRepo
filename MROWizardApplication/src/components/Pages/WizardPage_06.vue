@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1 v-if="areYouPatient">What's your Email Id ?</h1>
+    <h1 v-if="bAreYouPatient">What's your Email Id ?</h1>
     <h1 v-else>What is patient's Email Id ?</h1>
     <p>We'll email you a confirmation of your request when you're finished</p>
     <div>
@@ -65,8 +65,8 @@ export default {
     }
   },
   computed: {
-    areYouPatient() {
-      return this.$store.state.requestermodule.areYouPatient;
+    bAreYouPatient() {
+      return this.$store.state.requestermodule.bAreYouPatient;
     },   
     emailErrors() {
       const errors = [];

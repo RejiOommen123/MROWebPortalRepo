@@ -145,7 +145,7 @@ export default {
                 var apiLocationResponse = response.body;
                 if (response.body) {
                   this.$store.commit("ConfigModule/apiResponseDataByLocation",apiLocationResponse);
-                  this.$store.commit("requestermodule/mutateSelectedLocation", singleLocation.sNormalizedLocationName);
+                  this.$store.commit("requestermodule/sSelectedLocation", singleLocation.sNormalizedLocationName);
                   console.log('apiResponseDataByLocation    '+this.$store.state.ConfigModule.apiResponseDataByLocation);
                 }
               });

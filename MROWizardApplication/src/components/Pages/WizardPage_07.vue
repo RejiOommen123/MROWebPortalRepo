@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <form>
-       <h1 v-if="areYouPatient">What is your address?</h1>
+       <h1 v-if="bAreYouPatient">What is your address?</h1>
        <h1 v-else>What is patient's address?</h1>
       <v-row>
        
@@ -84,8 +84,8 @@ export default {
     streetAdd: { required }
   },
   computed: {
-     areYouPatient() {
-      return this.$store.state.requestermodule.areYouPatient;
+     bAreYouPatient() {
+      return this.$store.state.requestermodule.bAreYouPatient;
     },  
     zipcodeErrors() {
       const errors = [];

@@ -50,7 +50,7 @@ export default {
                 this.$store.state.ConfigModule.apiResponseDataByLocation
             );
             this.$store.commit(
-              "requestermodule/mutateSelectedLocation",
+              "requestermodule/sSelectedLocation",
               location.sNormalizedLocationName
             );
             this.$store.commit("ConfigModule/mutateNextIndex");

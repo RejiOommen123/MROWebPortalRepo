@@ -1,126 +1,3 @@
-<!--<template>
- <div class="center">
-     <br>
-     <div class="alert alert-success">You have Successfully Completed the Wizard</div>
-     <div class="alert alert-success">Please Check your EmaiID for the Completely filled Form</div>
-
-    <div class="alert alert-info alert-dismissible">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  <strong>Click &times;</strong> on Top Right Corner to Exit
-</div>
-     </div>
-
-</template>-->
-<!--<script>
-export default {
-    name:"WizardPage_09",
-    data(){
-        return{}
-    }
-}
-</script>
-<style scoped>
-.center {
-  text-align: center;
-}
-</style>-->
-<!--Signature Pad Code Start
-<template>
-    <div id="app">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 mt-2">
-                    <VueSignaturePad id="signature"
-                                     width="100%"
-                                     height="500px"
-                                     ref="signaturePad"
-                                     :options="options" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-3 mt-2">
-                    <button class="btn btn-outline-secondary" @click="undo">Undo</button>
-                </div>
-                <div class="col-3 mt-2">
-                    <button class="btn btn-outline-primary" @click="save">Save</button>
-                </div>
-                <div class="col-3 mt-2">
-                    <button class="btn btn-outline-primary" @click="change">Change</button>
-                </div>
-                <div class="col-3 mt-2">
-                    <button class="btn btn-outline-primary" @click="resume">Resume</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script>
-    export default {
-        name: "App",
-        data: () => ({
-            options: {
-                penColor: "#c0f"
-            }
-        }),
-        methods: {
-            undo() {
-                this.$refs.signaturePad.undoSignature();
-            },
-            save() {
-                const { data } = this.$refs.signaturePad.saveSignature();
-                this.$store.commit("requestermodule/mutatesignature", data);
-                alert("Open DevTools see the save data.");
-                var patient = {
-                    selectedLocation: this.$store.state.requestermodule.selectedLocation,
-                    notPatient: this.$store.state.requestermodule.notPatient,
-                    rname: this.$store.state.requestermodule.rname,
-                    relationToPatient: this.$store.state.requestermodule.relationToPatient,
-                    emailID: this.$store.state.requestermodule.emailID,
-
-                    confirmReport: this.$store.state.requestermodule.confirmReport,
-                    fname: this.$store.state.requestermodule.fname,
-                    minitial: this.$store.state.requestermodule.minitial,
-                    lname: this.$store.state.requestermodule.lname,
-                    isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,
-                    zipcode: this.$store.state.requestermodule.zipcode,
-                    streetAdd: this.$store.state.requestermodule.streetAdd,
-                    bDay: this.$store.state.requestermodule.bDay,
-                    imgdata: this.$store.state.requestermodule.imgdata
-                };
-                this.$http
-                    .post('http://localhost:57364/api/PDF/GeneratePDF/', patient, { responseType: "arraybuffer" })
-                    .then(response => {
-                        let blobFile = new Blob([response.data], { type: "application/pdf" });
-                        var fileURL = URL.createObjectURL(blobFile);
-                        window.open(fileURL, "_blank", false);
-                    })
-            },
-            change() {
-                this.options = {
-                    penColor: "#00f"
-                };
-            },
-            resume() {
-                this.options = {
-                    penColor: "#c0f"
-                };
-            }
-        }
-    };
-</script>
-
-<style>
-    #signature {
-        border: double 3px transparent;
-        border-radius: 5px;
-        background-image: linear-gradient(white, white), radial-gradient(circle at top left, #4bc5e8, #9f6274);
-        background-origin: border-box;
-        background-clip: content-box, border-box;
-    }
-</style>
--->
-
 <!--Signature Pad Code End-->
 
 <template>
@@ -201,22 +78,7 @@ export default {
     };
   },
   mounted() {
-    // var patient = {
-    //     selectedLocation: this.$store.state.requestermodule.selectedLocation,
-    //     notPatient: this.$store.state.requestermodule.,
-    //     rname: this.$store.state.requestermodule.rname,
-    //     relationToPatient: this.$store.state.requestermodule.relationToPatient,
-    //     emailID: this.$store.state.requestermodule.emailID,
-
-    //     confirmReport: this.$store.state.requestermodule.confirmReport,
-    //     fname: this.$store.state.requestermodule.fname,
-    //     minitial: this.$store.state.requestermodule.minitial,
-    //     lname: this.$store.state.requestermodule.lname,
-    //     isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,
-    //     zipcode: this.$store.state.requestermodule.zipcode,
-    //     streetAdd: this.$store.state.requestermodule.streetAdd,
-    //     bDay: this.$store.state.requestermodule.bDay
-    // };
+   
 
     this.$http
       .get("http://localhost:57364/api/LocationAuthorizationDocument/getPDF/", {
@@ -255,14 +117,14 @@ export default {
       //console.log(isEmpty);
       console.log(data);
       var patient = {
-        selectedLocation: this.$store.state.requestermodule.selectedLocation,
-        areYouPatient: this.$store.state.requestermodule.areYouPatient,
-        rname: this.$store.state.requestermodule.rname,
-        relationToPatient: this.$store.state.requestermodule.relationToPatient,
+        sSelectedLocation: this.$store.state.requestermodule.sSelectedLocation,
+        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
+        sRelativeName: this.$store.state.requestermodule.sRelativeName,
+        sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
         emailID: this.$store.state.requestermodule.emailID,
 
         confirmReport: this.$store.state.requestermodule.confirmReport,
-        fname: this.$store.state.requestermodule.fname,
+        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
         minitial: this.$store.state.requestermodule.minitial,
         lname: this.$store.state.requestermodule.lname,
         isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased,

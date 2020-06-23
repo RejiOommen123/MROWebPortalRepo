@@ -38,12 +38,13 @@ export default {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;  
        this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    check(prName) {
-      if (prName == "Other Reason") {
-        this.other= !this.other;       
-      }
     }
+    // ,
+    // check(prName) {
+    //   if (prName == "Other Reason") {
+    //     this.other= !this.other;       
+    //   }
+    // }
   }
 };
 </script>

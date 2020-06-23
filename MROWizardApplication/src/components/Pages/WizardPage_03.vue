@@ -7,32 +7,32 @@
         <br />
         <button @click.prevent="setNotPatient" class="btn btn-success btn-md locationButton" >No, I am requesting records for someone else <br/>(Child, Dependent, Decedent).</button>
       </div>
-      <div v-show="!areYouPatient">
+      <div v-show="!bAreYouPatient">
         <form>
           <v-row>
           <v-col cols="6" offset-sm="3" sm="6">
           <v-text-field
-            v-model="rname"
-            :error-messages="rnameErrors"
+            v-model="sRelativeName"
+            :error-messages="sRelativeName"
             label="Relative Full Name"
             required
-            @input="$v.rname.$touch()"
-            @blur="$v.rname.$touch()"
+            @input="$v.sRelativeName.$touch()"
+            @blur="$v.sRelativeName.$touch()"
           ></v-text-field>
           <v-text-field
-            v-model="relationToPatient"
-            :error-messages="relationToPatientErrors"
+            v-model="sRelationToPatient"
+            :error-messages="sRelationToPatientErrors"
             label="Relation With Patient"
             required
-            @input="$v.relationToPatient.$touch()"
-            @blur="$v.relationToPatient.$touch()"
+            @input="$v.sRelationToPatient.$touch()"
+            @blur="$v.sRelationToPatient.$touch()"
           ></v-text-field>
           <v-btn @click.prevent="continueAhead" :disabled="$v.$invalid" class="mr-4" color="success" >Continue</v-btn>
           </v-col>
           </v-row>
         </form>
       </div>
-      <div v-if="areYouPatient" class="disclaimer">{{this.disclaimer01}}</div>
+      <div v-if="bAreYouPatient" class="disclaimer">{{this.disclaimer01}}</div>
       <div v-else class="disclaimer">{{this.disclaimer02}}</div>
     </div>
     
@@ -46,31 +46,31 @@ export default {
   name: "WizardPage_03",
   data() {
     return {
-      rname: this.$store.state.requestermodule.rname,
-      relationToPatient: this.$store.state.requestermodule.relationToPatient,
-      disclaimer01: this.$store.state.ConfigModule.wp03_disclaimer01,
-      disclaimer02: this.$store.state.ConfigModule.wp03_disclaimer02
+      sRelativeName: this.$store.state.requestermodule.sRelativeName,
+      sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
+      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_03_disclaimer02,
+      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_03_disclaimer03
     };
   },
   mixins: [validationMixin],
   validations: {
-    rname: { required },
-    relationToPatient: { required }
+    sRelativeName: { required },
+    sRelationToPatient: { required }
   },
   computed: {
-    areYouPatient() {
-      return this.$store.state.requestermodule.areYouPatient;
+    bAreYouPatient() {
+      return this.$store.state.requestermodule.bAreYouPatient;
     },
-    rnameErrors() {
+    sRelativeNameErrors() {
       const errors = [];
-      if (!this.$v. rname.$dirty) return errors;
-      !this.$v. rname.required && errors.push("Name is required.");
+      if (!this.$v. sRelativeName.$dirty) return errors;
+      !this.$v. sRelativeName.required && errors.push("Name is required.");
       return errors;
     },
-    relationToPatientErrors() {
+    sRelationToPatientErrors() {
       const errors = [];
-      if (!this.$v.relationToPatient.$dirty) return errors;
-      !this.$v.relationToPatient.required && errors.push("Name is required.");
+      if (!this.$v.sRelationToPatient.$dirty) return errors;
+      !this.$v.sRelationToPatient.required && errors.push("Name is required.");
       return errors;
     }
   },
@@ -78,20 +78,20 @@ export default {
     setPatient() {
       this.$store.state.requestermodule.isPatientDeceased = false;
       this.$store.commit("requestermodule/mutateaskPatientDeceased", false);
-      this.$store.commit("requestermodule/mutateareYouPatient", true);
+      this.$store.commit("requestermodule/bAreYouPatient", true);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
           this.$store.commit("ConfigModule/mutateNextIndex");
     },
     setNotPatient() {
-      this.$store.commit("requestermodule/mutateareYouPatient", false);
+      this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
       this.$store.state.requestermodule.isPatientDeceased = false;
       this.$store.commit("requestermodule/mutateaskPatientDeceased", true);
 
-      this.$store.commit("requestermodule/mutatername", this.rname);
-      this.$store.commit("requestermodule/mutaterelationToPatient",this.relationToPatient);
+      this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
+      this.$store.commit("requestermodule/sRelationToPatient",this.sRelationToPatient);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
       
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");

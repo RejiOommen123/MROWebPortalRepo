@@ -1,20 +1,20 @@
 <template>
   <div class="center">
     <div class="control-group">
-      <h1 v-if="areYouPatient">What is your Full Name ?</h1>
+      <h1 v-if="bAreYouPatient">What is your Full Name ?</h1>
       <h1 v-else>What is patient's Full Name ?</h1>
       
     </div>
     <form>
       <v-row>
         <v-col cols="12" offset-sm="1" sm="3">
-          <label for="fname" class="control-label">First Name</label>
+          <label for="sPatientFirstName" class="control-label">First Name</label>
           <v-text-field
-            v-model="fname"
-            :error-messages="fNameError"
+            v-model="sPatientFirstName"
+            :error-messages="sPatientFirstNameError"
             required
-            @input="$v.fname.$touch()"
-            @blur="$v.fname.$touch()"
+            @input="$v.sPatientFirstName.$touch()"
+            @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="3">
@@ -54,7 +54,7 @@ export default {
   name: "WizardPage_05",
   data() {
     return {
-      fname: this.$store.state.requestermodule.fname,
+      sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
       lname: this.$store.state.requestermodule.lname,
       minitial: this.$store.state.requestermodule.minitial,
       isPatientMinor: this.$store.state.requestermodule.isPatientMinor,
@@ -63,26 +63,26 @@ export default {
   },
   mixins: [validationMixin],
   validations: {
-    fname: { required, maxLength: maxLength(15) },
+    sPatientFirstName: { required, maxLength: maxLength(15) },
     lname: { required, maxLength: maxLength(15) },
     minitial: { required, maxLength: maxLength(1) }
   },
   computed: {
-    areYouPatient() {
-      return this.$store.state.requestermodule.areYouPatient;
+    bAreYouPatient() {
+      return this.$store.state.requestermodule.bAreYouPatient;
     },   
-    disclaimer() {
-      return this.$store.state.ConfigModule.wp04_disclaimer;
+    disclaimer() {      
+      return this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01;
     },
     askPatientDeceased() {
       return this.$store.state.requestermodule.askPatientDeceased;
     },
-    fNameError() {
+    sPatientFirstNameError() {
       const errors = [];
-      if (!this.$v.fname.$dirty) return errors;
-      !this.$v.fname.maxLength &&
+      if (!this.$v.sPatientFirstName.$dirty) return errors;
+      !this.$v.sPatientFirstName.maxLength &&
         errors.push("First Name must be at most 15 characters long");
-      !this.$v.fname.required && errors.push("First Name is required.");
+      !this.$v.sPatientFirstName.required && errors.push("First Name is required.");
       return errors;
     },
     lNameError() {
@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     nextPage() {
-      this.$store.commit("requestermodule/mutatefname", this.fname);
+      this.$store.commit("requestermodule/sPatientFirstName", this.sPatientFirstName);
       this.$store.commit("requestermodule/mutatelname", this.lname);
       this.$store.commit("requestermodule/mutateminitial", this.minitial);
       this.$store.commit(

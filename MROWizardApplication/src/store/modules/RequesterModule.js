@@ -1,14 +1,17 @@
 ﻿//requestermodule
 const state = {    
-    askPatientDeceased:false,
-    selectedLocation:"",
-    areYouPatient:true,
-    rname:'',
-    relationToPatient:'',
+    sSelectedLocation:"",
+    bAreYouPatient:true,
+    sRelativeName:'',
+    sRelationToPatient:'',
+    sPatientFirstName:'',
+
+    
+    askPatientDeceased:false,     
     emailID:'',
     confirmEmailID:'',
     confirmReport:false,
-    fname:'',
+   
     lname:'',
     minitial:'',
     isPatientDeceased:false,
@@ -31,17 +34,29 @@ const state = {
     feedback:''
 }
 const mutations = {
+    sSelectedLocation(state,payload){
+        state.sSelectedLocation = payload;
+    },
+    sRelativeName(state,payload){
+        state.sRelativeName = payload;
+    },
+    sRelationToPatient(state,payload){
+        state.sRelationToPatient = payload;
+    },
+    sPatientFirstName(state,payload){
+        state.sPatientFirstName = payload;
+    },
+
+
+
     mutateaskPatientMinor(state,payload){
         state.askPatientMinor = payload
     },
     mutateaskPatientDeceased(state,payload){
         state.askPatientDeceased = payload
-    },   
-    mutateSelectedLocation(state,payload){
-        state.selectedLocation = payload;
-    },
-    mutateareYouPatient(state,payload){
-        state.areYouPatient = payload;
+    },    
+    bAreYouPatient(state,payload){
+        state.bAreYouPatient = payload;
     },
     mutateemailID(state,payload){
         state.emailID = payload;
@@ -52,15 +67,7 @@ const mutations = {
     mutateconfirmReport(state,payload){
         state.confirmReport = payload;
     },
-    mutatername(state,payload){
-        state.rname = payload;
-    },
-    mutaterelationToPatient(state,payload){
-        state.relationToPatient = payload;
-    },
-    mutatefname(state,payload){
-        state.fname = payload;
-    },
+   
     mutatelname(state,payload){
         state.lname = payload;
     },
