@@ -11,7 +11,7 @@
     "core-js": "^3.6.5",
     "moment": "^2.26.0",
     "vue": "^2.6.11",
-    "vue-cam": "^0.2.4",
+    "vue-cam-vision": "0.0.8",
     "vue-pdf": "^4.0.9",
     "vue-resource": "^1.5.1",
     "vue-signature-pad": "^2.0.2",

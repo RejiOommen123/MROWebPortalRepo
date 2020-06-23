@@ -33,7 +33,6 @@ export default {
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
       // this.$store.commit("requestermodule/mutatebDay", this.bDay);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 11);
@@ -45,28 +44,5 @@ export default {
 </script>
 
 <style scoped>
-/* .center {
-  text-align: center;
-}
-.checkboxBorder {
-  height: 40px;
-  line-height: 40px;
-  padding-left: 10px;
-  font-size: 14px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: visible;
-  border: 1px solid #f6efef;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  margin-top: 10px;
-  position: relative;
-}
-.checkboxBorder:hover {
-  background-color: #53b958;
-}
-v-checkbox :checked{
-    background-color: #53b958;
-} */
+
 </style>
