@@ -36,34 +36,6 @@ export default {
             // this.$store.commit("ConfigModule/mutateCurrentPage","page-2");
             this.$store.commit("ConfigModule/mutateNextIndex");
         }
-    },
-    mounted(){
-      //alert("Hello World");
-
-      this.$http.get("Wizards/GetWizardConfig/2").then(
-        response => {
-          // get body data
-          //this.nFacLocCount = JSON.parse(response.bodyText)["nFacLocCount"];
-          //alert(JSON.parse(response.bodyText));
-         this.wizard_config = response.body;
-          console.log(this.wizard_config);
-          //this.gridData.push(this.nFacLocCount);
-        },
-        response => {
-          // error callback
-          console.log(response.body);
-        }
-      );
-    //  var widget = new RingCaptcha.Widget('#xyz', {
-    //       app: "APP_KEY",
-    //       events: {
-    //       // Add JavaScript Callbacks
-    //       verified: function(event) {
-    //         alert("Phone number verified!");
-    //       }
-    //   }
-    // }).setup();
- 
     }
 };
 </script>

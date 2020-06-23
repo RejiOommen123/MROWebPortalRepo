@@ -33,8 +33,9 @@ const state = {
     wp23_disclaimer:"We'd love your feedback",
     wp24_disclaimer:"Your request is now complete. You may now close this window.",
     wizardArray:["page-1","page-2","page-3","page-4","page-5","page-6","page-7","page-8","page-9","page-10","page-11","page-12","page-13","page-14","page-15","page-16","page-17","page-18","page-19","page-20","page-21","page-22","page-23","page-24"],
-    wizardArrayIndex : 23,
-    selectedWizard:"page-24"
+    wizardArrayIndex : 0,
+    selectedWizard:"page-1",
+    LogoAndBackgroundImageforFacility:''
 }
 const mutations = {
     // mutatepageNumerical(state,payload){
@@ -65,6 +66,9 @@ const mutations = {
           }
         state.wizardArrayIndex =  state.wizardArrayIndex-1 ;
         state.selectedWizard=state.wizardArray[state.wizardArrayIndex];      
+    },
+    LogoAndBackgroundImageforFacility(state,payload){
+        state.LogoAndBackgroundImageforFacility =  payload;
     }
 }
 const actions = {

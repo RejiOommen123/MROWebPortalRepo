@@ -55,9 +55,8 @@
 
             <v-footer padless class="font-weight-medium" style="background-color:transparent">
               <v-col class="text-center" cols="12">
-                <p>Call 123-456-7890 for assistance</p>
-                <p>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a>
-                </p>
+                <span>Call 123-456-7890 for assistance</span><br/>
+                <span>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a></span>
               </v-col>
             </v-footer>
           </v-card>
@@ -104,6 +103,22 @@ export default {
       backgroundImg: this.$store.state.ConfigModule.wizardBackground
     };
   },
+  beforeCreate(){
+  let urlParams = new URLSearchParams(window.location.search);
+  let guid=urlParams.get('guid');
+  console.log(window.location.search);
+  console.log('GUID Value:-'+guid); 
+    
+    this.$http
+      .get("http://localhost:57364/api/Wizards/GetLogoAndBackgroundImageforFacilityGUID/"+guid)
+      .then(response => {
+        var apiResponse = response.body;
+        this.logo=apiResponse.facilityLogoandBackground[0].sConfigLogoData;
+        this.backgroundImg=apiResponse.facilityLogoandBackground[0].sConfigBackgroundData;
+        console.log(apiResponse)
+         this.$store.commit("ConfigModule/LogoAndBackgroundImageforFacility",apiResponse); 
+      });
+  },
   computed: {
     // selectedPage() {
     //   return this.$store.state.ConfigModule.selectedPage;
@@ -123,6 +138,13 @@ export default {
     dialogMaxHeight() {
       return this.$store.state.ConfigModule.dialogMaxHeight;
     }
+    // ,
+    // facilityLogo(){
+    //   return this.$store.state.ConfigModule.LogoAndBackgroundImageforFacility.facilityLogoandBackground.sConfigLogoData;
+    // },
+    // facilityBackground(){
+    //   return this.$store.state.ConfigModule.LogoAndBackgroundImageforFacility.facilityLogoandBackground.sConfigBackgroundData;
+    // }
   },
   methods: {
     doNothing() {
