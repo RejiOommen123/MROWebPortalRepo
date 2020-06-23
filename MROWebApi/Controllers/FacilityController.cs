@@ -203,12 +203,12 @@ namespace MROWebAPI.Controllers
                 //Add to facility Connections connecitons
                 FacilityConnectionsRepository facilityConnectionsRepository = new FacilityConnectionsRepository(_info);
                 FacilityConnections connection = new FacilityConnections();
-                connection.nCreatedAdminUserID = 1;
+                connection.nCreatingAdminUserID = 1;
                 connection.nFacilityID = dbFacility.nFacilityID;
-                connection.nUpdatedAdminUserID = 1;
+                connection.nUpdateAdminUserID = 1;
                 connection.sConnectionString = _info.ConnectionString;
-                Guid obj = new Guid();
-                connection.sGUID = obj.ToString() ;
+
+                connection.sGUID = Guid.NewGuid().ToString();
                 connection.dtCreated = DateTime.Now;
                 connection.dtLastUpdate = DateTime.Now;
                 
@@ -367,6 +367,32 @@ namespace MROWebAPI.Controllers
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities f = await rpFac.Select(id);
             return f == null;
+        }
+        #endregion
+
+        #region Get Facility GUID
+        [HttpGet("GetFacilityGUID/{nFacilityID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetFacilityGUID(int nFacilityID) {
+            try
+            {
+                //throw new Exception();
+                FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID",nFacilityID);
+
+                if (connections!=null&&connections.Count()==1) {
+                    if (connections.First().sGUID!=null)
+                        return Ok(connections.First().sGUID);
+                    else
+                        return NoContent();
+                }
+                return Content("No Such Facility");
+            }
+            catch (Exception exp)
+            {
+                return Content(exp.Message);
+            }
         }
         #endregion
 

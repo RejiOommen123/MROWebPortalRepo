@@ -110,6 +110,16 @@
               :error-messages="sOutboundEmailErrors"
               solo
             ></v-text-field>
+             <!-- Show GUID -->
+          <label class="col-md-4" for="sGUID">Guid for URL (Read Only):</label>
+          <v-text-field
+              type="text"
+              v-model="sGUID"
+              :readonly = true
+              
+              id="sGUID"
+              solo
+            ></v-text-field>
           </v-col>
         </v-row>
         <div class="submit">
@@ -252,6 +262,7 @@ export default {
   name: "EditFacility",
   data() {
     return {
+      sGUID:"",
       facility: {
         nFacilityID: 0,
         sFacilityName: "",
@@ -284,6 +295,23 @@ export default {
           this.gridData = response.body;
         }
       );
+      this.$http
+      .get(
+        "facility/GetFacilityGUID/" +
+          this.$route.params.id
+      )
+      .then(
+        response => {
+          // get body data
+          console.log(response.body);
+          this.sGUID = response.bodyText;
+        },
+        response => {
+          // error callback
+          console.log(response);
+        }
+      );
+
   },
   methods: {
     // API to post single facility (edit facility)
