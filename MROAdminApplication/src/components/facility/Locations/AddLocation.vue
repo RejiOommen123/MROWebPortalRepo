@@ -62,7 +62,7 @@
           ></v-text-field>
            
           
-          <label class="required" for="sFaxNo">Fax No:</label>
+          <label for="sFaxNo">Fax No:</label>
           <v-text-field
             type="text"
             id="nFaxNo"
@@ -165,7 +165,7 @@ export default {
           sLocationCode:{ required, maxLength: maxLength(4),minLength:minLength(4) },
           sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
-          sFaxNo:{required,maxLength: maxLength(10),minLength:minLength(10),numeric},
+          sFaxNo:{maxLength: maxLength(10),minLength:minLength(10),numeric},
       }
   },
   computed:
@@ -224,7 +224,7 @@ export default {
           !this.$v.location.sFaxNo.numeric && errors.push('Fax Number can only have numbers')
           !this.$v.location.sFaxNo.minLength && errors.push('Fax Number must be at least 10 characters long')
           !this.$v.location.sFaxNo.maxLength && errors.push('Fax Number must be at most 10 characters long')
-          !this.$v.location.sFaxNo.required && errors.push('Fax No is required.')
+          //!this.$v.location.sFaxNo.required && errors.push('Fax No is required.')
           return errors;
     }
   },

@@ -137,5 +137,7 @@ namespace MRODBL.Repositories
         /// <param name="nLocationID">Location ID</param>
         /// <returns></returns>
         Task<dynamic> GetLogoBackGroundforLocationsync(int nLocationID);
+
+        Task<IEnumerable<T>> GetLocationsList(int nFacilityID);
     }
 }

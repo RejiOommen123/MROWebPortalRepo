@@ -401,14 +401,16 @@ namespace MROWebAPI.Controllers
             //FacilitiesRepository fRepo = new FacilitiesRepository(_info);
 
             if (facility.bActiveStatus) {
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                foreach (FacilityLocations location in locationList) {
-                    location.bLocationActiveStatus = false;
-                }
-                await facilityLocationsRepository.UpdateMany(locationList.ToList());
+                //means user trying to deactivate
+                //FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                //foreach (FacilityLocations location in locationList) {
+                //    location.bLocationActiveStatus = false;
+                //}
+                //await facilityLocationsRepository.UpdateMany(locationList.ToList());
                 return true;
             }
             else {
+                //Means trying to active
                 return facility.nFacLocCount >0;
             }
         }

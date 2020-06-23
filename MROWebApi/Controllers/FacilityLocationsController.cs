@@ -86,8 +86,11 @@ namespace MROWebApi.Controllers
                 //var faloName = falo.nROIFacility.sFacilityName;
                 //return Ok(new { locations, faloName });
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities");
-                locations = locations.Where(c => c.nFacilityID == facilityID);
+                //IEnumerable<dynamic> locations = await facilityLocationsRepository.InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities");
+                //locations = locations.Where(c => c.nFacilityID == facilityID);
+
+
+                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(facilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
                 Facilities facility = await facilityRepo.Select(facilityID);
                 if (facility == null)
@@ -125,7 +128,7 @@ namespace MROWebApi.Controllers
                 facilityLocation.dtCreated = DateTime.Now;
                 facilityLocation.nUpdatedAdminUserID = 1;
                 facilityLocation.dtLastUpdate = DateTime.Now;
-                string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", ",");
+                string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
                 string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
                 finalString = "MRO" + finalString;
                 facilityLocation.sNormalizedLocationName = finalString;

@@ -307,5 +307,35 @@ namespace MRODBL.Repositories
 
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nFacilityID">Facility ID</param>
+        /// <returns>Locations for a Facility</returns>
+        public async Task<IEnumerable<T>> GetLocationsList(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityLocationID, " +  
+                      "sLocationName, " +
+                      "sLocationAddress, " +
+                      "sLocationCode, " +
+                      "bLocationActiveStatus, " +
+                      "sFacilityName " +
+                      "FROM " +
+                      "tblFacilityLocations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+                //InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities")
+            }
+        }
     }
 }

@@ -117,7 +117,7 @@
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
           <v-btn
             @click="goToLoc"
-            type="submit"
+            type="button"
             :disabled="this.$v.$invalid"
             color="primary"
           >Save & Add Location</v-btn>
@@ -283,7 +283,7 @@ export default {
         .post("facility/AddFacility", this.facility)
         .then(response => {
           if (response.ok == true) {
-            this.$router.push("/location/" + response.body.nFacilityId);
+            this.$router.push("/locations/" + response.body.nFacilityID);
           }
         });
     },
