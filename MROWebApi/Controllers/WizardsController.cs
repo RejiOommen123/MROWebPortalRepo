@@ -31,15 +31,15 @@ namespace MROWebApi.Controllers
         #endregion  
 
         #region Get Wizard Config
-        [HttpGet("GetWizardConfig/{nFacilityID}")]
+        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
         {
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                object Wizard_Config = await  fieldsRepository.GetWizardConfigurationAsync(nFacilityID);
+                object Wizard_Config = await  fieldsRepository.GetWizardConfigurationAsync(nFacilityID,nFacilityLocationID);
                 return Wizard_Config;
 
                 //var oWizardConfigFields = Function(wizard_config.ofield);
@@ -57,7 +57,7 @@ namespace MROWebApi.Controllers
         [HttpGet("GetLogoAndBackgroundImageforFacilityGUID/{sGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<object> GetLogoAndBackgroundImageforFacilityGUID(string sGUID)
+        public async Task<object> GetFacilityDatafromFacilityGUID(string sGUID)
         {
             try
             {

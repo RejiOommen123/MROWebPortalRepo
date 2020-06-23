@@ -243,32 +243,32 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="nFacilityID">Facility ID</param>
         /// <returns>IEnumerable<dynamic></returns>
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID,int nFacilityLocationID)
         {
             string SqlString = "spGetWizardConfigBynFacilityId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID }, commandType: CommandType.StoredProcedure);
                 //var oFields = wizardConfig.Read().ToList();
                 var oFields = wizardConfig.Read().ToDictionary(row => (string)row.sNormalizedFieldName, row => (bool)row.bShow);
                 //var oWizards = wizardConfig.Read().ToList();
-                var sWizards = wizardConfig.Read().Select(d => new object[] { d.sWizardName });
-                List<string> soWizard = new List<string>();
-                foreach (var wiz in sWizards)
-                //for (int i = 0; i<= sWizards.Count(); i++)
-                {
-                    soWizard.Add(wiz[0].ToString());
-                }
-                String[] oWizards = soWizard.ToArray();
+                //var sWizards = wizardConfig.Read().Select(d => new object[] { d.sWizardName });
+                //List<string> soWizard = new List<string>();
+                //foreach (var wiz in sWizards)
+                ////for (int i = 0; i<= sWizards.Count(); i++)
+                //{
+                //    soWizard.Add(wiz[0].ToString());
+                //}
+                //String[] oWizards = soWizard.ToArray();
                 var oPrimaryReason = wizardConfig.Read().ToList();
                 var oRecordTypes = wizardConfig.Read().ToList();
                 var oSensitiveInfo = wizardConfig.Read().ToList();
                 var oShipmentTypes = wizardConfig.Read().ToList();
-                //var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row., row => (bool)row.bShow);
-                
+                var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
+                var oLocations = wizardConfig.Read().ToList();
                 //var oLocation = wizardConfig.Read().ToList();
-                object newObject = new { oFields, oWizards, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes };
+                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oWizardHelper,oLocations};
                 return newObject;
             }
         }
@@ -281,8 +281,6 @@ namespace MRODBL.Repositories
                 db.Open();
                 dynamic logoBackgroundLocation = await db.QueryFirstAsync(SqlString, new { @nLocationId = nLocationID }, commandType: CommandType.StoredProcedure);
                 return logoBackgroundLocation;
-
-                
             }
         }
 
@@ -293,11 +291,18 @@ namespace MRODBL.Repositories
             {
                 db.Open();
                 SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID }, commandType: CommandType.StoredProcedure);
-
                 var facilityLogoandBackground = logoBackgroundFacility.Read().ToList();
-                var wizardHelper = logoBackgroundFacility.Read().ToList();
-                var  locationDetails= logoBackgroundFacility.Read().ToList();
-                object newObject = new { facilityLogoandBackground, wizardHelper, locationDetails };
+                var sWizards = logoBackgroundFacility.Read().Select(d => new object[] { d.sWizardName });
+                List<string> soWizard = new List<string>();
+                soWizard.Add("Wizard-01");
+                foreach (var wiz in sWizards)
+                {
+                    soWizard.Add(wiz[0].ToString());
+                }
+                String[] oWizards = soWizard.ToArray();
+                var wizardHelper = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
+                var locationDetails = logoBackgroundFacility.Read().ToList();
+                object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails };
                 return newObject;
 
             }

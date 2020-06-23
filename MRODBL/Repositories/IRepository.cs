@@ -114,7 +114,7 @@ namespace MRODBL.Repositories
         /// <returns>IEnumerable<dynamic<</returns>
         Task<IEnumerable<dynamic>> EditFields(int ID);
 
-        Task<object> GetWizardConfigurationAsync(int nFacilityID);
+        Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID);
 
         /// <summary>
         /// Get Latest ROI ID
