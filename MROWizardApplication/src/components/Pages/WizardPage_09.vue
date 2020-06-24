@@ -34,9 +34,7 @@ export default {
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;
-      // this.$store.commit("requestermodule/mutatebDay", this.bDay);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 11);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-11");
+
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

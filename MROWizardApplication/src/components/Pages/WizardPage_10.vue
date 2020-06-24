@@ -45,9 +45,6 @@ export default {
     nextPage() {
       //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
-      this.$store.commit("requestermodule/mutatebDay", this.bDay);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 9);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-9");
        this.$store.commit("ConfigModule/mutateNextIndex");
     },
     checkOther(prName) {

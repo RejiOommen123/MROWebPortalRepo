@@ -5,18 +5,18 @@ const state = {
     sRelativeName:'',
     sRelationToPatient:'',
     sPatientFirstName:'',
-
+    sPatientLastName:'',
+    bIsPatientMinor:false,
+    sPatientMiddleInitial:'',
+    bIsPatientDeceased:false,
+    dPatientDOB: null,
+    sPatientEmailId:'',
+    bConfirmEmailId:'',
+    bConfirmReport:false,  
+ 
     
-    askPatientDeceased:false,     
-    emailID:'',
-    confirmEmailID:'',
-    confirmReport:false,
-   
-    lname:'',
-    minitial:'',
-    isPatientDeceased:false,
-    isPatientMinor:false,
-    zipcode:'',
+
+    nAddZipCode:'',
     cityName:'',
     stateName:'',
     streetAdd:'',
@@ -37,6 +37,9 @@ const mutations = {
     sSelectedLocation(state,payload){
         state.sSelectedLocation = payload;
     },
+    bAreYouPatient(state,payload){
+        state.bAreYouPatient = payload;
+    },
     sRelativeName(state,payload){
         state.sRelativeName = payload;
     },
@@ -46,39 +49,36 @@ const mutations = {
     sPatientFirstName(state,payload){
         state.sPatientFirstName = payload;
     },
-
-
-
-    mutateaskPatientMinor(state,payload){
-        state.askPatientMinor = payload
-    },
-    mutateaskPatientDeceased(state,payload){
-        state.askPatientDeceased = payload
+    sPatientLastName(state,payload){
+        state.sPatientLastName = payload;
+    },      
+    sPatientMiddleInitial(state,payload){
+        state.sPatientMiddleInitial = payload;
     },    
-    bAreYouPatient(state,payload){
-        state.bAreYouPatient = payload;
+    bIsPatientMinor(state,payload){
+        state.bIsPatientMinor = payload
     },
-    mutateemailID(state,payload){
-        state.emailID = payload;
+    bIsPatientDeceased(state,payload){
+        state.bIsPatientDeceased = payload
+    },    
+    dPatientDOB(state,payload){
+        state.bDay = payload;
     },
-    mutateconfirmEmailID(state,payload){
-        state.confirmEmailID = payload;
+    sPatientEmailId(state,payload){
+        state.sPatientEmailId = payload;
     },
-    mutateconfirmReport(state,payload){
-        state.confirmReport = payload;
-    },
-   
-    mutatelname(state,payload){
-        state.lname = payload;
-    },
-    mutateminitial(state,payload){
-        state.minitial = payload;
-    },
-    mutateisPatientDeceased(state,payload){
-        state.isPatientDeceased = payload;
+    bConfirmEmailId(state,payload){
+        state.bConfirmEmailId = payload;
+    }, 
+    bConfirmReport(state,payload){
+        state.bConfirmReport = payload;
     },   
-    mutatezipcode(state,payload){
-        state.zipcode = payload;
+    
+    
+
+
+    nAddZipCode(state,payload){
+        state.nAddZipCode = payload;
     },
     mutatecityName(state,payload){
         state.cityName = payload;
@@ -89,9 +89,7 @@ const mutations = {
     mutatestreetAdd(state,payload){
         state.streetAdd = payload;
     },
-    mutatebDay(state,payload){
-        state.bDay = payload;
-    },
+ 
     mutatesignature(state, payload) {
         state.imgdata = payload;
     },

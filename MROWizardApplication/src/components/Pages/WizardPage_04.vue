@@ -7,7 +7,7 @@
     </div>
     <form>
       <v-row>
-        <v-col cols="12" offset-sm="1" sm="3">
+        <v-col v-if="MROPatientFirstName" cols="12" offset-sm="1" sm="3">
           <label for="sPatientFirstName" class="control-label">First Name</label>
           <v-text-field
             v-model="sPatientFirstName"
@@ -17,29 +17,29 @@
             @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3">
-          <label for="minitial" class="control-label">Middle Initial</label>
+        <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3">
+          <label for="sPatientMiddleInitial" class="control-label">Middle Initial</label>
           <v-text-field
-            v-model="minitial"
-            :error-messages="mInitialError"
+            v-model="sPatientMiddleInitial"
+            :error-messages="sPatientMiddleInitialError"
             required
-            @input="$v.minitial.$touch()"
-            @blur="$v.minitial.$touch()"
+            @input="$v.sPatientMiddleInitial.$touch()"
+            @blur="$v.sPatientMiddleInitial.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3">
-          <label for="lname" class="control-label">Last Name</label>
+        <v-col v-if="sPatientLastName" cols="12" sm="3">
+          <label for="sPatientLastName" class="control-label">Last Name</label>
           <v-text-field
-            v-model="lname"
-            :error-messages="lNameError"
+            v-model="sPatientLastName"
+            :error-messages="sPatientLastNameError"
             required
-            @input="$v.lname.$touch()"
-            @blur="$v.lname.$touch()"
+            @input="$v.sPatientLastName.$touch()"
+            @blur="$v.sPatientLastName.$touch()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox v-model="isPatientMinor" label="Is the patient a minor?"></v-checkbox>
-          <v-checkbox v-model="isPatientDeceased" label="Is the patient deceased?"></v-checkbox>
+          <v-checkbox v-if="MROIsPatientMinor" v-model="bIsPatientMinor" label="Is the patient a minor?"></v-checkbox>
+          <v-checkbox v-if="MROIsPatientDeceased" v-model="bIsPatientDeceased" label="Is the patient deceased?"></v-checkbox>
           <v-btn class="mr-4" @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
         </v-col>
         <div class="disclaimer">{{disclaimer}}</div>
@@ -55,27 +55,28 @@ export default {
   data() {
     return {
       sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-      lname: this.$store.state.requestermodule.lname,
-      minitial: this.$store.state.requestermodule.minitial,
-      isPatientMinor: this.$store.state.requestermodule.isPatientMinor,
-      isPatientDeceased: this.$store.state.requestermodule.isPatientDeceased
+      sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
+      sPatientMiddleInitial: this.$store.state.requestermodule.sPatientMiddleInitial,
+      bIsPatientMinor: this.$store.state.requestermodule.bIsPatientMinor,
+      bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
+
+      //Show and Hide Fields Values
+      MROPatientFirstName : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientFirstName,
+      MROPatientMiddleInitial : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientMiddleInitial,
+      MROPatientLastName : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientLastName,
+      MROIsPatientMinor : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROIsPatientMinor,
+      MROIsPatientDeceased : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROIsPatientDeceased
     };
   },
   mixins: [validationMixin],
   validations: {
     sPatientFirstName: { required, maxLength: maxLength(15) },
-    lname: { required, maxLength: maxLength(15) },
-    minitial: { required, maxLength: maxLength(1) }
+    sPatientLastName: { required, maxLength: maxLength(15) },
+    sPatientMiddleInitial: { required, maxLength: maxLength(1) }
   },
-  computed: {
-    bAreYouPatient() {
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },   
+  computed: {  
     disclaimer() {      
       return this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01;
-    },
-    askPatientDeceased() {
-      return this.$store.state.requestermodule.askPatientDeceased;
     },
     sPatientFirstNameError() {
       const errors = [];
@@ -85,35 +86,35 @@ export default {
       !this.$v.sPatientFirstName.required && errors.push("First Name is required.");
       return errors;
     },
-    lNameError() {
+    sPatientLastNameError() {
       const errors = [];
-      if (!this.$v.lname.$dirty) return errors;
-      !this.$v.lname.maxLength &&
+      if (!this.$v.sPatientLastName.$dirty) return errors;
+      !this.$v.sPatientLastName.maxLength &&
         errors.push("Last Name must be at most 15 characters long");
-      !this.$v.lname.required && errors.push("Last Name is required.");
+      !this.$v.sPatientLastName.required && errors.push("Last Name is required.");
       return errors;
     },
-    mInitialError() {
+    sPatientMiddleInitialError() {
       const errors = [];
-      if (!this.$v.minitial.$dirty) return errors;
-      !this.$v.minitial.maxLength &&
+      if (!this.$v.sPatientMiddleInitial.$dirty) return errors;
+      !this.$v.sPatientMiddleInitial.maxLength &&
         errors.push("Middle Initial must be at most 1 characters long");
-      !this.$v.minitial.required && errors.push("Middle Initial is required.");
+      !this.$v.sPatientMiddleInitial.required && errors.push("Middle Initial is required.");
       return errors;
     }
   },
   methods: {
     nextPage() {
       this.$store.commit("requestermodule/sPatientFirstName", this.sPatientFirstName);
-      this.$store.commit("requestermodule/mutatelname", this.lname);
-      this.$store.commit("requestermodule/mutateminitial", this.minitial);
+      this.$store.commit("requestermodule/sPatientLastName", this.sPatientLastName);
+      this.$store.commit("requestermodule/sPatientMiddleInitial", this.sPatientMiddleInitial);
       this.$store.commit(
-        "requestermodule/mutateisPatientDeceased",
-        this.isPatientMinor
+        "requestermodule/bIsPatientMinor",
+        this.bIsPatientMinor
       );
       this.$store.commit(
-        "requestermodule/mutateisPatientDeceased",
-        this.isPatientDeceased
+        "requestermodule/bIsPatientDeceased",
+        this.bIsPatientDeceased
       );
       // this.$store.commit("ConfigModule/mutatepageNumerical", 6);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-6");

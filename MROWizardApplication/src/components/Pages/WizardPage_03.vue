@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     setPatient() {
-      this.$store.state.requestermodule.isPatientDeceased = false;
       this.$store.commit("requestermodule/mutateaskPatientDeceased", false);
       this.$store.commit("requestermodule/bAreYouPatient", true);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
@@ -87,7 +86,6 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
-      this.$store.state.requestermodule.isPatientDeceased = false;
       this.$store.commit("requestermodule/mutateaskPatientDeceased", true);
 
       this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);

@@ -3,38 +3,36 @@
     <br />
     <br />
     <v-row>
-    <v-col cols="12" offset-sm="2" sm="6" md="8">
-       <h1>When was the Patient Born ?</h1>
+      <v-col cols="12" offset-sm="2" sm="6" md="8">
+        <h1>When was the Patient Born ?</h1>
         <h4>(MM/DD/YYYY)</h4>
-      <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+        <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
-            <v-text-field            
-              :value="dateFormatted"
+            <v-text-field
+              :value="dPatientDOBFormatted"
               placeholder="MM-DD-YYYY"
-              :error-messages="dateErrors"
+              :error-messages="dPatientDOBErrors"
               clearable
               label="Date of Birth"
               readonly
               v-bind="attrs"
               v-on="on"
-              @click:clear="date = null"
-              @input="$v.date.$touch()"
-              @blur="$v.date.$touch()"
+              @click:clear="dPatientDOB = null"
+              @input="$v.dPatientDOB.$touch()"
+              @blur="$v.dPatientDOB.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="date" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dPatientDOB" @change="menu1 = false"></v-date-picker>
         </v-menu>
-    </v-col>
-    <v-spacer></v-spacer>
-    <br />
-    <v-col cols="12" offset-sm="3" sm="6">
-    <div>
-      <v-btn @click.prevent="nextPage"  color="success">Next</v-btn>
-    </div>
-    <!-- :disabled="$v.$invalid" -->
-    </v-col>
-  </v-row>
-    
+      </v-col>
+      <v-spacer></v-spacer>
+      <br />
+      <v-col cols="12" offset-sm="3" sm="6">
+        <div>
+          <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -45,36 +43,33 @@ export default {
   name: "WizardPage_05",
   data() {
     return {
-     date: null,//new Date().toISOString().substr(0, 10),
+      dPatientDOB: this.$store.state.requestermodule.dPatientDOB,
       menu1: false,
     };
   },
   validations: {
-    date: {
-        required,
-        minValue: value => value < new Date().toISOString()
-    },
+    dPatientDOB: {
+      required,
+      minValue: value => value < new Date().toISOString()
+    }
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
-      console.log(this.date);
+      console.log(this.dPatientDOB);
       this.$store.state.ConfigModule.showBackBtn = true;
-      this.$store.commit("requestermodule/mutatebDay", this.bDay);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 8);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-8");
-          this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("requestermodule/dPatientDOB", this.dPatientDOB);
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
   computed: {
     dateFormatted() {
-      return this.date ? moment(this.date).format("MM-DD-YYYY") : "";
+      return this.dPatientDOB ? moment(this.dPatientDOB).format("MM-DD-YYYY") : "";
     },
-    dateErrors(){
+    dateErrors() {
       const errors = [];
-      if (!this.$v.date.$dirty) return errors;
-      !this.$v.date.minValue && errors.push("Invalid Date");
-      !this.$v.date.required && errors.push("End Date is required");
+      if (!this.$v.dPatientDOB.$dirty) return errors;
+      !this.$v.dPatientDOB.minValue && errors.push("Invalid Date");
+      !this.$v.dPatientDOB.required && errors.push("End Date is required");
       return errors;
     }
   }
@@ -85,5 +80,4 @@ export default {
 /* .center {
   text-align: center;
 } */
-
 </style>
