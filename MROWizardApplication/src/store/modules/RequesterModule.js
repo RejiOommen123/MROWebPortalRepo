@@ -29,6 +29,7 @@ const state = {
     sAuthSpecificEvent : '',
     bDeadlineStatus:false,
     dDeadline:null,
+    sAdditionalData:'',
     sIdentityIdName:'',
     sIdentityImage:'',
 
@@ -138,8 +139,11 @@ const mutations = {
     dDeadline(state, payload) {
         state.dDeadline = payload;
     },
+    sAdditionalData(state, payload) {
+        state.sAdditionalData = payload;
+    },
     sIdentityIdName(state, payload) {
-        state.identityId = payload;
+        state.sIdentityIdName = payload;
     },
 
    

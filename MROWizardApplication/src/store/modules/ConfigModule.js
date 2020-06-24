@@ -56,11 +56,7 @@ const state = {
             "sReleaseTo": "A third party (Attorney, Insurance Co., Payer, etc.)",
             "sNormalizedReleaseTo": "MROReleaseToThirdParty"
         }
-    ]
-
-    
-    apiResponseDataByFacilityGUID:'',
-    apiResponseDataByLocation:'',
+    ],
     nAuthExpirationMonths:0
 }
 const mutations = {
@@ -102,8 +98,6 @@ const mutations = {
     nAuthExpirationMonths(state,payload){
         state.nAuthExpirationMonths =  payload;
     }
-}
-const actions = {
 }
 const actions = {}
 const getter = {
