@@ -3,9 +3,10 @@
     <br />
     <br />
     <v-row>
-    <v-col cols="12" offset-sm="2" sm="6" md="8">
+    <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
        <h1>What date do you need your records by?</h1>
         <h4>(MM/DD/YYYY)</h4>
+        <div class="disclaimer">{{disclaimer}}</div>
       <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field            
@@ -17,12 +18,12 @@
               readonly
               v-bind="attrs"
               v-on="on"
-              @click:clear="deadlineDate = null"
-              @input="$v.deadlineDate.$touch()"
-              @blur="$v.deadlineDate.$touch()"
+              @click:clear="dDeadline = null"
+              @input="$v.dDeadline.$touch()"
+              @blur="$v.dDeadline.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="deadlineDate" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dDeadline" @change="menu1 = false"></v-date-picker>
         </v-menu>
     </v-col>
     <v-spacer></v-spacer>
@@ -45,36 +46,36 @@ export default {
   name: "WizardPage_16",
   data() {
     return {
-     deadlineDate: null,//new Date().toISOString().substr(0, 10),
+      dDeadline: null,//new Date().toISOString().substr(0, 10),
       menu1: false,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_16_disclaimer01,
+
+      //Show and Hide Fields Values
+      MRORequestDeadlineDate : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MRORequestDeadlineDate,
     };
   },
   validations: {
-    deadlineDate: {
+    dDeadline: {
         required,
         minValue: value => value < new Date().toISOString()
     },
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
-      console.log(this.deadlineDate);
       this.$store.state.ConfigModule.showBackBtn = true;
-      this.$store.commit("requestermodule/mutatedeadlineDate", this.deadlineDate);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 8);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-8");
-          this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("requestermodule/dDeadline", this.dDeadline);
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
   computed: {
     dateFormatted() {
-      return this.deadlineDate ? moment(this.deadlineDate).format("MM-DD-YYYY") : "";
+      return this.dDeadline ? moment(this.dDeadline).format("MM-DD-YYYY") : "";
     },
     dateErrors(){
       const errors = [];
-      if (!this.$v.deadlineDate.$dirty) return errors;
-      !this.$v.deadlineDate.minValue && errors.push("Invalid Date");
-      !this.$v.deadlineDate.required && errors.push("End Date is required");
+      if (!this.$v.dDeadline.$dirty) return errors;
+      !this.$v.dDeadline.minValue && errors.push("Invalid Date");
+      !this.$v.dDeadline.required && errors.push("End Date is required");
       return errors;
     }
   }

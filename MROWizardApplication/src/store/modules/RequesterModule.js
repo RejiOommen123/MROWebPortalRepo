@@ -20,16 +20,16 @@ const state = {
     dRecordRangeStart : '',
     dRecordRangeEnd : '',
     sSelectedRecordTypes: [],
+    dAuthExpire : null,
+    sAuthSpecificEvent : '',
+    bDeadlineStatus:false,
+    dDeadline:null,
+    sIdentityIdName:'',
+    sIdentityImage:'',
 
-
- 
     imgdata: '',
-    releaseTo:'',
-    authExpireDate : null,
-    authSpecificEvent : '',
-    deadlineStatus:false,
-    deadlineDate:null,
-    additionalData:'',
+    releaseTo:'',        
+    sAdditionalData:'',
     identityId:'',
     requestAnotherRecord:false,
     rating:0,
@@ -96,9 +96,21 @@ const mutations = {
     sSelectedRecordTypes(state,payload){
         state.sSelectedRecordTypes = payload;
     },
-    
-    
-
+    dAuthExpire(state, payload) {
+        state.dAuthExpire = payload;
+    },
+    sAuthSpecificEvent(state, payload) {
+        state.sAuthSpecificEvent = payload;
+    },
+    bDeadlineStatus(state, payload) {
+        state.deadlineStatus = payload;
+    },
+    dDeadline(state, payload) {
+        state.dDeadline = payload;
+    },
+    sIdentityIdName(state, payload) {
+        state.identityId = payload;
+    },
 
    
  
@@ -107,24 +119,10 @@ const mutations = {
     },
     mutatereleaseTo(state, payload) {
         state.releaseTo = payload;
-    },
-    mutateauthExpireDate(state, payload) {
-        state.authExpireDate = payload;
-    },
-    mutateauthSpecificEvent(state, payload) {
-        state.authSpecificEvent = payload;
-    },
-    mutatedeadlineStatus(state, payload) {
-        state.deadlineStatus = payload;
-    },
-    mutatedeadlineDate(state, payload) {
-        state.deadlineDate = payload;
-    },
-    mutateadditionalData(state, payload) {
-        state.additionalData = payload;
-    },
-    mutateidentityId(state, payload) {
-        state.identityId = payload;
+    },    
+   
+    sAdditionalData(state, payload) {
+        state.sAdditionalData = payload;
     },
     mutaterequestAnotherRecord(state, payload) {
         state.requestAnotherRecord = payload;

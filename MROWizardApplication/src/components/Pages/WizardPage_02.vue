@@ -53,6 +53,7 @@ export default {
               "requestermodule/sSelectedLocation",
               location.sNormalizedLocationName
             );
+            this.$store.commit("ConfigModule/nAuthExpirationMonths",location.nAuthExpirationMonths);
             this.$store.commit("ConfigModule/mutateNextIndex");
           }
         });

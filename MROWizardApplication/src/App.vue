@@ -146,6 +146,7 @@ export default {
                 if (response.body) {
                   this.$store.commit("ConfigModule/apiResponseDataByLocation",apiLocationResponse);
                   this.$store.commit("requestermodule/sSelectedLocation", singleLocation.sNormalizedLocationName);
+                  this.$store.commit("ConfigModule/nAuthExpirationMonths",singleLocation.nAuthExpirationMonths);
                   console.log('apiResponseDataByLocation    '+this.$store.state.ConfigModule.apiResponseDataByLocation);
                 }
               });

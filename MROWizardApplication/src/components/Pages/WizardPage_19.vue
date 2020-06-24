@@ -13,9 +13,9 @@
             class="checkboxBorder"
             label= "Drivers License"
             color="green"
-            value="DriversLicense"
-            v-model="selectedCheckBox"
-            @change="check('DriversLicense')"
+            value="MRODrivingLicID"
+            v-model="nSelectedCheckBox"
+            @change="check('MRODrivingLicID')"
 
           ></v-checkbox>
         </v-col>
@@ -25,9 +25,9 @@
             class="checkboxBorder"
             label="Other Government Photo Id"
             color="green"
-            value="OtherId"
-            v-model="selectedCheckBox"
-            @change="check('OtherId')"
+            value="MROOtherGovID"
+            v-model="nSelectedCheckBox"
+            @change="check('MROOtherGovID')"
           ></v-checkbox>
         </v-col>
       </v-layout>
@@ -43,21 +43,19 @@ export default {
   name: "WizardPage_19",
   data() {
     return {
-      selectedCheckBox:[],
-      menu1: false,
+      nSelectedCheckBox:[],
     };
   },
   methods: {
     nextPage() {
-        this.$store.commit("requestermodule/mutateidentityId", this.selectedCheckBox[0]);
+        this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
         this.$store.state.ConfigModule.showBackBtn = true;  
         this.$store.commit("ConfigModule/mutateNextIndex");
     },
     check(id) {
-
-        this.selectedCheckBox = [];
-        this.selectedCheckBox.push(id);
-        console.log(this.selectedCheckBox[0]);
+        this.nSelectedCheckBox = [];
+        this.nSelectedCheckBox.push(id);
+        console.log(this.nSelectedCheckBox[0]);
     }
   }
 };

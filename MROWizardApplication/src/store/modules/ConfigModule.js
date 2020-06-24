@@ -26,7 +26,7 @@ const state = {
     wp10_SensitiveInfo : ['Behavioral/Mental Health Records','HIV Test Results','Substance Abuse Information','Sexually Transmitted Diease'],
     wp11_releaseToArray : ["Me (The patient)","A family member/caregiver","Provider/Doctor","A third party (Attorney, Insurance Co., Payer, etc.)"],
     wp12_ShipmentType: ["Fax","Patient Portal","Email","Mail","In-Person"],
-    wp13_authMonths:12,
+
     wp15_disclaimer:"We will respond to your request within 30 days. If you need your records sooner, or if you have an upcoming appointment, please let us know.",
     wp17_disclaimer:"(This is optional but may help us better fulfill your request.)",
     wp22_disclaimer:"We will respond to your request within 30 days. If you entered a deadline by which you need your records, or if you have an upcoming appointment, your request will be prioritized accordingly.",
@@ -39,7 +39,8 @@ const state = {
 
     
     apiResponseDataByFacilityGUID:'',
-    apiResponseDataByLocation:''
+    apiResponseDataByLocation:'',
+    nAuthExpirationMonths:0
 }
 const mutations = {
     // mutatepageNumerical(state,payload){
@@ -76,6 +77,9 @@ const mutations = {
     },
     apiResponseDataByLocation(state,payload){
         state.apiResponseDataByLocation =  payload;
+    },
+    nAuthExpirationMonths(state,payload){
+        state.nAuthExpirationMonths =  payload;
     }
 }
 const actions = {
