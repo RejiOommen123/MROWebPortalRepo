@@ -8,21 +8,22 @@
     <h6>(This is optional, but may help us better fulfill your request)</h6>
 
     <template>
-      <v-layout v-for="primaryReason in primaryReasonArray" :key="primaryReason" row wrap>
+      <v-layout v-for="primaryReason in oPrimaryReasonArray" :key="primaryReason.sNormalizedPrimaryReasonName" row wrap>
         <v-col cols="12" offset-sm="3" sm="6">
           <v-checkbox
             dark
             class="checkboxBorder"
-            :label="primaryReason"
+            :label="primaryReason.sPrimaryReasonName"
             color="green"
-            :value="primaryReason"
-            @change="checkOther(primaryReason)"
+            :value="primaryReason.sNormalizedPrimaryReasonName"
+            v-model="sSelectedPrimaryReasons"
+            @change="checkOther(primaryReason.sNormalizedPrimaryReasonName)"
           ></v-checkbox>
         </v-col>
       </v-layout>
       <v-col cols="12" offset-sm="3" sm="6">
-      <div v-if="this.other==true">
-        <v-textarea counter label="Other Reason"></v-textarea>
+      <div v-if="this.bOther==true">
+        <v-textarea v-model="sOtherReasons" counter label="Other Reason"></v-textarea>
       </div>
       </v-col>
     </template>
@@ -37,19 +38,22 @@ export default {
   name: "WizardPage_08",
   data() {
     return {
-      primaryReasonArray: this.$store.state.ConfigModule.wp08_PrimaryReasons,
-      other: false
+      oPrimaryReasonArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason,
+      bOther: false,
+      sSelectedPrimaryReasons: [],
+      sOtherReasons: ''
     };
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
+      this.$store.commit("requestermodule/sSelectedPrimaryReasons", this.sSelectedPrimaryReasons);
+      this.$store.commit("requestermodule/sOtherReasons", this.sOtherReasons);
        this.$store.commit("ConfigModule/mutateNextIndex");
     },
     checkOther(prName) {
-      if (prName == "Other Reason") {
-        this.other= !this.other;
+      if (prName == "MROOtherPrimaryReason") {
+        this.bOther= !this.bOther;
       }
     }
   }

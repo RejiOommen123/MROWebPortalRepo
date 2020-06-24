@@ -6,15 +6,15 @@
     </h1>
 
     <template>
-      <v-layout v-for="shipmentType in shipmentTypeArray" :key="shipmentType" row wrap>
+      <v-layout v-for="shipmentType in oShipmentTypeArray" :key="shipmentType.sNormalizedShipmentTypeName" row wrap>
         <v-col cols="12" offset-sm="3" sm="6">
           <v-checkbox
             dark
             class="checkboxBorder"
-            :label="shipmentType"
+            :label="shipmentType.sShipmentTypeName"
             color="green"
-            :value="shipmentType"
-            @change="check(shipmentType)"
+            :value="shipmentType.sNormalizedShipmentTypeName"
+            v-model="sSelectedShipmentTypes"
           ></v-checkbox>
         </v-col>
       </v-layout>
@@ -30,13 +30,16 @@ export default {
   name: "WizardPage_12",
   data() {
     return {
-      shipmentTypeArray: this.$store.state.ConfigModule.wp12_ShipmentType,
-      other: false
+      //this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason
+      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
+      sSelectedShipmentTypes: []
+      //other: false
     };
   },
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;  
+      this.$store.commit("requestermodule/sSelectedShipmentTypes", this.sSelectedShipmentTypes);
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
     // ,
