@@ -68,7 +68,7 @@
 
 <template v-slot:item.bActiveStatus="{ item }">
       <!-- <v-chip :color="getColor(item.bActiveStatus)">{{ getStatus(item.bActiveStatus) }}</v-chip> -->
-      <v-switch color='#1AA260' style="padding-left:35px" @click="deleteItem(item.nFacilityID,item.sFacilityName)" v-model="item.bActiveStatus"></v-switch>
+      <v-switch color='#1AA260' style="padding-left:40px" @click="deleteItem(item.nFacilityID,item.sFacilityName)" v-model="item.bActiveStatus"></v-switch>
     </template>
 
 

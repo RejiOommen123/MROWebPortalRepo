@@ -64,8 +64,7 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="5">
+          
             <label for="sFTPUsername">FTP Username:</label>
             <v-text-field
               type="text"
@@ -77,6 +76,8 @@
               :error-messages="sFTPUsernameErrors"
               solo
             ></v-text-field>
+            </v-col>
+          <v-col cols="12" md="5">
             <label for="sFTPPassword">FTP Password:</label>
             <v-text-field
               type="password"
@@ -116,10 +117,11 @@
               type="text"
               v-model="sGUID"
               :readonly = true
-              
               id="sGUID"
               solo
             ></v-text-field>
+            <label for="bRequestorEmailConfirm">Send confirmation to requestor ?</label>
+            <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
           </v-col>
         </v-row>
         <div class="submit">
@@ -274,7 +276,8 @@ export default {
         sFTPPassword: "",
         sFTPUrl: "",
         sOutboundEmail: "",
-        bActiveStatus: true
+        bActiveStatus: true,
+        bRequestorEmailConfirm:Boolean
       }
     };
   },
@@ -337,18 +340,20 @@ export default {
   text-align: center;
 }
 #box {
-  margin: 25px;
+  margin: 10px;
 }
 * {
-  margin: 10px;
+  margin: 5px;
 }
 
 .editfacility-form {
   /* width: 1200px; */
-  margin: 30px auto;
+  margin: 10px auto;
   border: 1px solid #eee;
   padding: 20px;
   box-shadow: 0 2px 3px #ccc;
+  font-size: 15px;
+  /* font-weight: 500; */
 }
 
 .input {

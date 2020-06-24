@@ -110,6 +110,8 @@
               :error-messages="sOutboundEmailErrors"
               solo
             ></v-text-field>
+            <label for="bRequestorEmailConfirm">Send confirmation to requestor ?</label>
+            <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
           </v-col>
         </v-row>
         <div class="submit">
@@ -271,7 +273,8 @@ export default {
         sFTPPassword: "",
         sFTPUrl: "",
         sOutboundEmail: "",
-        bActiveStatus: true
+        bActiveStatus: true,
+        bRequestorEmailConfirm:true
       }
     };
   },
@@ -283,7 +286,7 @@ export default {
         .post("facility/AddFacility", this.facility)
         .then(response => {
           if (response.ok == true) {
-            this.$router.push("/locations/" + response.body.nFacilityID);
+            this.$router.push("/AddLocation/" + response.body.nFacilityID);
           }
         });
     },
