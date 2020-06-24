@@ -13,14 +13,16 @@ const state = {
     sPatientEmailId:'',
     bConfirmEmailId:'',
     bConfirmReport:false,  
- 
-    
-
     nAddZipCode:'',
-    cityName:'',
-    stateName:'',
-    streetAdd:'',
-    bDay: '',
+    sAddCity:'',
+    sAddState:'',
+    sAddStreetAddress:'',
+    dRecordRangeStart : '',
+    dRecordRangeEnd : '',
+    sSelectedRecordTypes: [],
+
+
+ 
     imgdata: '',
     releaseTo:'',
     authExpireDate : null,
@@ -73,22 +75,32 @@ const mutations = {
     bConfirmReport(state,payload){
         state.bConfirmReport = payload;
     },   
-    
-    
-
-
     nAddZipCode(state,payload){
         state.nAddZipCode = payload;
     },
-    mutatecityName(state,payload){
-        state.cityName = payload;
+    sAddCity(state,payload){
+        state.sAddCity = payload;
     },
-    mutatestateName(state,payload){
-        state.zstateName = payload;
+    sAddState(state,payload){
+        state.sAddState = payload;
     },
-    mutatestreetAdd(state,payload){
-        state.streetAdd = payload;
+    sAddStreetAddress(state,payload){
+        state.sAddStreetAddress = payload;
     },
+    dRecordRangeStart(state,payload){
+        state.dRecordRangeStart = payload;
+    },
+    dRecordRangeEnd(state,payload){
+        state.dRecordRangeEnd = payload;
+    },
+    sSelectedRecordTypes(state,payload){
+        state.sSelectedRecordTypes = payload;
+    },
+    
+    
+
+
+   
  
     mutatesignature(state, payload) {
         state.imgdata = payload;

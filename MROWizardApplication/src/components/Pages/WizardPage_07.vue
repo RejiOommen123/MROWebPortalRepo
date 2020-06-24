@@ -5,7 +5,7 @@
        <h1 v-else>What is patient's address?</h1>
       <v-row>
        
-        <v-col cols="12" offset-sm="2" sm="3">
+        <v-col v-if="MROAddZipCode" cols="12" offset-sm="2" sm="3">
           <v-text-field
             type="number"
             v-model="nAddZipCode"
@@ -16,34 +16,34 @@
             @blur="$v.nAddZipCode.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3">
+        <v-col v-if="MROAddCity" cols="12" sm="3">
           <v-text-field
-            v-model="cityName"
+            v-model="sAddCity"
             :error-messages="cityErrors"
             label="City"
             required
-            @input="$v.cityName.$touch()"
-            @blur="$v.cityName.$touch()"
+            @input="$v.sAddCity.$touch()"
+            @blur="$v.sAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3">
+        <v-col v-if="MROAddState" cols="12" sm="3">
           <v-text-field
-            v-model="stateName"
+            v-model="sAddState"
             :error-messages="stateErrors"
             label="State"
             required
-            @input="$v.stateName.$touch()"
-            @blur="$v.stateName.$touch()"
+            @input="$v.sAddState.$touch()"
+            @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" offset-sm="3" sm="6">
+        <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="3" sm="6">
           <v-text-field
-            v-model="streetAdd"
+            v-model="sAddStreetAddress"
             :error-messages="streetErrors"
             label="Street"
             required
-            @input="$v.streetAdd.$touch()"
-            @blur="$v.streetAdd.$touch()"
+            @input="$v.sAddStreetAddress.$touch()"
+            @blur="$v.sAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
@@ -66,9 +66,15 @@ export default {
   data() {
     return {
       nAddZipCode: this.$store.state.requestermodule.nAddZipCode,
-      cityName: this.$store.state.requestermodule.cityName,
-      stateName: this.$store.state.requestermodule.stateName,
-      streetAdd: this.$store.state.requestermodule.streetAdd
+      sAddCity: this.$store.state.requestermodule.sAddCity,
+      sAddState: this.$store.state.requestermodule.sAddState,
+      sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
+
+      //Show and Hide Fields Values
+      MROAddZipCode : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddZipCode,
+      MROAddCity : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddCity,
+      MROAddState : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddState,
+      MROAddStreetAddress : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddStreetAddress
     };
   },
   mixins: [validationMixin],
@@ -79,9 +85,9 @@ export default {
       minLength: minLength(5),
       numeric
     },
-    cityName: { required },
-    stateName: { required },
-    streetAdd: { required }
+    sAddCity: { required },
+    sAddState: { required },
+    sAddStreetAddress: { required }
   },
   computed: {
      bAreYouPatient() {
@@ -98,20 +104,20 @@ export default {
     },
     cityErrors() {
       const errors = [];
-      if (!this.$v.cityName.$dirty) return errors;
-      !this.$v.cityName.required && errors.push("City is required.");
+      if (!this.$v.sAddCity.$dirty) return errors;
+      !this.$v.sAddCity.required && errors.push("City is required.");
       return errors;
     },
     stateErrors() {
       const errors = [];
-      if (!this.$v.stateName.$dirty) return errors;
-      !this.$v.stateName.required && errors.push("State is required.");
+      if (!this.$v.sAddState.$dirty) return errors;
+      !this.$v.sAddState.required && errors.push("State is required.");
       return errors;
     },
     streetErrors() {
       const errors = [];
-      if (!this.$v.streetAdd.$dirty) return errors;
-      !this.$v.streetAdd.required && errors.push("Street Address is required.");
+      if (!this.$v.sAddStreetAddress.$dirty) return errors;
+      !this.$v.sAddStreetAddress.required && errors.push("Street Address is required.");
       return errors;
     }
   },
@@ -119,9 +125,9 @@ export default {
     nextPage() {
       //alert("Hello World");
       this.$store.commit("requestermodule/nAddZipCode", this.nAddZipCode);
-      this.$store.commit("requestermodule/mutatecityName", this.cityName);
-      this.$store.commit("requestermodule/mutatestateName", this.stateName);
-      this.$store.commit("requestermodule/mutatestreetAdd", this.streetAdd);
+      this.$store.commit("requestermodule/sAddCity", this.sAddCity);
+      this.$store.commit("requestermodule/sAddState", this.sAddState);
+      this.$store.commit("requestermodule/sAddStreetAddress", this.sAddStreetAddress);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 7);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-7");
        this.$store.commit("ConfigModule/mutateNextIndex");

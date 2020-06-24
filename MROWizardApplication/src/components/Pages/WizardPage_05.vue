@@ -62,10 +62,10 @@ export default {
     }
   },
   computed: {
-    dateFormatted() {
+    dPatientDOBFormatted() {
       return this.dPatientDOB ? moment(this.dPatientDOB).format("MM-DD-YYYY") : "";
     },
-    dateErrors() {
+    dPatientDOBErrors() {
       const errors = [];
       if (!this.$v.dPatientDOB.$dirty) return errors;
       !this.$v.dPatientDOB.minValue && errors.push("Invalid Date");

@@ -50,11 +50,6 @@ export default {
     checkOther(prName) {
       if (prName == "Other Reason") {
         this.other= !this.other;
-        // if (this.other == false) {
-        //   this.other = true;
-        // } else {
-        //   this.other = false;
-        // }
       }
     }
   }

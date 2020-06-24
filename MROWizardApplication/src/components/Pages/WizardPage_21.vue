@@ -129,7 +129,7 @@ export default {
         sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
         bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
         nAddZipCode: this.$store.state.requestermodule.nAddZipCode,
-        streetAdd: this.$store.state.requestermodule.streetAdd,
+        sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
         bDay: this.$store.state.requestermodule.bDay,
         imgdata: this.$store.state.requestermodule.imgdata
       };

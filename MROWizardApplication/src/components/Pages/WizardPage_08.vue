@@ -9,19 +9,19 @@
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              :value="startDateFormatted"
-              :error-messages="startDateErrors"
+              :value="dRecordRangeStartFormatted"
+              :error-messages="dRecordRangeStartErrors"
               clearable
               label="Start Date"
               readonly
               v-bind="attrs"
               v-on="on"
-              @click:clear="startDate = null"
-              @input="$v.startDate.$touch()"
-              @blur="$v.startDate.$touch()"
+              @click:clear="dRecordRangeStart = null"
+              @input="$v.dRecordRangeStart.$touch()"
+              @blur="$v.dRecordRangeStart.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="startDate" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dRecordRangeStart" @change="menu1 = false"></v-date-picker>
         </v-menu>
       </v-col>
 
@@ -29,19 +29,19 @@
         <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              :value="endDateFormatted"
-              :error-messages="endDateErrors"
+              :value="dRecordRangeEndFormatted"
+              :error-messages="dRecordRangeEndErrors"
               clearable
               label="End Date"
               readonly
               v-bind="attrs"
               v-on="on"
-              @click:clear="endDate = null"
-               @input="$v.endDate.$touch()"
-              @blur="$v.endDate.$touch()"
+              @click:clear="dRecordRangeEnd = null"
+               @input="$v.dRecordRangeEnd.$touch()"
+              @blur="$v.dRecordRangeEnd.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="endDate" @change="menu2 = false"></v-date-picker>
+          <v-date-picker v-model="dRecordRangeEnd" @change="menu2 = false"></v-date-picker>
         </v-menu>
       </v-col>
       <br />
@@ -63,19 +63,19 @@ export default {
   name: "WizardPage_08",
   data() {
     return {
-      startDate: new Date().toISOString().substr(0, 10),
-      endDate: new Date().toISOString().substr(0, 10),
+      dRecordRangeStart: new Date().toISOString().substr(0, 10),
+      dRecordRangeEnd: new Date().toISOString().substr(0, 10),
       menu1: false,
       menu2: false,
-      disclaimer : this.$store.state.ConfigModule.wp09_disclaimer
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01
     };
   },
   validations: {
-    startDate: {
+    dRecordRangeStart: {
         required,
         minValue: value => value < new Date().toISOString()
     },
-    endDate: {
+    dRecordRangeEnd: {
         required,
         minValue: value => value < new Date().toISOString()
     },
@@ -84,29 +84,30 @@ export default {
     nextPage() {
       //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
-
-       this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("requestermodule/dRecordRangeStart", this.dRecordRangeEnd);
+      this.$store.commit("requestermodule/dRecordRangeEnd", this.dRecordRangeEnd);
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
   computed: {
-    startDateFormatted() {
-      return this.startDate ? moment(this.startDate).format("MM-DD-YYYY") : "";
+    dRecordRangeStartFormatted() {
+      return this.dRecordRangeStart ? moment(this.dRecordRangeStart).format("MM-DD-YYYY") : "";
     },
-    endDateFormatted() {
-      return this.endDate ? moment(this.endDate).format("MM-DD-YYYY") : "";
+    dRecordRangeEndFormatted() {
+      return this.dRecordRangeEnd ? moment(this.dRecordRangeEnd).format("MM-DD-YYYY") : "";
     },
-    startDateErrors(){
+    dRecordRangeStartErrors(){
       const errors = [];
-      if (!this.$v.startDate.$dirty) return errors;
-      !this.$v.startDate.minValue && errors.push("Invalid Date");
-      !this.$v.startDate.required && errors.push("Start Date is required");
+      if (!this.$v.dRecordRangeStart.$dirty) return errors;
+      !this.$v.dRecordRangeStart.minValue && errors.push("Invalid Date");
+      !this.$v.dRecordRangeStart.required && errors.push("Start Date is required");
       return errors;
     },
-     endDateErrors(){
+     dRecordRangeEndErrors(){
       const errors = [];
-      if (!this.$v.endDate.$dirty) return errors;
-      !this.$v.endDate.minValue && errors.push("Invalid Date");
-      !this.$v.endDate.required && errors.push("End Date is required");
+      if (!this.$v.dRecordRangeEnd.$dirty) return errors;
+      !this.$v.dRecordRangeEnd.minValue && errors.push("Invalid Date");
+      !this.$v.dRecordRangeEnd.required && errors.push("End Date is required");
       return errors;
     }
   }

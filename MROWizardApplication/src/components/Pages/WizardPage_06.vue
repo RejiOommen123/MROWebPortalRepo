@@ -54,8 +54,8 @@ export default {
 
       
       //Show and Hide Fields Values
-      MROPEmailId : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPEmailId,
-      MROConfirmReport : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROConfirmReport
+      MROPEmailId : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPEmailId,
+      MROConfirmReport : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROConfirmReport
     };
   },
   mixins: [validationMixin],

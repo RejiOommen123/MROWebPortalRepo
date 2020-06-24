@@ -27,7 +27,7 @@
             @blur="$v.sPatientMiddleInitial.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="sPatientLastName" cols="12" sm="3">
+        <v-col v-if="MROPatientLastName" cols="12" sm="3">
           <label for="sPatientLastName" class="control-label">Last Name</label>
           <v-text-field
             v-model="sPatientLastName"
@@ -61,11 +61,11 @@ export default {
       bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
 
       //Show and Hide Fields Values
-      MROPatientFirstName : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientFirstName,
-      MROPatientMiddleInitial : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientMiddleInitial,
-      MROPatientLastName : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROPatientLastName,
-      MROIsPatientMinor : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROIsPatientMinor,
-      MROIsPatientDeceased : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oFields.MROIsPatientDeceased
+      MROPatientFirstName : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientFirstName,
+      MROPatientMiddleInitial : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientMiddleInitial,
+      MROPatientLastName : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientLastName,
+      MROIsPatientMinor : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROIsPatientMinor,
+      MROIsPatientDeceased : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROIsPatientDeceased
     };
   },
   mixins: [validationMixin],
@@ -75,6 +75,9 @@ export default {
     sPatientMiddleInitial: { required, maxLength: maxLength(1) }
   },
   computed: {  
+    bAreYouPatient(){
+      return this.$store.state.requestermodule.bAreYouPatient;
+    },
     disclaimer() {      
       return this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01;
     },
