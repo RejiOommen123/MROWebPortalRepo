@@ -23,8 +23,7 @@ export default {
   name: "WizardPage_02",
   data() {
     return {
-      locationArray: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.locationDetails
+      locationArray: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.locationDetails
     };
   },
   methods: {
