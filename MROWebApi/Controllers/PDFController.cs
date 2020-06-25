@@ -206,10 +206,14 @@ namespace MROWebAPI.Controllers
             //}
 
 
-            string image1 = @sAppRoot + @"\Whitebg.png";
+            //string image1 = @sAppRoot + @"\Whitebg.png";
+            MROHelperRepository helperRepo = new MROHelperRepository(_info);
+            MROHelper helper =  await helperRepo.Select(1);
+            helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+            byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+            string image1 = helper.sWhitebgimg;
 
-
-            System.Drawing.Image canvas = Bitmap.FromFile(image1);
+            System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
             Graphics gra = Graphics.FromImage(canvas);
             Bitmap smallImg = new Bitmap(image2);
             gra.DrawImage(smallImg, new Point(0, 0));
