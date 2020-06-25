@@ -6,7 +6,7 @@
         <v-dialog v-model="dialog" scrollable :max-width="dialogMaxWidth" :height="dialogMaxHeight">
           <v-card
             id="bgImg"
-            :style="selectedWizard=='page-21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
+            :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
             <v-card-text :style="{ height: dialogMaxHeight  }">
               <div>
@@ -24,7 +24,7 @@
                     <br />
                     <br />
                   </div>
-                  <div v-if="selectedWizard!='page-21'">
+                  <div v-if="selectedWizard!='Wizard_21'">
                     <img
                       :src="this.logo"
                       height="70px"
@@ -145,6 +145,8 @@ export default {
                 var apiLocationResponse = response.body;
                 if (response.body) {
                   this.$store.commit("ConfigModule/apiResponseDataByLocation",apiLocationResponse);
+                  this.$store.commit("requestermodule/nFacilityID", singleLocation.nFacilityID);
+                  this.$store.commit("requestermodule/nLocationID", singleLocation.nFacilityLocationID);
                   this.$store.commit("requestermodule/sSelectedLocation", singleLocation.sNormalizedLocationName);
                   this.$store.commit("ConfigModule/nAuthExpirationMonths",singleLocation.nAuthExpirationMonths);
                   console.log('apiResponseDataByLocation    '+this.$store.state.ConfigModule.apiResponseDataByLocation);

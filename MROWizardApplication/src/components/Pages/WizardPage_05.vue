@@ -9,20 +9,20 @@
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
-              :value="dPatientDOBFormatted"
+              :value="dtPatientDOBFormatted"
               placeholder="MM-DD-YYYY"
-              :error-messages="dPatientDOBErrors"
+              :error-messages="dtPatientDOBErrors"
               clearable
               label="Date of Birth"
               readonly
               v-bind="attrs"
-              v-on="on"
-              @click:clear="dPatientDOB = null"
-              @input="$v.dPatientDOB.$touch()"
-              @blur="$v.dPatientDOB.$touch()"
+              v-on="on"              
+              @click:clear="dtPatientDOB = null"
+              @input="$v.dtPatientDOB.$touch()"
+              @blur="$v.dtPatientDOB.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="dPatientDOB" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dtPatientDOB" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
         </v-menu>
       </v-col>
       <v-spacer></v-spacer>
@@ -43,33 +43,33 @@ export default {
   name: "WizardPage_05",
   data() {
     return {
-      dPatientDOB: this.$store.state.requestermodule.dPatientDOB,
+      dtPatientDOB: this.$store.state.requestermodule.dtPatientDOB,
       menu1: false,
     };
   },
   validations: {
-    dPatientDOB: {
+    dtPatientDOB: {
       required,
       minValue: value => value < new Date().toISOString()
     }
   },
   methods: {
     nextPage() {
-      console.log(this.dPatientDOB);
+      console.log(this.dtPatientDOB);
       this.$store.state.ConfigModule.showBackBtn = true;
-      this.$store.commit("requestermodule/dPatientDOB", this.dPatientDOB);
+      this.$store.commit("requestermodule/dtPatientDOB", this.dtPatientDOB);
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
   computed: {
-    dPatientDOBFormatted() {
-      return this.dPatientDOB ? moment(this.dPatientDOB).format("MM-DD-YYYY") : "";
+    dtPatientDOBFormatted() {
+      return this.dtPatientDOB ? moment(this.dtPatientDOB).format("MM-DD-YYYY") : "";
     },
-    dPatientDOBErrors() {
+    dtPatientDOBErrors() {
       const errors = [];
-      if (!this.$v.dPatientDOB.$dirty) return errors;
-      !this.$v.dPatientDOB.minValue && errors.push("Invalid Date");
-      !this.$v.dPatientDOB.required && errors.push("End Date is required");
+      if (!this.$v.dtPatientDOB.$dirty) return errors;
+      !this.$v.dtPatientDOB.minValue && errors.push("Invalid Date");
+      !this.$v.dtPatientDOB.required && errors.push("End Date is required");
       return errors;
     }
   }

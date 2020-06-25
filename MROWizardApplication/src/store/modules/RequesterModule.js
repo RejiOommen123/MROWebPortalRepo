@@ -1,5 +1,8 @@
 ﻿//requestermodule
 const state = {
+    nRequestorID: 0,
+    nFacilityID:0,
+    nLocationID:0,
     sSelectedLocation: "",
     bAreYouPatient: true,
     sRelativeName: '',
@@ -9,45 +12,46 @@ const state = {
     bIsPatientMinor: false,
     sPatientMiddleInitial: '',
     bIsPatientDeceased: false,
-    dPatientDOB: null,
+    dtPatientDOB: null,
     sPatientEmailId: '',
-    bConfirmEmailId: '',
+    sConfirmEmailId: '',
     bConfirmReport: false,
-    nAddZipCode: '',
+    sAddZipCode: '',
     sAddCity: '',
     sAddState: '',
     sAddStreetAddress: '',
-    dRecordRangeStart: '',
-    dRecordRangeEnd: '',
+    dtRecordRangeStart: '',
+    dtRecordRangeEnd: '',
     sSelectedRecordTypes: [],
     sSelectedPrimaryReasons: [],
     sOtherReasons: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
+    sSTFaxCompAdd:'',
+    sSTEmailId:'',
+    sSTConfirmEmailId:'',
+
     selectedSensitiveInfo: [],
     dAuthExpire : null,
     sAuthSpecificEvent : '',
     bDeadlineStatus:false,
-    dDeadline:null,
+    dtDeadline :null,
     sAdditionalData:'',
+    sPhoneNo:'',
     sIdentityIdName:'',
     sIdentityImage:'',
-
-
- 
-    imgdata: '',
-    releaseTo:'',
-    authExpireDate : null,
-    authSpecificEvent : '',
-    deadlineStatus:false,
-    deadlineDate:null,
-    additionalData:'',
-    identityId:'',
-    requestAnotherRecord:false,
-    rating:0,
-    feedback:''
+    sSignatureData:'',
+    bRequestAnotherRecord:false,
+    nFeedbackRating:0,
+    sFeedbackComment:'',   
 }
 const mutations = {
+    nFacilityID(state, payload) {
+        state.nFacilityID = payload;
+    },
+    nLocationID(state, payload) {
+        state.nLocationID = payload;
+    },
     sSelectedLocation(state, payload) {
         state.sSelectedLocation = payload;
     },
@@ -75,20 +79,20 @@ const mutations = {
     bIsPatientDeceased(state, payload) {
         state.bIsPatientDeceased = payload
     },
-    dPatientDOB(state, payload) {
-        state.bDay = payload;
+    dtPatientDOB(state, payload) {
+        state.dtPatientDOB = payload;
     },
     sPatientEmailId(state, payload) {
         state.sPatientEmailId = payload;
     },
-    bConfirmEmailId(state, payload) {
-        state.bConfirmEmailId = payload;
+    sConfirmEmailId(state, payload) {
+        state.sConfirmEmailId = payload;
     },
     bConfirmReport(state, payload) {
         state.bConfirmReport = payload;
     },
-    nAddZipCode(state, payload) {
-        state.nAddZipCode = payload;
+    sAddZipCode(state, payload) {
+        state.sAddZipCode = payload;
     },
     sAddCity(state, payload) {
         state.sAddCity = payload;
@@ -99,11 +103,11 @@ const mutations = {
     sAddStreetAddress(state, payload) {
         state.sAddStreetAddress = payload;
     },
-    dRecordRangeStart(state, payload) {
-        state.dRecordRangeStart = payload;
+    dtRecordRangeStart(state, payload) {
+        state.dtRecordRangeStart = payload;
     },
-    dRecordRangeEnd(state, payload) {
-        state.dRecordRangeEnd = payload;
+    dtRecordRangeEnd(state, payload) {
+        state.dtRecordRangeEnd = payload;
     },
     sSelectedRecordTypes(state, payload) {
         state.sSelectedRecordTypes = payload;
@@ -120,13 +124,22 @@ const mutations = {
     sSelectedShipmentTypes(state, payload) {
         state.sSelectedShipmentTypes = payload;
     },
-    selectedSensitiveInfo(state, payload) {
-        state.selectedSensitiveInfo = payload;
+    sSTEmailId(state, payload) {
+        state.sSTEmailId = payload;
+    },
+    sSTConfirmEmailId(state, payload) {
+        state.sSTConfirmEmailId = payload;
+    },
+    sSTFaxCompAdd(state, payload) {
+        state.sSTFaxCompAdd = payload;
     },
 
 
 
 
+    selectedSensitiveInfo(state, payload) {
+        state.selectedSensitiveInfo = payload;
+    },
     dAuthExpire(state, payload) {
         state.dAuthExpire = payload;
     },
@@ -134,10 +147,13 @@ const mutations = {
         state.sAuthSpecificEvent = payload;
     },
     bDeadlineStatus(state, payload) {
-        state.deadlineStatus = payload;
+        state.bDeadlineStatus = payload;
     },
-    dDeadline(state, payload) {
-        state.dDeadline = payload;
+    dtDeadline (state, payload) {
+        state.dtDeadline  = payload;
+    },
+    sPhoneNo(state, payload) {
+        state.sPhoneNo = payload;
     },
     sAdditionalData(state, payload) {
         state.sAdditionalData = payload;
@@ -145,37 +161,21 @@ const mutations = {
     sIdentityIdName(state, payload) {
         state.sIdentityIdName = payload;
     },
-
-   
- 
-    mutatesignature(state, payload) {
-        state.imgdata = payload;
+    sIdentityImage(state, payload) {
+        state.sIdentityImage = payload;
     },
-    mutatereleaseTo(state, payload) {
-        state.releaseTo = payload;
+    sSignatureData(state, payload) {
+        state.sSignatureData = payload;
     },
-    mutateauthExpireDate(state, payload) {
-        state.authExpireDate = payload;
-    },
-    mutateauthSpecificEvent(state, payload) {
-        state.authSpecificEvent = payload;
-    },
-    mutatedeadlineStatus(state, payload) {
-        state.deadlineStatus = payload;
-    },
-    mutatedeadlineDate(state, payload) {
-        state.deadlineDate = payload;
-    },
-    mutateadditionalData(state, payload) {
-        state.additionalData = payload;
-    },
-    mutateidentityId(state, payload) {
-        state.identityId = payload;
-    },
-    mutaterequestAnotherRecord(state, payload) {
+    bRequestAnotherRecord(state, payload) {
         state.requestAnotherRecord = payload;
-    }
-
+    },
+    nFeedbackRating(state, payload) {
+        state.nFeedbackRating = payload;
+    },
+    sFeedbackComment(state, payload) {
+        state.sFeedbackComment = payload;
+    },
 }
 const actions = {}
 const getter = {}

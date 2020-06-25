@@ -46,7 +46,7 @@
               @blur="$v.dSpecific.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="dSpecific" @change="menu1 = false"></v-date-picker>
+          <v-date-picker v-model="dSpecific" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
         </v-menu>
           </div>
         </v-col>
@@ -96,7 +96,7 @@ export default {
   validations: {
     dSpecific: {
         required,
-        minValue: value => value < new Date().toISOString()
+        minValue: value => value > new Date().toISOString()
     },
   },
   methods: {

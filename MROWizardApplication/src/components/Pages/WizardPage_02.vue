@@ -48,6 +48,8 @@ export default {
               "apiResponseDataByLocation    " +
                 this.$store.state.ConfigModule.apiResponseDataByLocation
             );
+            this.$store.commit("requestermodule/nFacilityID", location.nFacilityID);
+            this.$store.commit("requestermodule/nLocationID", location.nFacilityLocationID);
             this.$store.commit(
               "requestermodule/sSelectedLocation",
               location.sNormalizedLocationName

@@ -13,17 +13,13 @@ export default {
   name: "WizardPage_24",
   data() {
     return {
+        disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01,
     };
   },
   methods: {
     closeWizard() {
     //   parent.closeIFrame();
     location.reload();
-    }
-  },
-  computed: {
-    disclaimer() {
-      return this.$store.state.ConfigModule.wp24_disclaimer;
     }
   }
 };

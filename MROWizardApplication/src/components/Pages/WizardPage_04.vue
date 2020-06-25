@@ -84,8 +84,7 @@ export default {
     sPatientFirstNameError() {
       const errors = [];
       if (!this.$v.sPatientFirstName.$dirty) return errors;
-      !this.$v.sPatientFirstName.maxLength &&
-        errors.push("First Name must be at most 15 characters long");
+      !this.$v.sPatientFirstName.maxLength &&errors.push("First Name must be at most 15 characters long");
       !this.$v.sPatientFirstName.required && errors.push("First Name is required.");
       return errors;
     },
@@ -100,9 +99,7 @@ export default {
     sPatientMiddleInitialError() {
       const errors = [];
       if (!this.$v.sPatientMiddleInitial.$dirty) return errors;
-      !this.$v.sPatientMiddleInitial.maxLength &&
-        errors.push("Middle Initial must be at most 1 characters long");
-      !this.$v.sPatientMiddleInitial.required && errors.push("Middle Initial is required.");
+      !this.$v.sPatientMiddleInitial.maxLength && errors.push("Middle Initial must be at most 1 characters long");
       return errors;
     }
   },

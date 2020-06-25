@@ -1,13 +1,5 @@
-<!--Signature Pad Code End-->
-
 <template>
   <div>
-    <!-- All Finish Reviewing
-    <button
-      type="button"
-      class="btn btn-info btn-lg"
-      @click="dialog = true"
-    >Sign</button> -->
     <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
     <v-dialog v-model="dialog" max-width="500px" style="backgroundColor:white">
       <v-card id="signatureCard">
@@ -21,8 +13,8 @@
             <div class="col-12 mt-2">
               <VueSignaturePad
                 id="signature"
-                width="100%"
-                height="150px"
+                width="300px"
+                height="100px"
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
               />
@@ -42,10 +34,7 @@
     </v-dialog>
 
     <iframe :src="this.pdf" width="100%" height="1200px"></iframe>
-    <!-- <pdf :src=this.pdf>
-            @num-pages="pageCount = $event"
-            @page-loaded="currentPage = $event">
-    </pdf>-->
+
     <div id="modalOpener">
       <div v-if="recordSubmitted==false">
         <p id="review">All finished reviewing?</p>
@@ -59,12 +48,8 @@
 </template>
 
 <script>
-// import pdf from 'vue-pdf'
 
 export default {
-  components: {
-    // pdf
-  },
   data() {
     return {
       dialog: false,
@@ -78,28 +63,14 @@ export default {
     };
   },
   mounted() {
-   
-
     this.$http
       .get("LocationAuthorizationDocument/getPDF/", {
         responseType: "arraybuffer"
       })
       .then(response => {
         let blobFile = new Blob([response.data], { type: "application/pdf" });
-        //let link = document.createElement('a');
-
         var fileURL = URL.createObjectURL(blobFile);
         this.pdf = fileURL;
-        //window.open(fileURL, "_blank", false);
-        // window.open(fileURL, "popup", "width=600,height=600");
-
-        //Options are:
-        //_blank - URL is loaded into a new window, or tab.This is default
-        //_parent - URL is loaded into the parent frame
-        //_self - URL replaces the current page
-        //_top - URL replaces any framesets that may be loaded
-        //true - URL replaces the current document in the history list
-        //false - URL creates a new entry in the history list
       });
   },
   created(){ 
@@ -112,34 +83,32 @@ export default {
     save() {
       this.dialog = false;
       const { data } = this.$refs.signaturePad.saveSignature();
-      this.$store.commit("requestermodule/mutatesignature", data);
-      // alert("Open DevTools see the save data.");
-      //console.log(isEmpty);
+      this.$store.commit("requestermodule/sSignatureData", data);
       console.log(data);
-      var patient = {
-        sSelectedLocation: this.$store.state.requestermodule.sSelectedLocation,
-        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
-        sRelativeName: this.$store.state.requestermodule.sRelativeName,
-        sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
-        sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
+      // var patient = {
+      //   sSelectedLocation: this.$store.state.requestermodule.sSelectedLocation,
+      //   bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
+      //   sRelativeName: this.$store.state.requestermodule.sRelativeName,
+      //   sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
+      //   sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
 
-        bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
-        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-        sPatientMiddleInitial: this.$store.state.requestermodule.sPatientMiddleInitial,
-        sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
-        bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
-        nAddZipCode: this.$store.state.requestermodule.nAddZipCode,
-        sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
-        bDay: this.$store.state.requestermodule.bDay,
-        imgdata: this.$store.state.requestermodule.imgdata
-      };
+      //   bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
+      //   sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
+      //   sPatientMiddleInitial: this.$store.state.requestermodule.sPatientMiddleInitial,
+      //   sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
+      //   bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
+      //   sAddZipCode: this.$store.state.requestermodule.sAddZipCode,
+      //   sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
+      //   bDay: this.$store.state.requestermodule.bDay,
+      //   imgdata: this.$store.state.requestermodule.sSignatureData
+      // };
       //patient.imgdata="data:image/png;base64,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";
-      console.log(typeof data);
+      console.log( " Requester Data "+this.$store.state.requestermodule);
       this.$http
       
         .post(
           "LocationAuthorizationDocument/GeneratePDF/",
-          patient,
+          this.$store.state.requestermodule,
           { responseType: "arraybuffer" }
         )
         .then(response => {
@@ -148,16 +117,6 @@ export default {
           this.recordSubmitted=true;
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
-          
-          // window.open(fileURL, "popup", "width=600,height=600");
-
-          //Options are:
-          //_blank - URL is loaded into a new window, or tab.This is default
-          //_parent - URL is loaded into the parent frame
-          //_self - URL replaces the current page
-          //_top - URL replaces any framesets that may be loaded
-          //true - URL replaces the current document in the history list
-          //false - URL creates a new entry in the history list
         });
     },
     change() {
@@ -174,16 +133,11 @@ export default {
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-        // this.$store.commit("ConfigModule/mutatepageNumerical", 12);
-        // this.$store.commit("ConfigModule/mutateCurrentPage", "page-12");
-         this.$store.commit("ConfigModule/mutatePreviousIndex");
+        this.$store.commit("ConfigModule/mutatePreviousIndex");
         this.$vuetify.theme.dark = true;
     },
     showDialog(){
       this.dialog=true;
-
-    //    document.getElementById("signatureCard").removeClass("theme--dark");
-    // document.getElementById("signatureCard").addClass("theme--light");
     },
     next(){
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');

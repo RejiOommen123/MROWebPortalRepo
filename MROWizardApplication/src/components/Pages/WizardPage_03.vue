@@ -3,9 +3,9 @@
     <div class="form-group">
       <h1>Are you requesting records for yourself?</h1>
       <div class="form-group btn-group-vertical" role="toolbar">
-        <button @click.prevent="setPatient" class="btn btn-success btn-md locationButton " >Yes, I want my medical records.</button>
+        <button @click.prevent="setPatient" class="btn btn-success btn-md areYouPatientButton " >Yes, I want my medical records.</button>
         <br />
-        <button @click.prevent="setNotPatient" class="btn btn-success btn-md locationButton" >No, I am requesting records for someone else <br/>(Child, Dependent, Decedent).</button>
+        <button @click.prevent="setNotPatient" class="btn btn-success btn-md areYouPatientButton" >No, I am requesting records for someone else <br/>(Child, Dependent, Decedent).</button>
       </div>
       <div v-show="!bAreYouPatient">
         <form>
@@ -78,22 +78,17 @@ export default {
     setPatient() {
       
       this.$store.commit("requestermodule/bAreYouPatient", true);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
-          this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("requestermodule/sRelativeName", "");
+      this.$store.commit("requestermodule/sRelationToPatient","");
+      this.$store.commit("ConfigModule/mutateNextIndex");
     },
     setNotPatient() {
       this.$store.commit("requestermodule/bAreYouPatient", false);
-    },
-    continueAhead() {
-    
-
       this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
       this.$store.commit("requestermodule/sRelationToPatient",this.sRelationToPatient);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 4);
-      
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-4");
-          this.$store.commit("ConfigModule/mutateNextIndex");
+    },
+    continueAhead() {
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };

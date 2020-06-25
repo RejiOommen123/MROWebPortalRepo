@@ -15,14 +15,14 @@
               @input="$v.sPatientEmailId.$touch()"
               @blur="$v.sPatientEmailId.$touch()"
             ></v-text-field>
-            <label for="bConfirmEmailId" class="control-label">Confirm Email ID</label>
+            <label for="sConfirmEmailId" class="control-label">Confirm Email ID</label>
             <v-text-field
               @paste.prevent
-              v-model="bConfirmEmailId"
+              v-model="sConfirmEmailId"
               :error-messages="confirmEmailErrors"
               required
-              @input="$v.bConfirmEmailId.$touch()"
-              @blur="$v.bConfirmEmailId.$touch()"
+              @input="$v.sConfirmEmailId.$touch()"
+              @blur="$v.sConfirmEmailId.$touch()"
             ></v-text-field>
             <v-checkbox
               v-if="MROConfirmReport"
@@ -45,11 +45,11 @@
 import { validationMixin } from "vuelidate";
 import { required, email, sameAs } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_04",
+  name: "WizardPage_06",
   data() {
     return {
       sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
-      bConfirmEmailId: this.$store.state.requestermodule.bConfirmEmailId,
+      sConfirmEmailId: this.$store.state.requestermodule.sConfirmEmailId,
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
 
       
@@ -64,7 +64,7 @@ export default {
       required,
       email
     },
-    bConfirmEmailId: {
+    sConfirmEmailId: {
       required,
       email,
       sameAsemailID: sameAs('sPatientEmailId')
@@ -83,17 +83,17 @@ export default {
     },
     confirmEmailErrors() {
       const errors = [];
-      if (!this.$v.bConfirmEmailId.$dirty) return errors;
-      !this.$v.bConfirmEmailId.sameAsemailID && errors.push("Please enter correct e-mail");
-      !this.$v.bConfirmEmailId.email && errors.push("Must be valid e-mail");
-      !this.$v.bConfirmEmailId.required && errors.push("E-mail is required");
+      if (!this.$v.sConfirmEmailId.$dirty) return errors;
+      !this.$v.sConfirmEmailId.sameAsemailID && errors.push("Please enter correct e-mail");
+      !this.$v.sConfirmEmailId.email && errors.push("Must be valid e-mail");
+      !this.$v.sConfirmEmailId.required && errors.push("E-mail is required");
       return errors;
     }
   },
   methods: {
     nextPage() {
       this.$store.commit("requestermodule/sPatientEmailId", this.sPatientEmailId);
-      this.$store.commit("requestermodule/bConfirmEmailId", this.bConfirmEmailId);
+      this.$store.commit("requestermodule/sConfirmEmailId", this.sConfirmEmailId);
       this.$store.commit("requestermodule/bConfirmReport", this.bConfirmReport);
       // this.$store.commit("ConfigModule/mutatepageNumerical", 5);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-5");

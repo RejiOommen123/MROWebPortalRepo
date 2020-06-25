@@ -8,12 +8,12 @@
         <v-col v-if="MROAddZipCode" cols="12" offset-sm="2" sm="3">
           <v-text-field
             type="number"
-            v-model="nAddZipCode"
-            :error-messages="nAddZipCodeErrors"
-            label="nAddZipCode"
+            v-model="sAddZipCode"
+            :error-messages="sAddZipCodeErrors"
+            label="ZipCode"
             required
-            @input="$v.nAddZipCode.$touch()"
-            @blur="$v.nAddZipCode.$touch()"
+            @input="$v.sAddZipCode.$touch()"
+            @blur="$v.sAddZipCode.$touch()"
           ></v-text-field>
         </v-col>
         <v-col v-if="MROAddCity" cols="12" sm="3">
@@ -65,7 +65,7 @@ export default {
   name: "WizardPage_06",
   data() {
     return {
-      nAddZipCode: this.$store.state.requestermodule.nAddZipCode,
+      sAddZipCode: this.$store.state.requestermodule.sAddZipCode,
       sAddCity: this.$store.state.requestermodule.sAddCity,
       sAddState: this.$store.state.requestermodule.sAddState,
       sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
@@ -79,7 +79,7 @@ export default {
   },
   mixins: [validationMixin],
   validations: {
-    nAddZipCode: {
+    sAddZipCode: {
       required,
       maxLength: maxLength(5),
       minLength: minLength(5),
@@ -93,13 +93,13 @@ export default {
      bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
     },  
-    nAddZipCodeErrors() {
+    sAddZipCodeErrors() {
       const errors = [];
-      if (!this.$v.nAddZipCode.$dirty) return errors;
-      !this.$v.nAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
-      !this.$v.nAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
-      !this.$v.nAddZipCode.numeric && errors.push("ZipCode must me numeric.");
-      !this.$v.nAddZipCode.required && errors.push("ZipCode is required.");
+      if (!this.$v.sAddZipCode.$dirty) return errors;
+      !this.$v.sAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sAddZipCode.numeric && errors.push("ZipCode must me numeric.");
+      !this.$v.sAddZipCode.required && errors.push("ZipCode is required.");
       return errors;
     },
     cityErrors() {
@@ -124,7 +124,7 @@ export default {
   methods: {
     nextPage() {
       //alert("Hello World");
-      this.$store.commit("requestermodule/nAddZipCode", this.nAddZipCode);
+      this.$store.commit("requestermodule/sAddZipCode", this.sAddZipCode);
       this.$store.commit("requestermodule/sAddCity", this.sAddCity);
       this.$store.commit("requestermodule/sAddState", this.sAddState);
       this.$store.commit("requestermodule/sAddStreetAddress", this.sAddStreetAddress);

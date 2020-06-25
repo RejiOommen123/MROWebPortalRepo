@@ -8,7 +8,7 @@
       <form>
         <v-row>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-text-field placeholder="+(XX) (XXX) XXX-XXXX" v-model="nPhoneNo" label="Enter Mobile No" required></v-text-field>
+            <v-text-field placeholder="+(XX) (XXX) XXX-XXXX" v-model="sPhoneNo" label="Enter Mobile No" required></v-text-field>
           </v-col>
           <v-col cols="12" offset-sm="1" sm="10">
             <p>
@@ -39,7 +39,7 @@ export default {
     return {
       bOtpSend: false,
 
-      nPhoneNo: "",
+      sPhoneNo: "",
       sApp_Key: "tu9ete3u9ocidovebefu",
       sApi_Key: "51bdcc70021d29097aedce2a39ecb2beaa379e1b",
       sVerify: "",
@@ -54,10 +54,10 @@ export default {
     submit() {
       this.bOtpSend = true;
       var obj = {};
-      obj["phone"] = this.nPhoneNo;
+      obj["phone"] = this.sPhoneNo;
       obj["api_key"] = this.sApi_Key;
       var formData = new FormData();
-      formData.append("phone", this.nPhoneNo);
+      formData.append("phone", this.sPhoneNo);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
 
@@ -79,10 +79,10 @@ export default {
     },
     verifyCode() {
       var obj = {};
-      obj["phone"] = this.nPhoneNo;
+      obj["phone"] = this.sPhoneNo;
       obj["code"] = this.sVerify;
       var formData = new FormData();
-      formData.append("phone", this.nPhoneNo);
+      formData.append("phone", this.sPhoneNo);
       formData.append("code", this.sVerify);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
@@ -97,8 +97,10 @@ export default {
           }
         })
         .then(response => {
+          if(response.data.status=="SUCCESS"){
+           this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
           this.$store.commit("ConfigModule/mutateNextIndex");
-          
+          }
           console.log(response.data.status);
         })
         .catch(err => {

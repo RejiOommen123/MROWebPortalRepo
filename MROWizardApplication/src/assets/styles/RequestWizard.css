@@ -63,7 +63,6 @@
   .checkboxBorder:checked{
       background-color: #53b958;
   }
-
   .locationButton{
    
     margin: 10px;  
@@ -88,6 +87,29 @@
     border-color: transparent;
     background-color: #53b958;
   }
+
+  .areYouPatientButton{   
+    margin: 10px;     
+    width: 350px;
+    font-size: 22px;
+    /* line-height: 89px; */
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: transparent;
+    /* background-image: url(/plugins/wizard/gfx/year-selection-bg.png); */
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+
+  }
+  .areYouPatientButton:hover{
+    border-color: transparent;
+    background-color: #53b958;
+  }
+
   h1{
     color: white;
     font-size: 32px;

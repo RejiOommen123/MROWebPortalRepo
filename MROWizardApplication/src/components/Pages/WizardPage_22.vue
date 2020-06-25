@@ -18,6 +18,7 @@ export default {
   name: "WizardPage_22",
   data() {
     return {
+       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01
     };
   },
   created(){ 
@@ -25,16 +26,11 @@ export default {
   },
   methods:{
       requestAnotherRecord($event){  
-            this.$store.commit("requestermodule/mutaterequestAnotherRecord",$event.target.value);   
+            this.$store.commit("requestermodule/bRequestAnotherRecord",$event.target.value);   
             console.log($event.target.value);                
             this.$store.commit("ConfigModule/mutateNextIndex");          
       }
     },
-    computed:{
-        disclaimer(){
-            return this.$store.state.ConfigModule.wp22_disclaimer;
-        }       
-    }
 };
 </script>
 
