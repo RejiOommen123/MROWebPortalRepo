@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using DinkToPdf;
@@ -13,7 +16,14 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MRODBL.BaseClasses;
+using MRODBL.BaseClassRepositories;
+using MRODBL.Entities;
+using MROWebApi.Controllers;
 using MROWebAPI.Models;
+
+using WebSupergoo.ABCpdf11;
+using WebSupergoo.ABCpdf11.Objects;
 using Wizard_Demo.Models;
 
 namespace MROWebAPI.Controllers
@@ -23,141 +33,278 @@ namespace MROWebAPI.Controllers
     [EnableCors("AllowOrigin")]
     public class PDFController : ControllerBase
     {
-        private IConverter _converter;
+        private readonly DBConnectionInfo _info;
         private readonly ILogger<PDFController> _logger;
-        public PDFController(ILogger<PDFController> logger, IConverter converter)
+        public PDFController(ILogger<PDFController> logger,DBConnectionInfo info)
         {
             _logger = logger;
-            _converter = converter;
+            _info = info;
         }
 
-        //// GET: api/PDF
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/PDF/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
+        #region Commented Code POC 
         // POST: api/PDF
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[Route("[action]")]
+        //public IActionResult GeneratePDF(Patient patient)
+        //{
+        //    var globalSettings = new GlobalSettings
+        //    {
+        //        ColorMode = ColorMode.Color,
+        //        Orientation = Orientation.Portrait,
+        //        PaperSize = PaperKind.A4,
+        //        Margins = new MarginSettings { Top = 10 },
+        //        DocumentTitle = patient.FName + " " + patient.LName,
+        //        //Out = Path.Combine(Directory.GetCurrentDirectory(), "data", "pdf", patient.FName + " " + patient.LName + " - " + patient.PCell + ".pdf")
+        //    };
+
+        //    //var globalSettingsSave = new GlobalSettings
+        //    //{
+
+        //    //    ColorMode = ColorMode.Color,
+        //    //    Orientation = Orientation.Portrait,
+        //    //    PaperSize = PaperKind.A4,
+        //    //    Margins = new MarginSettings { Top = 10 },
+        //    //    DocumentTitle = patient.FName + " " + patient.LName + " - " + patient.PCell,
+        //    //    Out = Path.Combine(Directory.GetCurrentDirectory(), "data", "pdf", patient.FName + " " + patient.LName + " - " + patient.PCell + ".pdf")
+        //    //};
+
+        //    var objectSettings = new ObjectSettings
+        //    {
+        //        //Page= "http://localhost:50598/",
+        //        PagesCount = true,
+        //        HtmlContent = TemplateGenerator.GetHtmlTemplate(patient),
+        //        WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "assets", "StyleForHTML.css") },
+        //        HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+        //        FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+        //    };
+        //    //var objectSettingsSave = new ObjectSettings
+        //    //{
+        //    //    //Page= "http://localhost:50598/",
+        //    //    PagesCount = true,
+        //    //    HtmlContent = TemplateGenerator.GetHtmlTemplate(patient),
+        //    //    WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "assets", "StyleForHTML.css") },
+        //    //    HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+        //    //    FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+        //    //};
+
+        //    //var pdfSave = new HtmlToPdfDocument()
+        //    //{
+        //    //    GlobalSettings = globalSettingsSave,
+        //    //    Objects = { objectSettingsSave }
+        //    //};
+
+        //    var pdfServe = new HtmlToPdfDocument()
+        //    {
+        //        GlobalSettings = globalSettings,
+        //        Objects = { objectSettings }
+        //    };
+
+        //    byte[] pdfBytes = _converter.Convert(pdfServe);
+        //    _logger.LogInformation("PDF Generated");
+        //    //Utility u = new Utility();
+        //    GenerateXML(patient);
+        //    _logger.LogInformation("XML Generated");
+        //    return File(pdfBytes, "application/pdf", patient.FName + " " + patient.LName+ ".pdf");
+        //}
+        #endregion
+
+        #region Generate PDF
+        public static string GetApplicationRoot()
+        {
+            var exePath = Path.GetDirectoryName(System.Reflection
+                              .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
+        }
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        //public void Post([FromBody] string value)
-        public IActionResult GeneratePDF(Patient patient)
+        public async Task<IActionResult> FillAndSendPDF(Requestors requestor)
         {
-            var globalSettings = new GlobalSettings
-            {
-                ColorMode = ColorMode.Color,
-                Orientation = Orientation.Portrait,
-                PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 10 },
-                DocumentTitle = patient.FName + " " + patient.LName,
-                //Out = Path.Combine(Directory.GetCurrentDirectory(), "data", "pdf", patient.FName + " " + patient.LName + " - " + patient.PCell + ".pdf")
-            };
-
-            //var globalSettingsSave = new GlobalSettings
-            //{
-
-            //    ColorMode = ColorMode.Color,
-            //    Orientation = Orientation.Portrait,
-            //    PaperSize = PaperKind.A4,
-            //    Margins = new MarginSettings { Top = 10 },
-            //    DocumentTitle = patient.FName + " " + patient.LName + " - " + patient.PCell,
-            //    Out = Path.Combine(Directory.GetCurrentDirectory(), "data", "pdf", patient.FName + " " + patient.LName + " - " + patient.PCell + ".pdf")
-            //};
-
-            var objectSettings = new ObjectSettings
-            {
-                //Page= "http://localhost:50598/",
-                PagesCount = true,
-                HtmlContent = TemplateGenerator.GetHtmlTemplate(patient),
-                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "assets", "StyleForHTML.css") },
-                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-            };
-            //var objectSettingsSave = new ObjectSettings
-            //{
-            //    //Page= "http://localhost:50598/",
-            //    PagesCount = true,
-            //    HtmlContent = TemplateGenerator.GetHtmlTemplate(patient),
-            //    WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "assets", "StyleForHTML.css") },
-            //    HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-            //    FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-            //};
-
-            //var pdfSave = new HtmlToPdfDocument()
-            //{
-            //    GlobalSettings = globalSettingsSave,
-            //    Objects = { objectSettingsSave }
-            //};
-
-            var pdfServe = new HtmlToPdfDocument()
-            {
-                GlobalSettings = globalSettings,
-                Objects = { objectSettings }
-            };
-
-            byte[] pdfBytes = _converter.Convert(pdfServe);
-            _logger.LogInformation("PDF Generated");
-            //Utility u = new Utility();
-            GenerateXML(patient);
-            _logger.LogInformation("XML Generated");
-            return File(pdfBytes, "application/pdf", patient.FName + " " + patient.LName+ ".pdf");
+            byte[] pdfBytes = await GetFilledPDF(requestor,_info);
+            return File(pdfBytes, "application/pdf");
         }
 
-        private static void GenerateXML(Patient patient)
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> SignAndSendPDF(Requestors requestor)
         {
+            
+            string sAppRoot = GetApplicationRoot();
+            Dictionary<string, string> allFields = new Dictionary<string, string>();
+            //allFields.Add("MROAreYouPatient", requestor.bAreYouPatient.ToString());
+            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
+            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
+            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
+            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
+            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
+            allFields.Add("MROPEmailId", requestor.sPatientEmailId);
+            //allFields.Add("MROConfirmReport", requestor.bConfirmReport.ToString());
+            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
+            allFields.Add("MROAddCity", requestor.sAddCity);
+            allFields.Add("MROAddState", requestor.sAddState);
+            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
+            //allFields.Add("MROTFDateRange", requestor.dtRecordRangeStart);
 
-            var PatDec = patient.IsPatientDeceased ? "Yes" : "No";
-            var middleInitials = string.IsNullOrEmpty(patient.MInitial) ? "" : patient.MInitial;
-            var NotP = patient.NotPatient ? "No" : "Yes";
-            var RName = string.IsNullOrEmpty(patient.RName) ? "" : patient.RName;
-            var RelToP = string.IsNullOrEmpty(patient.RelationToPatient) ? "" : patient.RelationToPatient;
-            var FormRequest = patient.ConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
-            XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
+            //Record Type
+            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
             {
-                OmitXmlDeclaration =false,
-                ConformanceLevel = ConformanceLevel.Document
-            };
-            using XmlWriter writer = XmlWriter.Create(Path.Combine(Directory.GetCurrentDirectory(), "data", "xml", patient.FName + " " + patient.LName + ".xml"), xmlWriterSetting);
-            writer.WriteStartElement("patientdetails");
-            writer.WriteElementString("location", patient.SelectedLocation);
-            writer.WriteElementString("ispatient", NotP);
-            writer.WriteElementString("rname", RName);
-            writer.WriteElementString("relationwithpatient", RelToP);
-            writer.WriteElementString("emailID", patient.EmailID);
-            writer.WriteElementString("formrequested", FormRequest);
-            writer.WriteElementString("fname", patient.FName);
-            writer.WriteElementString("mname", middleInitials);
-            writer.WriteElementString("lname", patient.LName);
-            writer.WriteElementString("deceased", PatDec);
-            writer.WriteElementString("postalcode", patient.PostalCode);
-            writer.WriteElementString("streetarea", patient.StreetArea);
-            writer.WriteElementString("birthdate", patient.BDay);
+                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
 
-            writer.WriteEndElement();
-            writer.Flush();
+            //Primary Reason
+            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+            //Sensitive Info
+            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
+            {
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
 
-            //Utility u = new Utility()
+            //allFields.Add("MROAuthExpireDateAfterNMonths", requestor.sPatientFirstName);
+            //allFields.Add("MROAuthExpireDateSpecificDate", requestor.sPatientFirstName);
+            //allFields.Add("MROAuthExpireDateEventOccurs", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestDeadline", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestDeadlineDate", requestor.sPatientFirstName);
+            //allFields.Add("MROPatientAdditionalDetails", requestor.sPatientFirstName);
+            //allFields.Add("MRODLVerification", requestor.sPatientFirstName);
+            //allFields.Add("MROOtherGovID", requestor.sPatientFirstName);
+            //allFields.Add("MROCameraUpload", requestor.sPatientFirstName);
+            //allFields.Add("MROPDFView", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestReceived", requestor.sPatientFirstName);
+            //allFields.Add("MROFeedbackRating", requestor.sPatientFirstName);
+            //allFields.Add("MROFeedbackComment", requestor.sPatientFirstName);
+            //allFields.Add("MROThankyou", requestor.sPatientFirstName);
+            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
+            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocument().ReplaceFieldKeywordsWithValueWOStamp(pdfByteArray, allFields, out string sReplaceFieldsList);
+
+            allFields.Clear();
+
+            Doc theDoc = new Doc();
+
+            theDoc.Read(byteArrayToReturn);
+            //theDoc.Read("D:/MRO Code/MROWebApi/auth1.pdf");
+            string removeDataTag = requestor.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+            byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+            Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+
+
+            //Bitmap bmp;
+            //using (var ms = new MemoryStream(signatureByteArray))
+            //{
+            //    bmp = new Bitmap(ms);
+            //    bmp.Save("D:/MRO Code/MROWebApi/outputwithbitmap.png", ImageFormat.Png);
+            //}
+
+
+            string image1 = @sAppRoot + @"\Whitebg.png";
+
+
+            System.Drawing.Image canvas = Bitmap.FromFile(image1);
+            Graphics gra = Graphics.FromImage(canvas);
+            Bitmap smallImg = new Bitmap(image2);
+            gra.DrawImage(smallImg, new Point(0, 0));
+            //canvas.Save(@"D:\MRO Code\MROWebApi\signaturewithbg.png", System.Drawing.Imaging.ImageFormat.Jpeg);
+
+            var mssignaturewithbg = new MemoryStream();
+            canvas.Save(mssignaturewithbg, canvas.RawFormat);
+            mssignaturewithbg.ToArray();
+
+            //Bitmap bitmap = new Bitmap("D:/MRO Code/MROWebApi/output.png");
+            //Graphics graph = Graphics.FromImage(bitmap);
+            //graph.Clear(Color.Red);
+            //bitmap.Save("D:/MRO Code/MROWebApi/outputwithbg.png", ImageFormat.Png);
+
+            XImage theImg = new XImage();
+            theImg.SetStream(mssignaturewithbg);
+            theDoc.Rect.String = theImg.Selection.String;
+            theDoc.Rect.Magnify(0.15, 0.2);
+            theDoc.Rect.Position(theDoc.Form["Signature"].Rect.Left, theDoc.Form["Signature"].Rect.Bottom);
+            theDoc.AddImageObject(theImg, false);
+            theImg.Clear();
+
+
+            theDoc.Form.Stamp();
+
+            //System.IO.File.Delete(@"D:\MRO Code\MROWebApi\signature.png");
+            //System.IO.File.Delete(@"D:\MRO Code\MROWebApi\signaturewithbg.png");
+            //theDoc.Save("D:/MRO Code/MROWebApi/auth1.pdf".ToLower().Replace(".pdf", "_stamped.pdf"));
+
+            byte[] pdfBytes = theDoc.GetData();
+            //OnSubmit of SIgned Form
+            //Call to Generate XMl
+            //Wizards
+            //SendXML
+            //Object : requestor
+            return File(pdfBytes, "application/pdf");
         }
 
-        //// PUT: api/PDF/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+        private async static Task<byte[]> GetFilledPDF(Requestors requestor,DBConnectionInfo _info)
+        {
+            Dictionary<string, string> allFields = new Dictionary<string, string>();
+            //allFields.Add("MROAreYouPatient", requestor.bAreYouPatient.ToString());
+            allFields.Add("MROPatientFullName", requestor.sPatientFirstName+" "+requestor.sPatientMiddleInitial+" "+requestor.sPatientLastName);
+            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
+            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
+            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
+            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
+            allFields.Add("MROPEmailId", requestor.sPatientEmailId);
+            //allFields.Add("MROConfirmReport", requestor.bConfirmReport.ToString());
+            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
+            allFields.Add("MROAddCity", requestor.sAddCity);
+            allFields.Add("MROAddState", requestor.sAddState);
+            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
+            //allFields.Add("MROTFDateRange", requestor.dtRecordRangeStart);
 
-        //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+            //Record Type
+            for (int counter= 0; counter < requestor.sSelectedRecordTypes.Length;counter++) {
+                allFields.Add(requestor.sSelectedRecordTypes[counter]+ "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+
+            //Primary Reason
+            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+            //Sensitive Info
+            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
+            {
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
+
+            //allFields.Add("MROAuthExpireDateAfterNMonths", requestor.sPatientFirstName);
+            //allFields.Add("MROAuthExpireDateSpecificDate", requestor.sPatientFirstName);
+            //allFields.Add("MROAuthExpireDateEventOccurs", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestDeadline", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestDeadlineDate", requestor.sPatientFirstName);
+            //allFields.Add("MROPatientAdditionalDetails", requestor.sPatientFirstName);
+            //allFields.Add("MRODLVerification", requestor.sPatientFirstName);
+            //allFields.Add("MROOtherGovID", requestor.sPatientFirstName);
+            //allFields.Add("MROCameraUpload", requestor.sPatientFirstName);
+            //allFields.Add("MROPDFView", requestor.sPatientFirstName);
+            //allFields.Add("MRORequestReceived", requestor.sPatientFirstName);
+            //allFields.Add("MROFeedbackRating", requestor.sPatientFirstName);
+            //allFields.Add("MROFeedbackComment", requestor.sPatientFirstName);
+            //allFields.Add("MROThankyou", requestor.sPatientFirstName);
+            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
+            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocument().ReplaceFieldKeywordsWithValue(pdfByteArray,allFields,out string sReplaceFieldsList);
+
+            allFields.Clear();
+            return byteArrayToReturn;
+        }
+        #endregion
     }
 }

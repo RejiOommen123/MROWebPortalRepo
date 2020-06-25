@@ -4,45 +4,53 @@ using System.Collections.Generic;
 
 namespace MRODBL.BaseClasses
 {
+    //use only for xml  for now 
+    //when structure is finalized make changes to DB
     public partial class Requestors
     {
         [Key]
         public int nRequestorID { get; set; }
-        public int? nFacilityID { get; set; }
-        public int? nLocationID { get; set; }
-        public bool? bAreYouPatient { get; set; }
+        public int nFacilityID { get; set; }
+        public int nLocationID { get; set; }
+        public string sSelectedLocation { get;set;} 
+        public bool bAreYouPatient { get; set; }
         public string sRelativeName { get; set; }
-        public string sRelationship { get; set; }
-        public string sEmailId { get; set; }
+        public string sRelationToPatient { get; set; }
         public string sPatientFirstName { get; set; }
         public string sPatientLastName { get; set; }
         public string sPatientMiddleInitial { get; set; }
-        public bool? bIsPatientDeceased { get; set; }
-        public string sPatientZip { get; set; }
-        public string sPatientStreetAddress { get; set; }
+        public bool bIsPatientMinor { get; set; }
+        public bool bIsPatientDeceased { get; set; }
         public DateTime? dtPatientDOB { get; set; }
-        public DateTime? dtRecordTimeFrameStart { get; set; }
-        public DateTime? dtRecordTimeFrameEnd { get; set; }
-        public string sRecordType { get; set; }
-        public string sRecordTypeOther { get; set; }
-        public string sSensitiveData { get; set; }
-        public DateTime? dtAuthExpireDate { get; set; }
-        public bool? bRequestDeadline { get; set; }
-        public DateTime? dtRequestDeadlineDate { get; set; }
-        public string sWhomReleaseRecord { get; set; }
-        public string sShipmentType { get; set; }
-        public string sWayOfSendRecord { get; set; }
-        public string sWhomReleaseRecordName { get; set; }
-        public string sWhomReleaseRecordZip { get; set; }
-        public string sWhomReleaseRecordStreetAdd { get; set; }
+        public string sPatientEmailId { get; set; }
+        public string sConfirmEmailId { get; set; } 
+        public bool bConfirmReport { get; set; }
+        public string sAddZipCode { get; set; } 
+        public string sAddCity { get; set; }
+        public string sAddState { get; set; }
+        public string sAddStreetAddress { get; set; }
+        public DateTime? dtRecordRangeStart { get; set; } 
+        public DateTime? dtRecordRangeEnd { get; set; } 
+        public string[] sSelectedRecordTypes { get; set; }
+        public string[] sSelectedPrimaryReasons { get; set; }
+        public string sOtherReasons { get; set; }
+        public string sReleaseTo { get; set; }
+        public string[] sSelectedShipmentTypes { get; set; }
+        public string[] selectedSensitiveInfo { get; set; }
+        public DateTime? dtAuthExpire { get; set; }
+        public string sAuthSpecificEvent { get; set; }
+        public bool bDeadlineStatus { get; set; }
+        public DateTime? dtDeadline { get; set; }
         public string sAdditionalData { get; set; }
+        public string sIdentityIdName { get; set; }
+        public string sIdentityImage { get; set; }
+        public string sSignatureData { get; set; }
+        public bool bRequestAnotherRecord { get; set; }
+        public int nFeedbackRating { get; set; }
+        public string sFeedbackComment { get; set; }
         public string sPhoneNo { get; set; }
-        public string sPhotoIdentity { get; set; }
-        public string sSignature { get; set; }
-        public string sPDF { get; set; }
-        public bool? bToolEasyToUse { get; set; }
-        public string sToolTextFeedback { get; set; }
-        public DateTime dtLastUpdate { get; set; }
+        //public string sPDF { get; set; }
+        //public DateTime dtLastUpdate { get; set; }
     }
 }
 

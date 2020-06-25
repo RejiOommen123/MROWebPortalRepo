@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Siddhesh's File
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,16 +23,16 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class LocationAuthorizationDocumentController : ControllerBase
     {
-        static private Dictionary<string, string> FieldList =
-                        new Dictionary<string, string>();
-        #region Constructor
+        static private Dictionary<string, string> FieldList = new Dictionary<string, string>();
 
+        #region Constructor
         /// <summary>
         /// Constructor to set the license key for abcPDF
         /// </summary>
         public LocationAuthorizationDocumentController()
         {
             SetLicense();
+            //GetValidationFieldSet();
         }
 
         #endregion
@@ -39,8 +41,8 @@ namespace MROWebApi.Controllers
         /// <summary>
         /// Patient Web Portal - Replace Pre-defined Field Keywords with Values
         /// </summary>
-        /// <param name="PDFFile"></param>
-        /// <returns></returns>
+        /// <param name="PDFFile">PDF - Byte Array</param>
+        /// <returns>Byte Array - PDF (Replaced with values)</returns>
         public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile)
         {
             //Get Pre-defined Field set from DB
@@ -119,8 +121,6 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             return true;
         }
         #endregion
-
-
 
         [HttpGet]
         [AllowAnonymous]

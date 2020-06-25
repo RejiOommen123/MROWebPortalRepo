@@ -60,7 +60,7 @@ namespace MROWebApi.Controllers
             try
             {
                 #region Data Addition !UI
-                requestor.dtLastUpdate = DateTime.Now;
+                //requestor.dtLastUpdate = DateTime.Now;
                 #endregion
 
                 RequestorsRepository requestorsFac = new RequestorsRepository(_info);

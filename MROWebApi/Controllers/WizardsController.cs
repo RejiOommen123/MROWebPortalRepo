@@ -73,7 +73,6 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-
         #region Logo & Bg for Location
         [HttpGet("GetLogoAndBackgroundImageforLocation/{nLocationID}")]
         [AllowAnonymous]
@@ -93,9 +92,6 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-
-
-
         #region Send Only Required Values
         //private object OptimizeObject(object unoptimized_wizard_config) {
 
@@ -108,45 +104,67 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Commented for XML Part
-        private static void GenerateXML(Requestors requestors)
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public  async Task<IActionResult> SendXML([FromBody] Requestors requestors)
         {
+            //Requestors requestors = new Requestors();
+            FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+            Facilities facility = await rpFac.Select(requestors.nFacilityID);
+            FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
+            FacilityLocations location = await locaFac.Select(requestors.nLocationID);
+            var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
+            var sMddleInitials = string.IsNullOrEmpty(requestors.sPatientMiddleInitial) ? "" : requestors.sPatientMiddleInitial;
+            var sAreYouPatient = requestors.bAreYouPatient ? "No" : "Yes";
+            var sRelativeName = string.IsNullOrEmpty(requestors.sRelativeName) ? "" : requestors.sRelativeName;
+            var sRelationToPatient = string.IsNullOrEmpty(requestors.sRelationToPatient) ? "" : requestors.sRelationToPatient;
+            var sConfirmReport = requestors.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
+            var sOtherReasons = string.IsNullOrEmpty(requestors.sOtherReasons) ? "" : requestors.sOtherReasons;
+            var sComments = string.IsNullOrEmpty(requestors.sFeedbackComment) ? "" : requestors.sFeedbackComment;
 
-            //var PatDec = patient.IsPatientDeceased ? "Yes" : "No";
-            var middleInitials = string.IsNullOrEmpty(requestors.sPatientMiddleInitial) ? "" : requestors.sPatientMiddleInitial;
-            //var NotP = patient.NotPatient ? "No" : "Yes";
-            //var RName = string.IsNullOrEmpty(patient.RName) ? "" : patient.RName;
-            //var RelToP = string.IsNullOrEmpty(patient.RelationToPatient) ? "" : patient.RelationToPatient;
-            //var FormRequest = patient.ConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
             XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
             {
                 OmitXmlDeclaration = false,
                 ConformanceLevel = ConformanceLevel.Document
             };
-            using XmlWriter writer = XmlWriter.Create(Path.Combine(Directory.GetCurrentDirectory(), "data", "xml", requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml"), xmlWriterSetting);
+            string xmlString = "";
+            using XmlWriter writer = XmlWriter.Create(Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml"), xmlWriterSetting);
             writer.WriteStartElement("request");
-                writer.WriteStartElement("facility");
-                //For facility Code,Name,ID
-                writer.WriteEndElement();
-                writer.WriteStartElement("location");
-                    writer.WriteStartElement("item");
-                    //For Location Code,Name,ID
-                    writer.WriteEndElement();
-                writer.WriteEndElement();
-                writer.WriteStartElement("detail");
-                //For Date, Reason,Comments
-                writer.WriteEndElement();
+            writer.WriteStartElement("facility");
+            //For facility Code,Name,ID
+            //writer.WriteElementString("code", facility.sCode);
+            writer.WriteElementString("name", facility.sFacilityName);
+            writer.WriteElementString("ID", facility.nFacilityID.ToString());
+
+            writer.WriteEndElement();
+            writer.WriteStartElement("locations");
+            writer.WriteStartElement("item");
+            //For Location Code,Name,ID
+            writer.WriteElementString("code", location.sLocationCode);
+            writer.WriteElementString("name", location.sLocationName);
+            writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.WriteStartElement("detail");
+            //For Date, Reason,Comments
+            writer.WriteElementString("date", DateTime.Now.ToString());
+            writer.WriteElementString("date_required_by",requestors.dtDeadline.ToString());
+            writer.WriteElementString("reason", sOtherReasons);
+            writer.WriteElementString("comments", sComments);
+            writer.WriteElementString("expiration", requestors.dtAuthExpire.ToString());
+            writer.WriteEndElement();
             writer.WriteStartElement("patient");
             writer.WriteElementString("firstname", requestors.sPatientFirstName);
             writer.WriteElementString("lastname", requestors.sPatientLastName);
-            writer.WriteElementString("middle_name", middleInitials);
-            writer.WriteElementString("dob", requestors.dtPatientDOB.ToString());
+            writer.WriteElementString("middle_name", sMddleInitials);
+            writer.WriteElementString("dob", requestors.dtPatientDOB.Value.ToShortDateString());
             writer.WriteStartElement("address");
             //For Street,City,State,ZipCode
-            writer.WriteElementString("street", requestors.sPatientStreetAddress);
-                //Add
-                //writer.WriteElementString("city", requestors.sPatientCity);
-                //writer.WriteElementString("state", requestors.sPatientState); 
-                writer.WriteElementString("zipcode", requestors.sPatientZip);
+            writer.WriteElementString("street", requestors.sAddStreetAddress);
+            writer.WriteElementString("city", requestors.sAddCity);
+            writer.WriteElementString("state", requestors.sAddState); 
+            writer.WriteElementString("zipcode", requestors.sAddZipCode);
             writer.WriteEndElement();
             writer.WriteElementString("phone_number", requestors.sPhoneNo);
             writer.WriteEndElement();
@@ -154,45 +172,53 @@ namespace MROWebApi.Controllers
 
 
             //Requestor
+            #region Requestor
             writer.WriteStartElement("requestor");
-            writer.WriteElementString("firstname", requestors.sPatientFirstName);
-            writer.WriteElementString("lastname", requestors.sPatientLastName);
-            //Organization
+            writer.WriteElementString("name", sRelativeName);
+            //Requestor Last Name
+            //writer.WriteElementString("lastname", requestors.sPatientLastName);
+            //Organization - Skipped
             //writer.WriteElementString("organization", requestors.);
             writer.WriteElementString("is_patient", requestors.bAreYouPatient.ToString());
-            writer.WriteElementString("is_patient", requestors.bAreYouPatient.ToString());
-            writer.WriteElementString("relation", requestors.sRelationship);
-            writer.WriteElementString("email", requestors.sEmailId);
+            writer.WriteElementString("relation", sRelationToPatient);
+            writer.WriteElementString("email", requestors.sPatientEmailId);
             writer.WriteStartElement("address");
             //For Street,City,State,ZipCode
-            writer.WriteElementString("street", requestors.sPatientStreetAddress);
-            //Add
-            //writer.WriteElementString("city", requestors.sPatientCity);
-            //writer.WriteElementString("state", requestors.sPatientState); 
-            writer.WriteElementString("zipcode", requestors.sPatientZip);
+            writer.WriteElementString("street", requestors.sAddStreetAddress);
+            writer.WriteElementString("city", requestors.sAddCity);
+            writer.WriteElementString("state", requestors.sAddState);
+            writer.WriteElementString("zipcode", requestors.sAddZipCode);
             writer.WriteEndElement();
             writer.WriteElementString("phone_number", requestors.sPhoneNo);
-            writer.WriteElementString("fax_number", requestors.sPhoneNo);
+            //Fax Number Are WE Taking ?
+            //writer.WriteElementString("fax_number", requestors.sPhoneNo);
             writer.WriteEndElement();
-
             //requestor ends here
+            #endregion
 
 
             writer.WriteStartElement("requested_information");
-                writer.WriteStartElement("dates_of_service");
-                writer.WriteElementString("start", requestors.dtRecordTimeFrameStart.ToString());
-            writer.WriteElementString("end", requestors.dtRecordTimeFrameEnd.ToString());
+            writer.WriteStartElement("dates_of_service");
+            writer.WriteElementString("start", requestors.dtRecordRangeStart.Value.ToShortDateString());
+            writer.WriteElementString("end", requestors.dtRecordRangeEnd.Value.ToShortDateString());
             writer.WriteEndElement();
             writer.WriteStartElement("types");
             //Add Items Here
+            foreach (string singleRecordType in requestors.sSelectedRecordTypes) {
+                writer.WriteStartElement("item");
+                writer.WriteElementString("name",singleRecordType);
+                //writer.WriteElementString("include", singleRecordType);
+                writer.WriteEndElement();
+            }
             writer.WriteEndElement();
             writer.WriteEndElement();
 
             //PDF Here
             //Get PDF & Show in Base 64 Encoding
-            //writer.WriteElementString("pdf", requestors.dtRecordTimeFrameEnd.ToString());
+            //writer.WriteElementString("pdf", requestors.sPDF);
             writer.WriteEndElement();
             writer.Flush();
+            return Content(xmlString, "text/xml", System.Text.Encoding.UTF8);
         }
         #endregion
     }
