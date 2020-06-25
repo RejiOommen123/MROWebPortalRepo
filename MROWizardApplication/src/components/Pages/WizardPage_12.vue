@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       //this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason
-      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation1.oShipmentTypes,
+      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
       sSelectedShipmentTypes: [],
       sSTFaxCompAdd:'',
       sSTEmailId: this.$store.state.requestermodule.sPatientEmailId,

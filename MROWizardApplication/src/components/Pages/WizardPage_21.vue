@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
-    <v-dialog v-model="dialog" max-width="500px" style="backgroundColor:white">
+    <v-dialog v-model="dialog" max-width="400px" style="backgroundColor:white">
       <v-card id="signatureCard">
         <v-btn style="fontColor:black, textAlign:right" icon @click="dialog = false">
             X
@@ -13,8 +13,8 @@
             <div class="col-12 mt-2">
               <VueSignaturePad
                 id="signature"
-                width="300px"
-                height="100px"
+                width="350px"
+                height="120px"
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
               />
@@ -64,7 +64,9 @@ export default {
   },
   mounted() {
     this.$http
-      .get("LocationAuthorizationDocument/getPDF/", {
+      .post("LocationAuthorizationDocument/GeneratePDF/", 
+      this.$store.state.requestermodule,
+      {
         responseType: "arraybuffer"
       })
       .then(response => {
