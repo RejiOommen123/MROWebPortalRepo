@@ -206,7 +206,7 @@ namespace MROWebAPI.Controllers
                 connection.nCreatingAdminUserID = 1;
                 connection.nFacilityID = dbFacility.nFacilityID;
                 connection.nUpdateAdminUserID = 1;
-                connection.sConnectionString = "sConnectionString";
+                connection.sConnectionString = _info.ConnectionString;
 
                 connection.sGUID = Guid.NewGuid().ToString();
                 connection.dtCreated = DateTime.Now;

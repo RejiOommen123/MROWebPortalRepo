@@ -64,7 +64,7 @@ export default {
   },
   mounted() {
     this.$http
-      .post("LocationAuthorizationDocument/GeneratePDF/", 
+      .post("PDF/FillAndSendPDF/", 
       this.$store.state.requestermodule,
       {
         responseType: "arraybuffer"
@@ -109,7 +109,7 @@ export default {
       this.$http
       
         .post(
-          "LocationAuthorizationDocument/GeneratePDF/",
+          "PDF/SignAndSendPDF/",
           this.$store.state.requestermodule,
           { responseType: "arraybuffer" }
         )
