@@ -236,14 +236,6 @@ namespace MROWebApi.Controllers
 
             //}
 
-            StoreXMLFTP(requestors, xmlString);
-
-            //return Content(xmlString, "text/xml", System.Text.Encoding.UTF8);
-            return Ok(xmlString);
-        }
-
-        private static void StoreXMLFTP(Requestors requestors, StringBuilder xmlString)
-        {
             FtpWebRequest request =
                         (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
 
@@ -265,7 +257,35 @@ namespace MROWebApi.Controllers
             Stream reqStream = request.GetRequestStream();
             reqStream.Write(buffer, 0, buffer.Length);
             reqStream.Close();
+
+            //return Content(xmlString, "text/xml", System.Text.Encoding.UTF8);
+            return Ok(xmlString.ToString());
         }
+
+        //private static void StoreXMLFTP(Requestors requestors, StringBuilder xmlString)
+        //{
+        //    FtpWebRequest request =
+        //                (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
+
+        //    request.Method = WebRequestMethods.Ftp.UploadFile;
+        //    request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
+        //    request.UsePassive = true;
+        //    request.UseBinary = true;
+        //    request.KeepAlive = false;
+
+        //    //Load the file
+        //    //FileStream stream = System.IO.File.OpenRead(xmlString.ToString());
+        //    byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+        //    //byte[] buffer = new byte[stream.Length];
+
+        //    //stream.Read(buffer, 0, buffer.Length);
+        //    //stream.Close();
+
+        //    //Upload file
+        //    Stream reqStream = request.GetRequestStream();
+        //    reqStream.Write(buffer, 0, buffer.Length);
+        //    reqStream.Close();
+        //}
         #endregion
 
         #region Get Signed PDF

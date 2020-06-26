@@ -64,7 +64,7 @@ export default {
   },
   mounted() {
     this.$http
-      .post("PDF/FillAndSendPDF/", 
+      .post("PDF/GeneratePDF/", 
       this.$store.state.requestermodule,
       {
         responseType: "arraybuffer"
@@ -109,7 +109,7 @@ export default {
       this.$http
       
         .post(
-          "PDF/SignAndSendPDF/",
+          "PDF/GeneratePDF/",
           this.$store.state.requestermodule,
           { responseType: "arraybuffer" }
         )
@@ -146,10 +146,18 @@ export default {
       this.dialog=true;
     },
     next(){
+        this.$http
+      .post("Wizards/GenerateXML/", 
+      this.$store.state.requestermodule,
+      )
+      .then(response => {
+        console.log(response.body);
+      });
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
         this.$vuetify.theme.dark = true;
+
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
