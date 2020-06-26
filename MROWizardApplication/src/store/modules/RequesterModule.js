@@ -30,12 +30,14 @@ const state = {
     sSTFaxCompAdd:'',
     sSTEmailId:'',
     sSTConfirmEmailId:'',
+    sSTMailCompAdd:'',
+    dtSTPikeUp:'',
 
     selectedSensitiveInfo: [],
     dAuthExpire : null,
     sAuthSpecificEvent : '',
     bDeadlineStatus:false,
-    dtDeadline :null,
+    dtDeadline :'',
     sAdditionalData:'',
     sPhoneNo:'',
     sIdentityIdName:'',
@@ -132,6 +134,12 @@ const mutations = {
     },
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
+    },
+    sSTMailCompAdd(state, payload) {
+        state.sSTMailCompAdd = payload;
+    },
+    dtSTPikeUp(state, payload) {
+        state.dtSTPikeUp = payload;
     },
 
 

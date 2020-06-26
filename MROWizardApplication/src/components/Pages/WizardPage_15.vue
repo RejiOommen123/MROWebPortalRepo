@@ -21,9 +21,10 @@ export default {
     },
     methods:{
       setDeadlineStatus($event){           
-            this.$store.commit("ConfigModule/mutateNextIndex");
-            this.$store.commit("requestermodule/bDeadlineStatus",$event.target.value);   
-            console.log($event.target.value);       
+          this.$store.commit("requestermodule/bDeadlineStatus",$event.target.value);  
+          this.$store.commit("ConfigModule/bDeadlineStatus",$event.target.value);  
+          this.$store.commit("ConfigModule/mutateNextIndex");
+          console.log($event.target.value);       
       }
     }
 }

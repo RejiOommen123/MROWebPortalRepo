@@ -1,9 +1,7 @@
 <template>
   <div class="center">
-    <br />
-    <br />
     <h1>Specify an approximate*<br/>Date Range for records.</h1>
-    
+    <form>
     <v-row>
       <v-col cols="12" offset-sm="1" sm="3" md="4">
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
@@ -47,13 +45,15 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage" color="success">Next</v-btn>
+          <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage"  color="success">Next</v-btn>
         </div>
         <!-- :disabled="$v.$invalid" -->
       </v-col>
     </v-row>
      <div class="disclaimer">{{this.disclaimer}}</div>
+    </form>
     </div>
+    
 </template>
 
 <script>

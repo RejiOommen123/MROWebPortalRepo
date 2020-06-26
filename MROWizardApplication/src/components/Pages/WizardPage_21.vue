@@ -135,8 +135,9 @@ export default {
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+         this.$vuetify.theme.dark = true;
         this.$store.commit("ConfigModule/mutatePreviousIndex");
-        this.$vuetify.theme.dark = true;
+       
     },
     showDialog(){
       this.dialog=true;
@@ -145,6 +146,7 @@ export default {
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        this.$vuetify.theme.dark = true;
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

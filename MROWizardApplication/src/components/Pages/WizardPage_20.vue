@@ -98,6 +98,9 @@ export default {
             sStatus:'CapturingImg'
         };
     },
+    created(){ 
+        this.$vuetify.theme.dark = true
+     },
     computed: {
         device: function() {
             return this.devices.find(n => n.deviceId === this.deviceId);

@@ -46,7 +46,7 @@ export default {
   name: "WizardPage_16",
   data() {
     return {
-      dtDeadline : null,//new Date().toISOString().substr(0, 10),
+      dtDeadline : new Date().toISOString().substr(0, 10),
       menu1: false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_16_disclaimer01,
 

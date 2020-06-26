@@ -44,13 +44,13 @@ const state = {
             "sFieldToolTip": "Please contact your healthcare provider to setup a patient portal if you do not have one already setup for guidance on how to do so."
         },
         {
-            "sNormalizedShipmentTypeName": "MROSecureEmail",
-            "sShipmentTypeName": "Secure Email",
+            "sNormalizedShipmentTypeName": "MROEmail",
+            "sShipmentTypeName": "Email",
             "sFieldToolTip": null
         },
         {
-            "sNormalizedShipmentTypeName": "MROEmailShipment",
-            "sShipmentTypeName": "Email",
+            "sNormalizedShipmentTypeName": "MROMailShipment",
+            "sShipmentTypeName": "Mail",
             "sFieldToolTip": null
         },
         {
@@ -81,7 +81,8 @@ const state = {
             "sNormalizedReleaseTo": "MROReleaseToThirdParty"
         }
     ],
-    nAuthExpirationMonths:0
+    nAuthExpirationMonths:0,
+    bDeadlineStatus:true,
 }
 const mutations = {
     // mutatepageNumerical(state,payload){
@@ -103,14 +104,29 @@ const mutations = {
         state.wizardArrayIndex = payload;
     },
     mutateNextIndex(state) {
-        state.wizardArrayIndex = state.wizardArrayIndex + 1;
+        if (state.wizardArrayIndex == 19) {
+            state.showBackBtn = false;
+        }
+        if(state.bDeadlineStatus==false)
+        {
+            state.wizardArrayIndex = state.wizardArrayIndex + 2;
+        }
+        else{
+            state.wizardArrayIndex = state.wizardArrayIndex + 1;
+        }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
     },
     mutatePreviousIndex(state) {
-        if (state.wizardArrayIndex == 1) {
+        if (state.wizardArrayIndex == 1 && state.wizardArrayIndex == 21) {
             state.showBackBtn = false;
         }
-        state.wizardArrayIndex = state.wizardArrayIndex - 1;
+        if(state.bDeadlineStatus==false)
+        {
+            state.wizardArrayIndex = state.wizardArrayIndex - 2;
+        }
+        else{
+            state.wizardArrayIndex = state.wizardArrayIndex - 1;
+        }        
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
     },
     apiResponseDataByFacilityGUID(state, payload) {
@@ -121,7 +137,10 @@ const mutations = {
     },
     nAuthExpirationMonths(state,payload){
         state.nAuthExpirationMonths =  payload;
-    }
+    },
+    bDeadlineStatus(state,payload){
+        state.bDeadlineStatus = payload;
+    },
 }
 const actions = {}
 const getter = {}

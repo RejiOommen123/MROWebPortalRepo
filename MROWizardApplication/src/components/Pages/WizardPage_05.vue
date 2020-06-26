@@ -1,11 +1,12 @@
 <template>
   <div class="center">
-    <br />
-    <br />
+    <form>
     <v-row>
       <v-col cols="12" offset-sm="2" sm="6" md="8">
-        <h1>When was the Patient Born ?</h1>
+        <h1 v-if="bAreYouPatient">What is your date of birth?</h1>
+        <h1 v-else>When was the Patient Born ?</h1>
         <h4>(MM/DD/YYYY)</h4>
+        
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -29,10 +30,11 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
+          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
         </div>
       </v-col>
     </v-row>
+    </form>
   </div>
 </template>
 
@@ -62,6 +64,9 @@ export default {
     }
   },
   computed: {
+    bAreYouPatient(){
+      return this.$store.state.requestermodule.bAreYouPatient;
+    },
     dtPatientDOBFormatted() {
       return this.dtPatientDOB ? moment(this.dtPatientDOB).format("MM-DD-YYYY") : "";
     },

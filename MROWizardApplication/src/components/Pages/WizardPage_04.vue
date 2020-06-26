@@ -38,8 +38,8 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox v-if="MROIsPatientMinor" v-model="bIsPatientMinor" label="Is the patient a minor?"></v-checkbox>
-          <v-checkbox v-if="MROIsPatientDeceased" v-model="bIsPatientDeceased" label="Is the patient deceased?"></v-checkbox>
+          <v-checkbox v-if="MROIsPatientMinor" v-model="bIsPatientMinor" color="#53b958" label="Is the patient a minor?"></v-checkbox>
+          <v-checkbox v-if="MROIsPatientDeceased" v-model="bIsPatientDeceased" color="#53b958" label="Is the patient deceased?"></v-checkbox>
           <v-btn class="mr-4" @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
         </v-col>
         <div class="disclaimer">{{disclaimer}}</div>

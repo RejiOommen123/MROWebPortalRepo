@@ -14,22 +14,12 @@ export default {
     name:"WizardPage_11",
     data(){
       return{
-        //this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.locationDetails
         oReleaseToArray : this.$store.state.ConfigModule.oReleaseRequestTo,
-        
       }
     },
     methods:{
       releaseRequestTo($event){  
-            // var noSpecialChars = ($event.target.value).replace(/[^\w\s]/gi, '');
-            // var nowhitespaces = noSpecialChars.replace(/[^\w\s]/gi, '')
-            // var oReleaseRequestTo = {
-            //   "sNormalizedReleaseTo":"MRO"+nowhitespaces,
-            //   "sReleaseTo": $event.target.value
-            // };
-            // console.log(oReleaseRequestTo);
             this.$store.commit("requestermodule/sReleaseTo",$event.target.value);
-            // this.$store.commit("requestermodule/oReleaseRequestTo",oReleaseRequestTo);          
             this.$store.commit("ConfigModule/mutateNextIndex");
       }
     }
