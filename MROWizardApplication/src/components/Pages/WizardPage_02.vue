@@ -48,6 +48,8 @@ export default {
               "apiResponseDataByLocation    " +
                 this.$store.state.ConfigModule.apiResponseDataByLocation
             );
+            this.$store.commit("ConfigModule/wizardLogo",apiLocationResponse.oLocations[0].sConfigLogoData);
+            this.$store.commit("ConfigModule/wizardBackground",apiLocationResponse.oLocations[0].sConfigBackgroundData);
             this.$store.commit("requestermodule/nFacilityID", location.nFacilityID);
             this.$store.commit("requestermodule/nLocationID", location.nFacilityLocationID);
             this.$store.commit(

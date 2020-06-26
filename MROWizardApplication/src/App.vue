@@ -31,7 +31,7 @@
                   </div>
                   <div v-if="selectedWizard!='Wizard_21'">
                     <img
-                      :src="this.logo"
+                      :src="this.logoImg"
                       height="70px"
                       alt="Vue JS"
                       style="vertical-align:middle"
@@ -108,7 +108,7 @@ export default {
   data() {
     return {
       dialog: true,
-      logo: this.$store.state.ConfigModule.wizardLogo,
+      logoImg: this.$store.state.ConfigModule.wizardLogo,
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
       phoneNo:0
     };
@@ -128,10 +128,16 @@ export default {
         var apiFacilityResponse = response.body;
         if (response.body) {
           this.$store.commit("ConfigModule/apiResponseDataByFacilityGUID",apiFacilityResponse);
-          this.logo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigLogoData;
-          this.backgroundImg = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigBackgroundData;
+
+          this.$store.commit("ConfigModule/wizardLogo",apiFacilityResponse.facilityLogoandBackground[0].sConfigLogoData);
+          this.$store.commit("ConfigModule/wizardBackground",apiFacilityResponse.facilityLogoandBackground[0].sConfigBackgroundData);
+          // this.logoImg = this.$store.state.ConfigModule.wizardLogo;
+          // this.backgroundImg = this.$store.state.ConfigModule.wizardBackground;
+
+          // this.logo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigLogoData;
+          // this.backgroundImg = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigBackgroundData;
           this.phoneNo=this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
-          console.log("This Logo" + this.logo);
+          console.log("This Logo" + this.logoImg);
           console.log("This BG" + this.backgroundImg);
 
           //Check for number of locations in facility
@@ -161,8 +167,21 @@ export default {
         }
       });
   },
+  watch: {
+    logo (newlogo) {
+      this.logoImg=newlogo;
+    },
+    background (newBackground) {
+      this.backgroundImg=newBackground;
+    }
+  },
   computed: {
- 
+    logo() {
+      return this.$store.state.ConfigModule.wizardLogo
+    },
+    background() {
+      return this.$store.state.ConfigModule.wizardBackground
+    },
     selectedWizard() {
       return this.$store.state.ConfigModule.selectedWizard;
     },

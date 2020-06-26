@@ -31,7 +31,8 @@ const state = {
     // wp24_disclaimer:"Your request is now complete. You may now close this window.",
     // // wizardArray:["page-1","page-2","page-3","page-4","page-5","page-6","page-7","page-8","page-9","page-10","page-11","page-12","page-13","page-14","page-15","page-16","page-17","page-18","page-19","page-20","page-21","page-22","page-23","page-24"],
     
-
+    wizardLogo:'',
+    wizardBackground:'',
     showBackBtn:false,
     wizardArrayIndex: 0,
     selectedWizard: "Wizard_01",
@@ -83,6 +84,7 @@ const state = {
     ],
     nAuthExpirationMonths:0,
     bDeadlineStatus:true,
+ 
 }
 const mutations = {
     // mutatepageNumerical(state,payload){
@@ -91,6 +93,12 @@ const mutations = {
     // mutateCurrentPage(state,payload){
     //     state.selectedPage = payload;
     // },
+    wizardLogo(state, payload) {
+        state.wizardLogo = payload;
+    },
+    wizardBackground(state, payload) {
+        state.wizardBackground = payload;
+    },
     mutatedialogMinWidth(state, payload) {
         state.dialogMinWidth = payload;
     },
