@@ -49,10 +49,7 @@
                     </keep-alive>
                   </transition>
                   <div v-if="selectedWizard!='page-20'">
-                    <!-- <div><p id="contact">Call 123-456-7890 for assistance</p></div>
-                    <div id="poweredby">
-                    <span>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a></span>
-                    </div>-->
+
                   </div>
                 </div>
               </div>

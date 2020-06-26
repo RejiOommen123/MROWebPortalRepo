@@ -18,12 +18,22 @@
             </p>
           </v-col>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-btn @click.prevent="submit" @click="disbled=true" class="ma-2" color="success">Send Verification Code</v-btn>
+            <v-btn @click.prevent="submit" :disabled="this.isDisable" class="ma-2" color="success">Send Verification Code</v-btn>
             <div v-show="bOtpSend">
             <div>
-              <v-text-field v-model="sVerify" label="Enter 4 digit OTP" required></v-text-field>
-              <v-btn @click.prevent="submit" class="ma-2" color="success">Resend OTP</v-btn>
-              <v-btn @click.prevent="verifyCode" class="ma-2" color="success">Verify</v-btn>
+           <v-text-field
+            :error-messages="sVerifyError"         
+            @input="$v.sVerify.$touch()"
+            @blur="$v.sVerify.$touch()"
+            v-model="sVerify"
+            label="Enter OTP" 
+            required>
+            </v-text-field>
+            
+              <v-btn @click.prevent="submit"  color="success">Resend OTP</v-btn> 
+            
+              <v-btn @click.prevent="verifyCode" :disabled="$v.$invalid" style="margin-left:10px" color="success">Verify</v-btn>
+            
               </div>
             </div>
           </v-col>
@@ -34,10 +44,13 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required,maxLength,minLength } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_12",
   data() {
     return {
+      isDisable:false,
       bOtpSend: false,
 
       sPhoneNo: "",
@@ -48,11 +61,26 @@ export default {
       subData: {}
     };
   },
+  mixins: [validationMixin],
+  validations: {
+    sVerify: { required,maxLength: maxLength(4),minLength: minLength(4)  },
+  },
   created(){ 
     this.$vuetify.theme.dark = true
   },
+  computed:{
+      sVerifyError() {
+      const errors = [];
+      if (!this.$v.sVerify.$dirty) return errors;
+      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");
+      !this.$v.sVerify.minLength && errors.push("Enter 4 digit OTP");
+      !this.$v.sVerify.required && errors.push("OTP required");
+      return errors;
+    }
+    },
   methods: {
     submit() {
+      this.isDisable=true;
       this.bOtpSend = true;
       var obj = {};
       obj["phone"] = this.sPhoneNo;
@@ -102,12 +130,17 @@ export default {
            this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
           this.$store.commit("ConfigModule/mutateNextIndex");
           }
+          if(response.data.status=='ERROR')
+          {
+            alert("Invalid OTP");
+          }
           console.log(response.data.status);
         })
         .catch(err => {
           console.log(err);
         });
-    }
+    },
+    
   }
 };
 </script>

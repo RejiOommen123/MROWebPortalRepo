@@ -126,21 +126,21 @@
             <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  :value="dtSTPikeUpFormatted"
+                  :value="dtSTPickUpFormatted"
                   placeholder="MM-DD-YYYY"
-                  :error-messages="dtSTPikeUpErrors"
+                  :error-messages="dtSTPickUpErrors"
                   clearable
                   label="Pick up date"
                   readonly
                   v-bind="attrs"
                   v-on="on"
-                  @click:clear="dtSTPikeUp = null"
-                  @input="$v.dtSTPikeUp.$touch()"
-                  @blur="$v.dtSTPikeUp.$touch()"
+                  @click:clear="dtSTPickUp = null"
+                  @input="$v.dtSTPickUp.$touch()"
+                  @blur="$v.dtSTPickUp.$touch()"
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="dtSTPikeUp"
+                v-model="dtSTPickUp"
                 color="green lighten-1"
                 header-color="primary"
                 light
@@ -173,15 +173,14 @@ export default {
   data() {
     return {
       //this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason
-      oShipmentTypeArray: this.$store.state.ConfigModule
-        .apiResponseDataByLocation1.oShipmentTypes,
+      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
       sSelectedShipmentTypes: [],
       sSTFaxCompAdd: "",
       sSTEmailId: this.$store.state.requestermodule.sPatientEmailId,
       sSTConfirmEmailId: this.$store.state.requestermodule.sConfirmEmailId,
       sSTMailCompAdd: "",
       sSTRecordFormat: "",
-      dtSTPikeUp: "",
+      dtSTPickUp: "",
       menu1: false
 
       //other: false
@@ -201,7 +200,7 @@ export default {
     sSTRecordFormat: {
       required
     },
-    dtSTPikeUp: {
+    dtSTPickUp: {
       required,
       minValue: value => value > new Date().toISOString()
     }
@@ -230,16 +229,16 @@ export default {
         errors.push("Record format type is required");
       return errors;
     },
-    dtSTPikeUpFormatted() {
-      return this.dtSTPikeUp
-        ? moment(this.dtSTPikeUp).format("MM-DD-YYYY")
+    dtSTPickUpFormatted() {
+      return this.dtSTPickUp
+        ? moment(this.dtSTPickUp).format("MM-DD-YYYY")
         : "";
     },
-    dtSTPikeUpErrors() {
+    dtSTPickUpErrors() {
       const errors = [];
-      if (!this.$v.dtSTPikeUp.$dirty) return errors;
-      !this.$v.dtSTPikeUp.minValue && errors.push("Invalid Date");
-      !this.$v.dtSTPikeUp.required && errors.push("End Date is required");
+      if (!this.$v.dtSTPickUp.$dirty) return errors;
+      !this.$v.dtSTPickUp.minValue && errors.push("Invalid Date");
+      !this.$v.dtSTPickUp.required && errors.push("End Date is required");
       return errors;
     }
   },
@@ -279,7 +278,7 @@ export default {
             "requestermodule/sSTConfirmEmailId",
             this.sSTConfirmEmailId
           );
-          this.$store.commit("requestermodule/dtSTPikeUp", this.dtSTPikeUp);
+          this.$store.commit("requestermodule/dtSTPickUp", this.dtSTPickUp);
           console.log(this.dAuthExpire);
           break;
       }

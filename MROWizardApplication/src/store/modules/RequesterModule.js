@@ -31,7 +31,7 @@ const state = {
     sSTEmailId:'',
     sSTConfirmEmailId:'',
     sSTMailCompAdd:'',
-    dtSTPikeUp:'',
+    dtSTPickUp:'',
 
     selectedSensitiveInfo: [],
     dAuthExpire : null,
@@ -138,8 +138,8 @@ const mutations = {
     sSTMailCompAdd(state, payload) {
         state.sSTMailCompAdd = payload;
     },
-    dtSTPikeUp(state, payload) {
-        state.dtSTPikeUp = payload;
+    dtSTPickUp(state, payload) {
+        state.dtSTPickUp = payload;
     },
 
 
