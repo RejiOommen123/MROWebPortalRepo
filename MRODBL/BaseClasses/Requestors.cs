@@ -12,7 +12,7 @@ namespace MRODBL.BaseClasses
         public int nRequestorID { get; set; }
         public int nFacilityID { get; set; }
         public int nLocationID { get; set; }
-        public string sSelectedLocation { get;set;} 
+        public string sSelectedLocation { get; set; }
         public bool bAreYouPatient { get; set; }
         public string sRelativeName { get; set; }
         public string sRelationToPatient { get; set; }
@@ -23,14 +23,14 @@ namespace MRODBL.BaseClasses
         public bool bIsPatientDeceased { get; set; }
         public DateTime? dtPatientDOB { get; set; }
         public string sPatientEmailId { get; set; }
-        public string sConfirmEmailId { get; set; } 
+        public string sConfirmEmailId { get; set; }
         public bool bConfirmReport { get; set; }
-        public string sAddZipCode { get; set; } 
+        public string sAddZipCode { get; set; }
         public string sAddCity { get; set; }
         public string sAddState { get; set; }
         public string sAddStreetAddress { get; set; }
-        public DateTime? dtRecordRangeStart { get; set; } 
-        public DateTime? dtRecordRangeEnd { get; set; } 
+        public DateTime? dtRecordRangeStart { get; set; }
+        public DateTime? dtRecordRangeEnd { get; set; }
         public string[] sSelectedRecordTypes { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
         public string sOtherReasons { get; set; }
@@ -49,8 +49,14 @@ namespace MRODBL.BaseClasses
         public int nFeedbackRating { get; set; }
         public string sFeedbackComment { get; set; }
         public string sPhoneNo { get; set; }
-        //public string sPDF { get; set; }
-        //public DateTime dtLastUpdate { get; set; }
+        public string sPDF { get; set; }
+        public DateTime dtLastUpdate { get; set; }
+        //Extra Added
+        public string sSTFaxCompAdd { get; set; }
+        public string sSTEmailId {get;set;}
+        public string sSTConfirmEmailId {get;set;}
+        public string sSTMailCompAdd {get;set;}
+        public DateTime? dtPickUp {get;set;}
     }
 }
 
