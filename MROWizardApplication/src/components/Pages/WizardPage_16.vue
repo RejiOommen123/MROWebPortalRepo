@@ -3,6 +3,7 @@
   <h1>What date do you <br/>need your records by?</h1>
   <h4>(MM/DD/YYYY)</h4>
     <v-row>
+      <form>
     <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
      
         
@@ -30,10 +31,11 @@
     <br />
     <v-col cols="12" offset-sm="3" sm="6">
     <div>
-      <v-btn @click.prevent="nextPage"  color="success">Next</v-btn>
+      <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
     </div>
     <!-- :disabled="$v.$invalid" -->
     </v-col>
+      </form>
   </v-row>
     
   </div>

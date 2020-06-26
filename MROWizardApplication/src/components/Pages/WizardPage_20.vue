@@ -8,8 +8,8 @@
                     <vue-web-cam
                         ref="webcam"
                         :device-id="deviceId"
-                        width="100%"
-                        height="80%"
+                        width="90%"
+                        height="70%"
                         @started="onStarted"
                         @stopped="onStopped"
                         @error="onError"
@@ -30,9 +30,10 @@
                         </select>
                     </v-col>
                     <v-col cols="12" sm="12">
-                        <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>
-                        <button type="button" class="btn btn-danger" @click="onStop">Stop Camera</button>
-                        <button type="button" class="btn btn-success" @click="onStart">Start Camera</button>
+                        <v-btn @click="onCapture" fab dark color="teal">
+                          <v-icon dark>mdi-camera</v-icon>
+                        </v-btn>    
+                        <!-- <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button> -->
                     </v-col>
                 </v-row>
             </v-col>
@@ -75,7 +76,7 @@
                 </v-tooltip>
                 </v-file-input>
                 <v-col cols="12" sm="12">
-                        <button type="button" class="btn btn-success" @click="nextPage">Next</button>
+                        <button type="button" class="btn btn-success" @click="nextPage">Save & Next</button>
                 </v-col>
             </v-col>
         </v-row>
@@ -127,7 +128,7 @@ export default {
             });
         console.log(this.sIdentityImage);
         this.sStatus="ImgCaptured";
-            
+        this.$refs.webcam.stop();            
         },
         onStarted(stream) {
             console.log("On Started Event", stream);

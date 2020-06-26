@@ -3,11 +3,16 @@
   <v-app style="backgroundColor:transparent">
     <v-content>
       <v-row justify="center">
-        <v-dialog v-model="dialog" scrollable :max-width="dialogMaxWidth" :height="dialogMaxHeight">
+        <v-dialog persistent v-model="dialog" scrollable :max-width="dialogMaxWidth" :height="dialogMaxHeight">
           <v-card
             id="bgImg"
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
+       
+          <v-btn style="position:absolute;right:1%" icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+
             <v-card-text :style="{ height: dialogMaxHeight  }">
               <div>
                 <div>
@@ -183,31 +188,12 @@ export default {
   },
   methods: {
     doNothing() {
-      // alert("Working");
-      // var currPageAfterClickingBack = this.$store.state.ConfigModule
-      //   .selectedPageNumber;
-      // --currPageAfterClickingBack;
-      // //if it becomes 1 reset v-show to false
-      // if (currPageAfterClickingBack == 1) {
-      //   this.$store.state.ConfigModule.showBackBtn = false;
-      // }
-      // if (currPageAfterClickingBack == 12) {
-      //   this.$store.commit("ConfigModule/mutatedialogMinWidth", "600px");
-      //   this.$store.commit("ConfigModule/mutatedialogMaxWidth", "600px");
-      //   this.$store.commit("ConfigModule/mutatedialogMaxHeight", "653px");
-      //   this.$vuetify.theme.dark = true;
-      // }
-      // this.$store.state.ConfigModule.selectedPage =
-      //   "page-" + currPageAfterClickingBack;
-      // this.$store.commit(
-      //   "ConfigModule/mutatepageNumerical",
-      //   currPageAfterClickingBack
-      // );
-      // this.$store.commit(
-      //   "ConfigModule/mutateCurrentPage",
-      //   this.$store.state.ConfigModule.selectedPage
-
       this.$store.commit("ConfigModule/mutatePreviousIndex");
+    },
+    closeDialog(){
+        // $(this).trigger('post-message', [{
+        //             event: 'unload-bookmarklet'
+        //         }]);
     }
   },
   components: {

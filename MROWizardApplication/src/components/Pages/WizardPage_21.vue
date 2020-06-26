@@ -36,7 +36,7 @@
     <iframe :src="this.pdf" width="100%" height="1200px"></iframe>
 
     <div id="modalOpener">
-      <div v-if="recordSubmitted==false">
+      <div v-if="bFormSigned==false">
         <p id="review">All finished reviewing?</p>
         <v-btn id="signHere" @click="showDialog" color="white">Sign request</v-btn>
       </div>
@@ -59,7 +59,7 @@ export default {
       currentPage: 0,
       pageCount: 0,
       pdf: null,
-      recordSubmitted:false
+      bFormSigned:false
     };
   },
   mounted() {
@@ -116,7 +116,7 @@ export default {
         .then(response => {
           let blobFile = new Blob([response.data], { type: "application/pdf" });
           //let link = document.createElement('a');
-          this.recordSubmitted=true;
+          this.bFormSigned=true;
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
         });
@@ -132,10 +132,13 @@ export default {
       };
     },
     previous(){
+        this.$refs.signaturePad.clearSignature();
+        this.bFormSigned=false;
+        this.$store.commit("requestermodule/sSignatureData", '');
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-         this.$vuetify.theme.dark = true;
+        this.$vuetify.theme.dark = true;
         this.$store.commit("ConfigModule/mutatePreviousIndex");
        
     },

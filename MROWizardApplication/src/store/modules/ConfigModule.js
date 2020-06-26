@@ -104,10 +104,7 @@ const mutations = {
         state.wizardArrayIndex = payload;
     },
     mutateNextIndex(state) {
-        if (state.wizardArrayIndex == 19) {
-            state.showBackBtn = false;
-        }
-        if(state.bDeadlineStatus==false)
+        if(state.bDeadlineStatus=="false")
         {
             state.wizardArrayIndex = state.wizardArrayIndex + 2;
         }
@@ -115,12 +112,13 @@ const mutations = {
             state.wizardArrayIndex = state.wizardArrayIndex + 1;
         }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
-    },
-    mutatePreviousIndex(state) {
-        if (state.wizardArrayIndex == 1 && state.wizardArrayIndex == 21) {
+        if (state.selectedWizard == 'Wizard_21') {
             state.showBackBtn = false;
         }
-        if(state.bDeadlineStatus==false)
+    },
+    mutatePreviousIndex(state) {
+     
+        if(state.bDeadlineStatus=="false")
         {
             state.wizardArrayIndex = state.wizardArrayIndex - 2;
         }
@@ -128,6 +126,9 @@ const mutations = {
             state.wizardArrayIndex = state.wizardArrayIndex - 1;
         }        
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
+        if (state.selectedWizard == 'Wizard_01' || state.selectedWizard == 'Wizard_21') {
+            state.showBackBtn = false;
+        }
     },
     apiResponseDataByFacilityGUID(state, payload) {
         state.apiResponseDataByFacilityGUID = payload;

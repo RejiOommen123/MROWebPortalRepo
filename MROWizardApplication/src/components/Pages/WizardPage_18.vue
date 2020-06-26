@@ -18,10 +18,11 @@
             </p>
           </v-col>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-btn @click.prevent="submit" class="ma-2" color="success">Send Verification Code</v-btn>
+            <v-btn @click.prevent="submit" @click="disbled=true" class="ma-2" color="success">Send Verification Code</v-btn>
             <div v-show="bOtpSend">
             <div>
               <v-text-field v-model="sVerify" label="Enter 4 digit OTP" required></v-text-field>
+              <v-btn @click.prevent="submit" class="ma-2" color="success">Resend OTP</v-btn>
               <v-btn @click.prevent="verifyCode" class="ma-2" color="success">Verify</v-btn>
               </div>
             </div>
