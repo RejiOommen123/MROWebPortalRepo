@@ -53,6 +53,7 @@ namespace MRODBL.BaseClasses
         public DateTime dtLastUpdate { get; set; }
         //Extra Added
         public string sSTFaxCompAdd { get; set; }
+        public int nSTFaxNo { get; set; }
         public string sSTEmailId {get;set;}
         public string sSTConfirmEmailId {get;set;}
         public string sSTMailCompAdd {get;set;}

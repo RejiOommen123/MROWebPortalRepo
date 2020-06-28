@@ -77,7 +77,8 @@ export default {
     },
     dtRecordRangeEnd: {
         required,
-        minValue: value => value < new Date().toISOString()
+        minValue: value => value < new Date().toISOString(),
+        afterStartDate: (value,vm) => new Date(vm.dtRecordRangeEnd).getTime() >= new Date(vm.dtRecordRangeStart).getTime()
     },
   },
   methods: {
@@ -108,6 +109,7 @@ export default {
       if (!this.$v.dtRecordRangeEnd.$dirty) return errors;
       !this.$v.dtRecordRangeEnd.minValue && errors.push("Invalid Date");
       !this.$v.dtRecordRangeEnd.required && errors.push("End Date is required");
+      !this.$v.dtRecordRangeEnd.afterStartDate && errors.push("End date must be greater than start date.");
       return errors;
     }
   }

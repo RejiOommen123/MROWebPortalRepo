@@ -42,7 +42,7 @@
             <v-col cols="12" sm="12" v-if="sStatus=='ImgCaptured'" >
                 <h2>Captured Image</h2>
                 <figure class="figure">
-                    <img :src="sIdentityImage" class="img-responsive">
+                    <img :src="sIdentityImage" width="500px" height="400px" class="img-responsive">
                 </figure>
                 <div class="col-sm-12">
                         <button type="button" class="btn btn-primary" @click="sStatus='CapturingImg'">Capture Again</button>
@@ -51,10 +51,13 @@
             </v-col>
         </v-row>
         <v-row>
+         
             <v-col cols="12" sm="12" v-if="sStatus=='UploadImg'">
                 <h2>Upload Identity Document Image</h2>
-                <v-img class="identityUpload" style="cursor:pointer;" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
+                   <form >
+                <v-img class="identityUpload" style="cursor:pointer;" width='300px' height="200px" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
                 <v-file-input
+                    v-model="fileInput"
                     chips
                     show-size
                     dense
@@ -65,6 +68,10 @@
                     prepend-icon="mdi-camera"
                     @change="onFileChanged"
                     accept="image/png, image/jpeg, image/bmp"
+                    :error-messages="fileInputErrors"
+                    required
+                    @input="$v.fileInput.$touch()"
+                    @blur="$v.fileInput.$touch()"
                 >
                 <v-tooltip slot="append" top>
                     <template v-slot:activator="{ on }">
@@ -76,14 +83,18 @@
                 </v-tooltip>
                 </v-file-input>
                 <v-col cols="12" sm="12">
-                        <button type="button" class="btn btn-success" @click="nextPage">Save & Next</button>
+                        <button type="button" :disabled="$v.$invalid" class="btn btn-success" @click="nextPage">Save & Next</button>
                 </v-col>
+                   </form>
             </v-col>
+         
         </v-row>
     </div>
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required} from "vuelidate/lib/validators";
 import { WebCam } from 'vue-cam-vision'
 export default {
     name: "App",
@@ -96,8 +107,15 @@ export default {
             camera: null,
             deviceId: null,
             devices: [],
-            sStatus:'CapturingImg'
+            sStatus:'CapturingImg',
+            fileInput:''
         };
+    },
+     mixins: [validationMixin],
+    validations: {
+        fileInput: {
+        required,
+        }
     },
     created(){ 
         this.$vuetify.theme.dark = true
@@ -105,7 +123,13 @@ export default {
     computed: {
         device: function() {
             return this.devices.find(n => n.deviceId === this.deviceId);
-        }
+        },
+        fileInputErrors() {
+            const errors = [];
+            if (!this.$v.fileInput.$dirty) return errors;
+            !this.$v.fileInput.required && errors.push("File is required");
+            return errors;
+        },
     },
     watch: {
         camera: function(id) {

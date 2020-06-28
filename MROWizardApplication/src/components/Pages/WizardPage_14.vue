@@ -11,7 +11,16 @@
             :label="sensitiveInfo.sSensitiveInfoName"
             color="green"
             :value="sensitiveInfo.sNormalizedSensitiveInfoName"
-          ></v-checkbox>
+          >
+            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
+                </template>
+                <v-col cols="12" sm="12">
+                  <p style="width:200px">{{sensitiveInfo.sFieldToolTip}}</p>
+                </v-col>
+            </v-tooltip>
+          </v-checkbox>
         </v-col>
       </v-layout>
     </template>

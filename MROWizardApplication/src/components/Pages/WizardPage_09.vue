@@ -5,14 +5,23 @@
     <template>
       <v-layout v-for="recordType in RecordTypeArray" :key="recordType.sNormalizedRecordTypeName" row wrap>
         <v-col cols="12" offset-sm="2" sm="8">
-          <v-checkbox
+          <v-checkbox offset-sm="2" sm="8"
             dark
             v-model="sSelectedRecordTypes"
             class="checkboxBorder"
             :label="recordType.sRecordTypeName"
             color="green"
             :value="recordType.sNormalizedRecordTypeName"
-          ></v-checkbox>
+          >
+            <v-tooltip  v-if="recordType.sFieldToolTip" slot="append" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
+                </template>
+                <v-col cols="12" sm="12">
+                  <p style="width:200px">{{recordType.sFieldToolTip}}</p>
+                </v-col>
+            </v-tooltip>
+          </v-checkbox>
         </v-col>
       </v-layout>
     </template>

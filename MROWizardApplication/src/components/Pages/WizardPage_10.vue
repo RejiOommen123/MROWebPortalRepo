@@ -9,7 +9,7 @@
 
     <template>
       <v-layout v-for="primaryReason in oPrimaryReasonArray" :key="primaryReason.sNormalizedPrimaryReasonName" row wrap>
-        <v-col cols="12" offset-sm="3" sm="6">
+        <v-col cols="12" offset-sm="2" sm="8">
           <v-checkbox
             dark
             class="checkboxBorder"
@@ -18,12 +18,21 @@
             :value="primaryReason.sNormalizedPrimaryReasonName"
             v-model="sSelectedPrimaryReasons"
             @change="checkOther(primaryReason.sNormalizedPrimaryReasonName)"
-          ></v-checkbox>
+          >
+          <v-tooltip  v-if="primaryReason.sFieldToolTip" slot="append" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
+                </template>
+                <v-col cols="12" sm="12">
+                  <p style="width:200px">{{primaryReason.sFieldToolTip}}</p>
+                </v-col>
+          </v-tooltip>
+          </v-checkbox>
         </v-col>
       </v-layout>
       <v-col cols="12" offset-sm="3" sm="6">
       <div v-if="this.bOther==true">
-        <v-textarea v-model="sOtherReasons" counter label="Other Reason"></v-textarea>
+        <v-textarea v-model="sOtherReasons" rows="3" counter label="Other Reason"></v-textarea>
       </div>
       </v-col>
     </template>
@@ -61,25 +70,5 @@ export default {
 </script>
 
 <style scoped>
-/* .center {
-  text-align: center;
-}
-.checkboxBorder {
-  height: 40px;
-  line-height: 40px;
-  padding-left: 10px;
-  font-size: 14px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: visible;
-  border: 1px solid #f6efef;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  margin-top: 10px;
-  position: relative;
-}
-.checkboxBorder:hover {
-  background-color: #53b958;
-} */
+
 </style>

@@ -7,7 +7,7 @@
       <form>
         <v-row>
           <v-col v-if="MROPEmailId" cols="12" offset-sm="3" sm="6">
-            <label for="sPatientEmailId" class="control-label">Email ID</label>
+            <label for="sPatientEmailId" class="control-label">Email</label>
             <v-text-field
               v-model="sPatientEmailId"
               :error-messages="emailErrors"
@@ -15,7 +15,7 @@
               @input="$v.sPatientEmailId.$touch()"
               @blur="$v.sPatientEmailId.$touch()"
             ></v-text-field>
-            <label for="sConfirmEmailId" class="control-label">Confirm Email ID</label>
+            <label for="sConfirmEmailId" class="control-label">Confirm Email</label>
             <v-text-field
               @paste.prevent
               v-model="sConfirmEmailId"
@@ -27,6 +27,7 @@
             <v-checkbox
               v-if="MROConfirmReport"
               v-model="bConfirmReport"
+              color="#53b958"
               label="Please email me a copy of my completed request form"
             ></v-checkbox>
             <v-btn

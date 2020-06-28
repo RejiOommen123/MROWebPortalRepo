@@ -6,16 +6,20 @@
         <br />are you requesting records from?
       </h1>
     </div>
-    <div class="form-group btn-group-vertical">
-      <div v-for="location in locationArray" :key="location">
-        <!-- <v-btn class="locationButton" @click.native="locationRequest($event)" :value=location depressed large color="success">{{location}}</v-btn> -->
-        <button
-          @click.prevent="locationRequest(location)"
-          class="btn btn-success btn-lg locationButton"
-          :value="location.sNormalizedLocationName"
-        >{{location.sLocationName}}</button>
+    <v-row>
+      <div class="form-group" style="width:100%">
+        <div v-for="location in locationArray" :key="location.sNormalizedLocationName" style="width:100%">
+          <!-- <v-btn class="locationButton" @click.native="locationRequest($event)" :value=location depressed large color="success">{{location}}</v-btn> -->
+          <v-col cols="12" offset-sm="2" sm="8">
+            <button
+              @click.prevent="locationRequest(location)"
+              class="locationButton"
+              :value="location.sNormalizedLocationName"
+            >{{location.sLocationName}}</button>
+          </v-col>
+        </div>
       </div>
-    </div>
+    </v-row>
   </div>
 </template>
 <script>
@@ -23,7 +27,8 @@ export default {
   name: "WizardPage_02",
   data() {
     return {
-      locationArray: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.locationDetails
+      locationArray: this.$store.state.ConfigModule
+        .apiResponseDataByFacilityGUID.locationDetails
     };
   },
   methods: {
@@ -48,15 +53,30 @@ export default {
               "apiResponseDataByLocation    " +
                 this.$store.state.ConfigModule.apiResponseDataByLocation
             );
-            this.$store.commit("ConfigModule/wizardLogo",apiLocationResponse.oLocations[0].sConfigLogoData);
-            this.$store.commit("ConfigModule/wizardBackground",apiLocationResponse.oLocations[0].sConfigBackgroundData);
-            this.$store.commit("requestermodule/nFacilityID", location.nFacilityID);
-            this.$store.commit("requestermodule/nLocationID", location.nFacilityLocationID);
+            this.$store.commit(
+              "ConfigModule/wizardLogo",
+              apiLocationResponse.oLocations[0].sConfigLogoData
+            );
+            this.$store.commit(
+              "ConfigModule/wizardBackground",
+              apiLocationResponse.oLocations[0].sConfigBackgroundData
+            );
+            this.$store.commit(
+              "requestermodule/nFacilityID",
+              location.nFacilityID
+            );
+            this.$store.commit(
+              "requestermodule/nLocationID",
+              location.nFacilityLocationID
+            );
             this.$store.commit(
               "requestermodule/sSelectedLocation",
               location.sNormalizedLocationName
             );
-            this.$store.commit("ConfigModule/nAuthExpirationMonths",location.nAuthExpirationMonths);
+            this.$store.commit(
+              "ConfigModule/nAuthExpirationMonths",
+              location.nAuthExpirationMonths
+            );
             this.$store.commit("ConfigModule/mutateNextIndex");
           }
         });
@@ -65,12 +85,4 @@ export default {
 };
 </script>
 <style scoped>
-/* .center {
-  text-align: center;
-}
-.locationButton{
-  height: 87px;
-  margin: 10px;  
-  width: 250px;
-} */
 </style>

@@ -9,7 +9,7 @@
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
        
-          <v-btn style="position:absolute;right:1%" icon dark @click="dialog = false">
+          <v-btn style="position:absolute;right:3%" icon dark @click="dialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
 
