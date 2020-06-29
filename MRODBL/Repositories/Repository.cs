@@ -337,18 +337,5 @@ namespace MRODBL.Repositories
                 //InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities")
             }
         }
-        public void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId) {
-            string SqlString = "spAddDependencyRecordsForFacility";
-            using (SqlConnection db = new SqlConnection(sConnect))
-            {
-                db.Open();
-                using (var trans = db.BeginTransaction())
-                {
-                    
-                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @sConnectionString = sConnectionString, @nAdminUserId = nAdminUserId }, trans,commandType: CommandType.StoredProcedure);
-                    trans.Commit();
-                }
-            }
-        }
     }
 }

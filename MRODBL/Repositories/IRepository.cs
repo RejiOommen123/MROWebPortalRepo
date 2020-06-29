@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -138,14 +137,7 @@ namespace MRODBL.Repositories
         /// <param name="nLocationID">Location ID</param>
         /// <returns></returns>
         Task<dynamic> GetLogoBackGroundforLocationsync(int nLocationID);
-        Task<IEnumerable<T>> GetLocationsList(int nFacilityID);
 
-        /// <summary>
-        /// Insert Dependency Record for Facility
-        /// </summary>
-        /// <param name="nFacilityID">Unique Facility Id</param>
-        /// <param name="sConnectionString">Connection String (Add Facility)</param>
-        /// <param name="nAdminUserId">PK of Admin User Table</param>
-        void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId);
+        Task<IEnumerable<T>> GetLocationsList(int nFacilityID);
     }
 }

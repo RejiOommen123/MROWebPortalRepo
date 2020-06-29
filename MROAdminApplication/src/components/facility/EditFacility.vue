@@ -31,16 +31,7 @@
               :error-messages="sDescriptionErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUsername">SMTP Username:
-            <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copySMTPDetails" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                <span>Click to Copy SMTP Details</span>
-            </v-tooltip>
-            </label>
+            <label for="sSMTPUsername">SMTP Username:</label>
             <v-text-field
               type="text"
               id="sSMTPUsername"
@@ -73,29 +64,8 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-          <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
-            <v-text-field
-              type="text"
-              id="sOutboundEmail"
-              placeholder="Enter Outbound Email"
-              v-model="facility.sOutboundEmail"
-              @input="$v.facility.sOutboundEmail.$touch()"
-              @blur="$v.facility.sOutboundEmail.$touch()"
-              :error-messages="sOutboundEmailErrors"
-              solo
-            ></v-text-field>
-            </v-col>
-          <v-col cols="12" md="5">
-            <label for="sFTPUsername">FTP Username:
-              <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copyFTPDetails" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                <span>Click to Copy FTP Details</span>
-            </v-tooltip>
-            </label>
+          
+            <label for="sFTPUsername">FTP Username:</label>
             <v-text-field
               type="text"
               id="sFTPUsername"
@@ -106,6 +76,8 @@
               :error-messages="sFTPUsernameErrors"
               solo
             ></v-text-field>
+            </v-col>
+          <v-col cols="12" md="5">
             <label for="sFTPPassword">FTP Password:</label>
             <v-text-field
               type="password"
@@ -128,17 +100,19 @@
               :error-messages="sFTPUrlErrors"
               solo
             ></v-text-field>
+            <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
+            <v-text-field
+              type="text"
+              id="sOutboundEmail"
+              placeholder="Enter Outbound Email"
+              v-model="facility.sOutboundEmail"
+              @input="$v.facility.sOutboundEmail.$touch()"
+              @blur="$v.facility.sOutboundEmail.$touch()"
+              :error-messages="sOutboundEmailErrors"
+              solo
+            ></v-text-field>
              <!-- Show GUID -->
-          <label class="col-md-4" for="sGUID">Guid for URL (Read Only):
-            <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copyGUID" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                <span>Click to Copy GUID</span>
-            </v-tooltip>
-          </label>
+          <label class="col-md-4" for="sGUID">Guid for URL (Read Only):</label>
           <v-text-field
               type="text"
               v-model="sGUID"
@@ -146,7 +120,7 @@
               id="sGUID"
               solo
             ></v-text-field>
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
+            <label for="bRequestorEmailConfirm">Send confirmation to requestor ?</label>
             <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
           </v-col>
         </v-row>
@@ -343,20 +317,6 @@ export default {
 
   },
   methods: {
-    copySMTPDetails(){
-      //alert("Copied");
-      // let textToCopy = this.$refs.sSMTPUsernameCopy.$el.querySelector('input');
-      // alert(textToCopy);
-      // textToCopy._value.select()
-      // document.execCommand("copy");
-      navigator.clipboard.writeText(this.facility.sSMTPUrl+"\n"+this.facility.sSMTPUsername+"\n"+this.facility.sSMTPPassword);
-    },
-    copyFTPDetails(){
-      navigator.clipboard.writeText(this.facility.sFTPUrl+"\n"+this.facility.sFTPUsername+"\n"+this.facility.sFTPPassword);
-    },
-    copyGUID(){
-      navigator.clipboard.writeText(this.sGUID);
-    },
     // API to post single facility (edit facility)
     onSubmit() {
       this.$http

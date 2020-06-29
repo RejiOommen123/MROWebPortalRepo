@@ -25,7 +25,6 @@
             @blur="$v.location.nROILocationID.$touch()"
             :error-messages="nROILocationIDErrors"
             solo
-            min="1"
           ></v-text-field>
           <label class="required" for="sLocationCode">Location Code:</label>
           <v-text-field
@@ -164,7 +163,7 @@ export default {
           sLocationName: { required, maxLength:maxLength(40),minLength:minLength(2) },
           nROILocationID:{required,numeric},
           sLocationCode:{ required, maxLength: maxLength(4),minLength:minLength(4) },
-          sLocationAddress:{ required,maxLength: maxLength(1000) },
+          sLocationAddress:{ required,maxLength: maxLength(30) },
           sPhoneNo:{ required, maxLength: maxLength(10),minLength:minLength(10),numeric },
           sFaxNo:{maxLength: maxLength(10),minLength:minLength(10),numeric},
       }
@@ -203,7 +202,7 @@ export default {
       if (!this.$v.location.sLocationAddress.$dirty) 
       return errors
           // !this.$v.location.sLocationAddress.minLength && errors.push('Location Address must be at least 5 characters long')
-          !this.$v.location.sLocationAddress.maxLength && errors.push('Location Address must be at most 1000 characters long')
+          !this.$v.location.sLocationAddress.maxLength && errors.push('Location Address must be at most 30 characters long')
           !this.$v.location.sLocationAddress.required && errors.push('Location Address is required.')
           return errors;
     },
