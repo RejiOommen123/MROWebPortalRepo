@@ -8,7 +8,7 @@
     <v-col
       class="text-center"
       cols="12" id="footer"
-    >&copy;{{ new Date().getFullYear() }} — Powered by <strong><a href="https://mrocorp.com/">MRO</a></strong>
+    >&copy;{{ new Date().getFullYear() }} — Powered by <strong><a href="https://mrocorp.com/" target="_blank">MRO</a></strong>
     </v-col>
   </v-footer>
    </v-app>
