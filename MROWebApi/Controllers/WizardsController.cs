@@ -290,7 +290,7 @@ namespace MROWebApi.Controllers
                 //client.Connect("smtp.outlook.com", 25, false);
                 //get Port number
                 //Make ssl true
-                client.Connect(dbFacility.sSMTPUsername, 25, false);
+                client.Connect(dbFacility.sSMTPUrl, 25, false);
                 //client.AuthenticationMechanisms.Remove("XOAUTH2"); // Must be removed for Gmail SMTP
                 try
                 {
