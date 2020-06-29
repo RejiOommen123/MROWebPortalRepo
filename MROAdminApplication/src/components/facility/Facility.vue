@@ -36,7 +36,7 @@
 <template v-slot:item.nFacLocCount="{ item }">
 <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink"  v-on="on" id="facilitylocation" :to="'/Locations/'+item.nFacilityID" color='rgb(0, 91, 168)'>               
+               <router-link class="mrorouterlink"  v-on="on" id="facilitylocation" :to="'/Locations/'+item.facilities.nFacilityID" color='rgb(0, 91, 168)'>               
                {{item.nFacLocCount}}
                 </router-link>            
     
@@ -55,7 +55,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.nFacilityID">             
+              <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">             
                 <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">assignment</v-icon>
                 <!-- <v-img src="https://lh3.googleusercontent.com/proxy/2OQpbPrMGARzRvE92n73NNqOQIOTQ1R8iGPY17bOkNc-Kis_cEthPSttMw4975yUnOafbw44sOUffD42Yn2x3yrVqmd6YoQbqZQvpHT2kTM" v-on="on" medium class="mr-2" width=30 height=29></v-img> -->
 
@@ -68,7 +68,7 @@
 
 <template v-slot:item.bActiveStatus="{ item }">
       <!-- <v-chip :color="getColor(item.bActiveStatus)">{{ getStatus(item.bActiveStatus) }}</v-chip> -->
-      <v-switch color='#1AA260' style="padding-left:40px" @click="deleteItem(item.nFacilityID,item.sFacilityName)" v-model="item.bActiveStatus"></v-switch>
+      <v-switch color='#1AA260' style="padding-left:40px" @click="deleteItem(item.facilities.nFacilityID,item.facilities.sFacilityName)" v-model="item.facilities.bActiveStatus"></v-switch>
     </template>
 
 
@@ -77,7 +77,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.nFacilityID">             
+              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.facilities.nFacilityID">             
                 <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
@@ -93,7 +93,7 @@
       
            <v-tooltip top>
             <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.nFacilityID">               
+               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.facilities.nFacilityID">               
                 <v-icon v-on="on" medium >mdi-location_on</v-icon>   
                 </router-link>             
             </template>
@@ -175,9 +175,9 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "sFacilityName"
+          value: "facilities.sFacilityName"
         },
-        { text: "Description", value: "sDescription" , width:'50%'},
+        { text: "Description", value: "facilities.sDescription" , width:'50%'},
         { text: "Locations", value: "nFacLocCount" ,align:'center'},
         { text: "Patient Form", value: "Fields" ,align:'center'},
         { text: "Active", value: "bActiveStatus" ,align:'center'},

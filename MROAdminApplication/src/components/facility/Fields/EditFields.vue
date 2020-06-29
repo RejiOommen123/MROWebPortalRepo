@@ -26,6 +26,15 @@
   }"
               :items-per-page="10"
             >
+            <template v-slot:item.nFieldOrder="{ item }">
+
+              <v-text-field
+                type="number" min="1"
+                v-model.number="item.nFieldOrder"
+                v-show="item.nFieldOrder!=null" style="width: 4em"
+              ></v-text-field>
+              <label v-if="item.nFieldOrder==null" style="font-size:'18px'"><strong>-</strong></label>
+              </template>
               <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
               <template v-slot:item.actions="{ item }">
                 <input
@@ -58,8 +67,9 @@ export default {
           text: "Name",
           align: "start",
           value: "sFieldName",
-          width: "80%"
+          width: "60%"
         },
+        { text: "Order", value: "nFieldOrder", width: "20%", sortable: false },
         { text: "Action", value: "actions", width: "20%", sortable: false }
       ],
       gridData: this.getGridData(),
