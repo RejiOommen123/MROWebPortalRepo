@@ -45,7 +45,7 @@
                     <img :src="sIdentityImage" width="500px" height="400px" class="img-responsive">
                 </figure>
                 <div class="col-sm-12">
-                        <button type="button" class="btn btn-primary" @click="sStatus='CapturingImg'">Capture Again</button>
+                        <button type="button" class="btn btn-primary" @click="sStatus='CapturingImg'">Capture Again</button><br/><br/>
                         <button type="button" class="btn btn-success" @click="nextPage">Next</button>
                 </div>
             </v-col>
