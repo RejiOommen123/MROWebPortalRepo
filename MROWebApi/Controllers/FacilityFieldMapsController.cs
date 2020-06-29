@@ -136,18 +136,27 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public async Task<IActionResult> EditFacilityFields([FromBody]FacilityFieldMaps[] fieldFacilityMaps)
         {
-            try
-            {
-                foreach (FacilityFieldMaps map in fieldFacilityMaps) {
-                    map.dtCreated = DateTime.Now;
-                    map.dtLastUpdate = DateTime.Now;
+            if (ModelState.IsValid) {
+                try
+                {
+                    foreach (FacilityFieldMaps map in fieldFacilityMaps)
+                    {
+                        map.dtCreated = DateTime.Now;
+                        map.dtLastUpdate = DateTime.Now;
+                    }
+                    FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
+                    return await facilityFeldMapsRepository.UpdateMany(fieldFacilityMaps.ToList()) ? Ok() : (IActionResult)NoContent();
                 }
-                FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
-                return await facilityFeldMapsRepository.UpdateMany(fieldFacilityMaps.ToList()) ? Ok() : (IActionResult)NoContent();
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
-            catch (Exception ex)
-            {
-                throw ex;
+            else {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
             }
         }
         #endregion

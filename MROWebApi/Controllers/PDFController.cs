@@ -36,7 +36,7 @@ namespace MROWebAPI.Controllers
         #region Constructor
         private readonly DBConnectionInfo _info;
         private readonly ILogger<PDFController> _logger;
-        public PDFController(ILogger<PDFController> logger,DBConnectionInfo info)
+        public PDFController(ILogger<PDFController> logger, DBConnectionInfo info)
         {
             _logger = logger;
             _info = info;
@@ -126,13 +126,25 @@ namespace MROWebAPI.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GeneratePDF(Requestors requestor)
         {
-            if (string.IsNullOrEmpty(requestor.sSignatureData)) {
-                byte[] pdfBytes = await GetFilledPDF(requestor, _info);
-                return File(pdfBytes, "application/pdf");
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(requestor.sSignatureData))
+                {
+                    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
+                    return File(pdfBytes, "application/pdf");
+                }
+                else
+                {
+                    byte[] pdfBytes = await GetSignedPDF(requestor);
+                    return File(pdfBytes, "application/pdf");
+                }
             }
-            else {
-                byte[] pdfBytes = await GetSignedPDF(requestor);
-                return File(pdfBytes, "application/pdf");
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
             }
         }
 
@@ -235,13 +247,13 @@ namespace MROWebAPI.Controllers
             MROHelper helper = await helperRepo.Select(1);
             helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
             byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
-            
+
 
             System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
             Graphics gra = Graphics.FromImage(canvas);
             Bitmap smallImg = new Bitmap(image2);
             gra.DrawImage(smallImg, new Point(0, 0));
-            
+
 
             var mssignaturewithbg = new MemoryStream();
             canvas.Save(mssignaturewithbg, canvas.RawFormat);
@@ -267,11 +279,11 @@ namespace MROWebAPI.Controllers
         //Wizards
         //SendXML
         //Object : requestor
-        private async static Task<byte[]> GetFilledPDF(Requestors requestor,DBConnectionInfo _info)
+        private async static Task<byte[]> GetFilledPDF(Requestors requestor, DBConnectionInfo _info)
         {
             Dictionary<string, string> allFields = new Dictionary<string, string>();
             //allFields.Add("MROAreYouPatient", requestor.bAreYouPatient.ToString());
-            allFields.Add("MROPatientFullName", requestor.sPatientFirstName+" "+requestor.sPatientMiddleInitial+" "+requestor.sPatientLastName);
+            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
             allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
             allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
             allFields.Add("MROPatientLastName", requestor.sPatientLastName);
@@ -285,8 +297,9 @@ namespace MROWebAPI.Controllers
             //allFields.Add("MROTFDateRange", requestor.dtRecordRangeStart);
 
             //Record Type
-            for (int counter= 0; counter < requestor.sSelectedRecordTypes.Length;counter++) {
-                allFields.Add(requestor.sSelectedRecordTypes[counter]+ "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
             }
 
             //Primary Reason
@@ -300,7 +313,7 @@ namespace MROWebAPI.Controllers
                 allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
             }
             allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
-            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo== "MROReleaseToMe"?"On":"");
+            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
             //MRORequestDeadline
             //allFields.Add("MROAuthExpireDateAfterNMonths", requestor.sPatientFirstName);
             //allFields.Add("MROAuthExpireDateSpecificDate", requestor.sPatientFirstName);
@@ -317,7 +330,7 @@ namespace MROWebAPI.Controllers
             //allFields.Add("MROFeedbackComment", requestor.sPatientFirstName);
             //allFields.Add("MROThankyou", requestor.sPatientFirstName);
             if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
-                allFields.Add("MROSTFaxCompAdd",requestor.sSTFaxCompAdd);
+                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
             if (!string.IsNullOrEmpty(requestor.sSTEmailId))
                 allFields.Add("MROSTEmailId", requestor.sSTEmailId);
             if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
@@ -331,7 +344,7 @@ namespace MROWebAPI.Controllers
             FacilityLocations location = await locRepo.Select(requestor.nLocationID);
             location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
             byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocument().ReplaceFieldKeywordsWithValue(pdfByteArray,allFields,out string sReplaceFieldsList);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocument().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, out string sReplaceFieldsList);
 
             allFields.Clear();
             return byteArrayToReturn;

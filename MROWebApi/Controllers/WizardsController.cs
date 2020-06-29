@@ -18,6 +18,8 @@ using WebSupergoo.ABCpdf11;
 using WebSupergoo.ABCpdf11.Objects;
 using System.Net;
 using System.Text;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace MROWebApi.Controllers
 {
@@ -44,7 +46,7 @@ namespace MROWebApi.Controllers
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                object Wizard_Config = await  fieldsRepository.GetWizardConfigurationAsync(nFacilityID,nFacilityLocationID);
+                object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID);
                 return Wizard_Config;
 
                 //var oWizardConfigFields = Function(wizard_config.ofield);
@@ -112,155 +114,201 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public  async Task<IActionResult> GenerateXML([FromBody] Requestors requestors)
+        public async Task<IActionResult> GenerateXML([FromBody] Requestors requestors)
         {
-            byte[] signedPDF = await GetSignedPDF(requestors);
-            requestors.sPDF = Convert.ToBase64String(signedPDF);
-            requestors.sPDF = "data:application/pdf;base64," + requestors.sPDF;
-            FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-            Facilities facility = await rpFac.Select(requestors.nFacilityID);
-            FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locaFac.Select(requestors.nLocationID);
-            var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
-            var sMddleInitials = string.IsNullOrEmpty(requestors.sPatientMiddleInitial) ? "" : requestors.sPatientMiddleInitial;
-            var sAreYouPatient = requestors.bAreYouPatient ? "No" : "Yes";
-            var sRelativeName = string.IsNullOrEmpty(requestors.sRelativeName) ? "" : requestors.sRelativeName;
-            var sRelationToPatient = string.IsNullOrEmpty(requestors.sRelationToPatient) ? "" : requestors.sRelationToPatient;
-            var sConfirmReport = requestors.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
-            var sOtherReasons = string.IsNullOrEmpty(requestors.sOtherReasons) ? "" : requestors.sOtherReasons;
-            var sComments = string.IsNullOrEmpty(requestors.sFeedbackComment) ? "" : requestors.sFeedbackComment;
-
-
-            XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
+            if (ModelState.IsValid)
             {
-                OmitXmlDeclaration = false,
-                ConformanceLevel = ConformanceLevel.Document
-            };
-            StringBuilder xmlString = new StringBuilder();
-            //Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml")
-            using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
-            writer.WriteStartElement("request");
-            writer.WriteStartElement("facility");
-            //For facility Code,Name,ID
-            //writer.WriteElementString("code", facility.sCode);
-            writer.WriteElementString("name", facility.sFacilityName);
-            writer.WriteElementString("ID", facility.nFacilityID.ToString());
-
-            writer.WriteEndElement();
-            writer.WriteStartElement("locations");
-            writer.WriteStartElement("item");
-            //For Location Code,Name,ID
-            writer.WriteElementString("code", location.sLocationCode);
-            writer.WriteElementString("name", location.sLocationName);
-            writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-            writer.WriteStartElement("detail");
-            //For Date, Reason,Comments
-            writer.WriteElementString("date", DateTime.Now.ToString());
-            writer.WriteElementString("date_required_by", requestors.dtDeadline.ToString());
-            writer.WriteElementString("reason", sOtherReasons);
-            writer.WriteElementString("comments", sComments);
-            writer.WriteElementString("expiration", requestors.dtAuthExpire.ToString());
-            writer.WriteEndElement();
-            writer.WriteStartElement("patient");
-            writer.WriteElementString("firstname", requestors.sPatientFirstName);
-            writer.WriteElementString("lastname", requestors.sPatientLastName);
-            writer.WriteElementString("middle_name", sMddleInitials);
-            writer.WriteElementString("dob", requestors.dtPatientDOB.Value.ToShortDateString());
-            writer.WriteStartElement("address");
-            //For Street,City,State,ZipCode
-            writer.WriteElementString("street", requestors.sAddStreetAddress);
-            writer.WriteElementString("city", requestors.sAddCity);
-            writer.WriteElementString("state", requestors.sAddState);
-            writer.WriteElementString("zipcode", requestors.sAddZipCode);
-            writer.WriteEndElement();
-            writer.WriteElementString("phone_number", requestors.sPhoneNo);
-            writer.WriteEndElement();
+                byte[] signedPDF = await GetSignedPDF(requestors);
+                requestors.sPDF = Convert.ToBase64String(signedPDF);
+                requestors.sPDF = "data:application/pdf;base64," + requestors.sPDF;
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                Facilities facility = await rpFac.Select(requestors.nFacilityID);
+                FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
+                FacilityLocations location = await locaFac.Select(requestors.nLocationID);
+                var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
+                var sMddleInitials = string.IsNullOrEmpty(requestors.sPatientMiddleInitial) ? "" : requestors.sPatientMiddleInitial;
+                var sAreYouPatient = requestors.bAreYouPatient ? "No" : "Yes";
+                var sRelativeName = string.IsNullOrEmpty(requestors.sRelativeName) ? "" : requestors.sRelativeName;
+                var sRelationToPatient = string.IsNullOrEmpty(requestors.sRelationToPatient) ? "" : requestors.sRelationToPatient;
+                var sConfirmReport = requestors.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
+                var sOtherReasons = string.IsNullOrEmpty(requestors.sOtherReasons) ? "" : requestors.sOtherReasons;
+                var sComments = string.IsNullOrEmpty(requestors.sFeedbackComment) ? "" : requestors.sFeedbackComment;
 
 
+                XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
+                {
+                    OmitXmlDeclaration = false,
+                    ConformanceLevel = ConformanceLevel.Document
+                };
+                StringBuilder xmlString = new StringBuilder();
+                //Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml")
+                using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
+                writer.WriteStartElement("request");
+                writer.WriteStartElement("facility");
+                //For facility Code,Name,ID
+                //writer.WriteElementString("code", facility.sCode);
+                writer.WriteElementString("name", facility.sFacilityName);
+                writer.WriteElementString("ID", facility.nFacilityID.ToString());
 
-            //Requestor
-            #region Requestor
-            writer.WriteStartElement("requestor");
-            writer.WriteElementString("name", sRelativeName);
-            //Requestor Last Name
-            //writer.WriteElementString("lastname", requestors.sPatientLastName);
-            //Organization - Skipped
-            //writer.WriteElementString("organization", requestors.);
-            writer.WriteElementString("is_patient", requestors.bAreYouPatient.ToString());
-            writer.WriteElementString("relation", sRelationToPatient);
-            writer.WriteElementString("email", requestors.sPatientEmailId);
-            writer.WriteStartElement("address");
-            //For Street,City,State,ZipCode
-            writer.WriteElementString("street", requestors.sAddStreetAddress);
-            writer.WriteElementString("city", requestors.sAddCity);
-            writer.WriteElementString("state", requestors.sAddState);
-            writer.WriteElementString("zipcode", requestors.sAddZipCode);
-            writer.WriteEndElement();
-            writer.WriteElementString("phone_number", requestors.sPhoneNo);
-            //Fax Number Are WE Taking ?
-            //writer.WriteElementString("fax_number", requestors.sPhoneNo);
-            writer.WriteEndElement();
-            //requestor ends here
-            #endregion
-
-
-            writer.WriteStartElement("requested_information");
-            writer.WriteStartElement("dates_of_service");
-            writer.WriteElementString("start", requestors.dtRecordRangeStart.Value.ToShortDateString());
-            writer.WriteElementString("end", requestors.dtRecordRangeEnd.Value.ToShortDateString());
-            writer.WriteEndElement();
-            writer.WriteStartElement("types");
-            //Add Items Here
-            foreach (string singleRecordType in requestors.sSelectedRecordTypes)
-            {
-                writer.WriteStartElement("item");
-                writer.WriteElementString("name", singleRecordType);
-                //writer.WriteElementString("include", singleRecordType);
                 writer.WriteEndElement();
+                writer.WriteStartElement("locations");
+                writer.WriteStartElement("item");
+                //For Location Code,Name,ID
+                writer.WriteElementString("code", location.sLocationCode);
+                writer.WriteElementString("name", location.sLocationName);
+                writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+                writer.WriteStartElement("detail");
+                //For Date, Reason,Comments
+                writer.WriteElementString("date", DateTime.Now.ToString());
+                writer.WriteElementString("date_required_by", requestors.dtDeadline.ToString());
+                writer.WriteElementString("reason", sOtherReasons);
+                writer.WriteElementString("comments", sComments);
+                writer.WriteElementString("expiration", requestors.dtAuthExpire.ToString());
+                writer.WriteEndElement();
+                writer.WriteStartElement("patient");
+                writer.WriteElementString("firstname", requestors.sPatientFirstName);
+                writer.WriteElementString("lastname", requestors.sPatientLastName);
+                writer.WriteElementString("middle_name", sMddleInitials);
+                writer.WriteElementString("dob", requestors.dtPatientDOB.Value.ToShortDateString());
+                writer.WriteStartElement("address");
+                //For Street,City,State,ZipCode
+                writer.WriteElementString("street", requestors.sAddStreetAddress);
+                writer.WriteElementString("city", requestors.sAddCity);
+                writer.WriteElementString("state", requestors.sAddState);
+                writer.WriteElementString("zipcode", requestors.sAddZipCode);
+                writer.WriteEndElement();
+                writer.WriteElementString("phone_number", requestors.sPhoneNo);
+                writer.WriteEndElement();
+
+
+
+                //Requestor
+                #region Requestor
+                writer.WriteStartElement("requestor");
+                writer.WriteElementString("name", sRelativeName);
+                //Requestor Last Name
+                //writer.WriteElementString("lastname", requestors.sPatientLastName);
+                //Organization - Skipped
+                //writer.WriteElementString("organization", requestors.);
+                writer.WriteElementString("is_patient", requestors.bAreYouPatient.ToString());
+                writer.WriteElementString("relation", sRelationToPatient);
+                writer.WriteElementString("email", requestors.sPatientEmailId);
+                writer.WriteStartElement("address");
+                //For Street,City,State,ZipCode
+                writer.WriteElementString("street", requestors.sAddStreetAddress);
+                writer.WriteElementString("city", requestors.sAddCity);
+                writer.WriteElementString("state", requestors.sAddState);
+                writer.WriteElementString("zipcode", requestors.sAddZipCode);
+                writer.WriteEndElement();
+                writer.WriteElementString("phone_number", requestors.sPhoneNo);
+                //Fax Number Are WE Taking ?
+                //writer.WriteElementString("fax_number", requestors.sPhoneNo);
+                writer.WriteEndElement();
+                //requestor ends here
+                #endregion
+
+
+                writer.WriteStartElement("requested_information");
+                writer.WriteStartElement("dates_of_service");
+                writer.WriteElementString("start", requestors.dtRecordRangeStart.Value.ToShortDateString());
+                writer.WriteElementString("end", requestors.dtRecordRangeEnd.Value.ToShortDateString());
+                writer.WriteEndElement();
+                writer.WriteStartElement("types");
+                //Add Items Here
+                foreach (string singleRecordType in requestors.sSelectedRecordTypes)
+                {
+                    writer.WriteStartElement("item");
+                    writer.WriteElementString("name", singleRecordType);
+                    //writer.WriteElementString("include", singleRecordType);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+
+                //PDF Here
+                //Get PDF & Show in Base 64 Encoding
+                writer.WriteElementString("pdf", requestors.sPDF);
+                writer.WriteEndElement();
+                writer.Flush();
+
+                FtpWebRequest request =
+                            (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
+
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
+                request.UsePassive = true;
+                request.UseBinary = true;
+                request.KeepAlive = false;
+
+                byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+
+                //Upload file
+                Stream reqStream = request.GetRequestStream();
+                reqStream.Write(buffer, 0, buffer.Length);
+                reqStream.Close();
+
+                //Send Email
+                if (await SendEmail(requestors, signedPDF, _info))
+                    return Ok(xmlString.ToString());
+                else
+                    return Content("Email Not Sent");
             }
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-
-            //PDF Here
-            //Get PDF & Show in Base 64 Encoding
-            writer.WriteElementString("pdf", requestors.sPDF);
-            writer.WriteEndElement();
-            writer.Flush();
-            //using (var client = new WebClient())
-            //{
-
-            //    client.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
-            //    client.UploadFile("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml") , WebRequestMethods.Ftp.UploadFile, Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml"));
-
-            //}
-
-            FtpWebRequest request =
-                        (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
-
-            request.Method = WebRequestMethods.Ftp.UploadFile;
-            request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
-            request.UsePassive = true;
-            request.UseBinary = true;
-            request.KeepAlive = false;
-
-            //Load the file
-            //FileStream stream = System.IO.File.OpenRead(xmlString.ToString());
-            byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
-            //byte[] buffer = new byte[stream.Length];
-
-            //stream.Read(buffer, 0, buffer.Length);
-            //stream.Close();
-
-            //Upload file
-            Stream reqStream = request.GetRequestStream();
-            reqStream.Write(buffer, 0, buffer.Length);
-            reqStream.Close();
-
-            //return Content(xmlString, "text/xml", System.Text.Encoding.UTF8);
-            return Ok(xmlString.ToString());
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
         }
+        private static async Task<bool> SendEmail(Requestors requestor, byte[] signedPDF, DBConnectionInfo _info)
+        {
+            FacilitiesRepository fRep = new FacilitiesRepository(_info);
+            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
+
+            if (dbFacility.bRequestorEmailConfirm) //Check if Facility is Allowed to Send Mail
+            {
+                //From 
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress("Admin " + dbFacility.sFacilityName, dbFacility.sOutboundEmail);
+                message.From.Add(from);
+
+                //To
+                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sConfirmEmailId);
+                message.To.Add(to);
+
+                //Subject
+                message.Subject = "Your Request for Medicals Records has been Received";
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                string bodyText = "<h1>Hello " + requestor.sPatientFirstName + "!</h1><br/>Your request has been recived.<br/>Please Find Attached Request PDF";
+                bodyBuilder.HtmlBody = bodyText;
+                bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
+                message.Body = bodyBuilder.ToMessageBody();
+                SmtpClient client = new SmtpClient();
+                //client.Connect("smtp.outlook.com", 25, false);
+                //get Port number
+                //Make ssl true
+                client.Connect(dbFacility.sSMTPUsername, 25, true);
+                //client.AuthenticationMechanisms.Remove("XOAUTH2"); // Must be removed for Gmail SMTP
+                try
+                {
+                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                }
+                catch (Exception e)
+                {
+                    //Console.Write(e);
+                    return false;
+                }
+                client.Send(message);
+                client.Disconnect(true);
+                client.Dispose();
+                return true;
+            }
+            return false;
+        }
+
 
         //private static void StoreXMLFTP(Requestors requestors, StringBuilder xmlString)
         //{
@@ -401,5 +449,66 @@ namespace MROWebApi.Controllers
             return pdfBytes;
         }
         #endregion
+
+        #region Email Verification
+        public int GenerateRandomNo()
+        {
+            int _min = 1000;
+            int _max = 10000; //set to 10000 to get 9999 as a possible value
+            Random _rdm = new Random();
+            return _rdm.Next(_min, _max);
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(Requestors requestor)
+        {
+            FacilitiesRepository fRep = new FacilitiesRepository(_info);
+            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
+
+            if (dbFacility.bRequestorEmailConfirm) //Check if Facility is Allowed to Send Mail
+            {
+                var sOTP = GenerateRandomNo().ToString();
+                //From 
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress("Admin " + dbFacility.sFacilityName, dbFacility.sOutboundEmail);
+                message.From.Add(from);
+
+                //To
+                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sConfirmEmailId);
+                message.To.Add(to);
+
+                //Subject
+                message.Subject = "Here's Your 4 Digit Verification Code " + sOTP;
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                string bodyText = "<h1>Hello " + requestor.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
+                bodyBuilder.HtmlBody = bodyText;
+                //bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
+                message.Body = bodyBuilder.ToMessageBody();
+                SmtpClient client = new SmtpClient();
+                //client.Connect("smtp.outlook.com", 25, false);
+                //get Port number
+                //Make ssl true
+                client.Connect(dbFacility.sSMTPUrl, 25, false);
+                //client.AuthenticationMechanisms.Remove("XOAUTH2"); // Must be removed for Gmail SMTP
+                try
+                {
+                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                }
+                catch (Exception e)
+                {
+                    //Console.Write(e);
+                    return Content(e.Message);
+                }
+                client.Send(message);
+                client.Disconnect(true);
+                client.Dispose();
+                return Ok(sOTP);
+            }
+            return "false";
+
+        }
+        #endregion
+
     }
 }
