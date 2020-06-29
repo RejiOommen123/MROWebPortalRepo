@@ -64,6 +64,17 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
+            <label for="sOutboundEmail">Outbound Email:</label>
+            <v-text-field
+              type="text"
+              id="sOutboundEmail"
+              placeholder="Enter Outbound Email"
+              v-model="facility.sOutboundEmail"
+              @input="$v.facility.sOutboundEmail.$touch()"
+              @blur="$v.facility.sOutboundEmail.$touch()"
+              :error-messages="sOutboundEmailErrors"
+              solo
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sFTPUsername">FTP Username:</label>
@@ -99,18 +110,18 @@
               :error-messages="sFTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sOutboundEmail">Outbound Email:</label>
+            <label for="sFTPUrl">Connection String:</label>
             <v-text-field
               type="text"
-              id="sOutboundEmail"
-              placeholder="Enter Outbound Email"
-              v-model="facility.sOutboundEmail"
-              @input="$v.facility.sOutboundEmail.$touch()"
-              @blur="$v.facility.sOutboundEmail.$touch()"
-              :error-messages="sOutboundEmailErrors"
+              id="sConnectionString"
+              placeholder="Connection String"
+              v-model="sConnectionString"
+              @input="$v.sConnectionString.$touch()"
+              @blur="$v.sConnectionString.$touch()"
+              :error-messages="sConnectionStringErrors"
               solo
             ></v-text-field>
-            <label for="bRequestorEmailConfirm">Send confirmation to requestor ?</label>
+            <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
             <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
           </v-col>
         </v-row>
@@ -140,6 +151,10 @@ import {
 export default {
   mixins: [validationMixin],
   validations: {
+    sConnectionString:{
+      required,
+      maxLength: maxLength(1000),
+    },
     facility: {
       sFacilityName: {
         required,
@@ -169,6 +184,15 @@ export default {
     }
   },
   computed: {
+    sConnectionStringErrors(){
+      const errors = [];
+      if (!this.$v.sConnectionString.$dirty) return errors;
+      !this.$v.sConnectionString.maxLength &&
+        errors.push("Connection String must be at most 1000 characters long");
+      !this.$v.sConnectionString.required &&
+        errors.push("Connection String is required.");
+      return errors;
+    },
     sFacilityNameErrors() {
       const errors = [];
       if (!this.$v.facility.sFacilityName.$dirty) return errors;
@@ -260,6 +284,7 @@ export default {
   name: "AddFacility",
   data() {
     return {
+      sConnectionString:'',
       genFacId: "",
       facility: {
         nFacilityID: 0,
@@ -292,8 +317,9 @@ export default {
     },
     onSubmit() {
       // this.$v.$touch()
+      var combinedObj = {cFacility:this.facility,sConnectionString:this.sConnectionString};
       this.$http
-        .post("facility/AddFacility", this.facility)
+        .post("facility/AddFacility",combinedObj)
         .then(response => {
           if (response.ok == true) {
             this.$router.push("/facility");
@@ -309,17 +335,18 @@ export default {
   text-align: center;
 }
 #box {
-  margin: 25px;
+  margin: 10px;
 }
 * {
-  margin: 10px;
+  margin: 5px;
 }
 .addfacility-form {
   /* width: 1200px; */
-  margin: 30px auto;
+  margin: 10px auto;
   border: 1px solid #eee;
   padding: 20px;
   box-shadow: 0 2px 3px #ccc;
+  font-size: 15px;
 }
 
 .input {

@@ -1,33 +1,51 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    //use only for xml  for now 
+    //use only for xml now 
     //when structure is finalized make changes to DB
     public partial class Requestors
     {
-        [Key]
+        [Dapper.Contrib.Extensions.Key]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nRequestorID { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nFacilityID { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nLocationID { get; set; }
         public string sSelectedLocation { get; set; }
+        [Required]
         public bool bAreYouPatient { get; set; }
         public string sRelativeName { get; set; }
         public string sRelationToPatient { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage = "Maximum 20 characters")]
         public string sPatientFirstName { get; set; }
+        [Required]
+        [StringLength(50, ErrorMessage = "Maximum 50 characters")]
         public string sPatientLastName { get; set; }
         public string sPatientMiddleInitial { get; set; }
         public bool bIsPatientMinor { get; set; }
         public bool bIsPatientDeceased { get; set; }
+        [Required]
         public DateTime? dtPatientDOB { get; set; }
+        [Required]
+        [StringLength(30, ErrorMessage = "Maximum 30 characters")]
         public string sPatientEmailId { get; set; }
         public string sConfirmEmailId { get; set; }
         public bool bConfirmReport { get; set; }
+        [Required]
+        [StringLength(10, ErrorMessage = "Maximum 10 characters")]
         public string sAddZipCode { get; set; }
         public string sAddCity { get; set; }
         public string sAddState { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage = "Maximum 20 characters")]
         public string sAddStreetAddress { get; set; }
         public DateTime? dtRecordRangeStart { get; set; }
         public DateTime? dtRecordRangeEnd { get; set; }
@@ -48,6 +66,8 @@ namespace MRODBL.BaseClasses
         public bool bRequestAnotherRecord { get; set; }
         public int nFeedbackRating { get; set; }
         public string sFeedbackComment { get; set; }
+        [Required]
+        [StringLength(15, ErrorMessage = "Maximum 15 characters")]
         public string sPhoneNo { get; set; }
         public string sPDF { get; set; }
         public DateTime dtLastUpdate { get; set; }
