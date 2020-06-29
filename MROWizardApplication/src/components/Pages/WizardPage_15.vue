@@ -20,7 +20,6 @@
           >No, just as soon as possible.</button>
         </v-col>
       </div>
-      <!-- <div class="disclaimer">{{disclaimer}}</div> -->
     </v-row>
   </div>
 </template>

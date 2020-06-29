@@ -30,57 +30,14 @@
             });
         });
 
-        function closeIFrame() {
-            $('#MRO_request_container').remove();
+        window.onmessage = function(e){
+        if (e.data == 'hello') {
+            $("#MRO_request_container").hide();
+            console.log("window closed");
+            window.location.reload();
         }
+        };
     </script>
-
-
-    <!-- <div class="container-fluid">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-      Request Medical Records Here
-    </button>
-
-    <div class="modal" id="myModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered" style="max-width: 35%;"  role="document">
-        <div class="modal-content">
-          <button type="button" class="close" data-dismiss="modal" style="position: absolute; top: 5px; right: 20px; z-index: 99999;">&times;</button>
-
-          <div class="modal-body embed-responsive embed-responsive-1by1">         
-            <iframe class="embed-responsive-item" id="vueapp" src="http://localhost:8080/"></iframe>
-          </div>
-      
-        </div>
-      </div>
-    </div>
-  </div>
-  <script
-  src="https://code.jquery.com/jquery-3.5.1.js"
-  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-  crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.18.0/js/mdb.min.js"></script>
-  <script type="text/javascript">
-    $('#myModal').modal({
-      backdrop: 'static',
-      keyboard: true,
-      focus: true,
-      show: false
-    });
-    $('#myModal').on('hide.bs.modal', function (e) {
-     
-      if (confirm("You're about to close this request which will reset all fields. Do you want to continue ?")) {
-        location.reload(true);
-    
-        localStorage.clear("my-answers");
-      }
-      else {
-        e.preventDefault();
-      }
-
-    });
-   -->
-
 </body>
 
 </html>

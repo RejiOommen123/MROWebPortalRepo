@@ -90,7 +90,7 @@ const mutations = {
             state.wizardArrayIndex = state.wizardArrayIndex + 1;
         }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
-        if (state.selectedWizard == 'Wizard_21') {
+        if (state.selectedWizard == 'Wizard_21' || state.selectedWizard == 'Wizard_21') {
             state.showBackBtn = false;
         }
     },

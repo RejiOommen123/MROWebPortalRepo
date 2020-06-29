@@ -8,7 +8,15 @@
       <form>
         <v-row>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-text-field placeholder="+(XX) (XXX) XXX-XXXX" v-model="sPhoneNo" label="Enter Mobile No" required></v-text-field>
+            <v-text-field 
+            placeholder="+(XX) (XXX) XXX-XXXX" 
+            v-model="sPhoneNo" 
+            label="Enter Mobile No" 
+            required
+            :error-messages="sPhoneNoError"         
+            @input="$v.sPhoneNo.$touch()"
+            @blur="$v.sPhoneNo.$touch()"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" offset-sm="1" sm="10">
             <p>
@@ -53,7 +61,7 @@ export default {
       isDisable:false,
       bOtpSend: false,
 
-      sPhoneNo: "",
+      sPhoneNo: "+91",
       sApp_Key: "tu9ete3u9ocidovebefu",
       sApi_Key: "51bdcc70021d29097aedce2a39ecb2beaa379e1b",
       sVerify: "",
@@ -64,12 +72,21 @@ export default {
   mixins: [validationMixin],
   validations: {
     sVerify: { required,maxLength: maxLength(4),minLength: minLength(4)  },
+    sPhoneNo:{ required,maxLength: maxLength(13),minLength: minLength(13)  },
   },
   created(){ 
     this.$vuetify.theme.dark = true
   },
   computed:{
-      sVerifyError() {
+      sPhoneNoError() {
+      const errors = [];
+      if (!this.$v.sPhoneNo.$dirty) return errors;
+      !this.$v.sPhoneNo.maxLength && errors.push("Enter mobile no with prefix(+91)");
+      !this.$v.sPhoneNo.minLength && errors.push("Enter mobile no with prefix(+91)");
+      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
+      return errors;
+    },
+    sVerifyError() {
       const errors = [];
       if (!this.$v.sVerify.$dirty) return errors;
       !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");

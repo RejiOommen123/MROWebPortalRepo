@@ -1,12 +1,12 @@
 <template>
   <div class="center">
-    <h1 v-if="bAreYouPatient">What's your Email Id ?</h1>
-    <h1 v-else>What is patient's Email Id ?</h1>
+    <h1 v-if="bAreYouPatient">What's your Email Address?</h1>
+    <h1 v-else>What is patient's Email Address?</h1>
     <p>We'll email you a confirmation of your request when you're finished</p>
     <div>
-      <form>
-        <v-row>
-          <v-col v-if="MROPEmailId" cols="12" offset-sm="3" sm="6">
+      <v-row>
+        <v-col v-if="MROPEmailId" cols="12" offset-sm="3" sm="6">
+          <form>
             <label for="sPatientEmailId" class="control-label">Email</label>
             <v-text-field
               v-model="sPatientEmailId"
@@ -31,20 +31,53 @@
               label="Please email me a copy of my completed request form"
             ></v-checkbox>
             <v-btn
+              v-if="showVerifyBlock!=true && bConfirmReport!=true"
               class="mr-4"
               @click.prevent="nextPage"
-              :disabled="$v.$invalid"
+              
               color="success"
-            >Next</v-btn>           
-          </v-col>
-        </v-row>
-      </form>
+            >Next</v-btn>
+          </form>
+          <form>
+          <div v-if="bConfirmReport==true">
+            <p>Click on "Send Email" for email verification.</p>
+            <v-btn @click="sendEmail" :disabled="this.isDisable" color="success">Send Email Verification</v-btn>
+          </div>
+
+          <div v-if="showVerifyBlock==true">
+            <v-text-field
+              :error-messages="sVerifyError"
+              @input="$v.sVerify.$touch()"
+              @blur="$v.sVerify.$touch()"
+              v-model="sVerify"
+              label="Enter OTP"
+              required
+            ></v-text-field>
+
+            <v-btn @click.prevent="sendEmail" color="success">Resend OTP</v-btn>
+
+            <v-btn
+              @click.prevent="verifyCode"
+              :disabled="$v.$invalid"
+              style="margin-left:10px"
+              color="success"
+            >Verify</v-btn>
+          </div>
+          </form>
+        </v-col>
+      </v-row>
     </div>
   </div>
 </template>
 <script>
 import { validationMixin } from "vuelidate";
-import { required, email, sameAs } from "vuelidate/lib/validators";
+import {
+  required,
+  email,
+  sameAs,
+  maxLength,
+  minLength
+} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_06",
   data() {
@@ -52,11 +85,17 @@ export default {
       sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
       sConfirmEmailId: this.$store.state.requestermodule.sConfirmEmailId,
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
+      showVerifyBlock: false,
+      sVerify: "",
+      sResponseKey: "",
+      isDisable: false,
+      verified:false,
 
-      
       //Show and Hide Fields Values
-      MROPEmailId : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPEmailId,
-      MROConfirmReport : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROConfirmReport
+      MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROPEmailId,
+      MROConfirmReport: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROConfirmReport
     };
   },
   mixins: [validationMixin],
@@ -68,13 +107,14 @@ export default {
     sConfirmEmailId: {
       required,
       email,
-      sameAsemailID: sameAs('sPatientEmailId')
-    }
+      sameAsemailID: sameAs("sPatientEmailId")
+    },
+    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) }
   },
   computed: {
     bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
-    },   
+    },
     emailErrors() {
       const errors = [];
       if (!this.$v.sPatientEmailId.$dirty) return errors;
@@ -85,20 +125,59 @@ export default {
     confirmEmailErrors() {
       const errors = [];
       if (!this.$v.sConfirmEmailId.$dirty) return errors;
-      !this.$v.sConfirmEmailId.sameAsemailID && errors.push("Please enter correct e-mail");
+      !this.$v.sConfirmEmailId.sameAsemailID &&
+        errors.push("Please enter correct e-mail");
       !this.$v.sConfirmEmailId.email && errors.push("Must be valid e-mail");
       !this.$v.sConfirmEmailId.required && errors.push("E-mail is required");
+      return errors;
+    },
+    sVerifyError() {
+      const errors = [];
+      if (!this.$v.sVerify.$dirty) return errors;
+      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");
+      !this.$v.sVerify.minLength && errors.push("Enter 4 digit OTP");
+      !this.$v.sVerify.required && errors.push("OTP required");
       return errors;
     }
   },
   methods: {
+    sendEmail() {
+      this.$store.commit(
+        "requestermodule/sPatientEmailId",
+        this.sPatientEmailId
+      );
+      this.$store.commit(
+        "requestermodule/sConfirmEmailId",
+        this.sConfirmEmailId
+      );
+      this.isDisable = true;
+      this.showVerifyBlock = true;
+      this.$http
+        .post("Wizards/VerfiyRequestorEmail/", this.$store.state.requestermodule)
+        .then(response => {
+          if (response.body) {
+            this.sResponseKey = response.body;
+          }
+        });
+    },
+    verifyCode() {
+      if (this.sResponseKey == this.sVerify) {
+        this.nextPage();
+      } else {
+        alert("Invalid Key");
+      }
+    },
     nextPage() {
-      this.$store.commit("requestermodule/sPatientEmailId", this.sPatientEmailId);
-      this.$store.commit("requestermodule/sConfirmEmailId", this.sConfirmEmailId);
+      this.$store.commit(
+        "requestermodule/sPatientEmailId",
+        this.sPatientEmailId
+      );
+      this.$store.commit(
+        "requestermodule/sConfirmEmailId",
+        this.sConfirmEmailId
+      );
       this.$store.commit("requestermodule/bConfirmReport", this.bConfirmReport);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 5);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-5");
-       this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };

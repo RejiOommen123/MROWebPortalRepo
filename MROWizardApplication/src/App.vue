@@ -3,15 +3,20 @@
   <v-app style="backgroundColor:transparent">
     <v-content>
       <v-row justify="center">
-        <v-dialog persistent v-model="dialog" scrollable :max-width="dialogMaxWidth" :height="dialogMaxHeight">
+        <v-dialog
+          persistent
+          v-model="dialog"
+          scrollable
+          :max-width="dialogMaxWidth"
+          :height="dialogMaxHeight"
+        >
           <v-card
             id="bgImg"
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
-       
-          <v-btn style="position:absolute;right:3%" icon dark @click="dialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+            <v-btn style="position:absolute;right:3%" icon dark @click="dialogConfirm=true">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
 
             <v-card-text :style="{ height: dialogMaxHeight  }">
               <div>
@@ -48,9 +53,7 @@
                       <component :is="selectedWizard"></component>
                     </keep-alive>
                   </transition>
-                  <div v-if="selectedWizard!='page-20'">
-
-                  </div>
+                  <div v-if="selectedWizard!='page-20'"></div>
                 </div>
               </div>
             </v-card-text>
@@ -67,6 +70,26 @@
             </v-footer>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+        <!-- Confirm Close Wizard -->
+        <v-dialog v-model="dialogConfirm" persistent max-width="290">     
+      <v-card>
+        <v-card-title class="headline">Are you sure?</v-card-title>
+        <v-card-text>Closing wizard will clear all data previously enter by you.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
+          <v-btn color="green darken-1" text @click="dialogClose">Accept</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
       </v-row>
     </v-content>
     <br />
@@ -104,60 +127,94 @@ export default {
   name: "App",
   data() {
     return {
-      dialog: true,
+      dialog: false,
       logoImg: this.$store.state.ConfigModule.wizardLogo,
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
-      phoneNo:0
+      phoneNo: 0,
+      dialogLoader: false,
+      dialogConfirm:false
     };
   },
   created() {
+    this.dialogLoader = true;
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     console.log(window.location.search);
     console.log("GUID Value:-" + guid);
     //API Request get wizard config based on facility id.
     this.$http
-      .get(
-        "Wizards/GetFacilityDatafromFacilityGUID/" +
-          guid
-      )
+      .get("Wizards/GetFacilityDatafromFacilityGUID/" + guid)
       .then(response => {
         var apiFacilityResponse = response.body;
         if (response.body) {
-          this.$store.commit("ConfigModule/apiResponseDataByFacilityGUID",apiFacilityResponse);
+          this.$store.commit(
+            "ConfigModule/apiResponseDataByFacilityGUID",
+            apiFacilityResponse
+          );
 
-          this.$store.commit("ConfigModule/wizardLogo",apiFacilityResponse.facilityLogoandBackground[0].sConfigLogoData);
-          this.$store.commit("ConfigModule/wizardBackground",apiFacilityResponse.facilityLogoandBackground[0].sConfigBackgroundData);
+          this.$store.commit(
+            "ConfigModule/wizardLogo",
+            apiFacilityResponse.facilityLogoandBackground[0].sConfigLogoData
+          );
+          this.$store.commit(
+            "ConfigModule/wizardBackground",
+            apiFacilityResponse.facilityLogoandBackground[0]
+              .sConfigBackgroundData
+          );
           // this.logoImg = this.$store.state.ConfigModule.wizardLogo;
           // this.backgroundImg = this.$store.state.ConfigModule.wizardBackground;
 
           // this.logo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigLogoData;
           // this.backgroundImg = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigBackgroundData;
-          this.phoneNo=this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
+          this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           console.log("This Logo" + this.logoImg);
           console.log("This BG" + this.backgroundImg);
 
           //Check for number of locations in facility
-          let locationLength = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.locationDetails.length;
-
+          let locationLength = this.$store.state.ConfigModule
+            .apiResponseDataByFacilityGUID.locationDetails.length;
+          this.dialogLoader = false;
+          this.dialog = true;
           //API request to get wizard config data based on location id.
           if (locationLength == 1) {
             console.log("Inside Mounted - " + locationLength);
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
-              // Wizards/GetWizardConfig/fID=5&lID=2
+            // Wizards/GetWizardConfig/fID=5&lID=2
             this.$http
               .get(
-                "Wizards/GetWizardConfig/fID=" +singleLocation.nFacilityID+"&lID="+singleLocation.nFacilityLocationID)
+                "Wizards/GetWizardConfig/fID=" +
+                  singleLocation.nFacilityID +
+                  "&lID=" +
+                  singleLocation.nFacilityLocationID
+              )
               .then(response => {
                 var apiLocationResponse = response.body;
                 if (response.body) {
-                  this.$store.commit("ConfigModule/apiResponseDataByLocation",apiLocationResponse);
-                  this.$store.commit("requestermodule/nFacilityID", singleLocation.nFacilityID);
-                  this.$store.commit("requestermodule/nLocationID", singleLocation.nFacilityLocationID);
-                  this.$store.commit("requestermodule/sSelectedLocation", singleLocation.sNormalizedLocationName);
-                  this.$store.commit("ConfigModule/nAuthExpirationMonths",singleLocation.nAuthExpirationMonths);
-                  console.log('apiResponseDataByLocation    '+this.$store.state.ConfigModule.apiResponseDataByLocation);
+                  this.$store.commit(
+                    "ConfigModule/apiResponseDataByLocation",
+                    apiLocationResponse
+                  );
+                  this.$store.commit(
+                    "requestermodule/nFacilityID",
+                    singleLocation.nFacilityID
+                  );
+                  this.$store.commit(
+                    "requestermodule/nLocationID",
+                    singleLocation.nFacilityLocationID
+                  );
+                  this.$store.commit(
+                    "requestermodule/sSelectedLocation",
+                    singleLocation.sNormalizedLocationName
+                  );
+                  this.$store.commit(
+                    "ConfigModule/nAuthExpirationMonths",
+                    singleLocation.nAuthExpirationMonths
+                  );
+                  console.log(
+                    "apiResponseDataByLocation    " +
+                      this.$store.state.ConfigModule.apiResponseDataByLocation
+                  );
                 }
               });
           }
@@ -165,19 +222,19 @@ export default {
       });
   },
   watch: {
-    logo (newlogo) {
-      this.logoImg=newlogo;
+    logo(newlogo) {
+      this.logoImg = newlogo;
     },
-    background (newBackground) {
-      this.backgroundImg=newBackground;
+    background(newBackground) {
+      this.backgroundImg = newBackground;
     }
   },
   computed: {
     logo() {
-      return this.$store.state.ConfigModule.wizardLogo
+      return this.$store.state.ConfigModule.wizardLogo;
     },
     background() {
-      return this.$store.state.ConfigModule.wizardBackground
+      return this.$store.state.ConfigModule.wizardBackground;
     },
     selectedWizard() {
       return this.$store.state.ConfigModule.selectedWizard;
@@ -206,37 +263,37 @@ export default {
     doNothing() {
       this.$store.commit("ConfigModule/mutatePreviousIndex");
     },
-    closeDialog(){
-        // $(this).trigger('post-message', [{
-        //             event: 'unload-bookmarklet'
-        //         }]);
+    dialogClose() {
+      this.dialogConfirm=false
+      this.dialog = false;
+      window.top.postMessage("hello", "*");
     }
   },
   components: {
-    "Wizard_01": Wizard_01,
-    "Wizard_02": Wizard_02,
-    "Wizard_03": Wizard_03,
-    "Wizard_04": Wizard_04,
-    "Wizard_05": Wizard_05,
-    "Wizard_06": Wizard_06,
-    "Wizard_07": Wizard_07,
-    "Wizard_08": Wizard_08,
-    "Wizard_09": Wizard_09,
-    "Wizard_10": Wizard_10,
-    "Wizard_11": Wizard_11,
-    "Wizard_12": Wizard_12,
-    "Wizard_13": Wizard_13,
-    "Wizard_14": Wizard_14,
-    "Wizard_15": Wizard_15,
-    "Wizard_16": Wizard_16,
-    "Wizard_17": Wizard_17,
-    "Wizard_18": Wizard_18,
-    "Wizard_19": Wizard_19,
-    "Wizard_20": Wizard_20,
-    "Wizard_21": Wizard_21,
-    "Wizard_22": Wizard_22,
-    "Wizard_23": Wizard_23,
-    "Wizard_24": Wizard_24
+    Wizard_01: Wizard_01,
+    Wizard_02: Wizard_02,
+    Wizard_03: Wizard_03,
+    Wizard_04: Wizard_04,
+    Wizard_05: Wizard_05,
+    Wizard_06: Wizard_06,
+    Wizard_07: Wizard_07,
+    Wizard_08: Wizard_08,
+    Wizard_09: Wizard_09,
+    Wizard_10: Wizard_10,
+    Wizard_11: Wizard_11,
+    Wizard_12: Wizard_12,
+    Wizard_13: Wizard_13,
+    Wizard_14: Wizard_14,
+    Wizard_15: Wizard_15,
+    Wizard_16: Wizard_16,
+    Wizard_17: Wizard_17,
+    Wizard_18: Wizard_18,
+    Wizard_19: Wizard_19,
+    Wizard_20: Wizard_20,
+    Wizard_21: Wizard_21,
+    Wizard_22: Wizard_22,
+    Wizard_23: Wizard_23,
+    Wizard_24: Wizard_24
   }
 };
 </script>

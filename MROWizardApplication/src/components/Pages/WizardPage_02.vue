@@ -20,6 +20,15 @@
         </div>
       </div>
     </v-row>
+    <!-- Loader dialog -->
+    <v-dialog v-model="dialogLoader" hide-overlay persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
 <script>
@@ -28,11 +37,13 @@ export default {
   data() {
     return {
       locationArray: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.locationDetails
+        .apiResponseDataByFacilityGUID.locationDetails,
+        dialogLoader:false
     };
   },
   methods: {
     locationRequest(location) {
+      this.dialogLoader=true;
       // this.$store.commit("ConfigModule/mutatepageNumerical",3);
       // this.$store.commit("ConfigModule/mutateCurrentPage","page-3");
       this.$http
@@ -77,6 +88,7 @@ export default {
               "ConfigModule/nAuthExpirationMonths",
               location.nAuthExpirationMonths
             );
+            this.dialogLoader=false;
             this.$store.commit("ConfigModule/mutateNextIndex");
           }
         });

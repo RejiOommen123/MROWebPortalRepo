@@ -43,6 +43,15 @@
       <div v-else>
         <v-btn id="submitRequest" @click="next" color="success">Submit Request</v-btn>
     </div>
+    <!-- Loader dialog -->
+    <v-dialog v-model="dialogLoader" hide-overlay persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Generating PDF
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
     </div>
   </div>
 </template>
@@ -59,10 +68,12 @@ export default {
       currentPage: 0,
       pageCount: 0,
       pdf: null,
-      bFormSigned:false
+      bFormSigned:false,
+      dialogLoader:false
     };
   },
   mounted() {
+    this.dialogLoader=true;
     this.$http
       .post("PDF/GeneratePDF/", 
       this.$store.state.requestermodule,
@@ -73,6 +84,7 @@ export default {
         let blobFile = new Blob([response.data], { type: "application/pdf" });
         var fileURL = URL.createObjectURL(blobFile);
         this.pdf = fileURL;
+        this.dialogLoader=false;
       });
   },
   created(){ 
@@ -84,6 +96,7 @@ export default {
     },
     save() {
       this.dialog = false;
+      this.dialogLoader=true;
       const { data } = this.$refs.signaturePad.saveSignature();
       this.$store.commit("requestermodule/sSignatureData", data);
       console.log(data);
@@ -119,6 +132,7 @@ export default {
           this.bFormSigned=true;
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
+          this.dialogLoader=false;
         });
     },
     change() {

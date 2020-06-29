@@ -17,9 +17,8 @@ export default {
     };
   },
   methods: {
-    closeWizard() {
-    //   parent.closeIFrame();
-    location.reload();
+    closeWizard() {  
+      window.top.postMessage("hello", "*");
     }
   }
 };
