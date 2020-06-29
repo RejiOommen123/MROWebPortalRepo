@@ -157,7 +157,7 @@ const mutations = {
     bDeadlineStatus(state, payload) {
         state.bDeadlineStatus = payload;
     },
-    dtDeadline (state, payload) {
+    dtDeadline(state, payload) {
         state.dtDeadline  = payload;
     },
     sPhoneNo(state, payload) {

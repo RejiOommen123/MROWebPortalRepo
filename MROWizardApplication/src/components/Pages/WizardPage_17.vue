@@ -1,14 +1,15 @@
 <template>
   <div class="center">
     <h1>You’re almost done!</h1>
-    
+    <v-row>
     <div class="disclaimer">{{disclaimer}}</div>
-    <div v-if="MROPatientAdditionalDetails">             
+    <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
         <v-textarea filled          
           rows="4"
           row-height="30"
           shaped counter v-model="sAdditionalData" label="Additional Details"></v-textarea>    
-    </div>
+    </v-col>
+    </v-row>
     <div>
       <v-btn @click.prevent="nextPage"  color="success">Next</v-btn>
     </div>

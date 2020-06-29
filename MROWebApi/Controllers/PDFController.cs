@@ -181,12 +181,12 @@ namespace MROWebAPI.Controllers
             //Primary Reason
             for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
             {
-                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
             }
             //Sensitive Info
             for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
             {
-                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
             }
             allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
             allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
@@ -292,12 +292,12 @@ namespace MROWebAPI.Controllers
             //Primary Reason
             for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
             {
-                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
             }
             //Sensitive Info
             for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
             {
-                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
             }
             allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
             allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo== "MROReleaseToMe"?"On":"");

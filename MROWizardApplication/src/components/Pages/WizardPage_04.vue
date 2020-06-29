@@ -38,8 +38,8 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox v-if="MROIsPatientMinor" v-model="bIsPatientMinor" color="#53b958" label="Is the patient a minor?"></v-checkbox>
-          <v-checkbox v-if="MROIsPatientDeceased" v-model="bIsPatientDeceased" color="#53b958" label="Is the patient deceased?"></v-checkbox>
+          <!-- <v-checkbox v-if="MROIsPatientMinor" v-model="bIsPatientMinor" color="#53b958" label="Is the patient a minor?"></v-checkbox>
+          <v-checkbox v-if="MROIsPatientDeceased" v-model="bIsPatientDeceased" color="#53b958" label="Is the patient deceased?"></v-checkbox> -->
           <v-btn class="mr-4" @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
         </v-col>
         <div class="disclaimer">{{disclaimer}}</div>
@@ -57,8 +57,8 @@ export default {
       sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
       sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
       sPatientMiddleInitial: this.$store.state.requestermodule.sPatientMiddleInitial,
-      bIsPatientMinor: this.$store.state.requestermodule.bIsPatientMinor,
-      bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
+      // bIsPatientMinor: this.$store.state.requestermodule.bIsPatientMinor,
+      // bIsPatientDeceased: this.$store.state.requestermodule.bIsPatientDeceased,
 
       //Show and Hide Fields Values
       MROPatientFirstName : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientFirstName,
@@ -72,7 +72,7 @@ export default {
   validations: {
     sPatientFirstName: { required, maxLength: maxLength(15) },
     sPatientLastName: { required, maxLength: maxLength(15) },
-    sPatientMiddleInitial: { required, maxLength: maxLength(1) }
+    sPatientMiddleInitial: {maxLength: maxLength(1) }
   },
   computed: {  
     bAreYouPatient(){
@@ -99,7 +99,7 @@ export default {
     sPatientMiddleInitialError() {
       const errors = [];
       if (!this.$v.sPatientMiddleInitial.$dirty) return errors;
-      !this.$v.sPatientMiddleInitial.maxLength && errors.push("Middle Initial must be at most 1 characters long");
+      !this.$v.sPatientMiddleInitial.maxLength && errors.push("One character only.");
       return errors;
     }
   },
@@ -108,14 +108,14 @@ export default {
       this.$store.commit("requestermodule/sPatientFirstName", this.sPatientFirstName);
       this.$store.commit("requestermodule/sPatientLastName", this.sPatientLastName);
       this.$store.commit("requestermodule/sPatientMiddleInitial", this.sPatientMiddleInitial);
-      this.$store.commit(
-        "requestermodule/bIsPatientMinor",
-        this.bIsPatientMinor
-      );
-      this.$store.commit(
-        "requestermodule/bIsPatientDeceased",
-        this.bIsPatientDeceased
-      );
+      // this.$store.commit(
+      //   "requestermodule/bIsPatientMinor",
+      //   this.bIsPatientMinor
+      // );
+      // this.$store.commit(
+      //   "requestermodule/bIsPatientDeceased",
+      //   this.bIsPatientDeceased
+      // );
       // this.$store.commit("ConfigModule/mutatepageNumerical", 6);
       // this.$store.commit("ConfigModule/mutateCurrentPage", "page-6");
        this.$store.commit("ConfigModule/mutateNextIndex");

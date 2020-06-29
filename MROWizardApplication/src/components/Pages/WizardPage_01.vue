@@ -9,13 +9,7 @@
         <v-btn @click.prevent="nextPage" x-large  color="success" class="letsGoBtn">Get Started</v-btn>
     </div>
 
-
-    <br>
     <div><a style="cursor: pointer;" href="#" id="pdfFormLink">Want to print, fax or mail in your request? Click here for our PDF form.</a></div> 
-     <!-- <div><p id="contact">Call 123-456-7890 for assistance</p></div>
-                    <div id="poweredby">
-                    <span>Powered by <a href="https://mrocorp.com/" target="_blank">MRO Corp</a></span>
-                    </div>  -->
 
 
   </div>

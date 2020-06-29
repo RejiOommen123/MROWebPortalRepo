@@ -5,18 +5,17 @@
        <h1 v-else>What is patient's address?</h1>
       <v-row>
        
-        <v-col v-if="MROAddZipCode" cols="12" offset-sm="2" sm="3">
+       <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="1" sm="6">
           <v-text-field
-            type="number"
-            v-model="sAddZipCode"
-            :error-messages="sAddZipCodeErrors"
-            label="ZipCode"
+            v-model="sAddStreetAddress"
+            :error-messages="streetErrors"
+            label="Street"
             required
-            @input="$v.sAddZipCode.$touch()"
-            @blur="$v.sAddZipCode.$touch()"
+            @input="$v.sAddStreetAddress.$touch()"
+            @blur="$v.sAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddCity" cols="12" sm="3">
+        <v-col v-if="MROAddCity" cols="12" sm="4">
           <v-text-field
             v-model="sAddCity"
             :error-messages="cityErrors"
@@ -26,7 +25,7 @@
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddState" cols="12" sm="3">
+        <v-col v-if="MROAddState" cols="12" offset-sm="2" sm="4">
           <v-text-field
             v-model="sAddState"
             :error-messages="stateErrors"
@@ -36,14 +35,15 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="3" sm="6">
+         <v-col v-if="MROAddZipCode" cols="12" sm="4">
           <v-text-field
-            v-model="sAddStreetAddress"
-            :error-messages="streetErrors"
-            label="Street"
+            type="number"
+            v-model="sAddZipCode"
+            :error-messages="sAddZipCodeErrors"
+            label="ZipCode"
             required
-            @input="$v.sAddStreetAddress.$touch()"
-            @blur="$v.sAddStreetAddress.$touch()"
+            @input="$v.sAddZipCode.$touch()"
+            @blur="$v.sAddZipCode.$touch()"
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
