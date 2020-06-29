@@ -34,5 +34,9 @@
     <NativeLibs Remove="Controllers\RequestorsController.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+
 
 </Project>

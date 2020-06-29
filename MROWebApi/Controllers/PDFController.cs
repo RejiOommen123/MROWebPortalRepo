@@ -20,11 +20,8 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Controllers;
-using MROWebAPI.Models;
 
 using WebSupergoo.ABCpdf11;
-using WebSupergoo.ABCpdf11.Objects;
-using Wizard_Demo.Models;
 
 namespace MROWebAPI.Controllers
 {
