@@ -7,8 +7,8 @@
     <div class="disclaimer">{{disclaimer}}</div>
   
     <div class="form-group btn-group-vertical">     
-    <button @click.prevent="requestAnotherRecord(true)"  class="btn btn-success btn-lg locationButton" value=true>Request another record</button>
-    <button @click.prevent="requestAnotherRecord(false)"  class="btn btn-success btn-lg locationButton" value=false>I'm done</button>
+    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg locationButton" value=true>Request another record</button>
+    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg locationButton" value=false>I'm done</button>
     </div>
   </div>
 </template>
@@ -25,13 +25,13 @@ export default {
     this.$vuetify.theme.dark = true
   },
   methods:{
-      requestAnotherRecord(status){  
-            this.$store.commit("requestermodule/bRequestAnotherRecord",status);   
-            if(status==true);
+      requestAnotherRecord($event){  
+            this.$store.commit("requestermodule/bRequestAnotherRecord",$event.target.value);   
+            if($event.target.value==="true")
             {
               location.reload();
             }
-            console.log(status);                
+            console.log($event.target.value);                
             this.$store.commit("ConfigModule/mutateNextIndex");          
       }
     },
