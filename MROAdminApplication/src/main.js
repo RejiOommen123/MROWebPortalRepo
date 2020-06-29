@@ -7,9 +7,10 @@ import vuetify from './plugins/vuetify';
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 Vue.use(VueResource);
-// TODO
-//Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
-Vue.http.options.root = "http://localhost:57364/api";
+// TODO 
+Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
+//Vue.http.options.root = "https://devmroportalapi-dev.azurewebsites.net/api";
+//Vue.http.options.root = "http://localhost:57364/api";
 Vue.use(store);
 
 Vue.config.productionTip = false
