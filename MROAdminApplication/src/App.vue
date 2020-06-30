@@ -19,6 +19,7 @@
 </template>
 
 <script>
+  import { AuthenticationContext } from 'vue-adal' 
 import Header from "./components/header/header.vue";
 export default {
   name: "app",
@@ -27,6 +28,20 @@ export default {
   },
   //Code to Remove Scroll Bar Both Life Cycles Events - mounted, destroyed
   mounted: function() {
+    var adminUser = 
+      {
+        sUPN:AuthenticationContext.user.profile.upn,
+        sName:AuthenticationContext.user.profile.name,
+        sEmail:AuthenticationContext.user.userName
+      }
+      this.$http
+        .post("auth/GetAdminUserID",adminUser)
+        .then(response => {
+          if (response.ok == true) {
+             this.$store.commit("adminUserId", response.body);
+          }
+        });
+
     let elHtml = document.getElementsByTagName("html")[0];
     elHtml.style.overflowY = "auto";
   },
