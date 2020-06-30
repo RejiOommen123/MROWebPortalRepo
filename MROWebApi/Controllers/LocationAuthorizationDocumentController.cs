@@ -161,7 +161,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         /// </summary>
         /// <param name="PDFFile">PDF - Byte Array</param>
         /// <returns>Byte Array - PDF (Replaced with values)</returns>
-        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, Dictionary<string, string> allFields, out string sReplaceFieldsList)
+        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, Dictionary<string, string> allFields,Requestors requestor ,out string sReplaceFieldsList)
         {
             Doc thePDFAuthDoc = new Doc();
             thePDFAuthDoc.Read(PDFFile);
@@ -190,7 +190,8 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
 
             //Adding the Photo of Driving License
             //XImage theDrivingLicense = new XImage();
-            //theImg.SetFile("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-577160911.jpg");
+            //requestor.sIdentityImage = requestor.sIdentityImage.Replace("data:application/pdf;base64,", string.Empty);
+            //theDrivingLicense.SetData();
 
             //Adding new page in Authorization PDF
             //thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();

@@ -290,7 +290,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<string>> VerfiyRequestorEmail(Requestors requestor)
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requestor)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
@@ -304,7 +304,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sConfirmEmailId);
+                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sPatientEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -510,7 +510,7 @@ namespace MROWebApi.Controllers
             FacilityLocations location = await locRepo.Select(requestor.nLocationID);
             location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
             byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, out string sReplaceFieldsList);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requestor,out string sReplaceFieldsList);
 
             allFields.Clear();
             return byteArrayToReturn;
