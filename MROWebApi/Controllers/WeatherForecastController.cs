@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +10,7 @@ namespace MROWebApi.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        #region Weather Forecast Constructor
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -22,7 +22,9 @@ namespace MROWebApi.Controllers
         {
             _logger = logger;
         }
+        #endregion
 
+        #region Get Forecast
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
@@ -35,5 +37,6 @@ namespace MROWebApi.Controllers
             })
             .ToArray();
         }
+        #endregion
     }
 }

@@ -2,8 +2,8 @@
   <div>
     <div id="box">
       <form @submit.prevent="onSubmit" class="addfacility-form">
-        <div style="margin-top:-15px;margin-left:-20px">
-          <span style="font-size:14px">
+        <div id="formDiv">
+          <span id="spanMandate">
             <i>All the fields are mandatory</i>
           </span>
         </div>
@@ -122,7 +122,14 @@
               solo
             ></v-text-field>
             <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
-            <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
+            <v-switch
+              inset
+              flat
+              color="rgb(0,91,168)"
+              solo
+              id="bRequestorEmailConfirm"
+              v-model="facility.bRequestorEmailConfirm"
+            ></v-switch>
           </v-col>
         </v-row>
         <div class="submit">
@@ -137,6 +144,17 @@
         </div>
       </form>
     </div>
+    <!-- Dialog Alert for Same name facility -->
+    <v-dialog v-model="sameNameAlert" width ="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Facility with Same Name Exists</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="sameNameAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -151,9 +169,9 @@ import {
 export default {
   mixins: [validationMixin],
   validations: {
-    sConnectionString:{
+    sConnectionString: {
       required,
-      maxLength: maxLength(1000),
+      maxLength: maxLength(1000)
     },
     facility: {
       sFacilityName: {
@@ -166,25 +184,41 @@ export default {
         maxLength: maxLength(80),
         minLength: minLength(2)
       },
-      sSMTPUsername: { required },
+      sSMTPUsername: 
+      { 
+        required,
+        maxLength: maxLength(100), 
+      },
       sSMTPPassword: {
         required,
         maxLength: maxLength(20),
         minLength: minLength(5)
       },
-      sSMTPUrl: { required },
-      sFTPUsername: { required },
+      sSMTPUrl: 
+      { 
+        required,
+        maxLength: maxLength(200),
+      },
+      sFTPUsername: 
+      { 
+        required,
+        maxLength: maxLength(100),  
+      },
       sFTPPassword: {
         required,
         maxLength: maxLength(20),
         minLength: minLength(5)
       },
-      sFTPUrl: { required },
+      sFTPUrl: 
+      { 
+        required,
+        maxLength: maxLength(200),
+      },
       sOutboundEmail: { required, email }
     }
   },
   computed: {
-    sConnectionStringErrors(){
+    sConnectionStringErrors() {
       const errors = [];
       if (!this.$v.sConnectionString.$dirty) return errors;
       !this.$v.sConnectionString.maxLength &&
@@ -218,8 +252,8 @@ export default {
     sSMTPUsernameErrors() {
       const errors = [];
       if (!this.$v.facility.sSMTPUsername.$dirty) return errors;
-      // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
-      // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+      !this.$v.facility.sSMTPUsername.maxLength &&
+        errors.push("SMTP Username must be at most 100 characters long");
       !this.$v.facility.sSMTPUsername.required &&
         errors.push("SMTP Username is required.");
       return errors;
@@ -237,18 +271,18 @@ export default {
     },
     sSMTPUrlErrors() {
       const errors = [];
-
       if (!this.$v.facility.sSMTPUrl.$dirty) return errors;
-      // !this.$v.facility.sSMTPUrl.url && errors.push('Please provide a proper URl')
+      !this.$v.facility.sSMTPUrl.maxLength &&
+        errors.push("SMTP URL must be at most 200 characters long");
       !this.$v.facility.sSMTPUrl.required &&
-        errors.push("SMTP Url is required.");
+        errors.push("SMTP URL is required.");
       return errors;
     },
     sFTPUsernameErrors() {
       const errors = [];
       if (!this.$v.facility.sFTPUsername.$dirty) return errors;
-      // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
-      // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+      !this.$v.facility.sFTPUsername.maxLength &&
+        errors.push("FTP Username must be at most 100 characters long");
       !this.$v.facility.sFTPUsername.required &&
         errors.push("FTP Username is required.");
       return errors;
@@ -267,7 +301,8 @@ export default {
     sFTPUrlErrors() {
       const errors = [];
       if (!this.$v.facility.sFTPUrl.$dirty) return errors;
-      // !this.$v.facility.sFTPUrl.url && errors.push('Please provide a proper URl')
+      !this.$v.facility.sFTPUrl.maxLength &&
+        errors.push("FTP Url must be at most 200 characters long");
       !this.$v.facility.sFTPUrl.required && errors.push("FTP Url is required.");
       return errors;
     },
@@ -284,7 +319,8 @@ export default {
   name: "AddFacility",
   data() {
     return {
-      sConnectionString:'',
+      sameNameAlert:false,
+      sConnectionString: "",
       genFacId: "",
       facility: {
         nFacilityID: 0,
@@ -299,38 +335,63 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm:true
+        bRequestorEmailConfirm: true
       }
     };
   },
   methods: {
-    // API to add facility
+    // API Call to add facility
     goToLoc() {
-      // this.$v.$touch()
-      this.$http
-        .post("facility/AddFacility", this.facility)
-        .then(response => {
-          if (response.ok == true) {
-            this.$router.push("/AddLocation/" + response.body.nFacilityID);
-          }
-        });
+      var combinedObj = {
+        cFacility: this.facility,
+        sConnectionString: this.sConnectionString
+      };
+      this.$http.post("facility/AddFacility", combinedObj).then(response => {
+        if (response.ok == true) {
+          //if reponse ok then redirect to Add Location Page with Generated Facility ID
+          this.$router.push("/AddLocation/" + response.body.nFacilityID);
+        }
+      },error => {
+          // Error Callback
+          if(error.status==400&&error.bodyText=="Cannot Add Facility with Same Name"){
+          this.sameNameAlert = true;
+        }
+          console.log(error.body);
+        }
+      );
     },
     onSubmit() {
-      // this.$v.$touch()
-      var combinedObj = {cFacility:this.facility,sConnectionString:this.sConnectionString};
-      this.$http
-        .post("facility/AddFacility",combinedObj)
-        .then(response => {
-          if (response.ok == true) {
-            this.$router.push("/facility");
-          }
-        });
+      // API Call to add facility
+      var combinedObj = {
+        cFacility: this.facility,
+        sConnectionString: this.sConnectionString
+      };
+      this.$http.post("facility/AddFacility", combinedObj).then(response => {
+        if (response.ok == true) {
+          //if reponse ok then redirect to Facility List Page
+          this.$router.push("/facility");
+        }
+      },error => {
+          // Error Callback
+          if(error.status==400&&error.bodyText=="Cannot Add Facility with Same Name"){
+          this.sameNameAlert = true;
+        }
+          console.log(error.body);
+        }
+      );
     }
   }
 };
 </script>
 
 <style scoped>
+#spanMandate {
+  font-size: 14px;
+}
+#formDiv {
+  margin-top: -15px;
+  margin-left: -20px;
+}
 .submit {
   text-align: center;
 }
@@ -341,7 +402,6 @@ export default {
   margin: 5px;
 }
 .addfacility-form {
-  /* width: 1200px; */
   margin: 10px auto;
   border: 1px solid #eee;
   padding: 20px;
@@ -413,9 +473,9 @@ i {
 }
 label {
   margin-top: 4px;
-  margin-left:-1px
+  margin-left: -1px;
 }
-.row{
-margin:1px
+.row {
+  margin: 1px;
 }
 </style>

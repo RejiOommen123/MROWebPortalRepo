@@ -17,17 +17,15 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class FacilitySensitiveInfoController : ControllerBase
     {
+        #region Facility Sensitive Info Constructor
         private readonly ApplicationDbContext _context;
-
-        #region Facility Constructor
         public FacilitySensitiveInfoController(ApplicationDbContext context)
         {
             _context = context;
         }
         #endregion
 
-        #region Get Facility Primary Reasons
-        // GET: api/FacilitySensitiveInfo
+        #region Get Sensitive Info
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
@@ -36,7 +34,6 @@ namespace MROWebApi.Controllers
             return await _context.lnkROIFacilitySensitiveInfo.ToListAsync();
         }
 
-        // GET: api/Facility/5
         [HttpGet("GetFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]

@@ -2,8 +2,8 @@
   <div>
     <div id="box">
       <form @submit.prevent="onSubmit" class="editfacility-form">
-        <div style="margin-top:-15px;margin-left:-20px">
-          <span style="font-size:14px">
+        <div id="editFormDiv">
+          <span id="fieldsMandate">
             <i>All the fields are mandatory</i>
           </span>
         </div>
@@ -31,15 +31,22 @@
               :error-messages="sDescriptionErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUsername">SMTP Username:
-            <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copySMTPDetails" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
+            <label for="sSMTPUsername">
+              SMTP Username:
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon
+                      @click="copySMTPDetails"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
                 <span>Click to Copy SMTP Details</span>
-            </v-tooltip>
+              </v-tooltip>
             </label>
             <v-text-field
               type="text"
@@ -73,7 +80,7 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-          <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
+            <label class="col-md-4" for="sOutboundEmail">Outbound Email:</label>
             <v-text-field
               type="text"
               id="sOutboundEmail"
@@ -84,17 +91,24 @@
               :error-messages="sOutboundEmailErrors"
               solo
             ></v-text-field>
-            </v-col>
+          </v-col>
           <v-col cols="12" md="5">
-            <label for="sFTPUsername">FTP Username:
+            <label for="sFTPUsername">
+              FTP Username:
               <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copyFTPDetails" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon
+                      @click="copyFTPDetails"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
                 <span>Click to Copy FTP Details</span>
-            </v-tooltip>
+              </v-tooltip>
             </label>
             <v-text-field
               type="text"
@@ -128,26 +142,35 @@
               :error-messages="sFTPUrlErrors"
               solo
             ></v-text-field>
-             <!-- Show GUID -->
-          <label class="col-md-4" for="sGUID">Guid for URL (Read Only):
-            <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon @click="copyGUID" small color="rgb(0,91,168)" v-bind="attrs" v-on="on">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
+            <!-- Show GUID -->
+            <label class="col-md-4" for="sGUID">
+              Guid for URL (Read Only):
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon
+                      @click="copyGUID"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
                 <span>Click to Copy GUID</span>
-            </v-tooltip>
-          </label>
-          <v-text-field
-              type="text"
-              v-model="sGUID"
-              :readonly = true
-              id="sGUID"
-              solo
-            ></v-text-field>
+              </v-tooltip>
+            </label>
+            <!-- Show confirm email to requestor -->
+            <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
             <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
-            <v-switch inset flat color="rgb(0,91,168)" solo id="bRequestorEmailConfirm" v-model="facility.bRequestorEmailConfirm"></v-switch>
+            <v-switch
+              inset
+              flat
+              color="rgb(0,91,168)"
+              solo
+              id="bRequestorEmailConfirm"
+              v-model="facility.bRequestorEmailConfirm"
+            ></v-switch>
           </v-col>
         </v-row>
         <div class="submit">
@@ -181,20 +204,36 @@ export default {
         maxLength: maxLength(80),
         minLength: minLength(2)
       },
-      sSMTPUsername: { required },
+      sSMTPUsername: 
+      { 
+        required,
+        maxLength: maxLength(100), 
+      },
       sSMTPPassword: {
         required,
         maxLength: maxLength(20),
         minLength: minLength(5)
       },
-      sSMTPUrl: { required },
-      sFTPUsername: { required },
+      sSMTPUrl: 
+      { 
+        required,
+        maxLength: maxLength(200),
+      },
+      sFTPUsername: 
+      { 
+        required,
+        maxLength: maxLength(100),  
+      },
       sFTPPassword: {
         required,
         maxLength: maxLength(20),
         minLength: minLength(5)
       },
-      sFTPUrl: { required },
+      sFTPUrl: 
+      { 
+        required,
+        maxLength: maxLength(200),
+      },
       sOutboundEmail: { required, email }
     }
   },
@@ -224,8 +263,8 @@ export default {
     sSMTPUsernameErrors() {
       const errors = [];
       if (!this.$v.facility.sSMTPUsername.$dirty) return errors;
-      // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
-      // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+      !this.$v.facility.sSMTPUsername.maxLength &&
+        errors.push("SMTP Username must be at most 100 characters long");
       !this.$v.facility.sSMTPUsername.required &&
         errors.push("SMTP Username is required.");
       return errors;
@@ -243,18 +282,18 @@ export default {
     },
     sSMTPUrlErrors() {
       const errors = [];
-
       if (!this.$v.facility.sSMTPUrl.$dirty) return errors;
-      // !this.$v.facility.sSMTPUrl.url && errors.push('Please provide a proper URl')
+      !this.$v.facility.sSMTPUrl.maxLength &&
+        errors.push("SMTP URL must be at most 200 characters long");
       !this.$v.facility.sSMTPUrl.required &&
-        errors.push("SMTP Url is required.");
+        errors.push("SMTP URL is required.");
       return errors;
     },
     sFTPUsernameErrors() {
       const errors = [];
       if (!this.$v.facility.sFTPUsername.$dirty) return errors;
-      // !this.$v.facility.sSMTPUsername.minLength && errors.push('SMTP Username must be at least 5 characters long')
-      // !this.$v.facility.sSMTPUsername.maxLength && errors.push('SMTP Username must be at most 20 characters long')
+      !this.$v.facility.sFTPUsername.maxLength &&
+        errors.push("FTP Username must be at most 100 characters long");
       !this.$v.facility.sFTPUsername.required &&
         errors.push("FTP Username is required.");
       return errors;
@@ -273,8 +312,9 @@ export default {
     sFTPUrlErrors() {
       const errors = [];
       if (!this.$v.facility.sFTPUrl.$dirty) return errors;
-      // !this.$v.facility.sFTPUrl.url && errors.push('Please provide a proper URl')
-      !this.$v.facility.sFTPUrl.required && errors.push("FTP Url is required.");
+      !this.$v.facility.sFTPUrl.maxLength &&
+        errors.push("FTP Url must be at most 200 characters long");
+      !this.$v.facility.sFTPUrl.required && errors.push("FTP URL is required.");
       return errors;
     },
     sOutboundEmailErrors() {
@@ -290,7 +330,7 @@ export default {
   name: "EditFacility",
   data() {
     return {
-      sGUID:"",
+      sGUID: "",
       facility: {
         nFacilityID: 0,
         sFacilityName: "",
@@ -303,66 +343,60 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm:Boolean
+        bRequestorEmailConfirm: Boolean
       }
     };
   },
   mounted() {
-    // API to get single facility
-    this.$http
-      .get(
-        "facility/GetFacility/" +
-          this.$route.params.id
-      )
-      .then(
-        response => {
-          // get body data
-          this.facility = JSON.parse(response.bodyText);
-        },
-        response => {
-          // error callback
-          this.gridData = response.body;
-        }
-      );
-      this.$http
-      .get(
-        "facility/GetFacilityGUID/" +
-          this.$route.params.id
-      )
-      .then(
-        response => {
-          // get body data
-          console.log(response.body);
-          this.sGUID = response.bodyText;
-        },
-        response => {
-          // error callback
-          console.log(response);
-        }
-      );
-
+    // API call to get Facility
+    this.$http.get("facility/GetFacility/" + this.$route.params.id).then(
+      response => {
+        // get body data
+        this.facility = JSON.parse(response.bodyText);
+      },
+      response => {
+        // error callback
+        this.gridData = response.body;
+      }
+    );
+    //Get GUID for Facility
+    this.$http.get("facility/GetFacilityGUID/" + this.$route.params.id).then(
+      response => {
+        this.sGUID = response.bodyText;
+      },
+      response => {
+        // error callback
+        console.log(response);
+      }
+    );
   },
   methods: {
-    copySMTPDetails(){
-      //alert("Copied");
-      // let textToCopy = this.$refs.sSMTPUsernameCopy.$el.querySelector('input');
-      // alert(textToCopy);
-      // textToCopy._value.select()
-      // document.execCommand("copy");
-      navigator.clipboard.writeText(this.facility.sSMTPUrl+"\n"+this.facility.sSMTPUsername+"\n"+this.facility.sSMTPPassword);
+    copySMTPDetails() {
+      navigator.clipboard.writeText(
+        this.facility.sSMTPUrl +
+          "\n" +
+          this.facility.sSMTPUsername +
+          "\n" +
+          this.facility.sSMTPPassword
+      );
     },
-    copyFTPDetails(){
-      navigator.clipboard.writeText(this.facility.sFTPUrl+"\n"+this.facility.sFTPUsername+"\n"+this.facility.sFTPPassword);
+    copyFTPDetails() {
+      navigator.clipboard.writeText(
+        this.facility.sFTPUrl +
+          "\n" +
+          this.facility.sFTPUsername +
+          "\n" +
+          this.facility.sFTPPassword
+      );
     },
-    copyGUID(){
+    copyGUID() {
       navigator.clipboard.writeText(this.sGUID);
     },
-    // API to post single facility (edit facility)
+    // API call to post facility (Edit Facility)
     onSubmit() {
       this.$http
         .post(
-          "facility/EditFacility/" +
-            this.facility.nFacilityID,
+          "facility/EditFacility/" + this.facility.nFacilityID,
           this.facility
         )
         .then(response => {
@@ -376,6 +410,13 @@ export default {
 </script>
 
 <style scoped>
+#fieldsMandate {
+  font-size: 14px;
+}
+#editFormDiv {
+  margin-top: -15px;
+  margin-left: -20px;
+}
 .submit {
   text-align: center;
 }
@@ -383,17 +424,15 @@ export default {
   margin: 10px;
 }
 * {
-  margin: 5px;
+  margin: 4px;
 }
 
 .editfacility-form {
-  /* width: 1200px; */
   margin: 10px auto;
   border: 1px solid #eee;
   padding: 20px;
   box-shadow: 0 2px 3px #ccc;
   font-size: 15px;
-  /* font-weight: 500; */
 }
 
 .input {
@@ -460,9 +499,9 @@ i {
 }
 label {
   margin-top: 4px;
-  margin-left:-1px
+  margin-left: -1px;
 }
-.row{
-margin:1px
+.row {
+  margin: 1px;
 }
 </style>

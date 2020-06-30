@@ -1,49 +1,46 @@
 <template>
   <div id="welcome">
-    <br>
-    <!-- <h1>Administration Module</h1> -->
-    <div>
-      <!-- <v-img src="./assets/MRO-Web.png" alt="MRO WEB" width="500" height="600"></v-img> -->
-      <!-- <img src="./assets/MRO-Web.png"> -->
-    </div>
+    <!-- For Future Use -->
+    <br />
+    <div></div>
   </div>
 </template>
 
 <style scoped>
-  #welcome {
-    width: 80%;
-    margin: auto;
-  }
+#welcome {
+  width: 80%;
+  margin: auto;
+}
 
-  h1 {
-    text-align: center;
-  }
+h1 {
+  text-align: center;
+}
 
-  p {
-    text-align: center;
-  }
+p {
+  text-align: center;
+}
 
-  .cta {
-    width: 300px;
-    margin: auto;
-    text-align: center;
-  }
+.cta {
+  width: 300px;
+  margin: auto;
+  text-align: center;
+}
 
-  .cta a {
-    margin: 10px;
-    text-decoration: none;
-    display: inline-block;
-    border: 1px solid #521751;
-    border-radius: 3px;
-    width: 100px;
-    padding: 10px;
-    box-sizing: border-box;
-    color: #521751;
-  }
+.cta a {
+  margin: 10px;
+  text-decoration: none;
+  display: inline-block;
+  border: 1px solid #521751;
+  border-radius: 3px;
+  width: 100px;
+  padding: 10px;
+  box-sizing: border-box;
+  color: #521751;
+}
 
-  .cta a:hover,
-  .cta a:active {
-    background-color: #521751;
-    color: white;
-  }
+.cta a:hover,
+.cta a:active {
+  background-color: #521751;
+  color: white;
+}
 </style>

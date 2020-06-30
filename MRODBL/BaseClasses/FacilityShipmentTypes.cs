@@ -1,19 +1,24 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    [Table("lnkFacilityShipmentTypes")]
+    [Dapper.Contrib.Extensions.Table("lnkFacilityShipmentTypes")]
 
     public class FacilityShipmentTypes
     {
-        [Key]
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityShipmentTypeID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nShipmentTypeID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityID { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Shipment Type Allowed")]
         public string sShipmentTypeName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        #endregion
     }
 }

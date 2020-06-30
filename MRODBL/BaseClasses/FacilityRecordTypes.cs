@@ -1,18 +1,24 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    [Table("lnkFacilityRecordTypes")]
+    [Dapper.Contrib.Extensions.Table("lnkFacilityRecordTypes")]
 
     public partial class FacilityRecordTypes
     {
-        [Key]
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityRecordTypeID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nRecordTypeID { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Record Type Allowed")]
         public string sRecordTypeName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        #endregion
     }
 }

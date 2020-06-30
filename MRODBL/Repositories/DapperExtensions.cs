@@ -1,29 +1,26 @@
 ﻿using Dapper;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace MRODBL.BaseClasses
 {
     public static class DapperExtensions
     {
-        public static T Insert<T>(this IDbConnection cnn, string tableName, dynamic param, string sIDFieldName, IDbTransaction trans)
+        #region Extension Methods Dapper
+        public static T Insert<T>(this IDbConnection cnn, string tableName, dynamic param, string sIDFieldName, IDbTransaction transaction)
         {
-            IEnumerable<T> result = SqlMapper.Query<T>(cnn, DynamicQuery.GetInsertQuery(tableName, param, sIDFieldName), param, trans);
-            trans.Commit();
+            IEnumerable<T> result = SqlMapper.Query<T>(cnn, DynamicQuery.GetInsertQuery(tableName, param, sIDFieldName), param, transaction);
+            transaction.Commit();
             return result.First();
         }
 
-        public static int Update(this IDbConnection cnn, string tableName, dynamic param, string sKeyName, IDbTransaction trans)
+        public static int Update(this IDbConnection cnn, string tableName, dynamic param, string sKeyName, IDbTransaction transaction)
         {
-            //UpdateHere
-            int a = SqlMapper.Execute(cnn, DynamicQuery.GetUpdateQuery(tableName, param, sKeyName), param, trans);
-            trans.Commit();
-            return a;
+            int count = SqlMapper.Execute(cnn, DynamicQuery.GetUpdateQuery(tableName, param, sKeyName), param, transaction);
+            transaction.Commit();
+            return count;
         }
+        #endregion
     }
 }

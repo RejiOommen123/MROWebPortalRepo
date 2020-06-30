@@ -1,17 +1,23 @@
 <template>
   <div id="demo">
-    <!-- Add Facility Button which will redirect to AddFacility Page -->
-        <v-row no-gutters>
-          <v-col cols="6" sm="2" md="6">
-            
-              <!-- <v-btn id="addfacility" color="primary" to="/AddFacility">Add Facility</v-btn> -->
-               <v-btn depressed small class="mx-2" fab dark color='rgb(0, 91, 168)' id="addfacility" to="/AddFacility">
-                  <v-icon>mdi-plus</v-icon> 
-              </v-btn><span id="AddFac" style="font-size:24px">Add Facility</span>
-            
-          </v-col>
-        </v-row>
-
+    <!-- Add Facility Button which will redirect to Add Facility Page -->
+    <v-row no-gutters>
+      <v-col cols="6" sm="2" md="6">
+        <v-btn
+          depressed
+          small
+          class="mx-2"
+          fab
+          dark
+          color="rgb(0, 91, 168)"
+          id="addfacility"
+          to="/AddFacility"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+        <span id="AddFac" style="font-size:24px">Add Facility</span>
+      </v-col>
+    </v-row>
     <!-- Vuetify Card with Facility List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
@@ -25,134 +31,102 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-
       <!-- Facility List DataTable  -->
-      <v-data-table :headers="headers" :items="gridData" :search="search" 
-      :footer-props="{
-    'items-per-page-options': [5,10]
-  }"
-  :items-per-page="5"
-      class="body-1">
-<template v-slot:item.nFacLocCount="{ item }">
-<v-tooltip top>
-            <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink"  v-on="on" id="facilitylocation" :to="'/Locations/'+item.facilities.nFacilityID" color='rgb(0, 91, 168)'>               
-               {{item.nFacLocCount}}
-                </router-link>            
-    
-                <!-- <v-btn :to="'/Locations/'+item.nFacilityID">{{item.nFacLocCount}}</v-btn> -->
-            <!-- <v-btn :to="'/Locations/'+item.nFacilityID" v-on="on" color='rgb(0, 91, 168)'>
-           {{item.nFacLocCount}}
-            </v-btn> -->
-
+      <v-data-table
+        :headers="headers"
+        :items="gridData"
+        :search="search"
+        :footer-props="{
+          'items-per-page-options': [5,10]
+        }"
+        :items-per-page="5"
+        class="body-1"
+      >
+      <!-- Facility Location Count Template -->
+        <template v-slot:item.nFacLocCount="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <router-link
+                class="mrorouterlink"
+                v-on="on"
+                id="facilitylocation"
+                :to="'/Locations/'+item.facilities.nFacilityID"
+                color="rgb(0, 91, 168)"
+              >{{item.nFacLocCount}}</router-link>
             </template>
             <span>Manage Locations</span>
           </v-tooltip>
-          </template>
-
-
-<template v-slot:item.Fields="{ item }">
-
+        </template>
+        <!-- Facility Patient Form Count Template -->
+        <template v-slot:item.Fields="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">             
-                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">assignment</v-icon>
-                <!-- <v-img src="https://lh3.googleusercontent.com/proxy/2OQpbPrMGARzRvE92n73NNqOQIOTQ1R8iGPY17bOkNc-Kis_cEthPSttMw4975yUnOafbw44sOUffD42Yn2x3yrVqmd6YoQbqZQvpHT2kTM" v-on="on" medium class="mr-2" width=30 height=29></v-img> -->
-
+              <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-2">assignment</v-icon>
               </router-link>
             </template>
             <span>Edit Form</span>
           </v-tooltip>
-
         </template>
-
-<template v-slot:item.bActiveStatus="{ item }">
-      <!-- <v-chip :color="getColor(item.bActiveStatus)">{{ getStatus(item.bActiveStatus) }}</v-chip> -->
-      <v-switch color='#1AA260' style="padding-left:40px" @click="deleteItem(item.facilities.nFacilityID,item.facilities.sFacilityName)" v-model="item.facilities.bActiveStatus"></v-switch>
-    </template>
-
-
-        <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
+        <!-- Facility Active Status Template -->
+        <template v-slot:item.bActiveStatus="{ item }">
+          <v-switch
+            color="#1AA260"
+            style="padding-left:40px"
+            @click="deleteItem(item.facilities.nFacilityID,item.facilities.sFacilityName)"
+            v-model="item.facilities.bActiveStatus"
+          ></v-switch>
+        </template>
+        <!-- Facility List Actions (Edit Facility, Facility Locations)  -->
         <template v-slot:item.actions="{ item }">
-
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.facilities.nFacilityID">             
-                <v-icon color='rgb(0, 91, 168)' v-on="on" medium class="mr-2">mdi-pencil</v-icon>
+              <router-link class="mrorouterlink" :to="'/EditFacility/'+item.facilities.nFacilityID">
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-2">mdi-pencil</v-icon>
               </router-link>
             </template>
             <span>Edit Facility</span>
           </v-tooltip>
-
-          <!-- <v-tooltip top>
-            <template v-slot:activator="{ on }">              
-                <v-icon v-on="on" medium @click="deleteItem(item.nFacilityID,item.sFacilityName)">mdi-delete</v-icon>            
-            </template>
-            <span>Delete Facility</span>
-          </v-tooltip> -->
-      
-           <v-tooltip top>
-            <template v-slot:activator="{ on }">   
-               <router-link class="mrorouterlink" id="facilitylocation" :to="'/Locations/'+item.facilities.nFacilityID">               
-                <v-icon v-on="on" medium >mdi-location_on</v-icon>   
-                </router-link>             
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <router-link
+                class="mrorouterlink"
+                id="facilitylocation"
+                :to="'/Locations/'+item.facilities.nFacilityID"
+              >
+                <v-icon v-on="on" medium>mdi-location_on</v-icon>
+              </router-link>
             </template>
             <span>Facility Locations</span>
           </v-tooltip>
-          
-          <!-- <v-tooltip top>
-            <template v-slot:activator="{ on }">       
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.nFacilityID">          
-                <v-icon v-on="on" medium >mdi-format-list-checks</v-icon> 
-              </router-link>            
-            </template>
-            <span>Manage Fields</span>
-          </v-tooltip>  -->
-
         </template>
-
       </v-data-table>
-       <!-- End Facility List DataTable  -->
-       
+      <!-- End Facility List DataTable  -->
     </v-card>
 
-    <!-- Dialog box for delete facility  -->
+    <!-- Dialog box for Toggle Active Status of Facility  -->
     <v-dialog v-model="dialog" max-width="360">
       <v-card>
-        <v-card-title class="headline">Are you sure you want to <br>change the active status?</v-card-title>
-
-        <!-- <v-card-text class="red--text">Clicking Agree will change Active Status to false.</v-card-text>
-        <v-card-text class="blue--text">Clicking Disagree will close the Modal</v-card-text> -->
+        <v-card-title class="headline">
+          Are you sure you want to
+          <br />change the active status?
+        </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
-
           <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-
           <v-btn color="red darken-1" text @click="deleteFacility(editedItem.nFacilityID)">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Dialog Alert for 0 Locations -->
-    <v-dialog
-      v-model="facilityAlert"
-      max-width="360"
-      width="350"
-    >
+    <v-dialog v-model="facilityAlert" max-width="360" width="350">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>
-          To Active Facility atleast 1 Location must be Present
-        </v-card-text>
+        <v-card-text>To Active Facility atleast 1 Location must be Present</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="facilityAlert = false"
-          >
-            Ok
-          </v-btn>
+          <v-btn color="green darken-1" text @click="facilityAlert = false">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -163,13 +137,8 @@
 export default {
   data() {
     return {
-      // facLocCount:null,
-      // rowsPerPageItems: [5,8,10],
-      // pagination: {
-      //     rowsPerPage: 8
-      // },
       dialog: false,
-      facilityAlert:false,
+      facilityAlert: false,
       search: "",
       headers: [
         {
@@ -177,81 +146,64 @@ export default {
           align: "start",
           value: "facilities.sFacilityName"
         },
-        { text: "Description", value: "facilities.sDescription" , width:'50%'},
-        { text: "Locations", value: "nFacLocCount" ,align:'center'},
-        { text: "Patient Form", value: "Fields" ,align:'center'},
-        { text: "Active", value: "bActiveStatus" ,align:'center'},
-        { text: "Edit", value: "actions", sortable: false ,align:'center'}
+        { text: "Description", value: "facilities.sDescription", width: "50%" },
+        { text: "Locations", value: "nFacLocCount", align: "center" },
+        { text: "Patient Form", value: "Fields", sortable: false, align: "center"},
+        { text: "Active", value: "bActiveStatus", align: "center" },
+        { text: "Edit", value: "actions", sortable: false, align: "center" }
       ],
       gridData: this.getGridData(),
-      //nFacLocCount:[],
       editedItem: {
-        nFacilityID:0,
-        sFacilityName: ''
-      },
+        nFacilityID: 0,
+        sFacilityName: ""
+      }
     };
   },
   methods: {
-    // API to Get all Facilities
+    // API Call to Get all Facilities
     getGridData() {
       this.$http.get("facility/GetFacility").then(
         response => {
-          // get body data
-          //this.nFacLocCount = JSON.parse(response.bodyText)["nFacLocCount"];
           this.gridData = JSON.parse(response.bodyText);
-          //this.gridData.push(this.nFacLocCount);
         },
         response => {
-          // error callback
+          // Error Callback
           this.gridData = response.body;
         }
       );
     },
-    //Method to pass nROIFacilityID & sFacilityName to dialog box
-     deleteItem(nFacilityID,sFacilityName) {
-        this.editedItem.nFacilityID=nFacilityID;
-        this.editedItem.sFacilityName=sFacilityName;
-        this.dialog = true;
+    //Method to pass nFacilityID & sFacilityName to dialog box
+    deleteItem(nFacilityID, sFacilityName) {
+      this.editedItem.nFacilityID = nFacilityID;
+      this.editedItem.sFacilityName = sFacilityName;
+      this.dialog = true;
     },
-    //On Agree in dialog box API to delete Facility
+    //On Agree in dialog box API Call to Toggle Active Status of Facility
     deleteFacility(id) {
       this.dialog = false;
-      this.$http
-        .post("facility/DeleteFacility/", id)
-        .then(response => {
-          if (response.ok == true) {
-            if(response.body=="Cannot Activate Facility, Location Count = 0"){
-              this.facilityAlert=true;
-          }
-          else
-          {
+      this.$http.post("facility/DeleteFacility/", id).then(response => {
+        if (response.ok == true) {
+          if (response.body == "Cannot Activate Facility, Location Count = 0") {
+            this.facilityAlert = true;
+          } else {
             this.$router.go();
           }
-            
-          }
-        });
+        }
+      });
     },
-    getStatus (status) {
-        if(status) return 'Active'
-        else return 'Inactive'
-      },
-      getColor (status) {
-        if(status) return 'green'
-        else return 'red'
-      }
   }
 };
 </script>
 
 <style scoped>
-.mrorouterlink{
+.mrorouterlink {
   text-decoration: none;
 }
-#addfacility{
-  margin-bottom:20px ;
+#addfacility {
+  margin-bottom: 20px;
 }
-#facilitylocation{
-  margin-right: 10px;  
+#facilitylocation {
+  margin-right: 10px;
 }
 button {
   margin: 10px;
@@ -263,13 +215,13 @@ button {
 #search {
   padding-bottom: 30px;
 }
-#AddFac{
-  font-size:24px
+#AddFac {
+  font-size: 24px;
 }
-#addfacility{
-  margin-top:15px
+#addfacility {
+  margin-top: 15px;
 }
-#addUnderline{
-  text-decoration:underline
+#addUnderline {
+  text-decoration: underline;
 }
 </style>

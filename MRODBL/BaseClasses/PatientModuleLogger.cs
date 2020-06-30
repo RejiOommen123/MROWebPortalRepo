@@ -1,17 +1,21 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
     public class PatientModuleLogger
     {
-        [Key]
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nPMLID { get; set; }
-        public int sUserIPAddress { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters IP Address Allowed")]
+        public string sUserIPAddress { get; set; }
+        [MaxLength]
         public string sFacilityGUID { get; set; }
+        [StringLength(75, ErrorMessage = "Maximum 75 characters Wizard Name Allowed")]
         public string sWizardName { get; set; }
         public DateTime dtLogTime { get; set; }
+        #endregion
     }
 }

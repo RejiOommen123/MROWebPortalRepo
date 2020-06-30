@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
@@ -17,9 +14,8 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class RequestorsController : ControllerBase
     {
-        private readonly DBConnectionInfo _info;
-
         #region Requestors Constructor
+        private readonly DBConnectionInfo _info;
         public RequestorsController(DBConnectionInfo info)
         {
             _info = info;
@@ -29,7 +25,6 @@ namespace MROWebApi.Controllers
         #region Requestor Section
 
         #region Get Requestor Data
-        // GET: api/Requestors
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]/{requestorID}")]
@@ -49,9 +44,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Add Requestor Data
-        // POST: api/Requestors
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -59,8 +51,8 @@ namespace MROWebApi.Controllers
         {
             try
             {
-                #region Data Addition !UI
-                //requestor.dtLastUpdate = DateTime.Now;
+                #region Data Addition ! From UI
+                requestor.dtLastUpdate = DateTime.Now;
                 #endregion
 
                 RequestorsRepository requestorsFac = new RequestorsRepository(_info);
@@ -76,9 +68,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit Requestor Data
-        // PUT: api/Requestor/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("EditRequestor/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -101,7 +90,6 @@ namespace MROWebApi.Controllers
         #region TempRequestor Section
 
         #region Get TempRequestor Data
-        // GET: api/Requestors
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]/{tempRequestorID}")]
@@ -121,9 +109,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Add TempRequestor Data
-        // POST: api/Requestors
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]

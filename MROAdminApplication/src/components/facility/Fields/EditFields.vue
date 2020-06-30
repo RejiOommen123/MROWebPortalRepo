@@ -4,7 +4,7 @@
       <v-col cols="12">
         <form @submit.prevent="onSubmit">
           <v-card>
-            <v-card-title style="padding-top:0px">
+            <v-card-title id="cardTitle">
               Edit Fields For Facility - {{facilityName}}
               <v-spacer></v-spacer>
               <v-text-field
@@ -15,27 +15,30 @@
                 hide-details
               ></v-text-field>
             </v-card-title>
-
             <!-- Facility List DataTable  -->
             <v-data-table
               :headers="headers"
               :items="gridData"
               :search="search"
               :footer-props="{
-    'items-per-page-options': [5,10,20]
-  }"
+                'items-per-page-options': [5,10,20]
+              }"
               :items-per-page="10"
             >
-            <template v-slot:item.nFieldOrder="{ item }">
-
-              <v-text-field
-                type="number" min="1"
-                v-model.number="item.nFieldOrder"
-                v-show="item.nFieldOrder!=null" style="width: 4em"
-              ></v-text-field>
-              <label v-if="item.nFieldOrder==null" style="font-size:'18px'"><strong>-</strong></label>
+              <!-- Template for Field Order -->
+              <template v-slot:item.nFieldOrder="{ item }">
+                <v-text-field
+                  type="number"
+                  min="1"
+                  v-model.number="item.nFieldOrder"
+                  v-show="item.nFieldOrder!=null"
+                  style="width: 4em"
+                ></v-text-field>
+                <label v-if="item.nFieldOrder==null" style="font-size:'18px'">
+                  <strong>-</strong>
+                </label>
               </template>
-              <!-- Facility List Actions (Edit,Delete,Location and ManageField)  -->
+              <!-- Template for Field Map Checkboxes  -->
               <template v-slot:item.actions="{ item }">
                 <input
                   type="checkbox"
@@ -78,7 +81,7 @@ export default {
   },
   mounted() {},
   methods: {
-    // API to Get all Facilities
+    // API call to Get all Fields Maps
     getGridData() {
       this.$http
         .get("facilityfieldmaps/GetFieldsByFacilityID/" + this.$route.params.id)
@@ -87,7 +90,6 @@ export default {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["fields"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
-            //console.log(this.gridData + "    " + this.faciName);
           },
           response => {
             // error callback
@@ -95,6 +97,7 @@ export default {
           }
         );
     },
+    //toggle Check Function
     toggleCheck: function(id) {
       for (var i = 0; i < this.gridData.length; i++) {
         if (this.gridData[i].nFacilityFieldMapID == id) {
@@ -120,10 +123,12 @@ export default {
 </script>
 
 <style scoped>
+#cardTitle {
+  padding-top: 0px;
+}
 * {
   margin: 5px;
 }
-
 #demo {
   margin: 0 125px;
 }

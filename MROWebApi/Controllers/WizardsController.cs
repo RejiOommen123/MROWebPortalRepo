@@ -5,21 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
-using WebSupergoo.ABCpdf11.Elements;
 using WebSupergoo.ABCpdf11;
-using WebSupergoo.ABCpdf11.Objects;
 using System.Net;
 using System.Text;
 using MailKit.Net.Smtp;
 using MimeKit;
+using System.Text.RegularExpressions;
 
 namespace MROWebApi.Controllers
 {
@@ -28,9 +25,8 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class WizardsController : ControllerBase
     {
-        private readonly DBConnectionInfo _info;
-
         #region Wizards Constructor
+        private readonly DBConnectionInfo _info;
         public WizardsController(DBConnectionInfo info)
         {
             _info = info;
@@ -48,14 +44,10 @@ namespace MROWebApi.Controllers
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID);
                 return Wizard_Config;
-
-                //var oWizardConfigFields = Function(wizard_config.ofield);
-                //return OptimizeObject(unoptimized_wizard_config);
             }
             catch (Exception ex)
             {
-                //throw ex;
-                return ex;
+                return Content(ex.Message);
             }
         }
         #endregion
@@ -74,13 +66,12 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                //throw ex;
-                return ex;
+                return Content(ex.Message);
             }
         }
         #endregion
 
-        #region Logo & Bg for Location
+        #region Logo & BG for Location using Location ID
         [HttpGet("GetLogoAndBackgroundImageforLocation/{nLocationID}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -94,23 +85,12 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                return ex;
+                return Content(ex.Message);
             }
         }
         #endregion
 
-        #region Send Only Required Values
-        //private object OptimizeObject(object unoptimized_wizard_config) {
-
-        //    object wizard_config = null;
-
-        //    //var oFields = unoptimized_wizard_config.
-
-        //    return wizard_config;
-        //}
-        #endregion
-
-        #region Commented for XML Part
+        #region Generate XML
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -141,15 +121,11 @@ namespace MROWebApi.Controllers
                     ConformanceLevel = ConformanceLevel.Document
                 };
                 StringBuilder xmlString = new StringBuilder();
-                //Path.Combine(Directory.GetCurrentDirectory(), requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml")
                 using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
                 writer.WriteStartElement("request");
                 writer.WriteStartElement("facility");
-                //For facility Code,Name,ID
-                //writer.WriteElementString("code", facility.sCode);
                 writer.WriteElementString("name", facility.sFacilityName);
                 writer.WriteElementString("ID", facility.nFacilityID.ToString());
-
                 writer.WriteEndElement();
                 writer.WriteStartElement("locations");
                 writer.WriteStartElement("item");
@@ -182,10 +158,8 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("phone_number", requestors.sPhoneNo);
                 writer.WriteEndElement();
 
-
-
-                //Requestor
-                #region Requestor
+                //Requestor - Part
+                #region Requestor Part
                 writer.WriteStartElement("requestor");
                 writer.WriteElementString("name", sRelativeName);
                 //Requestor Last Name
@@ -203,12 +177,10 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("zipcode", requestors.sAddZipCode);
                 writer.WriteEndElement();
                 writer.WriteElementString("phone_number", requestors.sPhoneNo);
-                //Fax Number Are WE Taking ?
                 //writer.WriteElementString("fax_number", requestors.sPhoneNo);
                 writer.WriteEndElement();
-                //requestor ends here
+                //Requestor Part Ends Here
                 #endregion
-
 
                 writer.WriteStartElement("requested_information");
                 writer.WriteStartElement("dates_of_service");
@@ -216,7 +188,6 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("end", requestors.dtRecordRangeEnd.Value.ToShortDateString());
                 writer.WriteEndElement();
                 writer.WriteStartElement("types");
-                //Add Items Here
                 foreach (string singleRecordType in requestors.sSelectedRecordTypes)
                 {
                     writer.WriteStartElement("item");
@@ -227,20 +198,20 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.WriteEndElement();
 
-                //PDF Here
-                //Get PDF & Show in Base 64 Encoding
+                //PDF in Base 64 Encoding
                 writer.WriteElementString("pdf", requestors.sPDF);
                 writer.WriteEndElement();
                 writer.Flush();
 
-                FtpWebRequest request =
-                            (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
 
+                #region Request Params
                 request.Method = WebRequestMethods.Ftp.UploadFile;
                 request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
                 request.UsePassive = true;
                 request.UseBinary = true;
                 request.KeepAlive = false;
+                #endregion
 
                 byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
 
@@ -249,7 +220,7 @@ namespace MROWebApi.Controllers
                 reqStream.Write(buffer, 0, buffer.Length);
                 reqStream.Close();
 
-                //Send Email
+                //Send Email to Patient
                 if (await SendEmail(requestors, signedPDF, _info))
                     return Ok(xmlString.ToString());
                 else
@@ -267,8 +238,8 @@ namespace MROWebApi.Controllers
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
-
-            if (dbFacility.bRequestorEmailConfirm) //Check if Facility is Allowed to Send Mail
+            //Check if Facility is Allowed to Send Mail
+            if (dbFacility.bRequestorEmailConfirm) 
             {
                 //From 
                 MimeMessage message = new MimeMessage();
@@ -287,18 +258,15 @@ namespace MROWebApi.Controllers
                 bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
-                //client.Connect("smtp.outlook.com", 25, false);
-                //get Port number
-                //Make ssl true
+                //Get Port number
+                //Make SSL true
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
-                //client.AuthenticationMechanisms.Remove("XOAUTH2"); // Must be removed for Gmail SMTP
                 try
                 {
                     client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    //Console.Write(e);
                     return false;
                 }
                 client.Send(message);
@@ -308,153 +276,14 @@ namespace MROWebApi.Controllers
             }
             return false;
         }
-
-
-        //private static void StoreXMLFTP(Requestors requestors, StringBuilder xmlString)
-        //{
-        //    FtpWebRequest request =
-        //                (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
-
-        //    request.Method = WebRequestMethods.Ftp.UploadFile;
-        //    request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
-        //    request.UsePassive = true;
-        //    request.UseBinary = true;
-        //    request.KeepAlive = false;
-
-        //    //Load the file
-        //    //FileStream stream = System.IO.File.OpenRead(xmlString.ToString());
-        //    byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
-        //    //byte[] buffer = new byte[stream.Length];
-
-        //    //stream.Read(buffer, 0, buffer.Length);
-        //    //stream.Close();
-
-        //    //Upload file
-        //    Stream reqStream = request.GetRequestStream();
-        //    reqStream.Write(buffer, 0, buffer.Length);
-        //    reqStream.Close();
-        //}
-        #endregion
-
-        #region Get Signed PDF
-        private async Task<byte[]> GetSignedPDF(Requestors requestor)
-        {
-            //string sAppRoot = GetApplicationRoot();
-            Dictionary<string, string> allFields = new Dictionary<string, string>();
-            //allFields.Add("MROAreYouPatient", requestor.bAreYouPatient.ToString());
-            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
-            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
-            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
-            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
-            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
-            allFields.Add("MROPEmailId", requestor.sPatientEmailId);
-            //allFields.Add("MROConfirmReport", requestor.bConfirmReport.ToString());
-            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
-            allFields.Add("MROAddCity", requestor.sAddCity);
-            allFields.Add("MROAddState", requestor.sAddState);
-            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
-            //allFields.Add("MROTFDateRange", requestor.dtRecordRangeStart);
-
-            //Record Type
-            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
-            {
-                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
-            }
-
-            //Primary Reason
-            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
-            {
-                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
-            }
-            //Sensitive Info
-            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
-            {
-                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
-            }
-            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
-
-
-
-
-            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
-
-            //allFields.Add("MROAuthExpireDateAfterNMonths", requestor.sPatientFirstName);
-            //allFields.Add("MROAuthExpireDateSpecificDate", requestor.sPatientFirstName);
-            //allFields.Add("MROAuthExpireDateEventOccurs", requestor.sPatientFirstName);
-            //allFields.Add("MRORequestDeadline", requestor.sPatientFirstName);
-            //allFields.Add("MRORequestDeadlineDate", requestor.sPatientFirstName);
-            //allFields.Add("MROPatientAdditionalDetails", requestor.sPatientFirstName);
-            //allFields.Add("MRODLVerification", requestor.sPatientFirstName);
-            //allFields.Add("MROOtherGovID", requestor.sPatientFirstName);
-            //allFields.Add("MROCameraUpload", requestor.sPatientFirstName);
-            //allFields.Add("MROPDFView", requestor.sPatientFirstName);
-            //allFields.Add("MRORequestReceived", requestor.sPatientFirstName);
-            //allFields.Add("MROFeedbackRating", requestor.sPatientFirstName);
-            //allFields.Add("MROFeedbackComment", requestor.sPatientFirstName);
-            //allFields.Add("MROThankyou", requestor.sPatientFirstName);
-            if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
-                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
-            if (!string.IsNullOrEmpty(requestor.sSTEmailId))
-                allFields.Add("MROSTEmailId", requestor.sSTEmailId);
-            if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
-                allFields.Add("MROSTConfirmEmailId", requestor.sSTConfirmEmailId);
-            if (!string.IsNullOrEmpty(requestor.sSTMailCompAdd))
-                allFields.Add("MROSTMailCompAdd", requestor.sSTMailCompAdd);
-            if (requestor.dtPickUp != null)
-                allFields.Add("MROSTPike", requestor.dtPickUp.Value.ToShortDateString());
-            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
-            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocument().ReplaceFieldKeywordsWithValueWOStamp(pdfByteArray, allFields, out string sReplaceFieldsList);
-
-            allFields.Clear();
-
-            Doc theDoc = new Doc();
-
-            theDoc.Read(byteArrayToReturn);
-            string removeDataTag = requestor.sSignatureData.Replace("data:image/png;base64,", string.Empty);
-            byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
-            Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
-
-            //string image1 = @sAppRoot + @"\Whitebg.png";
-            MROHelperRepository helperRepo = new MROHelperRepository(_info);
-            MROHelper helper = await helperRepo.Select(1);
-            helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
-            byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
-
-
-            System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
-            Graphics gra = Graphics.FromImage(canvas);
-            Bitmap smallImg = new Bitmap(image2);
-            gra.DrawImage(smallImg, new Point(0, 0));
-
-
-            var mssignaturewithbg = new MemoryStream();
-            canvas.Save(mssignaturewithbg, canvas.RawFormat);
-            mssignaturewithbg.ToArray();
-
-
-            XImage theImg = new XImage();
-            theImg.SetStream(mssignaturewithbg);
-            theDoc.Rect.String = theImg.Selection.String;
-            theDoc.Rect.Magnify(0.15, 0.2);
-            theDoc.Rect.Position(theDoc.Form["Signature"].Rect.Left, theDoc.Form["Signature"].Rect.Bottom);
-            theDoc.AddImageObject(theImg, false);
-            theImg.Clear();
-
-            theDoc.Form.Stamp();
-
-            byte[] pdfBytes = theDoc.GetData();
-            return pdfBytes;
-        }
         #endregion
 
         #region Email Verification
         public int GenerateRandomNo()
         {
             int _min = 1000;
-            int _max = 10000; //set to 10000 to get 9999 as a possible value
+            //10,000 Added for 9999 to be a part of Generated random Number
+            int _max = 10000;
             Random _rdm = new Random();
             return _rdm.Next(_min, _max);
         }
@@ -466,7 +295,7 @@ namespace MROWebApi.Controllers
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
 
-            if (dbFacility.bRequestorEmailConfirm) //Check if Facility is Allowed to Send Mail
+            if (dbFacility.bRequestorEmailConfirm)
             {
                 var sOTP = GenerateRandomNo().ToString();
                 //From 
@@ -483,21 +312,17 @@ namespace MROWebApi.Controllers
                 BodyBuilder bodyBuilder = new BodyBuilder();
                 string bodyText = "<h1>Hello " + requestor.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
                 bodyBuilder.HtmlBody = bodyText;
-                //bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
-                //client.Connect("smtp.outlook.com", 25, false);
-                //get Port number
-                //Make ssl true
+                //GET Port number
+                //Make SSL true
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
-                //client.AuthenticationMechanisms.Remove("XOAUTH2"); // Must be removed for Gmail SMTP
                 try
                 {
                     client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
                 }
                 catch (Exception e)
                 {
-                    //Console.Write(e);
                     return Content(e.Message);
                 }
                 client.Send(message);
@@ -506,9 +331,190 @@ namespace MROWebApi.Controllers
                 return Ok(sOTP);
             }
             return "false";
-
         }
         #endregion
 
+        #region Generate PDF
+        public static string GetApplicationRoot()
+        {
+            var exePath = Path.GetDirectoryName(System.Reflection
+                              .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GeneratePDF(Requestors requestor)
+        {
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(requestor.sSignatureData))
+                {
+                    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
+                    return File(pdfBytes, "application/pdf");
+                }
+                else
+                {
+                    byte[] pdfBytes = await GetSignedPDF(requestor);
+                    return File(pdfBytes, "application/pdf");
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+
+        private async Task<byte[]> GetSignedPDF(Requestors requestor)
+        {
+            Dictionary<string, string> allFields = new Dictionary<string, string>();
+            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
+            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
+            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
+            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
+            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
+            allFields.Add("MROPEmailId", requestor.sPatientEmailId);
+            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
+            allFields.Add("MROAddCity", requestor.sAddCity);
+            allFields.Add("MROAddState", requestor.sAddState);
+            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
+
+            //Record Types
+            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+
+            //Primary Reasons
+            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
+            }
+            //Sensitive Info
+            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
+            {
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
+            }
+            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
+
+            //Release To
+            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
+
+            if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
+                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
+            if (!string.IsNullOrEmpty(requestor.sSTEmailId))
+                allFields.Add("MROSTEmailId", requestor.sSTEmailId);
+            if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
+                allFields.Add("MROSTConfirmEmailId", requestor.sSTConfirmEmailId);
+            if (!string.IsNullOrEmpty(requestor.sSTMailCompAdd))
+                allFields.Add("MROSTMailCompAdd", requestor.sSTMailCompAdd);
+            if (requestor.dtPickUp != null)
+                allFields.Add("MROSTPike", requestor.dtPickUp.Value.ToShortDateString());
+
+            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
+            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValueWOStamp(pdfByteArray, allFields, out string sReplaceFieldsList);
+
+            allFields.Clear();
+
+            Doc theDoc = new Doc();
+
+            theDoc.Read(byteArrayToReturn);
+            string removeDataTag = requestor.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+            byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+            Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+
+            MROHelperRepository helperRepo = new MROHelperRepository(_info);
+            MROHelper helper = await helperRepo.Select(1);
+            helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+            byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+
+            System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
+            Graphics gra = Graphics.FromImage(canvas);
+            Bitmap smallImg = new Bitmap(image2);
+            gra.DrawImage(smallImg, new Point(0, 0));
+
+
+            var mssignaturewithbg = new MemoryStream();
+            canvas.Save(mssignaturewithbg, canvas.RawFormat);
+            mssignaturewithbg.ToArray();
+
+
+            XImage theImg = new XImage();
+            theImg.SetStream(mssignaturewithbg);
+            theDoc.Rect.String = theImg.Selection.String;
+            theDoc.Rect.Magnify(0.15, 0.2);
+            theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
+            theDoc.AddImageObject(theImg, false);
+            theImg.Clear();
+
+            theDoc.Form.Stamp();
+
+            byte[] pdfBytes = theDoc.GetData();
+            return pdfBytes;
+        }
+        private async static Task<byte[]> GetFilledPDF(Requestors requestor, DBConnectionInfo _info)
+        {
+            Dictionary<string, string> allFields = new Dictionary<string, string>();
+            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
+            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
+            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
+            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
+            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
+            allFields.Add("MROPEmailId", requestor.sPatientEmailId);
+            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
+            allFields.Add("MROAddCity", requestor.sAddCity);
+            allFields.Add("MROAddState", requestor.sAddState);
+            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
+
+            //Record Types
+            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
+            }
+
+            //Primary Reasons
+            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
+            {
+                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
+            }
+            //Sensitive Info
+            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
+            {
+                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
+            }
+            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
+
+            //Release To
+            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
+            if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
+                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
+            if (!string.IsNullOrEmpty(requestor.sSTEmailId))
+                allFields.Add("MROSTEmailId", requestor.sSTEmailId);
+            if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
+                allFields.Add("MROSTConfirmEmailId", requestor.sSTConfirmEmailId);
+            if (!string.IsNullOrEmpty(requestor.sSTMailCompAdd))
+                allFields.Add("MROSTMailCompAdd", requestor.sSTMailCompAdd);
+            if (requestor.dtPickUp != null)
+                allFields.Add("MROSTPike", requestor.dtPickUp.Value.ToShortDateString());
+
+            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
+            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, out string sReplaceFieldsList);
+
+            allFields.Clear();
+            return byteArrayToReturn;
+        }
+        #endregion
     }
 }

@@ -1,16 +1,23 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
     public partial class Fields
     {
-        [Key]
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFieldID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nWizardID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [MaxLength]
         public string sFieldName { get; set; }
+        [MaxLength]
         public string sNormalizedFieldName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        #endregion
     }
 }

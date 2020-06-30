@@ -1,29 +1,28 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import VuexPersist from 'vuex-persist'
-Vue.use(Vuex)
+//Imports
+import Vue from 'vue';
+import Vuex from 'vuex';
+import VuexPersist from 'vuex-persist';
 
- const vuexPersist = new VuexPersist({
-     key: 'MroAuth',
-     storage: window.localStorage
- });
+//Using Imports
+Vue.use(Vuex);
+
+const vuexPersist = new VuexPersist({
+    key: 'MroAuth',
+    storage: window.localStorage
+});
 export default new Vuex.Store({
-  state: {
-        IsSignIn: false,
-        pageheader:'malay'
-  },
-  mutations: {
-      mutateIsSignIn(state, payload) {
-          state.IsSignIn = payload;
-      },
-      mutatepageHeader(state, payload) {
-        state.pageheader = payload;
-    }
-  },
-  actions: {
+    state: {
+        pageheader: ''
+    },
+    mutations: {
+        mutatepageHeader(state, payload) {
+            state.pageheader = payload;
+        }
+    },
+    actions: {
 
-  },
-  getters: {
+    },
+    getters: {
 
     },
     plugins: [vuexPersist.plugin]

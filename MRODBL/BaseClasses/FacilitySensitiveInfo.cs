@@ -1,18 +1,24 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    [Table("lnkFacilitySensitiveInfo")]
+    [Dapper.Contrib.Extensions.Table("lnkFacilitySensitiveInfo")]
 
     public partial class FacilitySensitiveInfo
     {
-        [Key]
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilitySensitiveInfoID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nSensitiveInfoID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityID { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Sensitive Info Allowed")]
         public string sSensitiveInfoName { get; set; }
         public DateTime dtLastUpdate { get; set; }
+        #endregion
     }
 }

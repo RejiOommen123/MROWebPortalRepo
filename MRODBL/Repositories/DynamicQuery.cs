@@ -9,7 +9,7 @@ using System.Text;
 namespace MRODBL.BaseClasses
 {
     /// <summary>
-    /// Dynamic query class.
+    /// Dynamic Query Class.
     /// </summary>
     public sealed class DynamicQuery
     {
@@ -25,7 +25,6 @@ namespace MRODBL.BaseClasses
         {
             PropertyInfo[] props = item.GetType().GetProperties();
             string[] columns = props.Select(p => p.Name).Where(s => s != "ID").ToArray();
-
             return string.Format("INSERT INTO {0} ({1}) OUTPUT inserted.ID VALUES (@{2})",
                                  tableName,
                                  string.Join(",", columns),
@@ -44,9 +43,7 @@ namespace MRODBL.BaseClasses
         {
             PropertyInfo[] props = item.GetType().GetProperties();
             string[] columns = props.Select(p => p.Name).ToArray();
-
             var parameters = columns.Select(name => name + "=@" + name).ToList();
-            //Add Item for ID
             return string.Format("UPDATE {0} SET {1} WHERE ID=@ID", tableName, string.Join(",", parameters));
         }
 
@@ -98,8 +95,7 @@ namespace MRODBL.BaseClasses
         /// <param name="body">The body.</param>
         /// <param name="linkingType">Type of the linking.</param>
         /// <param name="queryProperties">The query properties.</param>
-        private static void WalkTree(BinaryExpression body, ExpressionType linkingType,
-                                     ref List<QueryParameter> queryProperties)
+        private static void WalkTree(BinaryExpression body, ExpressionType linkingType,ref List<QueryParameter> queryProperties)
         {
             if (body.NodeType != ExpressionType.AndAlso && body.NodeType != ExpressionType.OrElse)
             {
@@ -168,7 +164,6 @@ namespace MRODBL.BaseClasses
             }
         }
 
-
         /// <summary>
         /// Gets the insert query.
         /// </summary>
@@ -182,7 +177,6 @@ namespace MRODBL.BaseClasses
         {
             PropertyInfo[] props = item.GetType().GetProperties();
             string[] columns = props.Select(p => p.Name).Where(s => s != sKeyName).ToArray();
-
             string a =  string.Format("INSERT INTO {0} ({1}) OUTPUT inserted." + sKeyName + " VALUES (@{2})",
                                  tableName,
                                  string.Join(",", columns),
@@ -203,9 +197,7 @@ namespace MRODBL.BaseClasses
         {
             PropertyInfo[] props = item.GetType().GetProperties();
             string[] columns = props.Select(p => p.Name).ToArray();
-
             var parameters = columns.Select(name => name + "=@" + name).ToList();
-            //nROIFacilityID=@nROIFacilityID
             string sKeyToRemove = sKeyName+"=@"+sKeyName;
             parameters.Remove(sKeyToRemove);
             string a  = string.Format("UPDATE {0} SET {1} WHERE " + sKeyName + "=@" + sKeyName, tableName, string.Join(",", parameters));

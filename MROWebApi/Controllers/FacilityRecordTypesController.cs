@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CodeFirstMigration.Context;
@@ -17,17 +16,16 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class FacilityRecordTypesController : ControllerBase
     {
+        #region Facility Record Type Constructor
         private readonly ApplicationDbContext _context;
 
-        #region Facility Constructor
         public FacilityRecordTypesController(ApplicationDbContext context)
         {
             _context = context;
         }
         #endregion
 
-        #region Get Facility Primary Reasons
-        // GET: api/FacilityRecordTypes
+        #region Get Record Types 
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
@@ -36,7 +34,6 @@ namespace MROWebApi.Controllers
             return await _context.lnkROIFacilityRecordTypes.ToListAsync();
         }
 
-        // GET: api/Facility/5
         [HttpGet("GetFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]

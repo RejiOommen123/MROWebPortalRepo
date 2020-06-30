@@ -4,14 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CodeFirstMigration.Context;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
-using MROWebApi.Context;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MROWebApi.Controllers
@@ -21,19 +18,15 @@ namespace MROWebApi.Controllers
     [EnableCors("AllowOrigin")]
     public class FacilityLocationsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        #region Facility Locations Constructor
         private readonly DBConnectionInfo _info;
-
-        #region Facility Location Constructor
-        public FacilityLocationsController(ApplicationDbContext context, DBConnectionInfo info)
+        public FacilityLocationsController(DBConnectionInfo info)
         {
-            _context = context;
             _info = info;
         }
         #endregion
 
-        #region Get Facility Location
-        // GET: api/Facility Location
+        #region Get Facility Location/Locations
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]/{id}")]
@@ -44,7 +37,6 @@ namespace MROWebApi.Controllers
             return await facilityLocationsRepository.Select(nId);
         }
 
-        // GET: api/FacilityLocation/5
         [HttpGet("GetFacilityLocation/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -57,7 +49,6 @@ namespace MROWebApi.Controllers
             return facilityLocations;
         }
 
-
         [HttpGet("GetFacilityLocationByFacilityID/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -66,30 +57,7 @@ namespace MROWebApi.Controllers
             try
             {
                 bool result = int.TryParse(id, out int facilityID);
-                //var locations = (from fln in _context.lnkROIFacilityLocations
-                //                 join f in _context.tblROIFacilities
-                //               on fln.nROIFacilityID.ToString() equals f.nROIFacilityID.ToString()
-                //                 where fln.nROIFacilityID == facilityID
-                //                 select new
-                //                 {
-                //                     LocationID = fln.nLocationID,
-                //                     LocationCode = fln.sLocationCode,
-                //                     LocationName = fln.sLocationName,
-                //                     LocationAddress = fln.sLocationAddress,
-                //                     PhoneNo = fln.sPhoneNo,
-                //                     FaxNo = fln.sFaxNo,
-                //                     FacilityId = fln.nROIFacilityID,
-                //                     FacilityName = f.sFacilityName,
-                //                     FacilityDescription = f.sDescription,
-                //                 }).ToList();
-                //lnkROIFacilityLocations falo = _context.lnkROIFacilityLocations.Where(c => c.nROIFacilityID == facilityID).FirstOrDefault();
-                //var faloName = falo.nROIFacility.sFacilityName;
-                //return Ok(new { locations, faloName });
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                //IEnumerable<dynamic> locations = await facilityLocationsRepository.InnerJoin("nFacilityID", "nFacilityID", "tblFacilityLocations", "tblFacilities");
-                //locations = locations.Where(c => c.nFacilityID == facilityID);
-
-
                 IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(facilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
                 Facilities facility = await facilityRepo.Select(facilityID);
@@ -106,9 +74,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Add Facility Location
-        // POST: api/FacilityLocation
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -116,18 +81,17 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                
                 try
                 {
                     FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info); 
                     IEnumerable<FacilityLocations> dbLocations = await facilityLocationsRepository.SelectWhere("sLocationName", facilityLocation.sLocationName);
                     if (dbLocations.Count() != 0)
                     {
-                        //exit
+                        //Exit
                         return BadRequest("Cannot Add Location with Same Name");
                     }
-                    //Data which not present in data coming from UI
-                    //Added Lin efor Checkout
+
+                    #region Data ! From UI
                     int? addedLocationID = null;
                     bool checkPDF = false;
                     string sValidationTextGlobal = "";
@@ -141,15 +105,16 @@ namespace MROWebApi.Controllers
                     finalString = "MRO" + finalString;
                     facilityLocation.sNormalizedLocationName = finalString;
                     facilityLocation.nAuthExpirationMonths = 6;
+                    #endregion
+
                     if (facilityLocation.sAuthTemplate != "")
                     {
                         facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
                         byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
                         ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
                         IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                        LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
-                        checkPDF = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
-
+                        LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
+                        checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
                     }
                     addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
                     if (addedLocationID != null)
@@ -162,18 +127,16 @@ namespace MROWebApi.Controllers
                         Facilities facility = new Facilities();
                         facility = await fRepo.Select(facilityLocation.nFacilityID);
                         IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", facilityLocation.nFacilityID);
-                        //facility.nFacLocCount = locationList.Count();
-                        fRepo.Update(facility);
                         if (locationList.Count() == 1)
                         {
-                            //Making BActive to True
+                            //Making facility active, if the location added was the first one
                             FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
                             await facilitiesRepository.ToggleSoftDelete("bActiveStatus", facilityLocation.nFacilityID);
                         }
-                        return Ok("Success");
+                        return Ok(sValidationTextGlobal);
                     }
                     else
-                        return NoContent();
+                        return Content("Location Cannot be Added");
                 }
                 catch (Exception ex)
                 {
@@ -190,9 +153,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit Facility Location
-        // PUT: api/FacilityLocation/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("EditFacilityLocation/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -204,7 +164,7 @@ namespace MROWebApi.Controllers
                 {
                     if (id != facilityLocation.nFacilityLocationID)
                     {
-                        return BadRequest();
+                        return BadRequest("Bad Request: ID Not Equals Location ID");
                     }
                     bool checkPDF = true;
                     FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
@@ -215,23 +175,17 @@ namespace MROWebApi.Controllers
                         byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
                         ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
                         IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                        LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
-                        checkPDF = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
+                        LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
+                        checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
                         if (checkPDF)
                         {
                             await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", facilityLocation.nFacilityLocationID);
 
                         }
                     }
-                    //if (continueAhead)
-                    //{
                     facilityLocation.nUpdatedAdminUserID = 1;
                     facilityLocation.dtLastUpdate = DateTime.Now;
                     return facilityLocationsRepository.Update(facilityLocation) ? Ok("Sucess") : (IActionResult)NoContent();
-                    //}
-                    //else
-                    //    return Content(sValidationTextGlobal);
-
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -258,8 +212,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Remove Facility Location
-        // DELETE: api/FacilityLocation/
+        #region Toggle Facility Location
         [HttpPost("DeleteFacilityLocation")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -307,7 +260,6 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Facility Location Exist
-        //To check the Facility Location Exisit
         private async Task<bool> FacilityLocationExists(int id)
         {
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
@@ -319,9 +271,10 @@ namespace MROWebApi.Controllers
         #region ValidateFacilityLocation
         private async static Task<bool> ValidateFacilityLocation(FacilityLocations location, IEnumerable<FacilityLocations> locationList, DBConnectionInfo _info)
         {
-            if (location.bLocationActiveStatus)//means user trying to deactivate
+            if (location.bLocationActiveStatus)
             {
-                //if last location in deactivate state fac as well, else normal
+                //User trying to deactivate
+                //if this is the last location user is deactivating, make Facility state Deactivate, else normal
                 if (locationList.Count() == 1)
                 {
                     FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
@@ -329,15 +282,16 @@ namespace MROWebApi.Controllers
                 }
                 return true;
             }
-            else //trying to activate
+            else 
             {
+                //User trying to Activate
                 bool checkPDF = false;
                 if (location.sAuthTemplate!="") {
                     byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
                     ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
                     IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                    LocationAuthorizationDocument locationAuthorizationDocument = new LocationAuthorizationDocument();
-                    checkPDF = locationAuthorizationDocument.ValidateAuthorizationDocument(pdfByteArray, validationRules, out string sValidationTextGlobal);
+                    LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
+                    checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out string sValidationTextGlobal);
                     FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
                     Facilities fac = await facilitiesRepository.Select(location.nFacilityID);
                     if (checkPDF && location.sAuthTemplate != "" && !fac.bActiveStatus)
@@ -350,7 +304,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region GET ROI Location ID
+        #region Get ROI Location ID
         [HttpGet]
         [Route("[action]/{id}")]
         public int GetROILocationID(string id)
@@ -361,6 +315,5 @@ namespace MROWebApi.Controllers
             return nROILocationID;
         }
         #endregion
-
     }
 }

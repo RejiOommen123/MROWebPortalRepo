@@ -1,18 +1,23 @@
-﻿using Dapper.Contrib.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
     public class AdminModuleLogger
     {
-        [Key]
-        public int nAMLID { get; set;}
+        #region Props
+        [Dapper.Contrib.Extensions.Key]
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        public int nAMLID { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nAdminUserID { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Module Name Allowed")]
         public string sModuleName { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Event Name Allowed")]
         public string sEventName { get; set; }
+        [StringLength(200, ErrorMessage = "Maximum 200 characters Description Allowed")]
         public string sDescription { get; set; }
         public DateTime dtLogTime { get; set; }
+        #endregion
     }
 }
