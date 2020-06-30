@@ -1,19 +1,43 @@
-﻿using CodeFirstMigration.Context;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using MRODBL.BaseClasses;
+using MRODBL.BaseClassRepositories;
+using MRODBL.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace MROWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         #region Auth Constructor
-        private readonly ApplicationDbContext _context;
-        public AuthController(ApplicationDbContext context)
+        private readonly DBConnectionInfo _info;
+        public AuthController(DBConnectionInfo info)
         {
-            _context = context;
+            _info = info;
+        }
+        #endregion
+
+        #region Return Admin ID
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetAdminUserID(AdminUsers adminUser)
+        {
+            try
+            {
+                AdminUsersRepository adminUserRepo = new AdminUsersRepository(_info);
+                int nAdminUserID = await adminUserRepo.GetAdminUserID(adminUser.sName,adminUser.sUPN,adminUser.sEmail);
+                return Ok(nAdminUserID);
+            }
+            catch (Exception exp)
+            {
+                return Content(exp.Message);
+            }
         }
         #endregion
     }
