@@ -91,7 +91,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         #endregion
 
         #region Replace values & Don't Stamp
-        public byte[] ReplaceFieldKeywordsWithValueWOStamp(byte[] PDFFile, Dictionary<string, string> allFields, out string sReplaceFieldsList)
+        public byte[] ReplaceFieldKeywordsWithValueWOStamp(byte[] PDFFile, Dictionary<string, string> allFields,Requestors requestor ,out string sReplaceFieldsList)
         {
             Doc thePDFAuthDoc = new Doc();
             thePDFAuthDoc.Read(PDFFile);
@@ -100,78 +100,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                 //check for MRO Appended Keyword
                 try
                 {
-                    if (frm.Name.Substring(0, 3) == "MRO")
-                    {
-                        string sValue = null;
-                        string sName = frm.Name;
-                        string sNewValue;
-                        if (InList(sName, allFields, out sNewValue))
-                            sValue += sNewValue + " ";
-                        Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
-                    }
-                }
-                catch (Exception e)
-                {
-                    continue;
-                }
-
-            }
-
-            //adding the Photo of Driving License
-            //XImage theDrivingLicense = new XImage();
-            //theImg.SetFile(sAppRoot + @"\download.jpg");
-            //theImg.SetFile("https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-577160911.jpg");
-
-            //Adding new page in Authorization PDF
-            //thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
-            //int theID = 0;
-            //string theText = "Creat New Page"; // 
-            //thePDFAuthDoc.Width = 4;
-            //thePDFAuthDoc.FontSize = 32;
-            //thePDFAuthDoc.TextStyle.Justification = 1;
-            //thePDFAuthDoc.Rect.Inset(20, 20);
-            //thePDFAuthDoc.FrameRect();
-            //theID = thePDFAuthDoc.AddTextStyled(theText);
-
-            //thePDFAuthDoc.FontSize = 12;
-            //thePDFAuthDoc.AddTextStyled("<br /><br /><br /><br /><b>Reji Oommen</b> <br />Lets go to Office <br /><br /><br />" +
-            //    "<br /><br /><b>Siddesh Lad</b> <br />Lets go to Park<br /><br /><br />");
-
-            //// Image insertion on a specific location on new page
-            //thePDFAuthDoc.Rect.Left = 50;
-            //thePDFAuthDoc.Rect.Bottom = 400;
-            //thePDFAuthDoc.Rect.Width = theImg.Width;
-            //thePDFAuthDoc.Rect.Height = 300;
-            //thePDFAuthDoc.Rect.Height = theImg.Height;
-            //thePDFAuthDoc.AddImageObject(theImg, false);
-            //thePDFAuthDoc.Clear();
-
-
-
-            //thePDFAuthDoc.Form.Stamp();
-            byte[] ArrayToReturn = thePDFAuthDoc.GetData();
-            sReplaceFieldsList = "";
-            return ArrayToReturn;
-        }
-        #endregion
-
-        #region ReplaceFieldKeywordsWithValue & Stamp as well
-        /// <summary>
-        /// Patient Web Portal - Replace Pre-defined Field Keywords with Values
-        /// </summary>
-        /// <param name="PDFFile">PDF - Byte Array</param>
-        /// <returns>Byte Array - PDF (Replaced with values)</returns>
-        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, Dictionary<string, string> allFields,Requestors requestor ,out string sReplaceFieldsList)
-        {
-            Doc thePDFAuthDoc = new Doc();
-            thePDFAuthDoc.Read(PDFFile);
-
-            foreach (Field frm in thePDFAuthDoc.Form.Fields)
-            {
-                //check for MRO Appended Keyword
-                try
-                {
-                    if (frm.Name.Substring(0, 3) == "MRO")
+                    if (frm.Name.Substring(0, 3) == "MRO" && frm.Name != "MROSignature")
                     {
                         string sValue = null;
                         string sName = frm.Name;
@@ -189,34 +118,119 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             }
 
             //Adding the Photo of Driving License
-            //XImage theDrivingLicense = new XImage();
-            //requestor.sIdentityImage = requestor.sIdentityImage.Replace("data:application/pdf;base64,", string.Empty);
-            //theDrivingLicense.SetData();
+            string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+            XImage theDrivingLicense = new XImage();
+            //char[] chDelimiter = { ',' };
+            //var pieces = requestor.sIdentityImage.Split(chDelimiter, 2);
+            //requestor.sIdentityImage = pieces[1];
+            byte[] dlArray = Convert.FromBase64String(result);
+            theDrivingLicense.SetData(dlArray);
 
             //Adding new page in Authorization PDF
-            //thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
-            //int theID = 0;
-            //string theText = "Creat New Page"; // 
-            //thePDFAuthDoc.Width = 4;
-            //thePDFAuthDoc.FontSize = 32;
-            //thePDFAuthDoc.TextStyle.Justification = 1;
-            //thePDFAuthDoc.Rect.Inset(20, 20);
-            //thePDFAuthDoc.FrameRect();
-            //theID = thePDFAuthDoc.AddTextStyled(theText);
+            thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
+            int theID = 0;
+            string theText = requestor.sPatientFirstName + " " + requestor.sPatientLastName + " " + "(D.O.B. " + requestor.dtPatientDOB.Value.ToShortDateString() + ")";
+            thePDFAuthDoc.Width = 4;
+            thePDFAuthDoc.FontSize = 20;
+            thePDFAuthDoc.TextStyle.Justification = 1;
+            thePDFAuthDoc.Rect.Inset(20, 20);
+            thePDFAuthDoc.FrameRect();
+            theID = thePDFAuthDoc.AddTextStyled(theText);
+            thePDFAuthDoc.FontSize = 12;
+            thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address (User Confirmed)<b> " + requestor.sPatientEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
 
-            //thePDFAuthDoc.FontSize = 12;
-            //thePDFAuthDoc.AddTextStyled("<br /><br /><br /><br /><b>Reji Oommen</b> <br />Lets go to Office <br /><br /><br />" +
-            // "<br /><br /><b>Siddesh Lad</b> <br />Lets go to Park<br /><br /><br />");
 
             //// Image insertion on a specific location on new page
-            //thePDFAuthDoc.Rect.Left = 50;
-            //thePDFAuthDoc.Rect.Bottom = 400;
-            //thePDFAuthDoc.Rect.Width = theImg.Width;
-            //thePDFAuthDoc.Rect.Height = 300;
-            //thePDFAuthDoc.Rect.Height = theImg.Height;
-            //thePDFAuthDoc.AddImageObject(theImg, false);
-            //thePDFAuthDoc.Clear();
+            thePDFAuthDoc.Rect.Left = 50;
+            thePDFAuthDoc.Rect.Bottom = 400;
+            //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
+            thePDFAuthDoc.Rect.Width = 200;
+            thePDFAuthDoc.Rect.Height = 150;
+            //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
 
+            thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
+            
+            //thePDFAuthDoc.Form.Stamp();
+            byte[] ArrayToReturn = thePDFAuthDoc.GetData();
+            sReplaceFieldsList = "";
+            return ArrayToReturn;
+        }
+        #endregion
+
+        #region ReplaceFieldKeywordsWithValue & Stamp as well
+        /// <summary>
+        /// Patient Web Portal - Replace Pre-defined Field Keywords with Values
+        /// </summary>
+        /// <param name="PDFFile">PDF - Byte Array</param>
+        /// <returns>Byte Array - PDF (Replaced with values)</returns>
+        public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, Dictionary<string, string> allFields, Requestors requestor, out string sReplaceFieldsList)
+        {
+            Doc thePDFAuthDoc = new Doc();
+            thePDFAuthDoc.Read(PDFFile);
+
+            foreach (Field frm in thePDFAuthDoc.Form.Fields)
+            {
+                //check for MRO Appended Keyword
+                try
+                {
+                    if (frm.Name.Substring(0, 3) == "MRO" && frm.Name != "MROSignature")
+                    {
+                        string sValue = null;
+                        string sName = frm.Name;
+                        string sNewValue;
+                        if (InList(sName, allFields, out sNewValue))
+                            sValue += sNewValue + " ";
+                        Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
+                    }
+                }
+                catch (Exception e)
+                {
+                    continue;
+                }
+
+            }
+
+            //Adding the Photo of Driving License
+            string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+            XImage theDrivingLicense = new XImage();
+            //char[] chDelimiter = { ',' };
+            //var pieces = requestor.sIdentityImage.Split(chDelimiter, 2);
+            //requestor.sIdentityImage = pieces[1];
+            byte[] dlArray = Convert.FromBase64String(result);
+            theDrivingLicense.SetData(dlArray);
+
+            //Adding new page in Authorization PDF
+            thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
+            int theID = 0;
+            string theText = requestor.sPatientFirstName+" "+requestor.sPatientLastName + " "+"(D.O.B. "+requestor.dtPatientDOB.Value.ToShortDateString()+")";
+            thePDFAuthDoc.Width = 4;
+            thePDFAuthDoc.FontSize = 20;
+            thePDFAuthDoc.TextStyle.Justification = 1;
+            thePDFAuthDoc.Rect.Inset(20, 20);
+            thePDFAuthDoc.FrameRect();
+            theID = thePDFAuthDoc.AddTextStyled(theText);
+            thePDFAuthDoc.FontSize = 12;
+
+            thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address (User Confirmed)<b> " + requestor.sPatientEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
+            //// Image insertion on a specific location on new page
+            thePDFAuthDoc.Rect.Left = 50;
+            thePDFAuthDoc.Rect.Bottom = 400;
+            //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
+            thePDFAuthDoc.Rect.Width = 200;
+            thePDFAuthDoc.Rect.Height = 150;
+            //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
+            thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
+            
 
             thePDFAuthDoc.Form.Stamp();
             byte[] ArrayToReturn = thePDFAuthDoc.GetData();
@@ -232,7 +246,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             return appRoot;
         }
         private Dictionary<string, string> GetFieldSetValueFromAuthorizationDocFields(IEnumerable<ValidateAuthorizationDoc> authorizationDocFeilds)
-        { 
+        {
             _FieldList = authorizationDocFeilds.ToDictionary(sADF => sADF.sKeyword, sADF => sADF.sFieldname);
             return _FieldList;
         }
