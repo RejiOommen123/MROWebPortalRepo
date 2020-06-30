@@ -12,11 +12,15 @@ const vuexPersist = new VuexPersist({
 });
 export default new Vuex.Store({
     state: {
-        pageheader: ''
+        pageheader: '',
+        adminUserId:0
     },
     mutations: {
         mutatepageHeader(state, payload) {
             state.pageheader = payload;
+        },
+        adminUserId(state, payload) {
+            state.adminUserId = payload;
         }
     },
     actions: {

@@ -31,6 +31,9 @@ const state = {
     ],
     nAuthExpirationMonths:0,
     bDeadlineStatus:true,
+    nTotalWizardPages:0,
+    nProgressBar:0,
+    nProgressBarIncrValue:0
  
 }
 const mutations = {
@@ -53,31 +56,39 @@ const mutations = {
     mutatewizardArrayIndex(state, payload) {
         state.wizardArrayIndex = payload;
     },
+    setProgressBarIncrValue(state, payload){
+        state.nTotalWizardPages = payload.length-2;
+        state.nProgressBarIncrValue=100/state.nTotalWizardPages;
+    },
     mutateNextIndex(state) {
+        state.nProgressBar+=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if(state.bDeadlineStatus=="false")
+        if(state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_15')
         {
             state.wizardArrayIndex = state.wizardArrayIndex + 2;
+            state.nProgressBar+=state.nProgressBarIncrValue * 2;
         }
         else{
             state.wizardArrayIndex = state.wizardArrayIndex + 1;
         }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
-        if (state.selectedWizard == 'Wizard_21' || state.selectedWizard == 'Wizard_21') {
+        if (state.selectedWizard == 'Wizard_01' || state.selectedWizard == 'Wizard_21' || state.selectedWizard == 'Wizard_22' || state.selectedWizard == 'Wizard_23' || state.selectedWizard == 'Wizard_24') {
             state.showBackBtn = false;
         }
     },
     mutatePreviousIndex(state) {
-     
-        if(state.bDeadlineStatus=="false")
+        state.nProgressBar-=state.nProgressBarIncrValue;
+        state.showBackBtn = true;
+        if(state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_17')
         {
             state.wizardArrayIndex = state.wizardArrayIndex - 2;
+            state.nProgressBar-=state.nProgressBarIncrValue * 2;
         }
         else{
             state.wizardArrayIndex = state.wizardArrayIndex - 1;
         }        
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
-        if (state.selectedWizard == 'Wizard_01' || state.selectedWizard == 'Wizard_21') {
+        if (state.selectedWizard == 'Wizard_01') {
             state.showBackBtn = false;
         }
     },

@@ -17,7 +17,21 @@
         <li>
           <router-link to="/facility">Manage Facilities</router-link>
         </li>
-        <!-- TODO: Add avatar here -->
+        <li>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    color="warning" 
+                    fab
+                    small
+                    dark                  
+                    v-bind="attrs"
+                    v-on="on"
+                  ><v-icon>mdi-account-circle</v-icon></v-btn>
+                </template>
+                <span>{{userName}}</span>
+              </v-tooltip>
+            </li>
         <!-- <li>
                 <button @click="onLogout" class="logout">Logout</button>
         </li>-->
@@ -27,12 +41,19 @@
 </template>
 
 <script>
+import { AuthenticationContext } from 'vue-adal'
 export default {
+
   computed: {
     pageHeader() {
       return this.$store.state.pageheader;
     }
   },
+ data() {
+          return {
+            userName: AuthenticationContext.user.userName
+          };
+        },
   methods: {
     onLogout() {
       //call for logout
