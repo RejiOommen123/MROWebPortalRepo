@@ -44,7 +44,7 @@
         <v-btn id="submitRequest" @click="next" color="success">Submit Request</v-btn>
     </div>
     <!-- Loader dialog -->
-    <v-dialog v-model="dialogLoader" hide-overlay persistent width="300">
+    <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="primary" dark>
             <v-card-text>
               Generating PDF
@@ -72,7 +72,8 @@ export default {
       dialogLoader:false
     };
   },
-  mounted() {
+  activated(){
+    this.$vuetify.theme.dark = false;
     this.dialogLoader=true;
     this.$http
       .post("PDF/GeneratePDF/", 
@@ -87,8 +88,9 @@ export default {
         this.dialogLoader=false;
       });
   },
-  created(){ 
-    this.$vuetify.theme.dark = false
+  
+  updated(){
+    console.log("Updated Event");
   },
   methods: {
     undo() {
@@ -146,6 +148,7 @@ export default {
       };
     },
     previous(){
+        this.pdf=null;
         this.$refs.signaturePad.clearSignature();
         this.bFormSigned=false;
         this.$store.commit("requestermodule/sSignatureData", '');

@@ -14,7 +14,10 @@
             id="bgImg"
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
-            <v-btn style="position:absolute;right:3%" icon dark @click="dialogConfirm=true">
+            <v-progress-linear color="#53b958" height="5" :value="nProgressBar">
+              <!-- <strong>{{ Math.ceil(nProgressBar) }}%</strong> -->
+            </v-progress-linear>
+            <v-btn style="position:absolute;right:3%;top:2%" icon dark @click="dialogConfirm=true">
               <v-icon>mdi-close</v-icon>
             </v-btn>
 
@@ -79,17 +82,17 @@
           </v-card>
         </v-dialog>
         <!-- Confirm Close Wizard -->
-        <v-dialog v-model="dialogConfirm" persistent max-width="290">     
-      <v-card>
-        <v-card-title class="headline">Are you sure?</v-card-title>
-        <v-card-text>Closing wizard will clear all data previously enter by you.</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
-          <v-btn color="green darken-1" text @click="dialogClose">Accept</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        <v-dialog v-model="dialogConfirm" persistent max-width="280">
+          <v-card>
+            <v-card-title class="headline">Are you sure to close this request?</v-card-title>
+            <v-card-text>Closing wizard will clear all data previously enter by you.</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
+              <v-btn color="green darken-1" text @click="dialogClose">Accept</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-row>
     </v-content>
     <br />
@@ -132,7 +135,7 @@ export default {
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
       phoneNo: 0,
       dialogLoader: false,
-      dialogConfirm:false
+      dialogConfirm: false
     };
   },
   created() {
@@ -151,7 +154,6 @@ export default {
             "ConfigModule/apiResponseDataByFacilityGUID",
             apiFacilityResponse
           );
-
           this.$store.commit(
             "ConfigModule/wizardLogo",
             apiFacilityResponse.facilityLogoandBackground[0].sConfigLogoData
@@ -161,11 +163,10 @@ export default {
             apiFacilityResponse.facilityLogoandBackground[0]
               .sConfigBackgroundData
           );
-          // this.logoImg = this.$store.state.ConfigModule.wizardLogo;
-          // this.backgroundImg = this.$store.state.ConfigModule.wizardBackground;
-
-          // this.logo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigLogoData;
-          // this.backgroundImg = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sConfigBackgroundData;
+          this.$store.commit(
+            "ConfigModule/setProgressBarIncrValue",
+            apiFacilityResponse.oWizards
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           console.log("This Logo" + this.logoImg);
           console.log("This BG" + this.backgroundImg);
@@ -236,6 +237,9 @@ export default {
     background() {
       return this.$store.state.ConfigModule.wizardBackground;
     },
+    nProgressBar() {
+      return this.$store.state.ConfigModule.nProgressBar;
+    },
     selectedWizard() {
       return this.$store.state.ConfigModule.selectedWizard;
     },
@@ -251,20 +255,13 @@ export default {
     dialogMaxHeight() {
       return this.$store.state.ConfigModule.dialogMaxHeight;
     }
-    // ,
-    // facilityLogo(){
-    //   return this.$store.state.ConfigModule.LogoAndBackgroundImageforFacility.facilityLogoandBackground.sConfigLogoData;
-    // },
-    // facilityBackground(){
-    //   return this.$store.state.ConfigModule.LogoAndBackgroundImageforFacility.facilityLogoandBackground.sConfigBackgroundData;
-    // }
   },
   methods: {
     doNothing() {
       this.$store.commit("ConfigModule/mutatePreviousIndex");
     },
     dialogClose() {
-      this.dialogConfirm=false
+      this.dialogConfirm = false;
       this.dialog = false;
       window.top.postMessage("hello", "*");
     }

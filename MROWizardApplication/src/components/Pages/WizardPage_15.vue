@@ -7,16 +7,18 @@
        <div style="width:100%">
         <v-col name="Yes" cols="12" offset-sm="2" sm="8">
           <button
+            :class="{active: sActiveBtn === 'true'}"
             @click.prevent="setDeadlineStatus($event)"
             class="locationButton"
-            value="true"
+            value=true
           >Yes, I have a deadline.</button>
         </v-col>
         <v-col name="No" cols="12" offset-sm="2" sm="8">
           <button
+            :class="{active: sActiveBtn === 'false'}"
             @click.prevent="setDeadlineStatus($event)"
             class="locationButton"
-            value="false"
+            value=false
           >No, just as soon as possible.</button>
         </v-col>
       </div>
@@ -29,6 +31,7 @@ export default {
   name: "WizardPage_15",
   data() {
     return {
+      sActiveBtn:''
       // disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_disclaimer01,
       //Show and Hide Fields Values
       // MRORequestDeadline : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MRORequestDeadline,
@@ -36,6 +39,7 @@ export default {
   },
   methods: {
     setDeadlineStatus($event) {
+      this.sActiveBtn= $event.target.value;
       this.$store.commit(
         "requestermodule/bDeadlineStatus",
         $event.target.value

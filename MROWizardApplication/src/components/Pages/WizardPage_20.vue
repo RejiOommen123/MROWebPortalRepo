@@ -111,6 +111,9 @@ export default {
             fileInput:''
         };
     },
+    updated(){
+    console.log("Updated Event");
+    },
      mixins: [validationMixin],
     validations: {
         fileInput: {

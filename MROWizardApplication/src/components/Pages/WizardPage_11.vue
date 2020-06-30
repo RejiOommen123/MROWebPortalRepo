@@ -11,7 +11,9 @@
         <div v-for="releaseTo in oReleaseToArray" :key="releaseTo.sNormalizedReleaseTo">
           <v-col cols="12" offset-sm="2" sm="10">
             <!-- <v-btn class="locationButton" @click.native="locationRequest($event)" :value=location depressed large color="success">{{location}}</v-btn> -->
-            <button @click.prevent="releaseRequestTo($event)" class="releaseToButton" :value="releaseTo.sNormalizedReleaseTo"
+            <button
+            :class="{active: sActiveBtn === releaseTo.sNormalizedReleaseTo}" 
+            @click.prevent="releaseRequestTo($event)" class="releaseToButton" :value="releaseTo.sNormalizedReleaseTo"
             >{{releaseTo.sReleaseTo}}</button>
           </v-col>
         </div>
@@ -24,11 +26,13 @@ export default {
   name: "WizardPage_11",
   data() {
     return {
-      oReleaseToArray: this.$store.state.ConfigModule.oReleaseRequestTo
+      oReleaseToArray: this.$store.state.ConfigModule.oReleaseRequestTo,
+      sActiveBtn:''
     };
   },
   methods: {
     releaseRequestTo($event) {
+      this.sActiveBtn=$event.target.value;
       this.$store.commit("requestermodule/sReleaseTo", $event.target.value);
       this.$store.commit("ConfigModule/mutateNextIndex");
     }

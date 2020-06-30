@@ -12,6 +12,7 @@
           <!-- <v-btn class="locationButton" @click.native="locationRequest($event)" :value=location depressed large color="success">{{location}}</v-btn> -->
           <v-col cols="12" offset-sm="2" sm="8">
             <button
+              :class="{active: sActiveBtn === location.sNormalizedLocationName}"
               @click.prevent="locationRequest(location)"
               class="locationButton"
               :value="location.sNormalizedLocationName"
@@ -21,7 +22,7 @@
       </div>
     </v-row>
     <!-- Loader dialog -->
-    <v-dialog v-model="dialogLoader" hide-overlay persistent width="300">
+    <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="primary" dark>
             <v-card-text>
               Please stand by
@@ -29,6 +30,14 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+            <!--   Circular progress 
+            <v-progress-circular v-if="dialogLoader"
+            indeterminate
+            :rotate="rotate"
+            size="80"
+            width="10"
+            color="light-blue"
+          >{{ value }}</v-progress-circular> -->
   </div>
 </template>
 <script>
@@ -38,15 +47,16 @@ export default {
     return {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
-        dialogLoader:false
+        dialogLoader:false,
+        sActiveBtn:''
     };
   },
   methods: {
     locationRequest(location) {
+      this.sActiveBtn=location.sNormalizedLocationName;
       this.dialogLoader=true;
-      // this.$store.commit("ConfigModule/mutatepageNumerical",3);
-      // this.$store.commit("ConfigModule/mutateCurrentPage","page-3");
-      this.$http
+      if(location.sNormalizedLocationName!=this.$store.state.requestermodule.sSelectedLocation){
+        this.$http
         .get(
           "Wizards/GetWizardConfig/fID=" +
             location.nFacilityID +
@@ -92,6 +102,12 @@ export default {
             this.$store.commit("ConfigModule/mutateNextIndex");
           }
         });
+        
+      }
+      else{
+          this.dialogLoader=false;
+            this.$store.commit("ConfigModule/mutateNextIndex");
+        }
     }
   }
 };

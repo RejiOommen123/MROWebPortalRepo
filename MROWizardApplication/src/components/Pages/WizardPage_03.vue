@@ -5,6 +5,7 @@
       <div style="width:100%">
         <v-col cols="12" offset-sm="2" sm="8">
           <button
+            :class="{active: sActiveBtn === 'Yes'}"
             @click.prevent="setPatient"
             class="releaseToButton"
           >Yes, I want my medical records.</button>
@@ -12,7 +13,9 @@
       </div>
       <div style="width:100%">
         <v-col cols="12" offset-sm="2" sm="8">
-          <button @click.prevent="setNotPatient" class="releaseToButton">
+          <button 
+            :class="{active: sActiveBtn === 'No'}"
+            @click.prevent="setNotPatient" class="releaseToButton">
             No, I am requesting records
             <br />for someone else.
           </button>
@@ -66,7 +69,8 @@ export default {
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer02,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer03
+        .wizardHelper.Wizard_03_disclaimer03,
+      sActiveBtn:''
     };
   },
   mixins: [validationMixin],
@@ -94,12 +98,14 @@ export default {
   },
   methods: {
     setPatient() {
+      this.sActiveBtn='Yes';
       this.$store.commit("requestermodule/bAreYouPatient", true);
       this.$store.commit("requestermodule/sRelativeName", "");
       this.$store.commit("requestermodule/sRelationToPatient", "");
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     setNotPatient() {
+      this.sActiveBtn='No';
       this.$store.commit("requestermodule/bAreYouPatient", false);
       this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
       this.$store.commit(

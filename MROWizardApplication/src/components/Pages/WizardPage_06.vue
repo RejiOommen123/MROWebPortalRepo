@@ -39,30 +39,30 @@
             >Next</v-btn>
           </form>
           <form>
-          <div v-if="bConfirmReport==true">
-            <p>Click on "Send Email" for email verification.</p>
-            <v-btn @click="sendEmail" :disabled="this.isDisable" color="success">Send Email Verification</v-btn>
-          </div>
+            <div v-if="bConfirmReport==true">
+              <p>Click on "Send Email" for email verification.</p>
+              <v-btn @click="sendEmail" :disabled="this.isDisable" color="success">Send Email Verification</v-btn>
+            </div>
 
-          <div v-if="showVerifyBlock==true">
-            <v-text-field
-              :error-messages="sVerifyError"
-              @input="$v.sVerify.$touch()"
-              @blur="$v.sVerify.$touch()"
-              v-model="sVerify"
-              label="Enter OTP"
-              required
-            ></v-text-field>
+            <div v-if="showVerifyBlock==true">
+              <v-text-field
+                :error-messages="sVerifyError"
+                @input="$v.sVerify.$touch()"
+                @blur="$v.sVerify.$touch()"
+                v-model="sVerify"
+                label="Enter OTP"
+                required
+              ></v-text-field>
 
-            <v-btn @click.prevent="sendEmail" color="success">Resend OTP</v-btn>
+              <v-btn @click.prevent="sendEmail" color="success">Resend OTP</v-btn>
 
-            <v-btn
-              @click.prevent="verifyCode"
-              :disabled="$v.$invalid"
-              style="margin-left:10px"
-              color="success"
-            >Verify</v-btn>
-          </div>
+              <v-btn
+                @click.prevent="verifyCode"
+                :disabled="$v.$invalid"
+                style="margin-left:10px"
+                color="success"
+              >Verify</v-btn>
+            </div>
           </form>
         </v-col>
       </v-row>

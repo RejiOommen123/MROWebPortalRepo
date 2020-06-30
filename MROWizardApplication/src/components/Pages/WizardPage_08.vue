@@ -63,8 +63,8 @@ export default {
   name: "WizardPage_08",
   data() {
     return {
-      dtRecordRangeStart: new Date().toISOString().substr(0, 10),
-      dtRecordRangeEnd: new Date().toISOString().substr(0, 10),
+      dtRecordRangeStart: '',
+      dtRecordRangeEnd: '',
       menu1: false,
       menu2: false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01

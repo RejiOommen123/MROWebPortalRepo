@@ -31,8 +31,10 @@ export default {
             {
               location.reload();
             }
+            else{
             console.log($event.target.value);                
             this.$store.commit("ConfigModule/mutateNextIndex");          
+            }
       }
     },
 };
