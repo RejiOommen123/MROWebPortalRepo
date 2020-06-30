@@ -76,7 +76,7 @@ export default {
     this.$vuetify.theme.dark = false;
     this.dialogLoader=true;
     this.$http
-      .post("PDF/GeneratePDF/", 
+      .post("wizards/GeneratePDF/", 
       this.$store.state.requestermodule,
       {
         responseType: "arraybuffer"
@@ -124,7 +124,7 @@ export default {
       this.$http
       
         .post(
-          "PDF/GeneratePDF/",
+          "wizards/GeneratePDF/",
           this.$store.state.requestermodule,
           { responseType: "arraybuffer" }
         )
@@ -149,7 +149,10 @@ export default {
     },
     previous(){
         this.pdf=null;
-        this.$refs.signaturePad.clearSignature();
+        if( this.$refs.signaturePad!=null)
+        {
+          this.$refs.signaturePad.clearSignature();
+        }
         this.bFormSigned=false;
         this.$store.commit("requestermodule/sSignatureData", '');
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');

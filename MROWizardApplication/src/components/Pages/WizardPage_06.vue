@@ -152,8 +152,14 @@ export default {
       );
       this.isDisable = true;
       this.showVerifyBlock = true;
+      var emailConfirm={
+        nFacilityID :this.$store.state.requestermodule.nFacilityID,
+        sPatientEmailId :this.$store.state.requestermodule.sPatientEmailId,
+        sPatientFirstName :this.$store.state.requestermodule.sPatientFirstName,
+        sPatientLastName :this.$store.state.requestermodule.sPatientLastName,
+      }
       this.$http
-        .post("Wizards/VerfiyRequestorEmail/", this.$store.state.requestermodule)
+        .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
         .then(response => {
           if (response.body) {
             this.sResponseKey = response.body;

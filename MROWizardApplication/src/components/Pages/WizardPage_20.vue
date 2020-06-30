@@ -25,7 +25,7 @@
                             <option
                                 v-for="device in devices"
                                 :key="device.deviceId"
-                                :value="device.deviceId"
+                                
                             >{{ device.label }}</option>
                         </select>
                     </v-col>
@@ -33,6 +33,7 @@
                         <v-btn @click="onCapture" fab dark color="teal">
                           <v-icon dark>mdi-camera</v-icon>
                         </v-btn>    
+                        <!-- :value="device.deviceId" -->
                         <!-- <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button> -->
                     </v-col>
                 </v-row>
@@ -55,7 +56,9 @@
             <v-col cols="12" sm="12" v-if="sStatus=='UploadImg'">
                 <h2>Upload Identity Document Image</h2>
                    <form >
-                <v-img class="identityUpload" style="cursor:pointer;" width='300px' height="200px" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
+                <div v-show="bShowImage!=''">
+                    <v-img class="identityUpload" style="cursor:pointer;" width='300px' height="200px" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
+                </div>
                 <v-file-input
                     v-model="fileInput"
                     chips
@@ -108,7 +111,8 @@ export default {
             deviceId: null,
             devices: [],
             sStatus:'CapturingImg',
-            fileInput:''
+            fileInput:'',
+            bShowImage:''
         };
     },
     updated(){
@@ -201,7 +205,10 @@ export default {
             this.sIdentityImage=reader.result; //base64encoded string
             })
             reader.readAsDataURL(file);
-            // this.sIdentityImage=file.name;
+            this.bShowImage=file.name;
+        }
+        else{
+            this.bShowImage='';
         }
         },
     }
