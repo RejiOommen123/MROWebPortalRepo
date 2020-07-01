@@ -1,11 +1,10 @@
 <template>
   <div class="center">
     <form>
-       <h1 v-if="bAreYouPatient">What is your address?</h1>
-       <h1 v-else>What is patient's address?</h1>
+      <h1 v-if="bAreYouPatient">What is your address?</h1>
+      <h1 v-else>What is patient's address?</h1>
       <v-row>
-       
-       <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="1" sm="6">
+        <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="1" sm="6">
           <v-text-field
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
@@ -35,7 +34,7 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-         <v-col v-if="MROAddZipCode" cols="12" sm="4">
+        <v-col v-if="MROAddZipCode" cols="12" sm="4">
           <v-text-field
             type="number"
             v-model="sAddZipCode"
@@ -71,12 +70,17 @@ export default {
       sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
 
       //Show and Hide Fields Values
-      MROAddZipCode : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddZipCode,
-      MROAddCity : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddCity,
-      MROAddState : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddState,
-      MROAddStreetAddress : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAddStreetAddress
+      MROAddZipCode: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROAddZipCode,
+      MROAddCity: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROAddCity,
+      MROAddState: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROAddState,
+      MROAddStreetAddress: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAddStreetAddress
     };
   },
+  //Requestor address validations
   mixins: [validationMixin],
   validations: {
     sAddZipCode: {
@@ -90,9 +94,10 @@ export default {
     sAddStreetAddress: { required }
   },
   computed: {
-     bAreYouPatient() {
+    bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
-    },  
+    },
+    //Requestor address validation error message setter
     sAddZipCodeErrors() {
       const errors = [];
       if (!this.$v.sAddZipCode.$dirty) return errors;
@@ -117,27 +122,22 @@ export default {
     streetErrors() {
       const errors = [];
       if (!this.$v.sAddStreetAddress.$dirty) return errors;
-      !this.$v.sAddStreetAddress.required && errors.push("Street Address is required.");
+      !this.$v.sAddStreetAddress.required &&
+        errors.push("Street Address is required.");
       return errors;
     }
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
       this.$store.commit("requestermodule/sAddZipCode", this.sAddZipCode);
       this.$store.commit("requestermodule/sAddCity", this.sAddCity);
       this.$store.commit("requestermodule/sAddState", this.sAddState);
-      this.$store.commit("requestermodule/sAddStreetAddress", this.sAddStreetAddress);
-      // this.$store.commit("ConfigModule/mutatepageNumerical", 7);
-      // this.$store.commit("ConfigModule/mutateCurrentPage", "page-7");
-       this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit(
+        "requestermodule/sAddStreetAddress",
+        this.sAddStreetAddress
+      );
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };
 </script>
-
-<style scoped>
-/* .center {
-  text-align: center;
-} */
-</style>

@@ -3,6 +3,7 @@
     <h1>Which types of<br/>records would you like?</h1>
     
     <template>
+       <!-- Get all record types associated to facility and displayed as checkbox for selection-->
       <v-layout v-for="recordType in RecordTypeArray" :key="recordType.sNormalizedRecordTypeName" row wrap>
         <v-col cols="12" offset-sm="2" sm="8">
           <v-checkbox offset-sm="2" sm="8"
@@ -13,6 +14,7 @@
             color="green"
             :value="recordType.sNormalizedRecordTypeName"
           >
+          <!-- This for 'i' button to give disclaimers/info about option -->
             <v-tooltip  v-if="recordType.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
@@ -49,7 +51,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-
-</style>

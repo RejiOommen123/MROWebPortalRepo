@@ -29,24 +29,32 @@ namespace MROWebApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var origins = Configuration["AllowedOrigins"].Split(";");
-            services.AddCors(c =>
+            try
             {
-                c.AddPolicy("AllowOrigin", options => options.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod());
-            });
-            #region
-            //Region for Code for DI Purpose using DBConnection class
-            services.AddSingleton<IConfiguration>(Configuration);
-            var config = new DBConnectionInfo();
-            config.ConnectionString = Configuration.GetConnectionString("myconn");
-            services.AddSingleton(config);
-            //Region Ends
-            #endregion
-            services.AddControllers();
-            services.AddDbContext<ApplicationDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
-            services.AddControllers().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
+                var origins = Configuration["AllowedOrigins"].Split(";");
+                services.AddCors(c =>
+                {
+                    c.AddPolicy("AllowOrigin", options => options.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod());
+                });
+                #region
+                //Region for Code for DI Purpose using DBConnection class
+                services.AddSingleton<IConfiguration>(Configuration);
+                var config = new DBConnectionInfo();
+                config.ConnectionString = Configuration.GetConnectionString("myconn");
+                services.AddSingleton(config);
+                //Region Ends
+                #endregion
+                services.AddControllers();
+                services.AddDbContext<ApplicationDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
+                services.AddControllers().AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+            }
+            catch (Exception ex)
+            {
+                //TODO: Force Log the details
+                throw ex;
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

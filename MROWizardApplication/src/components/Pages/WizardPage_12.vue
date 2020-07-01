@@ -7,6 +7,7 @@
 
     <template>
       <form>
+         <!-- Get all Shipment Type associated to facility and displayed as checkbox for selection-->
         <v-layout
           v-for="shipmentType in oShipmentTypeArray"
           :key="shipmentType.sNormalizedShipmentTypeName"
@@ -36,7 +37,9 @@
             <slot :name="shipmentType.sNormalizedShipmentTypeName"></slot>
           </v-col>
         </v-layout>
+        <!-- if requestor select one of the option above then based on selection below slots will display -->
         <!-- Slots Starts -->
+        <!-- MROFax Slot -->
         <template>
           <v-col
             v-if="sSelectedShipmentTypes[0]=='MROFax'"
@@ -45,19 +48,20 @@
             offset-sm="2"
             sm="8"
           >
-          <v-text-field
-            type="number"
-            v-model="nSTFaxNo"
-            :error-messages="nSTFaxNoErrors"
-            label="Fax No"
-            required
-            @input="$v.nSTFaxNo.$touch()"
-            @blur="$v.nSTFaxNo.$touch()"
-          ></v-text-field>
+            <v-text-field
+              type="number"
+              v-model="nSTFaxNo"
+              :error-messages="nSTFaxNoErrors"
+              label="Fax No"
+              required
+              @input="$v.nSTFaxNo.$touch()"
+              @blur="$v.nSTFaxNo.$touch()"
+            ></v-text-field>
             <v-textarea v-model="sSTFaxCompAdd" rows="2" counter label="Complete Address"></v-textarea>
           </v-col>
         </template>
-
+        
+        <!-- MROEmail Slot -->
         <template>
           <v-col
             v-if="sSelectedShipmentTypes[0]=='MROEmail'"
@@ -86,6 +90,7 @@
           </v-col>
         </template>
 
+        <!-- MROMailShipment slot -->
         <template>
           <v-col
             v-if="sSelectedShipmentTypes[0]=='MROMailShipment'"
@@ -114,7 +119,7 @@
             ></v-text-field>
           </v-col>
         </template>
-
+        <!-- MROIn-Person slot -->
         <template>
           <v-col
             v-if="sSelectedShipmentTypes[0]=='MROIn-Person'"
@@ -166,39 +171,50 @@
       </form>
     </template>
   </div>
-  <!-- MROPatientPortal
-MROEmail
-MROMailShipment
-MROIn-Person
-  MROFax-->
+
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, email, sameAs ,numeric} from "vuelidate/lib/validators";
+import { required, email, sameAs, numeric } from "vuelidate/lib/validators";
 import moment from "moment";
 export default {
   name: "WizardPage_12",
   data() {
     return {
-      //this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason
-      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
+      oShipmentTypeArray: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oShipmentTypes,
       sSelectedShipmentTypes: [],
-      sSTFaxCompAdd: this.$store.state.requestermodule.sAddStreetAddress+", "+this.$store.state.requestermodule.sAddCity+", "+this.$store.state.requestermodule.sAddState+", "+this.$store.state.requestermodule.sAddZipCode,
-      nSTFaxNo:0,
+      // combine previously entered data by requestor
+      sSTFaxCompAdd:
+        this.$store.state.requestermodule.sAddStreetAddress +
+        ", " +
+        this.$store.state.requestermodule.sAddCity +
+        ", " +
+        this.$store.state.requestermodule.sAddState +
+        ", " +
+        this.$store.state.requestermodule.sAddZipCode,
+      nSTFaxNo: 0,
       sSTEmailId: this.$store.state.requestermodule.sPatientEmailId,
       sSTConfirmEmailId: this.$store.state.requestermodule.sConfirmEmailId,
-      sSTMailCompAdd: this.$store.state.requestermodule.sAddStreetAddress+", "+this.$store.state.requestermodule.sAddCity+", "+this.$store.state.requestermodule.sAddState+", "+this.$store.state.requestermodule.sAddZipCode,
+      // combine previously entered data by requestor
+      sSTMailCompAdd:
+        this.$store.state.requestermodule.sAddStreetAddress +
+        ", " +
+        this.$store.state.requestermodule.sAddCity +
+        ", " +
+        this.$store.state.requestermodule.sAddState +
+        ", " +
+        this.$store.state.requestermodule.sAddZipCode,
       sSTRecordFormat: "",
       dtSTPickUp: "",
       menu1: false
-
-      //other: false
     };
   },
+  //Shipment type validations
   mixins: [validationMixin],
   validations: {
-     nSTFaxNo: {
+    nSTFaxNo: {
       required,
       numeric
     },
@@ -220,6 +236,7 @@ export default {
     }
   },
   computed: {
+    //validations error message setter
     nSTFaxNoErrors() {
       const errors = [];
       if (!this.$v.nSTFaxNo.$dirty) return errors;
@@ -265,13 +282,13 @@ export default {
   },
   methods: {
     nextPage() {
+      //Switch based on selection and set state data
       switch (this.sSelectedShipmentTypes[0]) {
         case "MROFax":
           this.$store.commit(
             "requestermodule/sSTFaxCompAdd",
             this.sSTFaxCompAdd
           );
-          console.log(this.sSTFaxCompAdd);
           break;
         case "MROEmail":
           this.$store.commit("requestermodule/sSTEmailId", this.sSTEmailId);
@@ -279,7 +296,6 @@ export default {
             "requestermodule/sSTConfirmEmailId",
             this.sSTConfirmEmailId
           );
-          console.log(this.dAuthExpire);
           break;
         case "MROMailShipment":
           this.$store.commit(
@@ -291,7 +307,6 @@ export default {
             "requestermodule/sSTConfirmEmailId",
             this.sSTConfirmEmailId
           );
-          console.log(this.dAuthExpire);
           break;
         case "MROIn-Person":
           this.$store.commit("requestermodule/sSTEmailId", this.sSTEmailId);
@@ -300,20 +315,16 @@ export default {
             this.sSTConfirmEmailId
           );
           this.$store.commit("requestermodule/dtSTPickUp", this.dtSTPickUp);
-          console.log(this.dAuthExpire);
           break;
       }
       this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
+    //set variable based on selection
     check(id) {
       this.sSelectedShipmentTypes = [];
       this.sSelectedShipmentTypes.push(id);
-      console.log(this.sSelectedShipmentTypes[0]);
     }
   }
 };
 </script>
-
-<style scoped>
-</style>

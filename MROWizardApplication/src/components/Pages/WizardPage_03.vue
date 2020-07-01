@@ -7,7 +7,7 @@
           <button
             :class="{active: sActiveBtn === 'Yes'}"
             @click.prevent="setPatient"
-            class="releaseToButton"
+            class="wizardSelectionButton"
           >Yes, I want my medical records.</button>
         </v-col>
       </div>
@@ -15,13 +15,14 @@
         <v-col cols="12" offset-sm="2" sm="8">
           <button 
             :class="{active: sActiveBtn === 'No'}"
-            @click.prevent="setNotPatient" class="releaseToButton">
+            @click.prevent="setNotPatient" class="wizardSelectionButton">
             No, I am requesting records
             <br />for someone else.
           </button>
         </v-col>
       </div>
     </v-row>
+    <!-- Below html will render only if user select not patient option -->
     <div v-show="!bAreYouPatient">
       <form>
         <v-row>
@@ -73,6 +74,7 @@ export default {
       sActiveBtn:''
     };
   },
+  //Relative name and realtion validations
   mixins: [validationMixin],
   validations: {
     sRelativeName: { required },
@@ -82,6 +84,7 @@ export default {
     bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
     },
+    //Relative name and realtion validation error message setter
     sRelativeNameErrors() {
       const errors = [];
       if (!this.$v.sRelativeName.$dirty) return errors;
@@ -97,6 +100,7 @@ export default {
     }
   },
   methods: {
+    // This will set bAreYouPatient status to true and empty realtives variables
     setPatient() {
       this.sActiveBtn='Yes';
       this.$store.commit("requestermodule/bAreYouPatient", true);
@@ -104,21 +108,19 @@ export default {
       this.$store.commit("requestermodule/sRelationToPatient", "");
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
+    // This will set bAreYouPatient status to false and set realtives variables
     setNotPatient() {
       this.sActiveBtn='No';
       this.$store.commit("requestermodule/bAreYouPatient", false);
+    },
+    continueAhead() {
       this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
       this.$store.commit(
         "requestermodule/sRelationToPatient",
         this.sRelationToPatient
       );
-    },
-    continueAhead() {
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };
 </script>
-
-<style scoped>
-</style>
