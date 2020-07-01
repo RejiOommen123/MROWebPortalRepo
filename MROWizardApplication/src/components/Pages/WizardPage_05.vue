@@ -6,7 +6,7 @@
         <h1 v-if="bAreYouPatient">What is your date of birth?</h1>
         <h1 v-else>When was the Patient Born ?</h1>
         <h4>(MM/DD/YYYY)</h4>
-        
+        <!-- date picker menu and date picker -->
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -49,6 +49,7 @@ export default {
       menu1: false,
     };
   },
+  // Date Validation
   validations: {
     dtPatientDOB: {
       required,
@@ -57,7 +58,6 @@ export default {
   },
   methods: {
     nextPage() {
-      console.log(this.dtPatientDOB);
       this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("requestermodule/dtPatientDOB", this.dtPatientDOB);
       this.$store.commit("ConfigModule/mutateNextIndex");
@@ -67,22 +67,17 @@ export default {
     bAreYouPatient(){
       return this.$store.state.requestermodule.bAreYouPatient;
     },
+     //Date validations error message setter
     dtPatientDOBFormatted() {
       return this.dtPatientDOB ? moment(this.dtPatientDOB).format("MM-DD-YYYY") : "";
     },
     dtPatientDOBErrors() {
       const errors = [];
       if (!this.$v.dtPatientDOB.$dirty) return errors;
-      !this.$v.dtPatientDOB.minValue && errors.push("Invalid Date");
+      !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");
       !this.$v.dtPatientDOB.required && errors.push("End Date is required");
       return errors;
     }
   }
 };
 </script>
-
-<style scoped>
-/* .center {
-  text-align: center;
-} */
-</style>

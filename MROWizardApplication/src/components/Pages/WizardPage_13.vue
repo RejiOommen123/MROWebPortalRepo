@@ -6,17 +6,17 @@
     </h1>
 
     <template>
+       <!--Auth expiration selection box-->
       <v-layout row wrap>
         <v-col v-if="MROAuthExpireDateAfterNMonths" cols="12" offset-sm="3" sm="6">
           <v-checkbox
             dark
             class="checkboxBorder"
-            :label= "nAuthMonths+' months after signature date'"
+            :label="nAuthMonths+' months after signature date'"
             color="green"
             :value="1"
             v-model="nSelectedCheckBox"
             @change="check(1)"
-
           ></v-checkbox>
         </v-col>
         <v-col v-if="MROAuthExpireDateSpecificDate" cols="12" offset-sm="3" sm="6">
@@ -30,27 +30,33 @@
             @change="check(2)"
           ></v-checkbox>
           <div v-if="nSelectedCheckBox==2">
-              <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field            
-              :value="dSpecificFormatted"
-              placeholder="MM-DD-YYYY"
-              :error-messages="dSpecificErrors"
-              clearable
-              label="Specify Date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              @click:clear="dSpecific = null"
-              @input="$v.dSpecific.$touch()"
-              @blur="$v.dSpecific.$touch()"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="dSpecific" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
-        </v-menu>
+            <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  :value="dSpecificFormatted"
+                  placeholder="MM-DD-YYYY"
+                  :error-messages="dSpecificErrors"
+                  clearable
+                  label="Specify Date"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  @click:clear="dSpecific = null"
+                  @input="$v.dSpecific.$touch()"
+                  @blur="$v.dSpecific.$touch()"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dSpecific"
+                color="green lighten-1"
+                header-color="primary"
+                light
+                @change="menu1 = false"
+              ></v-date-picker>
+            </v-menu>
           </div>
         </v-col>
-        
+
         <v-col v-if="MROAuthExpireDateEventOccurs" cols="12" offset-sm="3" sm="6">
           <v-checkbox
             dark
@@ -62,7 +68,7 @@
             @change="check(3)"
           ></v-checkbox>
           <div v-if="nSelectedCheckBox==3">
-              <v-textarea counter v-model="sAuthSpecificEvent" rows="2" label="Specify Event Here"></v-textarea>
+            <v-textarea counter v-model="sAuthSpecificEvent" rows="2" label="Specify Event Here"></v-textarea>
           </div>
         </v-col>
       </v-layout>
@@ -81,63 +87,68 @@ export default {
   data() {
     return {
       nAuthMonths: this.$store.state.ConfigModule.nAuthExpirationMonths,
-      nSelectedCheckBox:[],
-      dSpecific: null,//new Date().toISOString().substr(0, 10),
+      nSelectedCheckBox: [],
+      dSpecific: null,
       menu1: false,
-      dAuthExpire: '',
-      sAuthSpecificEvent: '',
+      dAuthExpire: "",
+      sAuthSpecificEvent: "",
 
       //Show and Hide Fields Values
-      MROAuthExpireDateAfterNMonths : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAuthExpireDateAfterNMonths,
-      MROAuthExpireDateSpecificDate : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAuthExpireDateSpecificDate,
-      MROAuthExpireDateEventOccurs : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROAuthExpireDateEventOccurs
+      MROAuthExpireDateAfterNMonths: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateAfterNMonths,
+      MROAuthExpireDateSpecificDate: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateSpecificDate,
+      MROAuthExpireDateEventOccurs: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateEventOccurs
     };
   },
+  //Auth expiration validations
   validations: {
     dSpecific: {
-        required,
-        minValue: value => value > new Date().toISOString()
-    },
+      required,
+      minValue: value => value > new Date().toISOString()
+    }
   },
   methods: {
     nextPage() {
-        switch(this.nSelectedCheckBox[0]) {
+      //Switch based on selection and set state values
+      switch (this.nSelectedCheckBox[0]) {
         case 1:
-            var dt = new Date();
-            dt.setMonth( dt.getMonth() + this.nAuthMonths );            
-            this.dAuthExpire = dt.toISOString();
-            console.log(this.dAuthExpire);
-            break;
+          var dt = new Date();
+          dt.setMonth(dt.getMonth() + this.nAuthMonths);
+          this.dAuthExpire = dt.toISOString();
+          break;
         case 2:
-            this.dAuthExpire = this.dSpecific;          
-            console.log(this.dAuthExpire);
-            break;
+          this.dAuthExpire = this.dSpecific;
+          break;
         case 3:
-            this.dAuthExpire = null;
-            console.log(this.sAuthSpecificEvent);
-            break;
+          this.dAuthExpire = null;
+          break;
         default:
-            var dt1 = new Date();
-            this.dAuthExpire = dt1.setMonth( dt1.getMonth() + this.nAuthMonths );  
-            console.log(this.dAuthExpire);
-        }        
-        this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
-        this.$store.commit("requestermodule/sAuthSpecificEvent", this.sAuthSpecificEvent);
-        this.$store.state.ConfigModule.showBackBtn = true;  
-        this.$store.commit("ConfigModule/mutateNextIndex");
+          var dt1 = new Date();
+          this.dAuthExpire = dt1.setMonth(dt1.getMonth() + this.nAuthMonths);
+      }
+      this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
+      this.$store.commit(
+        "requestermodule/sAuthSpecificEvent",
+        this.sAuthSpecificEvent
+      );
+      this.$store.state.ConfigModule.showBackBtn = true;
+      this.$store.commit("ConfigModule/mutateNextIndex");
     },
+    //Check for which checkbox is selected
     check(id) {
-
-        this.nSelectedCheckBox = [];
-        this.nSelectedCheckBox.push(id);
-        console.log(this.nSelectedCheckBox[0]);
+      this.nSelectedCheckBox = [];
+      this.nSelectedCheckBox.push(id);
     }
   },
   computed: {
+    //Change date format
     dSpecificFormatted() {
       return this.dSpecific ? moment(this.dSpecific).format("MM-DD-YYYY") : "";
     },
-    dSpecificErrors(){
+    //Date validation
+    dSpecificErrors() {
       const errors = [];
       if (!this.$v.dSpecific.$dirty) return errors;
       !this.$v.dSpecific.minValue && errors.push("Invalid Date");
@@ -147,7 +158,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-
-</style>

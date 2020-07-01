@@ -9,7 +9,7 @@
           <button
             :class="{active: sActiveBtn === 'true'}"
             @click.prevent="setDeadlineStatus($event)"
-            class="locationButton"
+            class="wizardSelectionButton"
             value=true
           >Yes, I have a deadline.</button>
         </v-col>
@@ -17,7 +17,7 @@
           <button
             :class="{active: sActiveBtn === 'false'}"
             @click.prevent="setDeadlineStatus($event)"
-            class="locationButton"
+            class="wizardSelectionButton"
             value=false
           >No, just as soon as possible.</button>
         </v-col>
@@ -32,9 +32,6 @@ export default {
   data() {
     return {
       sActiveBtn:''
-      // disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_disclaimer01,
-      //Show and Hide Fields Values
-      // MRORequestDeadline : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MRORequestDeadline,
     };
   },
   methods: {
@@ -44,6 +41,7 @@ export default {
         "requestermodule/bDeadlineStatus",
         $event.target.value
       );
+      // set deadline to tomorrow date
       this.$store.commit(
         "requestermodule/dtDeadline",
         moment()
@@ -53,10 +51,7 @@ export default {
       );
       this.$store.commit("ConfigModule/bDeadlineStatus", $event.target.value);
       this.$store.commit("ConfigModule/mutateNextIndex");
-      console.log($event.target.value);
     }
   }
 };
 </script>
-<style scoped>
-</style>

@@ -7,8 +7,8 @@
     <div class="disclaimer">{{disclaimer}}</div>
   
     <div class="form-group btn-group-vertical">     
-    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg locationButton" value=true>Request another record</button>
-    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg locationButton" value=false>I'm done</button>
+    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg wizardSelectionButton" value=true>Request another record</button>
+    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg wizardSelectionButton" value=false>I'm done</button>
     </div>
   </div>
 </template>
@@ -31,15 +31,10 @@ export default {
             {
               location.reload();
             }
-            else{
-            console.log($event.target.value);                
-            this.$store.commit("ConfigModule/mutateNextIndex");          
+            else{    
+              this.$store.commit("ConfigModule/mutateNextIndex");          
             }
       }
     },
 };
 </script>
-
-<style scoped>
-
-</style>

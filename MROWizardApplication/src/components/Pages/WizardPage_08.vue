@@ -3,6 +3,7 @@
     <h1>Specify an approximate*<br/>Date Range for records.</h1>
     <form>
     <v-row>
+      <!-- Start Date input -->
       <v-col cols="12" offset-sm="1" sm="3" md="4">
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -22,7 +23,7 @@
           <v-date-picker v-model="dtRecordRangeStart" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
         </v-menu>
       </v-col>
-
+      <!-- End Date input -->
       <v-col cols="12" offset-sm="2" sm="3" md="4">
         <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -47,7 +48,6 @@
         <div>
           <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage"  color="success">Next</v-btn>
         </div>
-        <!-- :disabled="$v.$invalid" -->
       </v-col>
     </v-row>
      <div class="disclaimer">{{this.disclaimer}}</div>
@@ -70,6 +70,7 @@ export default {
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01
     };
   },
+  // Start and end date validations
   validations: {
     dtRecordRangeStart: {
         required,
@@ -83,7 +84,6 @@ export default {
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeEnd);
       this.$store.commit("requestermodule/dtRecordRangeEnd", this.dtRecordRangeEnd);
@@ -91,33 +91,29 @@ export default {
     }
   },
   computed: {
+     //Date Format setter
     dtRecordRangeStartFormatted() {
       return this.dtRecordRangeStart ? moment(this.dtRecordRangeStart).format("MM-DD-YYYY") : "";
     },
     dtRecordRangeEndFormatted() {
       return this.dtRecordRangeEnd ? moment(this.dtRecordRangeEnd).format("MM-DD-YYYY") : "";
     },
+     //Start and End Date validation error message setter
     dtRecordRangeStartErrors(){
       const errors = [];
       if (!this.$v.dtRecordRangeStart.$dirty) return errors;
-      !this.$v.dtRecordRangeStart.minValue && errors.push("Invalid Date");
+      !this.$v.dtRecordRangeStart.minValue && errors.push("This date cannot be future date");
       !this.$v.dtRecordRangeStart.required && errors.push("Start Date is required");
       return errors;
     },
      dtRecordRangeEndErrors(){
       const errors = [];
       if (!this.$v.dtRecordRangeEnd.$dirty) return errors;
-      !this.$v.dtRecordRangeEnd.minValue && errors.push("Invalid Date");
+      !this.$v.dtRecordRangeEnd.minValue && errors.push("This date cannot be future date");
       !this.$v.dtRecordRangeEnd.required && errors.push("End Date is required");
-      !this.$v.dtRecordRangeEnd.afterStartDate && errors.push("End date must be greater than start date.");
+      !this.$v.dtRecordRangeEnd.afterStartDate && errors.push("End Date cannot be before Start Date.");
       return errors;
     }
   }
 };
 </script>
-
-<style scoped>
-/* .center {
-  text-align: center;
-} */
-</style>
