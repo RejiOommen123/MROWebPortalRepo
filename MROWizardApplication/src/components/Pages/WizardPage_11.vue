@@ -8,12 +8,12 @@
     </div>
     <v-row>
       <div class="form-group">
+         <!-- Get all Release to options and displayed as buttons for selection-->
         <div v-for="releaseTo in oReleaseToArray" :key="releaseTo.sNormalizedReleaseTo">
           <v-col cols="12" offset-sm="2" sm="10">
-            <!-- <v-btn class="locationButton" @click.native="locationRequest($event)" :value=location depressed large color="success">{{location}}</v-btn> -->
             <button
             :class="{active: sActiveBtn === releaseTo.sNormalizedReleaseTo}" 
-            @click.prevent="releaseRequestTo($event)" class="releaseToButton" :value="releaseTo.sNormalizedReleaseTo"
+            @click.prevent="releaseRequestTo($event)" class="wizardSelectionButton" :value="releaseTo.sNormalizedReleaseTo"
             >{{releaseTo.sReleaseTo}}</button>
           </v-col>
         </div>
@@ -39,5 +39,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-</style>

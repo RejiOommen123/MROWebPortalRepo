@@ -55,12 +55,7 @@ export default {
     check(id) {
         this.nSelectedCheckBox = [];
         this.nSelectedCheckBox.push(id);
-        console.log(this.nSelectedCheckBox[0]);
     }
   }
 };
 </script>
-
-<style scoped>
-
-</style>

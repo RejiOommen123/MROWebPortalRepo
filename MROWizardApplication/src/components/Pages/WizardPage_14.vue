@@ -2,6 +2,7 @@
   <div class="center">
     <h1>Is there any sensitive info you<br/>would also like to be included?</h1>
     <template>
+      <!-- Get all Sensitive Information associated to facility and displayed as checkbox for selection-->
       <v-layout v-for="sensitiveInfo in oSensitiveInfoArray" :key="sensitiveInfo.sNormalizedSensitiveInfoName" row wrap>
         <v-col cols="12" offset-sm="2" sm="8">
           <v-checkbox
@@ -12,6 +13,8 @@
             color="green"
             :value="sensitiveInfo.sNormalizedSensitiveInfoName"
           >
+          <!-- This for 'i' button to give disclaimers/info about option -->
+          <!-- display info only if it exist else no i button -->
             <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
@@ -35,22 +38,16 @@ export default {
   name: "WizardPage_14",
   data() {
     return {
-      //this.$store.state.ConfigModule.apiResponseDataByLocation.oPrimaryReason
       oSensitiveInfoArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
       selectedSensitiveInfo: []
     };
   },
   methods: {
     nextPage() {
-      //alert("Hello World");
       this.$store.state.ConfigModule.showBackBtn = true;
-          this.$store.commit("requestermodule/selectedSensitiveInfo", this.selectedSensitiveInfo);
-          this.$store.commit("ConfigModule/mutateNextIndex");
+      this.$store.commit("requestermodule/selectedSensitiveInfo", this.selectedSensitiveInfo);
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };
 </script>
-
-<style scoped>
-
-</style>

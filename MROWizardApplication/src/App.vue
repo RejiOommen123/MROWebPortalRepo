@@ -3,6 +3,7 @@
   <v-app style="backgroundColor:transparent">
     <v-content>
       <v-row justify="center">
+        <!-- Pop up wizard screen -->
         <v-dialog
           persistent
           v-model="dialog"
@@ -10,26 +11,23 @@
           :max-width="dialogMaxWidth"
           :height="dialogMaxHeight"
         >
+          <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card
             id="bgImg"
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
-            <v-progress-linear color="#53b958" height="5" :value="nProgressBar">
-              <!-- <strong>{{ Math.ceil(nProgressBar) }}%</strong> -->
-            </v-progress-linear>
+            <!-- Wizard top progress bar -->
+            <v-progress-linear color="#53b958" height="5" :value="nProgressBar"></v-progress-linear>
+            <!-- Wizard top close button -->
             <v-btn style="position:absolute;right:3%;top:2%" icon dark @click="dialogConfirm=true">
               <v-icon>mdi-close</v-icon>
             </v-btn>
 
-            <v-card-text :style="{ height: dialogMaxHeight  }">
+            <v-card-text :style="{ height: dialogMaxHeight}">
               <div>
                 <div>
                   <div v-if="showBackBtn">
-                    <button
-                      type="button"
-                      @click.prevent="doNothing"
-                      style="font-size:36px color:#e0e0e0;"
-                    >
+                    <button type="button" @click.prevent="previousPage" style="color:#e0e0e0;">
                       <i style="font-size:36px" class="fa fa-angle-left"></i>
                     </button>
                   </div>
@@ -37,6 +35,7 @@
                     <br />
                     <br />
                   </div>
+                  <!-- Wizard logo image set here -->
                   <div v-if="selectedWizard!='Wizard_21'">
                     <img
                       :src="this.logoImg"
@@ -52,15 +51,15 @@
                     leave-active-class="animated fadeOut"
                     mode="out-in"
                   >
+                    <!-- Dynamically loading wizard pages -->
                     <keep-alive>
                       <component :is="selectedWizard"></component>
                     </keep-alive>
                   </transition>
-                  <div v-if="selectedWizard!='page-20'"></div>
                 </div>
               </div>
             </v-card-text>
-
+            <!-- Wizard Footer -->
             <v-footer padless class="font-weight-medium" style="background-color:transparent">
               <v-col class="text-center" cols="12">
                 <span>Call 123-456-7890 for assistance</span>
@@ -73,6 +72,7 @@
             </v-footer>
           </v-card>
         </v-dialog>
+        <!-- Loader to indicate wizard is getting ready -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="primary" dark>
             <v-card-text>
@@ -98,8 +98,6 @@
     <br />
   </v-app>
 </template>
-
-
 
 <script>
 import Wizard_01 from "./components/Pages/WizardPage_01";
@@ -140,11 +138,11 @@ export default {
   },
   created() {
     this.dialogLoader = true;
+    //Get GUID from url
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
-    console.log(window.location.search);
-    console.log("GUID Value:-" + guid);
-    //API Request get wizard config based on facility id.
+
+    //API Request get wizard config based on facility guid.
     this.$http
       .get("Wizards/GetFacilityDatafromFacilityGUID/" + guid)
       .then(response => {
@@ -168,20 +166,17 @@ export default {
             apiFacilityResponse.oWizards
           );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
-          console.log("This Logo" + this.logoImg);
-          console.log("This BG" + this.backgroundImg);
-
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;
+          //disable loader and show wizard pop up screen
           this.dialogLoader = false;
           this.dialog = true;
           //API request to get wizard config data based on location id.
           if (locationLength == 1) {
-            console.log("Inside Mounted - " + locationLength);
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
-            // Wizards/GetWizardConfig/fID=5&lID=2
+
             this.$http
               .get(
                 "Wizards/GetWizardConfig/fID=" +
@@ -190,6 +185,7 @@ export default {
                   singleLocation.nFacilityLocationID
               )
               .then(response => {
+                console.log(response);
                 var apiLocationResponse = response.body;
                 if (response.body) {
                   this.$store.commit(
@@ -212,16 +208,13 @@ export default {
                     "ConfigModule/nAuthExpirationMonths",
                     singleLocation.nAuthExpirationMonths
                   );
-                  console.log(
-                    "apiResponseDataByLocation    " +
-                      this.$store.state.ConfigModule.apiResponseDataByLocation
-                  );
                 }
               });
           }
         }
       });
   },
+  //Watcher and computed property are set to check for update logo and background in store
   watch: {
     logo(newlogo) {
       this.logoImg = newlogo;
@@ -257,9 +250,10 @@ export default {
     }
   },
   methods: {
-    doNothing() {
+    previousPage() {
       this.$store.commit("ConfigModule/mutatePreviousIndex");
     },
+    //To close wizard pop up window
     dialogClose() {
       this.dialogConfirm = false;
       this.dialog = false;

@@ -115,9 +115,6 @@ export default {
             bShowImage:''
         };
     },
-    updated(){
-    console.log("Updated Event");
-    },
      mixins: [validationMixin],
     validations: {
         fileInput: {
@@ -157,7 +154,6 @@ export default {
             this.$refs.webcam.capture().then(function (defs){
                 self.sIdentityImage = defs;
             });
-        console.log(this.sIdentityImage);
         this.sStatus="ImgCaptured";
         this.$refs.webcam.stop();            
         },
@@ -214,12 +210,3 @@ export default {
     }
 };
 </script>
-<style scoped>
-.identityUpload {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-  height: 40%;
-}
-</style>>

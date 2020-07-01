@@ -8,14 +8,14 @@
       <form>
         <v-row>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-text-field 
-            placeholder="+(XX) (XXX) XXX-XXXX" 
-            v-model="sPhoneNo" 
-            label="Enter Mobile No" 
-            required
-            :error-messages="sPhoneNoError"         
-            @input="$v.sPhoneNo.$touch()"
-            @blur="$v.sPhoneNo.$touch()"
+            <v-text-field
+              placeholder="+(XX) (XXX) XXX-XXXX"
+              v-model="sPhoneNo"
+              label="Enter Mobile No"
+              required
+              :error-messages="sPhoneNoError"
+              @input="$v.sPhoneNo.$touch()"
+              @blur="$v.sPhoneNo.$touch()"
             ></v-text-field>
           </v-col>
           <v-col cols="12" offset-sm="1" sm="10">
@@ -26,22 +26,32 @@
             </p>
           </v-col>
           <v-col cols="12" offset-sm="3" sm="6">
-            <v-btn @click.prevent="submit" :disabled="this.isDisable" class="ma-2" color="success">Send Verification Code</v-btn>
+            <v-btn
+              @click.prevent="submit"
+              :disabled="this.isDisable"
+              class="ma-2"
+              color="success"
+            >Send Verification Code</v-btn>
+            <!-- Below fields will shown only after requestor click on "Send Verification Code" button -->
             <div v-show="bOtpSend">
-            <div>
-           <v-text-field
-            :error-messages="sVerifyError"         
-            @input="$v.sVerify.$touch()"
-            @blur="$v.sVerify.$touch()"
-            v-model="sVerify"
-            label="Enter OTP" 
-            required>
-            </v-text-field>
-            
-              <v-btn @click.prevent="submit"  color="success">Resend OTP</v-btn> 
-            
-              <v-btn @click.prevent="verifyCode" :disabled="$v.$invalid" style="margin-left:10px" color="success">Verify</v-btn>
-            
+              <div>
+                <v-text-field
+                  :error-messages="sVerifyError"
+                  @input="$v.sVerify.$touch()"
+                  @blur="$v.sVerify.$touch()"
+                  v-model="sVerify"
+                  label="Enter OTP"
+                  required
+                ></v-text-field>
+
+                <v-btn @click.prevent="submit" color="success">Resend OTP</v-btn>
+
+                <v-btn
+                  @click.prevent="verifyCode"
+                  :disabled="$v.$invalid"
+                  style="margin-left:10px"
+                  color="success"
+                >Verify</v-btn>
               </div>
             </div>
           </v-col>
@@ -53,12 +63,12 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required,maxLength,minLength } from "vuelidate/lib/validators";
+import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_12",
   data() {
     return {
-      isDisable:false,
+      isDisable: false,
       bOtpSend: false,
 
       sPhoneNo: "+91",
@@ -69,20 +79,24 @@ export default {
       subData: {}
     };
   },
+  // OTP and phono validations
   mixins: [validationMixin],
   validations: {
-    sVerify: { required,maxLength: maxLength(4),minLength: minLength(4)  },
-    sPhoneNo:{ required,maxLength: maxLength(13),minLength: minLength(13)  },
+    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) },
+    sPhoneNo: { required, maxLength: maxLength(13), minLength: minLength(13) }
   },
-  created(){ 
-    this.$vuetify.theme.dark = true
+  created() {
+    this.$vuetify.theme.dark = true;
   },
-  computed:{
-      sPhoneNoError() {
+  computed: {
+    //OTP and Phone no Validation message setter
+    sPhoneNoError() {
       const errors = [];
       if (!this.$v.sPhoneNo.$dirty) return errors;
-      !this.$v.sPhoneNo.maxLength && errors.push("Enter mobile no with prefix(+91)");
-      !this.$v.sPhoneNo.minLength && errors.push("Enter mobile no with prefix(+91)");
+      !this.$v.sPhoneNo.maxLength &&
+        errors.push("Enter mobile no with prefix(+91)");
+      !this.$v.sPhoneNo.minLength &&
+        errors.push("Enter mobile no with prefix(+91)");
       !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
       return errors;
     },
@@ -94,10 +108,11 @@ export default {
       !this.$v.sVerify.required && errors.push("OTP required");
       return errors;
     }
-    },
+  },
   methods: {
+    //send otp on send verification no and resend button
     submit() {
-      this.isDisable=true;
+      this.isDisable = true;
       this.bOtpSend = true;
       var obj = {};
       obj["phone"] = this.sPhoneNo;
@@ -108,7 +123,6 @@ export default {
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
 
       var self = this;
-      console.log(self);
       this.$http
         .post(url, formData, {
           headers: {
@@ -118,11 +132,9 @@ export default {
         })
         .then(response => {
           self.subData = response;
-        })
-        .catch(err => {
-          console.log(err);
         });
     },
+    //Verify OPT entered by requestor
     verifyCode() {
       var obj = {};
       obj["phone"] = this.sPhoneNo;
@@ -133,8 +145,6 @@ export default {
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
 
-      var self = this;
-      console.log(self);
       this.$http
         .post(url, formData, {
           headers: {
@@ -143,25 +153,15 @@ export default {
           }
         })
         .then(response => {
-          if(response.data.status=="SUCCESS"){
-           this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
-          this.$store.commit("ConfigModule/mutateNextIndex");
+          if (response.data.status == "SUCCESS") {
+            this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
+            this.$store.commit("ConfigModule/mutateNextIndex");
           }
-          if(response.data.status=='ERROR')
-          {
+          if (response.data.status == "ERROR") {
             alert("Invalid OTP");
           }
-          console.log(response.data.status);
-        })
-        .catch(err => {
-          console.log(err);
         });
-    },
-    
+    }
   }
 };
 </script>
-
-<style scoped>
-
-</style>

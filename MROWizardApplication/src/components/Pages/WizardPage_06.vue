@@ -1,5 +1,6 @@
 <template>
   <div class="center">
+    <!-- Switch question based on bAreYouPatient or not -->
     <h1 v-if="bAreYouPatient">What's your Email Address?</h1>
     <h1 v-else>What is patient's Email Address?</h1>
     <p>We'll email you a confirmation of your request when you're finished</p>
@@ -34,14 +35,18 @@
               v-if="showVerifyBlock!=true && bConfirmReport!=true"
               class="mr-4"
               @click.prevent="nextPage"
-              
               color="success"
             >Next</v-btn>
           </form>
           <form>
+            <!-- if please email copy checkbox is check then below fields are visible -->
             <div v-if="bConfirmReport==true">
               <p>Click on "Send Email" for email verification.</p>
-              <v-btn @click="sendEmail" :disabled="this.isDisable" color="success">Send Email Verification</v-btn>
+              <v-btn
+                @click="sendEmail"
+                :disabled="this.isDisable"
+                color="success"
+              >Send Email Verification</v-btn>
             </div>
 
             <div v-if="showVerifyBlock==true">
@@ -89,7 +94,7 @@ export default {
       sVerify: "",
       sResponseKey: "",
       isDisable: false,
-      verified:false,
+      verified: false,
 
       //Show and Hide Fields Values
       MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
@@ -98,6 +103,7 @@ export default {
         .oFields.MROConfirmReport
     };
   },
+  //Email on verify OTP validations
   mixins: [validationMixin],
   validations: {
     sPatientEmailId: {
@@ -115,6 +121,7 @@ export default {
     bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
     },
+    // Email and verify OTP validations error message setter
     emailErrors() {
       const errors = [];
       if (!this.$v.sPatientEmailId.$dirty) return errors;
@@ -152,12 +159,13 @@ export default {
       );
       this.isDisable = true;
       this.showVerifyBlock = true;
-      var emailConfirm={
-        nFacilityID :this.$store.state.requestermodule.nFacilityID,
-        sPatientEmailId :this.$store.state.requestermodule.sPatientEmailId,
-        sPatientFirstName :this.$store.state.requestermodule.sPatientFirstName,
-        sPatientLastName :this.$store.state.requestermodule.sPatientLastName,
-      }
+      var emailConfirm = {
+        nFacilityID: this.$store.state.requestermodule.nFacilityID,
+        sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
+        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
+        sPatientLastName: this.$store.state.requestermodule.sPatientLastName
+      };
+      // api to send mail and get opt in response
       this.$http
         .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
         .then(response => {
@@ -166,6 +174,7 @@ export default {
           }
         });
     },
+    //Check response opt and entered opt matched or not
     verifyCode() {
       if (this.sResponseKey == this.sVerify) {
         this.nextPage();
@@ -189,7 +198,4 @@ export default {
 };
 </script>
 <style scoped>
-/* .center {
-  text-align: center;
-} */
 </style>

@@ -31,14 +31,9 @@ export default {
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;
-        
       this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };
 </script>
-
-<style scoped>
-
-</style>
