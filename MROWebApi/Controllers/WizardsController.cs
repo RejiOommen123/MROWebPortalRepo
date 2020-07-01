@@ -192,7 +192,6 @@ namespace MROWebApi.Controllers
                 {
                     writer.WriteStartElement("item");
                     writer.WriteElementString("name", singleRecordType);
-                    //writer.WriteElementString("include", singleRecordType);
                     writer.WriteEndElement();
                 }
                 writer.WriteEndElement();
@@ -203,11 +202,11 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.Flush();
 
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://waws-prod-blu-117.ftp.azurewebsites.windows.net/site/wwwroot/xmls/" + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + requestors.sPatientFirstName + " " + requestors.sPatientLastName + ".xml");
 
                 #region Request Params
                 request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.Credentials = new NetworkCredential(@"devmroportalcust1__DEV\$devmroportalcust1__DEV", "u4vruzYx1oAq2ush4afofyiHZwHP9QylGaZsrWhw7C6xSQEMyzdb1JKzM4A7");
+                request.Credentials = new NetworkCredential(facility.sFTPUsername,facility.sFTPPassword);
                 request.UsePassive = true;
                 request.UseBinary = true;
                 request.KeepAlive = false;
@@ -219,6 +218,8 @@ namespace MROWebApi.Controllers
                 Stream reqStream = request.GetRequestStream();
                 reqStream.Write(buffer, 0, buffer.Length);
                 reqStream.Close();
+                //Add Requestor
+                AddRequestor(requestors, _info);
 
                 //Send Email to Patient
                 if (await SendEmail(requestors, signedPDF, _info))
@@ -233,6 +234,35 @@ namespace MROWebApi.Controllers
                            .ToList();
                 return BadRequest(errors);
             }
+        }
+        private static int AddRequestor(Requestors requestor,DBConnectionInfo _info) 
+        {
+
+                try
+                {
+                #region Data Addition ! From UI
+                requestor.dtLastUpdate = DateTime.Now;
+                #endregion
+
+                #region Array Processing
+                var PRArray = string.Join(",", requestor.sSelectedPrimaryReasons);
+                var SRArray = string.Join(",", requestor.sSelectedRecordTypes);
+                var STArray = string.Join(",", requestor.sSelectedShipmentTypes);
+                var SIArray = string.Join(",", requestor.selectedSensitiveInfo);
+                requestor.sSelectedPrimaryReasons = new string[] { PRArray };
+                requestor.sSelectedRecordTypes = new string[] { SRArray }; 
+                requestor.sSelectedShipmentTypes = new string[] { STArray }; 
+                requestor.selectedSensitiveInfo = new string[] { SIArray };
+                #endregion
+
+                RequestorsRepository requestorsFac = new RequestorsRepository(_info);
+                    int GeneratedID = (int)requestorsFac.Insert(requestor);
+                    return GeneratedID;
+                }
+                catch (Exception ex)
+                {
+                        return 0;
+                }
         }
         private static async Task<bool> SendEmail(Requestors requestor, byte[] signedPDF, DBConnectionInfo _info)
         {

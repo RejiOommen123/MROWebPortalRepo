@@ -84,13 +84,10 @@ namespace MROWebAPI.Controllers
                 }
                 try
                 {
-                    #region Data Addition ! from UI
+                    #region Data Addition ! from UIthis.$store.state.adminUserId,
                     facility.bFacilityLogging = true;
                     facility.bActiveStatus = false;
-                    facility.nUpdatedAdminUserID = 1;
-                    facility.dtCreated = DateTime.Now;
-                    facility.nCreatedAdminUserID = 1;
-                    facility.nUpdatedAdminUserID = 1;
+                    facility.dtCreated = DateTime.Now;                    
                     facility.dtLastUpdate = DateTime.Now;
                     #endregion
 

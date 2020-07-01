@@ -73,7 +73,7 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public ActionResult<Requestors> EditRequestor(int id, Requestors requestors)
         {
-            if (id != requestors.nRequestorID)
+            if (id != requestors.nRequesterID)
             {
                 return BadRequest();
             }

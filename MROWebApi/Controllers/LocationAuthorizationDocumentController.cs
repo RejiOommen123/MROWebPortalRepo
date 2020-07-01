@@ -120,9 +120,6 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             //Adding the Photo of Driving License
             string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
             XImage theDrivingLicense = new XImage();
-            //char[] chDelimiter = { ',' };
-            //var pieces = requestor.sIdentityImage.Split(chDelimiter, 2);
-            //requestor.sIdentityImage = pieces[1];
             byte[] dlArray = Convert.FromBase64String(result);
             theDrivingLicense.SetData(dlArray);
 
@@ -145,17 +142,14 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
 
 
-            //// Image insertion on a specific location on new page
+            // Image insertion on a specific location on new page
             thePDFAuthDoc.Rect.Left = 50;
             thePDFAuthDoc.Rect.Bottom = 400;
-            //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
             thePDFAuthDoc.Rect.Width = 200;
             thePDFAuthDoc.Rect.Height = 150;
-            //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
 
             thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
             
-            //thePDFAuthDoc.Form.Stamp();
             byte[] ArrayToReturn = thePDFAuthDoc.GetData();
             sReplaceFieldsList = "";
             return ArrayToReturn;
@@ -198,9 +192,6 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             //Adding the Photo of Driving License
             string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
             XImage theDrivingLicense = new XImage();
-            //char[] chDelimiter = { ',' };
-            //var pieces = requestor.sIdentityImage.Split(chDelimiter, 2);
-            //requestor.sIdentityImage = pieces[1];
             byte[] dlArray = Convert.FromBase64String(result);
             theDrivingLicense.SetData(dlArray);
 
@@ -222,7 +213,8 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
-            //// Image insertion on a specific location on new page
+
+            // Image insertion on a specific location on new page
             thePDFAuthDoc.Rect.Left = 50;
             thePDFAuthDoc.Rect.Bottom = 400;
             //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
@@ -231,7 +223,6 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
             thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
             
-
             thePDFAuthDoc.Form.Stamp();
             byte[] ArrayToReturn = thePDFAuthDoc.GetData();
             sReplaceFieldsList = "";

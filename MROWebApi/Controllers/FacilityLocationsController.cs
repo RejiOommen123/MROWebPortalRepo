@@ -96,9 +96,7 @@ namespace MROWebApi.Controllers
                     bool checkPDF = false;
                     string sValidationTextGlobal = "";
                     facilityLocation.bLocationActiveStatus = false;
-                    facilityLocation.nCreatedAdminUserID = 1;
                     facilityLocation.dtCreated = DateTime.Now;
-                    facilityLocation.nUpdatedAdminUserID = 1;
                     facilityLocation.dtLastUpdate = DateTime.Now;
                     string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
                     string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
@@ -183,7 +181,6 @@ namespace MROWebApi.Controllers
 
                         }
                     }
-                    facilityLocation.nUpdatedAdminUserID = 1;
                     facilityLocation.dtLastUpdate = DateTime.Now;
                     return facilityLocationsRepository.Update(facilityLocation) ? Ok("Sucess") : (IActionResult)NoContent();
                 }

@@ -9,7 +9,7 @@ namespace MRODBL.BaseClasses
         [Dapper.Contrib.Extensions.Key]
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        public int nRequestorID { get; set; }
+        public int nRequesterID { get; set; }
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nFacilityID { get; set; }
