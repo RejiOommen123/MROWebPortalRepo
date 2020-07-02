@@ -1,6 +1,7 @@
 
   .v-application {
-      font-family: "Roboto", sans-serif;
+    font-family: 'Lato', sans-serif !important;
+    color: white;
   }
   .v-input{
     font-size: 18px;
@@ -9,6 +10,11 @@
     font-size: 14px;
   }
   
+  .wizardClose{
+    position:absolute;
+    right:3%;
+    top:1%;
+  }
   /*Styles for images */
   
   #logoImg {
@@ -44,7 +50,20 @@
     text-align: center;
   }
   
-  
+  /* apply this after backup 
+  .disclaimer {
+    background-color: #30c4b0;
+    font-size: 16px;
+    text-align: center;
+    color: #ffffff;
+    white-space: normal !important;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+   */
   
   /* Pages contains Checkbox List */
   
@@ -62,6 +81,7 @@
     -webkit-border-radius: 8px;
     margin-top: 10px;
     position: relative;
+    word-wrap: break-word;
   }
   .checkboxBorder:hover {
     background-color: #53b958;
@@ -75,6 +95,7 @@
     height: 15%;
     font-size: 22px;
     /* line-height: 89px; */
+    color: white;
     text-align: center;
     margin-bottom: 10px;
     padding-top: 10px;
@@ -147,3 +168,137 @@
     width: 80%;
     height: 40%;
   }
+
+/* signature page css start */
+#signature {
+  border: double 3px transparent;
+  border-radius: 5px;
+  background-image: linear-gradient(white, white),
+    radial-gradient(circle at top left, #4bc5e8, #9f6274);
+  /* background-image: url('https://image.shutterstock.com/image-illustration/abstract-gray-background-260nw-508982365.jpg'); */
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+#modalOpener {
+  position: fixed;
+  bottom: 150px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  border-color: #53b958;
+  background-color: #53b958;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+#review {
+  font-size: 18px;
+  display: inline-block;
+  padding: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 16px ;
+}
+#signHere {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  color: #333333;
+  font-size: 18px;
+  display: inline-block;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  width: auto !important;
+  text-decoration: none;
+  margin-right: 15px;
+}
+.page-title{
+    color:black;
+    text-align: center;
+}
+/* signature page css end */
+
+   @media only screen and (max-width: 600px) {
+
+    .v-dialog:not(.v-dialog--fullscreen) {
+      max-height: 100%; 
+      margin: 0px;
+    }
+    #signature{
+      width: 100%;
+      height: 30%;
+    }
+    #review {
+      font-size: 12px;
+      display: inline-block;
+      padding: 10px;
+      margin-right: 5px;
+      margin-left: 5px;
+      margin-top: 16px ;
+    }
+    #signHere {
+      background-color: #ffffff;
+      border: 1px solid #ffffff;
+      color: #333333;
+      font-size: 12px;
+      display: inline-block;
+      border-radius: 3px;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      padding-top: 3px !important;
+      padding-bottom: 3px !important;
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+      width: auto !important;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+    #pdfViewer{
+      width: 100%;
+      height: 450px;
+    }
+
+
+    
+  }
+  /*
+    h1{
+      color: white;
+      font-size: 26px;
+      margin-bottom:5%;
+    }
+    .subHeadings{
+      font-size: 14px;
+      line-height: 26px;
+      margin-bottom: 30px;
+      white-space: normal !important;
+      max-width: 75%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      color: white;
+    }
+    
+  .disclaimer{
+    font-size: 12px;
+    text-align: center;
+    color: #e2e2e2;
+    margin-bottom: 30px;
+    white-space: normal !important;
+    max-width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  .v-input{
+    font-size: 14px;
+  }
+  .v-messages{
+    font-size: 12px;
+  }
+  } */

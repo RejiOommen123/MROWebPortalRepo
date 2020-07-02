@@ -13,7 +13,7 @@
             :label="recordType.sRecordTypeName"
             color="green"
             :value="recordType.sNormalizedRecordTypeName"
-          >
+          wrap>
           <!-- This for 'i' button to give disclaimers/info about option -->
             <v-tooltip  v-if="recordType.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">

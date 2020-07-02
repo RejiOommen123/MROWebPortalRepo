@@ -57,7 +57,7 @@
                 <h2>Upload Identity Document Image</h2>
                    <form >
                 <div v-show="bShowImage!=''">
-                    <v-img class="identityUpload" style="cursor:pointer;" width='300px' height="200px" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
+                    <v-img class="identityUpload" width="50%" height="50%" style="cursor:pointer;" v-if="sIdentityImage" :src="sIdentityImage"></v-img><br>
                 </div>
                 <v-file-input
                     v-model="fileInput"

@@ -4,7 +4,8 @@
     <v-content>
       <v-row justify="center">
         <!-- Pop up wizard screen -->
-        <v-dialog
+        <v-dialog 
+          class="wizardDialog"
           persistent
           v-model="dialog"
           scrollable
@@ -19,22 +20,23 @@
             <!-- Wizard top progress bar -->
             <v-progress-linear color="#53b958" height="5" :value="nProgressBar"></v-progress-linear>
             <!-- Wizard top close button -->
-            <v-btn style="position:absolute;right:3%;top:2%" icon dark @click="dialogConfirm=true">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
+           
 
             <v-card-text :style="{ height: dialogMaxHeight}">
               <div>
                 <div>
-                  <div v-if="showBackBtn">
+                  <div  v-if="showBackBtn">
                     <button type="button" @click.prevent="previousPage" style="color:#e0e0e0;">
                       <i style="font-size:36px" class="fa fa-angle-left"></i>
-                    </button>
+                    </button>                    
                   </div>
                   <div v-else>
-                    <br />
-                    <br />
-                  </div>
+                    <br/>
+                    <br/>
+                    </div>
+                    <v-btn style="font-size:36px" class="wizardClose" icon dark @click="dialogConfirm=true">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>      
                   <!-- Wizard logo image set here -->
                   <div v-if="selectedWizard!='Wizard_21'">
                     <img
@@ -133,7 +135,7 @@ export default {
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
       phoneNo: 0,
       dialogLoader: false,
-      dialogConfirm: false
+      dialogConfirm: false,
     };
   },
   created() {
@@ -147,7 +149,7 @@ export default {
       .get("Wizards/GetFacilityDatafromFacilityGUID/" + guid)
       .then(response => {
         var apiFacilityResponse = response.body;
-        if (response.body) {
+        if (response.body!="") {
           this.$store.commit(
             "ConfigModule/apiResponseDataByFacilityGUID",
             apiFacilityResponse
@@ -210,6 +212,10 @@ export default {
                   );
                 }
               });
+          }
+          else{
+          this.dialogLoader = false;
+            alert("Request Wizard not working contact administrator.");
           }
         }
       });
@@ -287,6 +293,7 @@ export default {
     Wizard_24: Wizard_24
   }
 };
+
 </script>
 <style scoped>
 @import "./assets/styles/RequestWizard.css";

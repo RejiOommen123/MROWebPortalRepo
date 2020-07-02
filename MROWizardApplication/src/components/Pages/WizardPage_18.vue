@@ -7,6 +7,7 @@
       </h1>
       <form>
         <v-row>
+          <!-- Phone no input box -->
           <v-col cols="12" offset-sm="3" sm="6">
             <v-text-field
               placeholder="+(XX) (XXX) XXX-XXXX"

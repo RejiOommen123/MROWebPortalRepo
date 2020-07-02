@@ -6,7 +6,7 @@
     </div>
     <form>
       <v-row>
-        <v-col v-if="MROPatientFirstName" cols="12" offset-sm="1" sm="3">
+        <v-col v-if="MROPatientFirstName" cols="12" offset-sm="1" sm="3" xs="3">
           <label for="sPatientFirstName" class="control-label">First Name</label>
           <v-text-field
             v-model="sPatientFirstName"
@@ -16,7 +16,7 @@
             @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3">
+        <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3" xs="3">
           <label for="sPatientMiddleInitial" class="control-label">Middle Initial</label>
           <v-text-field
             v-model="sPatientMiddleInitial"
@@ -26,7 +26,7 @@
             @blur="$v.sPatientMiddleInitial.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROPatientLastName" cols="12" sm="3">
+        <v-col v-if="MROPatientLastName" cols="12" sm="3" xs="3">
           <label for="sPatientLastName" class="control-label">Last Name</label>
           <v-text-field
             v-model="sPatientLastName"
