@@ -3,14 +3,14 @@
     <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
     <v-dialog v-model="dialog" max-width="400px" style="backgroundColor:white">
       <v-card id="signatureCard">
-        <v-btn style="fontColor:black, textAlign:right" icon @click="dialog = false">
+        <v-btn class="wizardClose" icon @click="dialog = false">
             X
           </v-btn>
-        <v-card-title class="headline">Draw your signature below</v-card-title>
+        <v-card-title >Draw your signature below</v-card-title>
 
         <v-card-text>
           <div class="row">
-            <div class="col-12 mt-2">
+            <v-col cols="12" sm="3">
               <VueSignaturePad
                 id="signature"
                 width="350px"
@@ -18,22 +18,25 @@
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
               />
+               <!-- width="350px"
+                " -->
               <!--<VueSignaturePad :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}" ref="signaturePad" />-->
-            </div>
+            </v-col>
           </div>
-          <div class="row">
-            <div class="col-3 mt-2">
+          <v-row>
+            <v-col cols="3" sm="3">
               <button class="btn btn-outline-secondary" @click="undo">Undo</button>
-            </div>
-            <div class="col-3 mt-2">
-              <button class="btn btn-outline-primary" @click="save" data-dismiss="modal">Save</button>
-            </div>
-          </div>
+                          
+            </v-col>
+            <v-col cols="3" offset-sm="6" sm="3">
+              <button class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Save</button>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
 
-    <iframe :src="this.pdf" width="100%" height="1200px"></iframe>
+    <iframe id="pdfViewer" :src="this.pdf" width="100%" height="1200px"></iframe>
 
     <div id="modalOpener">
       <div v-if="bFormSigned==false">
@@ -161,55 +164,5 @@ export default {
 };
 </script>
 <style>
-#signature {
-  border: double 3px transparent;
-  border-radius: 5px;
-  background-image: linear-gradient(white, white),
-    radial-gradient(circle at top left, #4bc5e8, #9f6274);
-  /* background-image: url('https://image.shutterstock.com/image-illustration/abstract-gray-background-260nw-508982365.jpg'); */
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-}
-#modalOpener {
-  position: fixed;
-  bottom: 150px;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  border-color: #53b958;
-  background-color: #53b958;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  color: #ffffff;
-  white-space: nowrap;
-}
-#review {
-  font-size: 18px;
-  display: inline-block;
-  padding: 10px;
-  margin-right: 5px;
-  margin-left: 5px;
-  margin-top: 16px ;
-}
-#signHere {
-  background-color: #ffffff;
-  border: 1px solid #ffffff;
-  color: #333333;
-  font-size: 18px;
-  display: inline-block;
-  border-radius: 3px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  padding-top: 3px !important;
-  padding-bottom: 3px !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
-  width: auto !important;
-  text-decoration: none;
-  margin-right: 15px;
-}
-.page-title{
-    color:black;
-    text-align: center;
-}
+
 </style>
