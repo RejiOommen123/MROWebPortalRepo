@@ -138,7 +138,7 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public ActionResult<TempRequestors> EditTempRequestor(int id, TempRequestors tempRequestors)
         {
-            if (id != tempRequestors.nRequestorID)
+            if (id != tempRequestors.nRequesterID)
             {
                 return BadRequest();
             }
@@ -159,7 +159,7 @@ namespace MROWebApi.Controllers
 
             TempRequestorsRepository tempRequestorFac = new TempRequestorsRepository(_info);
             TempRequestors dbTemprequestor = await tempRequestorFac.Select(id);
-            if (id != dbTemprequestor.nRequestorID)
+            if (id != dbTemprequestor.nRequesterID)
             {
                 return BadRequest();
             }

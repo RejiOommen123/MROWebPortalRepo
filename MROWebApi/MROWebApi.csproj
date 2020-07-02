@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\LocationAuthorizationDocument.cs" />
+    <Compile Remove="Controllers\PDFController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ABCpdfCore" Version="11.3.8" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="MailKit" Version="2.7.0" />
