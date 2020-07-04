@@ -33,7 +33,7 @@ namespace MROWebApi.Controllers
             try
             {
                 RequestorsRepository requestorsFac = new RequestorsRepository(_info);
-                Requestors requestor = await requestorsFac.Select(requestorID);
+                Requesters requestor = await requestorsFac.Select(requestorID);
                 return Ok(requestor);
             }
             catch (Exception exp)
@@ -47,7 +47,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Requestors>> AddRequestor(Requestors requestor)
+        public async Task<ActionResult<Requesters>> AddRequestor(Requesters requestor)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace MROWebApi.Controllers
 
                 RequestorsRepository requestorsFac = new RequestorsRepository(_info);
                 int GeneratedID = (int)requestorsFac.Insert(requestor);
-                Requestors dbRequestor = await requestorsFac.Select(GeneratedID);
+                Requesters dbRequestor = await requestorsFac.Select(GeneratedID);
                 return dbRequestor;
             }
             catch (Exception ex)
@@ -71,7 +71,7 @@ namespace MROWebApi.Controllers
         [HttpPost("EditRequestor/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public ActionResult<Requestors> EditRequestor(int id, Requestors requestors)
+        public ActionResult<Requesters> EditRequestor(int id, Requesters requestors)
         {
             if (id != requestors.nRequesterID)
             {

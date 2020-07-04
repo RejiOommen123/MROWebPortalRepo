@@ -1,47 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>MROWebApi.Program</StartupObject>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<StartupObject>MROWebApi.Program</StartupObject>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Controllers\LocationAuthorizationDocument.cs" />
-    <Compile Remove="Controllers\PDFController.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Context\**" />
+		<Content Remove="Context\**" />
+		<EmbeddedResource Remove="Context\**" />
+		<None Remove="Context\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ABCpdfCore" Version="11.3.8" />
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="MailKit" Version="2.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ABCpdfCore" Version="11.3.8" />
+		<PackageReference Include="DinkToPdf" Version="1.0.8" />
+		<PackageReference Include="MailKit" Version="2.7.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="4.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MRODBL\MRODBL.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MRODBL\MRODBL.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <NativeLibs Remove="Controllers\LocationAuthorizationDocument.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<NativeLibs Remove="Controllers\WizardsController.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <NativeLibs Remove="Controllers\WizardsController.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="assets\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <NativeLibs Remove="Controllers\RequestorsController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="assets\" />
-  </ItemGroup>
+	<ItemGroup>
+		<NativeLibs Remove="Services\DataProtectionPurposeStrings.cs" />
+	</ItemGroup>
 
 
 </Project>

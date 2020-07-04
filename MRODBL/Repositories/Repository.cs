@@ -26,6 +26,10 @@ namespace MRODBL.Repositories
         {
             return item;
         }
+        internal virtual Requesters Mapping(Requesters item)
+        {
+            return item;
+        }
         #endregion
 
         #region SELECT Queries 
@@ -236,9 +240,15 @@ namespace MRODBL.Repositories
             string SqlString = "spGetPatientFormBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                db.Open();
-                IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @ID = ID }, commandType: CommandType.StoredProcedure);
-                return a;
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex) {
+                    return (IEnumerable<dynamic>)ex;
+                }
             }
         }
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
@@ -287,7 +297,8 @@ namespace MRODBL.Repositories
                 String[] oWizards = soWizard.ToArray();
                 var wizardHelper = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var locationDetails = logoBackgroundFacility.Read().ToList();
-                object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails };
+                var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequestor);
+                object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails, wizardsSave };
                 return newObject;
             }
         }
@@ -300,6 +311,19 @@ namespace MRODBL.Repositories
                 using (var trans = db.BeginTransaction())
                 {
                     db.Query(SqlString, new { @nFacilityID = nFacilityID, @sConnectionString = sConnectionString, @nAdminUserId = nAdminUserId }, trans, commandType: CommandType.StoredProcedure);
+                    trans.Commit();
+                }
+            }
+        }
+        public void AddDependencyRecordsForFacilityLocation(int nFacilityLocationID,int nFacilityID)
+        {
+            string SqlString = "spAddDependencyRecordsForFacilityLocation";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                using (var trans = db.BeginTransaction())
+                {
+                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID}, trans, commandType: CommandType.StoredProcedure);
                     trans.Commit();
                 }
             }

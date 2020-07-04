@@ -12,7 +12,6 @@ namespace MRODBL.BaseClasses
         public int nFieldID { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nWizardID { get; set; }
-        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [MaxLength]
         public string sFieldName { get; set; }
         [MaxLength]

@@ -1,15 +1,13 @@
 ﻿using MRODBL.BaseClasses;
 using MRODBL.Entities;
 using MRODBL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace MRODBL.BaseClassRepositories
 {
-    public class PatientModuleLoggerRepository:Repository<PatientModuleLogger>
+    public class RequesterModuleLoggerRepository:Repository<RequesterModuleLogger>
     {
-        public PatientModuleLoggerRepository(DBConnectionInfo DBInfo)
+        public RequesterModuleLoggerRepository(DBConnectionInfo DBInfo)
 
         {
             Init(DBInfo.ConnectionString);
@@ -17,7 +15,7 @@ namespace MRODBL.BaseClassRepositories
 
         public void Init(string sConnectIn)
         {
-            Init(sConnectIn, "tblPatientModuleLogger", "nPMLID");
+            Init(sConnectIn, "tblRequesterModuleLogger", "nRMLID");
         }
     }
 }

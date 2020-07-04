@@ -10,6 +10,8 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using System.Text.RegularExpressions;
+using MROWebApi.Services;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace MROWebApi.Controllers
 {
@@ -20,6 +22,8 @@ namespace MROWebApi.Controllers
     {
         #region Facility Locations Constructor
         private readonly DBConnectionInfo _info;
+        
+
         public FacilityLocationsController(DBConnectionInfo info)
         {
             _info = info;
@@ -29,12 +33,21 @@ namespace MROWebApi.Controllers
         #region Get Facility Location/Locations
         [HttpGet]
         [AllowAnonymous]
-        [Route("[action]/{id}")]
-        public async Task<FacilityLocations> GetFacilityLocationSingle(string id)
+        [Route("[action]/sFacilitylocationID={sFacilitylocationID}&sAdminUserID={sAdminUserID}")]
+        public async Task<FacilityLocations> GetFacilityLocationSingle(string sFacilitylocationID,string sAdminUserID)
         {
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-            bool result = int.TryParse(id, out int nId);
-            return await facilityLocationsRepository.Select(nId);
+            bool resultFacilityLocation = int.TryParse(sFacilitylocationID, out int nFacilitylocationID);
+            bool resultAdminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
+
+            FacilityLocations location =  await facilityLocationsRepository.Select(nFacilitylocationID);
+
+            #region Logging
+            MROLogger logger = new MROLogger(_info);
+            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Location Method for Location ID: " + sFacilitylocationID;
+            logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
+            #endregion
+            return location;
         }
 
         [HttpGet("GetFacilityLocation/{id}")]
@@ -49,21 +62,27 @@ namespace MROWebApi.Controllers
             return facilityLocations;
         }
 
-        [HttpGet("GetFacilityLocationByFacilityID/{id}")]
+        [HttpGet("GetFacilityLocationByFacilityID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityID(string id)
+        public async Task<IActionResult> GetFacilityLocationByFacilityID(string sFacilityID,string sAdminUserID)
         {
             try
             {
-                bool result = int.TryParse(id, out int facilityID);
+                bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
+                bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(facilityID);
+                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(nFacilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
-                Facilities facility = await facilityRepo.Select(facilityID);
+                Facilities facility = await facilityRepo.Select(nFacilityID);
                 if (facility == null)
                     return NotFound();
                 var faciName = facility.sFacilityName;
+                #region Logging
+                MROLogger logger = new MROLogger(_info);
+                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility locations Method for Facility ID: " + sFacilityID;
+                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
+                #endregion
                 return Ok(new { locations, faciName });
             }
             catch (Exception ex)
@@ -105,7 +124,19 @@ namespace MROWebApi.Controllers
                     facilityLocation.nAuthExpirationMonths = 6;
                     #endregion
 
-                    if (facilityLocation.sAuthTemplate != "")
+                    if (string.IsNullOrEmpty(facilityLocation.sConfigLogoData)) {
+                        facilityLocation.sConfigLogoData = null;
+                        facilityLocation.sConfigLogoName = "";
+                    }
+
+                    if (string.IsNullOrEmpty(facilityLocation.sConfigBackgroundData))
+                    {
+                        facilityLocation.sConfigBackgroundData = null;
+                        facilityLocation.sConfigBackgroundName = "";
+                    }
+
+                    //Validating Authorization Template
+                    if (!string.IsNullOrEmpty(facilityLocation.sAuthTemplate))
                     {
                         facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
                         byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
@@ -114,31 +145,42 @@ namespace MROWebApi.Controllers
                         LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
                         checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
                     }
-                    addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
-                    if (addedLocationID != null)
+
+                    if (checkPDF)
                     {
-                        if (checkPDF)
-                        {
-                            await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", (int)addedLocationID);
-                        }
-                        FacilitiesRepository fRepo = new FacilitiesRepository(_info);
-                        Facilities facility = new Facilities();
-                        facility = await fRepo.Select(facilityLocation.nFacilityID);
-                        IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", facilityLocation.nFacilityID);
-                        if (locationList.Count() == 1)
-                        {
-                            //Making facility active, if the location added was the first one
-                            FacilitiesRepository facilitiesRepository = new FacilitiesRepository(_info);
-                            await facilitiesRepository.ToggleSoftDelete("bActiveStatus", facilityLocation.nFacilityID);
-                        }
-                        return Ok(sValidationTextGlobal);
+                        facilityLocation.bLocationActiveStatus = true;
+                        addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
                     }
                     else
-                        return Content("Location Cannot be Added");
+                    {
+                        facilityLocation.sAuthTemplateName = null;
+                        facilityLocation.sAuthTemplate = null;
+                        //Make Active Status False, then insert record & then call SP
+                        //In SP call,as location active status is false, hence facility won't be activated
+                        facilityLocation.bLocationActiveStatus = false;
+                        addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
+                    }
+
+                    if (addedLocationID != null)
+                    {
+                        //Call spAddDepedencyRecordsforFacilityLocation & Log
+                        facilityLocationsRepository.AddDependencyRecordsForFacilityLocation((int)addedLocationID, facilityLocation.nFacilityID);
+
+                        #region Logging
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + facilityLocation.nCreatedAdminUserID + " called Add Location Method & Created Location with ID: " + addedLocationID;
+                        logger.LogAdminRecords(facilityLocation.nCreatedAdminUserID, sDescription, "Add Location", "Add Location");
+                        #endregion
+                    }
+                    else
+                        return Content("Error Adding location!");
+
+                    return Ok(sValidationTextGlobal);
+
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    return BadRequest(ex.Message);
                 }
             }
             else {
@@ -164,10 +206,23 @@ namespace MROWebApi.Controllers
                     {
                         return BadRequest("Bad Request: ID Not Equals Location ID");
                     }
-                    bool checkPDF = true;
-                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                    bool checkPDF = false;
                     string sValidationTextGlobal = "";
-                    if (facilityLocation.sAuthTemplate != "")
+
+                    if (string.IsNullOrEmpty(facilityLocation.sConfigLogoData))
+                    {
+                        facilityLocation.sConfigLogoData = null;
+                        facilityLocation.sConfigLogoName = "";
+                    }
+
+                    if (string.IsNullOrEmpty(facilityLocation.sConfigBackgroundData))
+                    {
+                        facilityLocation.sConfigBackgroundData = null;
+                        facilityLocation.sConfigBackgroundName = "";
+                    }
+
+                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                    if (!string.IsNullOrEmpty(facilityLocation.sAuthTemplate))
                     {
                         facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
                         byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
@@ -175,14 +230,31 @@ namespace MROWebApi.Controllers
                         IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
                         LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
                         checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
-                        if (checkPDF)
-                        {
-                            await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", facilityLocation.nFacilityLocationID);
-
-                        }
                     }
                     facilityLocation.dtLastUpdate = DateTime.Now;
-                    return facilityLocationsRepository.Update(facilityLocation) ? Ok("Sucess") : (IActionResult)NoContent();
+                    if (checkPDF)
+                    {
+                        facilityLocation.bLocationActiveStatus = true;
+                        facilityLocationsRepository.Update(facilityLocation);
+                        #region Logging
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
+                        logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                        #endregion
+                        return Ok(sValidationTextGlobal);
+                    }
+                    else {
+                        facilityLocation.bLocationActiveStatus = false;
+                        facilityLocation.sAuthTemplate = null;
+                        facilityLocation.sAuthTemplateName = "";
+                        facilityLocationsRepository.Update(facilityLocation);
+                        #region Logging
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
+                        logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                        #endregion
+                        return BadRequest(sValidationTextGlobal);
+                    }
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -210,16 +282,17 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Toggle Facility Location
-        [HttpPost("DeleteFacilityLocation")]
+        [HttpPost("ToggleFacilityLocation")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> DeleteFacilityLocation([FromBody] int id)
+        public async Task<IActionResult> ToggleFacilityLocation(ToggleLocation toggleLocation)
         {
             try
             {
+                int nFacilityLocationID = toggleLocation.nFacilityLocationID;
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                FacilityLocations location = await facilityLocationsRepository.Select(id);
-                if (id != location.nFacilityLocationID)
+                FacilityLocations location = await facilityLocationsRepository.Select(nFacilityLocationID);
+                if (nFacilityLocationID != location.nFacilityLocationID)
                 {
                     return BadRequest();
                 }
@@ -228,8 +301,13 @@ namespace MROWebApi.Controllers
                 locationList = locationList.Where(c => c.bLocationActiveStatus == false);
                 if (await ValidateFacilityLocation(location, locationList, _info))
                 {
-                    if (await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", id))
+                    if (await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", nFacilityLocationID))
                     {
+                        #region Logging
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + toggleLocation.nAdminUserID + " called Toggle Location Method for Location ID: " + toggleLocation.nFacilityLocationID;
+                        logger.LogAdminRecords(toggleLocation.nAdminUserID, sDescription, "Toggle Location", "Manage Locations");
+                        #endregion
                         return Ok("Success");
                     }
                     else
@@ -244,7 +322,7 @@ namespace MROWebApi.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                if (!await FacilityLocationExists(id))
+                if (!await FacilityLocationExists(toggleLocation.nFacilityLocationID))
                 {
                     return NotFound();
                 }
@@ -283,7 +361,7 @@ namespace MROWebApi.Controllers
             {
                 //User trying to Activate
                 bool checkPDF = false;
-                if (location.sAuthTemplate!="") {
+                if (!string.IsNullOrEmpty(location.sAuthTemplate)) {
                     byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
                     ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
                     IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
@@ -296,7 +374,7 @@ namespace MROWebApi.Controllers
                         await facilitiesRepository.ToggleSoftDelete("bActiveStatus", location.nFacilityID);
                     }
                 }
-                return location.sAuthTemplate != "" && checkPDF;
+                return string.IsNullOrEmpty(location.sAuthTemplate) && checkPDF;
             }
         }
         #endregion

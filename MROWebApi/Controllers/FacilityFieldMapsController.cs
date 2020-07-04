@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using MRODBL.Entities;
 using MRODBL.BaseClassRepositories;
 using MRODBL.BaseClasses;
+using MROWebApi.Services;
 
 namespace MROWebApi.Controllers
 {
@@ -47,20 +48,25 @@ namespace MROWebApi.Controllers
             return facilityFieldMaps;
         }
 
-        [HttpGet("GetFieldsByFacilityID/{facilityID}")]
+        [HttpGet("GetFieldsByFacilityID/nFacilityID={nFacilityID}&nAdminUserID={nAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFieldsByFacilityID(int facilityID)
+        public async Task<IActionResult> GetFieldsByFacilityID(int nFacilityID,int nAdminUserID)
         {
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                IEnumerable<dynamic> fields = await fieldsRepository.EditFields(facilityID);
+                IEnumerable<dynamic> fields = await fieldsRepository.EditFields(nFacilityID);
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                Facilities facility = await rpFac.Select(facilityID);
+                Facilities facility = await rpFac.Select(nFacilityID);
                 if (facility == null)
                     return NotFound();
                 var faciName = facility.sFacilityName;
+                #region Logging
+                MROLogger logger = new MROLogger(_info);
+                string sDescription = "Admin with ID: " + nAdminUserID + " called Get Facility Fields Method for Facility ID: " + nFacilityID;
+                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
+                #endregion
                 return Ok(new { fields, faciName });
             }
             catch (Exception ex)
@@ -74,19 +80,143 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityFields([FromBody]FacilityFieldMaps[] fieldFacilityMaps)
+        public async Task<IActionResult> EditFacilityFields([FromBody] FacilitiesFieldMapTable[] fieldFacilityMapsTable)
         {
             if (ModelState.IsValid) 
             {
                 try
                 {
-                    foreach (FacilityFieldMaps map in fieldFacilityMaps)
+
+                    //Repos Created
+                    FacilityFieldMapsRepository facilityFieldMapsRepository = new FacilityFieldMapsRepository(_info);
+                    FacilityPrimaryReasonsRepository primaryReasonRepo = new FacilityPrimaryReasonsRepository(_info);
+                    FacilityShipmentTypesRepository shipmentTypeRepo = new FacilityShipmentTypesRepository(_info);
+                    FacilitySensitiveInfoRepository sensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
+                    FacilityRecordTypesRepository recordTypeRepo = new FacilityRecordTypesRepository(_info);
+
+
+                    //Separating Table Data
+                    var PRList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPrimaryReasons");
+                    var RTList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityRecordTypes");
+                    var SIList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilitySensitiveInfo");
+                    var STList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
+                    var FMList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
+                    
+
+                    //Facility PrimaryReasons
+                    List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
+                    foreach (var primaryReason in PRList)
                     {
-                        map.dtCreated = DateTime.Now;
-                        map.dtLastUpdate = DateTime.Now;
+                        primaryReasonsList.Add(
+                            new FacilityPrimaryReasons()
+                            {
+                                nFacilityID = primaryReason.nFacilityID,
+                                nPrimaryReasonID = primaryReason.nFacilityFieldMapID,
+                                sPrimaryReasonName = primaryReason.sFieldName,
+                                nFieldOrder = primaryReason.nFieldOrder,
+                                nWizardID = primaryReason.nWizardID,
+                                bShow = primaryReason.bShow,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            ); 
                     }
-                    FacilityFieldMapsRepository facilityFeldMapsRepository = new FacilityFieldMapsRepository(_info);
-                    return await facilityFeldMapsRepository.UpdateMany(fieldFacilityMaps.ToList()) ? Ok() : (IActionResult)NoContent();
+                    await primaryReasonRepo.UpdateMany(primaryReasonsList);
+
+
+
+                    //Facility Shipment Types 
+                    List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
+                    foreach (var shipmentType in STList)
+                    {
+                        shipmentTypeList.Add(
+                            new FacilityShipmentTypes()
+                            {
+                                nShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                nFacilityID = shipmentType.nFacilityID,
+                                sShipmentTypeName = shipmentType.sFieldName,
+                                nFieldOrder = shipmentType.nFieldOrder,
+                                nWizardID = shipmentType.nWizardID,
+                                bShow = shipmentType.bShow,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            ); 
+                    }
+                    await shipmentTypeRepo.UpdateMany(shipmentTypeList);
+
+
+                    //Facility Sensitive Info
+                    List<FacilitySensitiveInfo> sensitiveInfoList = new List<FacilitySensitiveInfo>();
+                    foreach (var sensitiveInfo in SIList)
+                    {
+                        sensitiveInfoList.Add(
+                            new FacilitySensitiveInfo()
+                            {
+                                nSensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                nFacilityID = sensitiveInfo.nFacilityID,
+                                sSensitiveInfoName = sensitiveInfo.sFieldName,
+                                nFieldOrder = sensitiveInfo.nFieldOrder,
+                                nWizardID = sensitiveInfo.nWizardID,
+                                bShow = sensitiveInfo.bShow,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            );
+
+                    }
+                    await sensitiveInfoRepo.UpdateMany(sensitiveInfoList);
+
+
+                    //Facility Record Types 
+                    List<FacilityRecordTypes> recordTypeList = new List<FacilityRecordTypes>();
+                    foreach (var recordType in RTList)
+                    {
+                        recordTypeList.Add(
+                            new FacilityRecordTypes()
+                            {
+                                nFacilityID = recordType.nFacilityID,
+                                nRecordTypeID = recordType.nFacilityFieldMapID,
+                                sRecordTypeName = recordType.sFieldName,
+                                nFieldOrder = recordType.nFieldOrder,
+                                nWizardID = recordType.nWizardID,
+                                bShow = recordType.bShow,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            );
+
+                    }
+                    await recordTypeRepo.UpdateMany(recordTypeList);
+
+                    //Facility Field Maps 
+                    List<FacilityFieldMaps> fieldMapsList = new List<FacilityFieldMaps>();
+                    foreach (var fieldMaps in FMList)
+                    {
+                        fieldMapsList.Add(
+                            new FacilityFieldMaps()
+                            {
+                                nFacilityID = fieldMaps.nFacilityID,
+                                nFieldID = fieldMaps.nFieldID,
+                                nWizardID = fieldMaps.nWizardID,
+                                bShow = fieldMaps.bShow,
+                                nFieldOrder = fieldMaps.nFieldOrder,
+                                nCreatedAdminUserID  = fieldMaps.nCreatedAdminUserID,
+                                dtCreated = DateTime.Now,
+                                nUpdatedAdminUserID = fieldMaps.nUpdatedAdminUserID,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            );
+
+                    }
+                    await facilityFieldMapsRepository.UpdateMany(fieldMapsList);
+
+                    #region Logging
+                    var mapTable = FMList.FirstOrDefault();
+                    int nAdminUserID = mapTable.nUpdatedAdminUserID;
+                    int nFacilityID = mapTable.nFacilityID;
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Fields Method for Facility ID: " + nFacilityID + " and Updated Fields";
+                    logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Fields", "Edit Fields");
+                    #endregion
+
+                    return Ok("Success");
                 }
                 catch (Exception ex)
                 {

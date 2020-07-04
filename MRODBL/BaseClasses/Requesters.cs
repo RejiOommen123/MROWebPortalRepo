@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    public partial class Requestors
+    public partial class Requesters
     {
         #region Props
         [Dapper.Contrib.Extensions.Key]
@@ -31,15 +31,17 @@ namespace MRODBL.BaseClasses
         public string sPatientLastName { get; set; }
         [StringLength(1, ErrorMessage = "Maximum 1 character Middle Initial allowed")]
         public string sPatientMiddleInitial { get; set; }
-        public bool bIsPatientMinor { get; set; }
-        public bool bIsPatientDeceased { get; set; }
+        //public bool bIsPatientMinor { get; set; }
+        //public bool bIsPatientDeceased { get; set; }
         [Required]
         public DateTime? dtPatientDOB { get; set; }
         [Required]
         [StringLength(30, ErrorMessage = "Maximum 30 characters Email ID allowed")]
-        public string sPatientEmailId { get; set; }
-        [StringLength(30, ErrorMessage = "Maximum 30 characters Confirm Email ID allowed")]
-        public string sConfirmEmailId { get; set; }
+        //public string sPatientEmailId { get; set; }
+        public string sRequesterEmailId { get; set; }
+
+        //[StringLength(30, ErrorMessage = "Maximum 30 characters Confirm Email ID allowed")]
+        //public string sConfirmEmailId { get; set; }
         public bool bConfirmReport { get; set; }
         [Required]
         [StringLength(10, ErrorMessage = "Maximum 10 characters Zip Code allowed")]
@@ -85,8 +87,8 @@ namespace MRODBL.BaseClasses
         public string sSTFaxCompAdd { get; set; }
         [StringLength(30, ErrorMessage = "Maximum 30 characters Shipment Type Email ID allowed")]
         public string sSTEmailId { get; set; }
-        [StringLength(30, ErrorMessage = "Maximum 30 characters Shipment Type Confirm Email ID allowed")]
-        public string sSTConfirmEmailId { get; set; }
+        //[StringLength(30, ErrorMessage = "Maximum 30 characters Shipment Type Confirm Email ID allowed")]
+        //public string sSTConfirmEmailId { get; set; }
         public string sSTMailCompAdd { get; set; }
         public DateTime? dtPickUp { get; set; }
         #endregion

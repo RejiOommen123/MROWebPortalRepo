@@ -165,6 +165,12 @@ namespace MRODBL.Repositories
         /// <param name="nAdminUserId">Logged In Admin User ID</param>
         void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId);
         /// <summary>
+        /// Add Dependency Records for Facility Location
+        /// </summary>
+        /// <param name="nFacilityLocationID">Location ID</param>
+        /// <param name="nFacilityID">Facility ID</param>
+        void AddDependencyRecordsForFacilityLocation(int nFacilityLocationID, int nFacilityID);
+        /// <summary>
         /// Get Admin User ID
         /// </summary>
         /// <param name="nAdminUserID">Admin ID</param>

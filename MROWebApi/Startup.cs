@@ -1,18 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using CodeFirstMigration.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MRODBL.Entities;
+using MROWebApi.Services;
+using System;
 
 namespace MROWebApi
 {
@@ -36,19 +29,24 @@ namespace MROWebApi
                 {
                     c.AddPolicy("AllowOrigin", options => options.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod());
                 });
-                #region
-                //Region for Code for DI Purpose using DBConnection class
+
+                #region Code for DI Purpose using DBConnection class
                 services.AddSingleton<IConfiguration>(Configuration);
                 var config = new DBConnectionInfo();
                 config.ConnectionString = Configuration.GetConnectionString("myconn");
                 services.AddSingleton(config);
-                //Region Ends
                 #endregion
+
+                #region Encrypt Decrypt - Don't Change Order
+                services.AddAuthentication();
+                services.AddSingleton<DataProtectionPurposeStrings>();
+                #endregion
+
                 services.AddControllers();
-                services.AddDbContext<ApplicationDbContext>(item => item.UseSqlServer(Configuration.GetConnectionString("myconn")));
                 services.AddControllers().AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+                
             }
             catch (Exception ex)
             {

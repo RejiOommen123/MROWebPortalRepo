@@ -32,6 +32,7 @@ namespace MRODBL.BaseClasses
         public bool bActiveStatus { get; set; }
         public bool bFacilityLogging { get; set; }
         public bool bRequestorEmailConfirm { get; set; }
+        public bool bRequestorEmailVerify { get; set; }
         #endregion
     }
 }
