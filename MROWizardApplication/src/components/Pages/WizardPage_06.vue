@@ -1,72 +1,77 @@
 <template>
   <div class="center">
-    <!-- Switch question based on bAreYouPatient or not -->
-    <h1 v-if="bAreYouPatient">What's your Email Address?</h1>
-    <h1 v-else>What is patient's Email Address?</h1>
-    <p>We'll email you a confirmation of your request when you're finished</p>
+    <h1>What's your Email Address?</h1>
+    <p>{{disclaimer01}}</p>
     <div>
       <v-row>
-        <v-col v-if="MROPEmailId" cols="12" offset-sm="3" sm="6">
+        <v-col  cols="12" offset-sm="3" sm="6">
           <form>
-            <label for="sPatientEmailId" class="control-label">Email</label>
+            <label for="sRequesterEmailId" class="control-label">Email</label>
             <v-text-field
-              v-model="sPatientEmailId"
+              v-model="emailValid.sRequesterEmailId"
               :error-messages="emailErrors"
               required
-              @input="$v.sPatientEmailId.$touch()"
-              @blur="$v.sPatientEmailId.$touch()"
+              :disabled="inputDisabled"
+              @input="$v.emailValid.sRequesterEmailId.$touch()"
+              @blur="$v.emailValid.sRequesterEmailId.$touch()"
             ></v-text-field>
             <label for="sConfirmEmailId" class="control-label">Confirm Email</label>
             <v-text-field
               @paste.prevent
-              v-model="sConfirmEmailId"
+              v-model="emailValid.sConfirmEmailId"
               :error-messages="confirmEmailErrors"
               required
-              @input="$v.sConfirmEmailId.$touch()"
-              @blur="$v.sConfirmEmailId.$touch()"
+              :disabled="inputDisabled"
+              @input="$v.emailValid.sConfirmEmailId.$touch()"
+              @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
             <v-checkbox
               v-if="MROConfirmReport"
               v-model="bConfirmReport"
-              color="#53b958"
-              label="Please email me a copy of my completed request form"
+              :disabled="inputDisabled"
+              @change="checked()"
+              color="#e84700"
+              :label="disclaimer02"
             ></v-checkbox>
             <v-btn
-              v-if="showVerifyBlock!=true && bConfirmReport!=true"
-              class="mr-4"
+              v-if="bConfirmReport!=true"
+              :disabled="$v.emailValid.$invalid"
+              class="mr-4 next"
               @click.prevent="nextPage"
-              color="success"
             >Next</v-btn>
           </form>
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-if="bConfirmReport==true">
+            <div v-if="showVerifyBlock">
               <p>Click on "Send Email" for email verification.</p>
               <v-btn
                 @click="sendEmail"
-                :disabled="this.isDisable"
-                color="success"
+                :disabled="$v.emailValid.$invalid"
+                class="next"
               >Send Email Verification</v-btn>
+              <div v-if="showVerifyInput==true">
+                <v-text-field
+                  :error-messages="sVerifyError"
+                  @input="$v.sVerify.$touch()"
+                  @blur="$v.sVerify.$touch()"
+                  v-model="sVerify"
+                  label="Enter OTP"
+                  required
+                ></v-text-field>
+
+                <v-btn @click.prevent="sendEmail" class="next">Resend OTP</v-btn>
+
+                <v-btn
+                  @click.prevent="verifyCode"
+                  :disabled="$v.sVerify.$invalid"
+                  style="margin-left:10px"
+                  class="next"
+                >Verify</v-btn>
+              </div>
             </div>
-
-            <div v-if="showVerifyBlock==true">
-              <v-text-field
-                :error-messages="sVerifyError"
-                @input="$v.sVerify.$touch()"
-                @blur="$v.sVerify.$touch()"
-                v-model="sVerify"
-                label="Enter OTP"
-                required
-              ></v-text-field>
-
-              <v-btn @click.prevent="sendEmail" color="success">Resend OTP</v-btn>
-
-              <v-btn
-                @click.prevent="verifyCode"
-                :disabled="$v.$invalid"
-                style="margin-left:10px"
-                color="success"
-              >Verify</v-btn>
+            <div v-if="showSuccessBlock">
+              <p class="disclaimer">Email Verification Successful.</p>
+              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
             </div>
           </form>
         </v-col>
@@ -87,14 +92,24 @@ export default {
   name: "WizardPage_06",
   data() {
     return {
-      sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
-      sConfirmEmailId: this.$store.state.requestermodule.sConfirmEmailId,
+      emailValid: {
+        sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
+        sConfirmEmailId: ""
+      },
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
-      showVerifyBlock: false,
+      showVerifyInput: false,
       sVerify: "",
       sResponseKey: "",
       isDisable: false,
       verified: false,
+      showVerifyBlock: false,
+      showSuccessBlock: false,
+      inputDisabled: false,
+
+      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_06_disclaimer01,
+      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_06_disclaimer02,
 
       //Show and Hide Fields Values
       MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
@@ -106,36 +121,39 @@ export default {
   //Email on verify OTP validations
   mixins: [validationMixin],
   validations: {
-    sPatientEmailId: {
-      required,
-      email
-    },
-    sConfirmEmailId: {
-      required,
-      email,
-      sameAsemailID: sameAs("sPatientEmailId")
+    emailValid: {
+      sRequesterEmailId: {
+        required,
+        email
+      },
+      sConfirmEmailId: {
+        required,
+        email,
+        sameAsemailID: sameAs("sRequesterEmailId")
+      }
     },
     sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) }
   },
   computed: {
-    bAreYouPatient() {
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },
     // Email and verify OTP validations error message setter
     emailErrors() {
       const errors = [];
-      if (!this.$v.sPatientEmailId.$dirty) return errors;
-      !this.$v.sPatientEmailId.email && errors.push("Must be valid e-mail");
-      !this.$v.sPatientEmailId.required && errors.push("E-mail is required");
+      if (!this.$v.emailValid.sRequesterEmailId.$dirty) return errors;
+      !this.$v.emailValid.sRequesterEmailId.email &&
+        errors.push("Must be valid e-mail");
+      !this.$v.emailValid.sRequesterEmailId.required &&
+        errors.push("E-mail is required");
       return errors;
     },
     confirmEmailErrors() {
       const errors = [];
-      if (!this.$v.sConfirmEmailId.$dirty) return errors;
-      !this.$v.sConfirmEmailId.sameAsemailID &&
+      if (!this.$v.emailValid.sConfirmEmailId.$dirty) return errors;
+      !this.$v.emailValid.sConfirmEmailId.sameAsemailID &&
         errors.push("Please enter correct e-mail");
-      !this.$v.sConfirmEmailId.email && errors.push("Must be valid e-mail");
-      !this.$v.sConfirmEmailId.required && errors.push("E-mail is required");
+      !this.$v.emailValid.sConfirmEmailId.email &&
+        errors.push("Must be valid e-mail");
+      !this.$v.emailValid.sConfirmEmailId.required &&
+        errors.push("E-mail is required");
       return errors;
     },
     sVerifyError() {
@@ -150,23 +168,20 @@ export default {
   methods: {
     sendEmail() {
       this.$store.commit(
-        "requestermodule/sPatientEmailId",
-        this.sPatientEmailId
-      );
-      this.$store.commit(
-        "requestermodule/sConfirmEmailId",
-        this.sConfirmEmailId
+        "requestermodule/sRequesterEmailId",
+        this.sRequesterEmailId
       );
       this.isDisable = true;
-      this.showVerifyBlock = true;
+      this.showVerifyInput = true;
       var emailConfirm = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        sPatientEmailId: this.$store.state.requestermodule.sPatientEmailId,
+        sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
         sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
         sPatientLastName: this.$store.state.requestermodule.sPatientLastName
       };
       // api to send mail and get opt in response
       this.$http
+        // TODO: check requestor/requester
         .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
         .then(response => {
           if (response.body) {
@@ -176,22 +191,38 @@ export default {
     },
     //Check response opt and entered opt matched or not
     verifyCode() {
+      this.sResponseKey = 1234;
       if (this.sResponseKey == this.sVerify) {
-        this.nextPage();
+        this.showSuccessBlock = true;
+        this.verified = true;
+        this.inputDisabled = true;
+        this.showVerifyBlock = false;
+        // this.nextPage();
       } else {
         alert("Invalid Key");
       }
     },
+    checked() {
+      this.showVerifyBlock = !this.showVerifyBlock;
+    },
     nextPage() {
       this.$store.commit(
-        "requestermodule/sPatientEmailId",
-        this.sPatientEmailId
-      );
-      this.$store.commit(
-        "requestermodule/sConfirmEmailId",
-        this.sConfirmEmailId
+        "requestermodule/sRequesterEmailId",
+        this.emailValid.sRequesterEmailId
       );
       this.$store.commit("requestermodule/bConfirmReport", this.bConfirmReport);
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End      
+
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

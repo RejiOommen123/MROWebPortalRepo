@@ -1,20 +1,21 @@
 ﻿//requestermodule
 const state = {
-    nRequestorID: 0,
+    // TODO: check requestor/requester
+    nRequesterID: 0,
     nFacilityID:0,
     nLocationID:0,
     sSelectedLocation: "",
     bAreYouPatient: true,
     sRelativeName: '',
     sRelationToPatient: '',
+    sRelativeFileArray:[],
     sPatientFirstName: '',
     sPatientLastName: '',
     bIsPatientMinor: false,
     sPatientMiddleInitial: '',
     bIsPatientDeceased: false,
     dtPatientDOB: null,
-    sPatientEmailId: '',
-    sConfirmEmailId: '',
+    sRequesterEmailId: '',
     bConfirmReport: false,
     sAddZipCode: '',
     sAddCity: '',
@@ -29,7 +30,6 @@ const state = {
     sSelectedShipmentTypes: [],
     sSTFaxCompAdd:'',
     sSTEmailId:'',
-    sSTConfirmEmailId:'',
     sSTMailCompAdd:'',
     dtSTPickUp:'',
 
@@ -46,8 +46,12 @@ const state = {
     bRequestAnotherRecord:false,
     nFeedbackRating:0,
     sFeedbackComment:'',   
+    sWizardName:''
 }
 const mutations = {
+    nRequesterID(state, payload) {
+        state.nRequesterID = payload;
+    },
     nFacilityID(state, payload) {
         state.nFacilityID = payload;
     },
@@ -65,6 +69,9 @@ const mutations = {
     },
     sRelationToPatient(state, payload) {
         state.sRelationToPatient = payload;
+    },
+    sRelativeFileArray(state, payload){
+        state.sRelativeFileArray = payload;
     },
     sPatientFirstName(state, payload) {
         state.sPatientFirstName = payload;
@@ -84,11 +91,8 @@ const mutations = {
     dtPatientDOB(state, payload) {
         state.dtPatientDOB = payload;
     },
-    sPatientEmailId(state, payload) {
-        state.sPatientEmailId = payload;
-    },
-    sConfirmEmailId(state, payload) {
-        state.sConfirmEmailId = payload;
+    sRequesterEmailId(state, payload) {
+        state.sRequesterEmailId = payload;
     },
     bConfirmReport(state, payload) {
         state.bConfirmReport = payload;
@@ -128,9 +132,6 @@ const mutations = {
     },
     sSTEmailId(state, payload) {
         state.sSTEmailId = payload;
-    },
-    sSTConfirmEmailId(state, payload) {
-        state.sSTConfirmEmailId = payload;
     },
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
@@ -184,6 +185,9 @@ const mutations = {
     sFeedbackComment(state, payload) {
         state.sFeedbackComment = payload;
     },
+    sWizardName(state, payload) {
+        state.sWizardName = payload;
+    }
 }
 const actions = {}
 const getter = {}

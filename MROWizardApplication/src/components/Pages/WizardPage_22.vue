@@ -6,9 +6,11 @@
     
     <div class="disclaimer">{{disclaimer}}</div>
   
-    <div class="form-group btn-group-vertical">     
-    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg wizardSelectionButton" value=true>Request another record</button>
-    <button @click.prevent="requestAnotherRecord($event)"  class="btn btn-success btn-lg wizardSelectionButton" value=false>I'm done</button>
+    <div class="form-group">     
+      <v-col cols="12" offset-sm="2" sm="8">
+    <button @click.prevent="requestAnotherRecord($event)"  class="wizardSelectionButton" value=true>Request another record</button>
+    <button @click.prevent="requestAnotherRecord($event)"  class="wizardSelectionButton" value=false>I'm done</button>
+    </v-col>
     </div>
   </div>
 </template>

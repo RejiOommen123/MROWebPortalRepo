@@ -1,8 +1,8 @@
 <template>
   <div class="center">
     <div class="control-group">
-      <h1 v-if="bAreYouPatient">What is your Full Name ?</h1>
-      <h1 v-else>What is patient's Full Name ?</h1>
+      <h1 v-if="bAreYouPatient">What is your full legal name?</h1>
+      <h1 v-else>What is the patient’s full legal name?</h1>
     </div>
     <form>
       <v-row>
@@ -37,7 +37,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-btn class="mr-4" @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
+          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.$invalid" >Next</v-btn>
         </v-col>
         <div class="disclaimer">{{disclaimer}}</div>
       </v-row>
@@ -70,7 +70,7 @@ export default {
         .apiResponseDataByLocation.oFields.MROIsPatientDeceased
     };
   },
-  //Requestor name validations
+  //Requester name validations
   mixins: [validationMixin],
   validations: {
     sPatientFirstName: { required, maxLength: maxLength(15) },
@@ -85,7 +85,7 @@ export default {
       return this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_04_disclaimer01;
     },
-    //Requestor name validations error message setter
+    //Requester name validations error message setter
     sPatientFirstNameError() {
       const errors = [];
       if (!this.$v.sPatientFirstName.$dirty) return errors;

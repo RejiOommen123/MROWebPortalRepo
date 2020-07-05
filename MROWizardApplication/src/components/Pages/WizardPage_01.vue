@@ -1,26 +1,22 @@
 <template>
   <div class="center">
-    <div>
-      <h1>Request your health records.</h1>
-    </div>
-    <br />
+    <!-- <div>
+      <h1>It only takes a few minutes to request your health records. Please have a copy of your Government or Photo ID ready.</h1>
+    </div> -->
     <div>
       <p class="subHeadings">
-        This should only take a few minutes,
-        <br />please have your photo ID ready.
+        {{disclaimer01}}
       </p>
     </div>
-    <br />
-    <div class="disclaimer">{{this.disclaimer}}</div>
+    <div class="disclaimer">{{this.disclaimer02}}</div>
     <div>
-      <v-btn @click.prevent="nextPage" x-large color="#e84700" class="letsGoBtn">Get Started</v-btn>
+      <v-btn @click.prevent="nextPage" x-large color="#e84700" id="letsGoBtn">Get Started</v-btn>
     </div>
     <div>
       <a
-        style="cursor: pointer;"
         href="#"
         id="pdfFormLink"
-      >Want to print, fax or mail in your request? Click here for our PDF form.</a>
+      >{{disclaimer03}}</a>
     </div>
   </div>
 </template>
@@ -30,14 +26,22 @@ export default {
   name: "WizardPage_01",
   data() {
     return {
-      disclaimer: this.$store.state.ConfigModule.wp01_disclaimer,
+      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer01,
+      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer02,
+      disclaimer03: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer03,
+        //TODO: Correct all posiotions of disclaimers
       wizard_config: null
     };
   },
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;
+     
       this.$store.commit("ConfigModule/mutateNextIndex");
+
     }
   }
 };

@@ -1,9 +1,11 @@
 <template>
   <div class="center">
     <h1>Thank you for your feedback!</h1>
-        <div class="disclaimer">{{disclaimer}}</div>
+        <div class="disclaimer">{{disclaimer01}}</div>
+        <div class="disclaimer">{{disclaimer02}}</div>
+        <div class="disclaimer">{{disclaimer03}}</div>
     <div>
-      <v-btn @click.prevent="closeWizard" color="success">Close</v-btn>
+      <v-btn @click.prevent="closeWizard" class="next">Close</v-btn>
     </div>
   </div>
 </template>
@@ -13,7 +15,9 @@ export default {
   name: "WizardPage_24",
   data() {
     return {
-        disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01,
+        disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01,
+        disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer02,
+        disclaimer03 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer03
     };
   },
   methods: {

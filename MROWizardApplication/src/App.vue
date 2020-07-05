@@ -18,7 +18,7 @@
             :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
             <!-- Wizard top progress bar -->
-            <v-progress-linear color="#53b958" height="5" :value="nProgressBar"></v-progress-linear>
+            <v-progress-linear  color="#e84700"  height="5" :value="nProgressBar"></v-progress-linear>
             <!-- Wizard top close button -->
            
 
@@ -41,7 +41,6 @@
                   <div v-if="selectedWizard!='Wizard_21'">
                     <img
                       :src="this.logoImg"
-                      height="70px"
                       alt="Vue JS"
                       style="vertical-align:middle"
                       id="logoImg"
@@ -62,14 +61,14 @@
               </div>
             </v-card-text>
             <!-- Wizard Footer -->
-            <v-footer padless class="font-weight-medium" style="background-color:transparent">
+            <v-footer padless id="footer" style="background-color:transparent">
               <v-col class="text-center" cols="12">
-                <span>Call 123-456-7890 for assistance</span>
-                <br />
-                <span>
-                  Powered by
-                  <a href="https://mrocorp.com/" target="_blank">MRO Corp</a>
-                </span>
+                 Powered by
+                <a href="https://mrocorp.com/" target="_blank">
+                  <img alt="Qries" src="./assets/images/MRO-Web.png" height="30px">
+                </a>
+                 <br />
+                <span>For assistance call (610) 994-7500 Option 1 Mon-Thu 8:30am-8pm Fri 8:30am-6pm</span>              
               </v-col>
             </v-footer>
           </v-card>
@@ -84,7 +83,7 @@
           </v-card>
         </v-dialog>
         <!-- Confirm Close Wizard -->
-        <v-dialog v-model="dialogConfirm" persistent max-width="280">
+        <v-dialog v-model="dialogConfirm" light persistent max-width="280">
           <v-card>
             <v-card-title class="headline">Are you sure to close this request?</v-card-title>
             <v-card-text>Closing wizard will clear all data previously enter by you.</v-card-text>
@@ -213,10 +212,10 @@ export default {
                 }
               });
           }
-          else{
-          this.dialogLoader = false;
-            alert("Request Wizard not working contact administrator.");
-          }
+          // else{
+          // this.dialogLoader = false;
+          //   alert("Request Wizard not working contact administrator.");
+          // }
         }
       });
   },

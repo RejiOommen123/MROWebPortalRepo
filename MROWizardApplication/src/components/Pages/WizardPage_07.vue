@@ -1,8 +1,7 @@
 <template>
   <div class="center">
     <form>
-      <h1 v-if="bAreYouPatient">What is your address?</h1>
-      <h1 v-else>What is patient's address?</h1>
+      <h1>What is your mailing address?</h1>
       <v-row>
         <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="1" sm="6">
           <v-text-field
@@ -45,8 +44,11 @@
             @blur="$v.sAddZipCode.$touch()"
           ></v-text-field>
         </v-col>
+        <v-col cols="12" offset-sm="2" sm="8">
+          <div class="disclaimer">{{disclaimer}}</div>
+        </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
+          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
         </v-col>
       </v-row>
     </form>
@@ -69,6 +71,8 @@ export default {
       sAddState: this.$store.state.requestermodule.sAddState,
       sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
 
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01,
+
       //Show and Hide Fields Values
       MROAddZipCode: this.$store.state.ConfigModule.apiResponseDataByLocation
         .oFields.MROAddZipCode,
@@ -80,7 +84,7 @@ export default {
         .apiResponseDataByLocation.oFields.MROAddStreetAddress
     };
   },
-  //Requestor address validations
+  //Requester address validations
   mixins: [validationMixin],
   validations: {
     sAddZipCode: {
@@ -94,10 +98,7 @@ export default {
     sAddStreetAddress: { required }
   },
   computed: {
-    bAreYouPatient() {
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },
-    //Requestor address validation error message setter
+    //Requester address validation error message setter
     sAddZipCodeErrors() {
       const errors = [];
       if (!this.$v.sAddZipCode.$dirty) return errors;
@@ -129,6 +130,7 @@ export default {
   },
   methods: {
     nextPage() {
+
       this.$store.commit("requestermodule/sAddZipCode", this.sAddZipCode);
       this.$store.commit("requestermodule/sAddCity", this.sAddCity);
       this.$store.commit("requestermodule/sAddState", this.sAddState);
@@ -136,6 +138,18 @@ export default {
         "requestermodule/sAddStreetAddress",
         this.sAddStreetAddress
       );
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End
+      
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

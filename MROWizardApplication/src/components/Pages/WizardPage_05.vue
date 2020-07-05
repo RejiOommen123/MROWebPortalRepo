@@ -4,8 +4,7 @@
     <v-row>
       <v-col cols="12" offset-sm="2" sm="6" md="8">
         <h1 v-if="bAreYouPatient">What is your date of birth?</h1>
-        <h1 v-else>When was the Patient Born ?</h1>
-        <h4>(MM/DD/YYYY)</h4>
+        <h1 v-else>What is the patient’s date of birth?</h1>
         <!-- date picker menu and date picker -->
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -30,7 +29,7 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" color="success">Next</v-btn>
+          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
