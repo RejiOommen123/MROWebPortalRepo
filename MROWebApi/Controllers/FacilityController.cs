@@ -283,7 +283,7 @@ namespace MROWebAPI.Controllers
                 string patternGUID = @"\bMROFacilityGuid\b";
                 string replaceGUID = connection.sGUID;
                 helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternGUID, replaceGUID);
-                string patternFname = @"\MROFacilityName\b";
+                string patternFname = @"\bMROFacilityName\b";
                 string replaceFname = dbFacility.sFacilityName;
                 helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternFname, replaceFname);
                 return helper.sFacilityButtonHTMLCode;
