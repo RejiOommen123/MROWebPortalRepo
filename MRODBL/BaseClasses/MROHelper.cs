@@ -19,6 +19,10 @@ namespace MRODBL.BaseClasses
         public string sDefaultBGName { get; set; }
         [MaxLength]
         public string sMROEmailFooterImage { get; set; }
+        [StringLength(5000, ErrorMessage = "Maximum 5000 characters HTML Code Allowed")]
+        public string sFacilityButtonHTMLCode { get; set; }
+        [StringLength(1000, ErrorMessage = "Maximum 1000 characters Facility URL Allowed")]
+        public string sFacilityURL { get; set; }
         #endregion
     }
 }

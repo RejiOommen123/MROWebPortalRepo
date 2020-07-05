@@ -47,18 +47,39 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Requesters>> AddRequestor(Requesters requestor)
+        public  ActionResult<int> AddRequestor(Requesters requester)
         {
             try
             {
                 #region Data Addition ! From UI
-                requestor.dtLastUpdate = DateTime.Now;
+                requester.dtLastUpdate = DateTime.Now;
                 #endregion
 
-                RequestorsRepository requestorsFac = new RequestorsRepository(_info);
-                int GeneratedID = (int)requestorsFac.Insert(requestor);
-                Requesters dbRequestor = await requestorsFac.Select(GeneratedID);
-                return dbRequestor;
+                RequestorsRepository requestersFac = new RequestorsRepository(_info);
+
+                #region Array Processing
+                var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
+                var SRArray = requester.sSelectedRecordTypes.Length != 0 ? string.Join(",", requester.sSelectedRecordTypes) : "";
+                var STArray = requester.sSelectedShipmentTypes.Length != 0 ? string.Join(",", requester.sSelectedShipmentTypes) : "";
+                var SIArray = requester.selectedSensitiveInfo.Length != 0 ? string.Join(",", requester.selectedSensitiveInfo) : "";
+                var relativeFileArray = requester.sRelativeFileArray.Length != 0 ? string.Join(",", requester.sRelativeFileArray) : "";
+                requester.sSelectedPrimaryReasons = new string[] { PRArray };
+                requester.sSelectedRecordTypes = new string[] { SRArray };
+                requester.sSelectedShipmentTypes = new string[] { STArray };
+                requester.selectedSensitiveInfo = new string[] { SIArray };
+                requester.sRelativeFileArray = new string[] { relativeFileArray };
+                #endregion
+
+                if (requester.nRequesterID==0) {
+                    //Insert in Table
+                    int GeneratedID = (int)requestersFac.Insert(requester);
+                    return GeneratedID;
+                }
+                else {
+                    //update in table 
+                    requestersFac.Update(requester);
+                    return requester.nRequesterID;
+                }
             }
             catch (Exception ex)
             {

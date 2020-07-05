@@ -17,7 +17,7 @@ namespace MRODBL.BaseClassRepositories
 
         public void Init(string sConnectIn)
         {
-            Init(sConnectIn, "tblMROHelper", "nMROHelperID");
+            Init(sConnectIn, "lstMROHelper", "nMROHelperID");
         }
     }
 }

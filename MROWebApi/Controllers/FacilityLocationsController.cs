@@ -253,7 +253,7 @@ namespace MROWebApi.Controllers
                         string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
                         logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
                         #endregion
-                        return BadRequest(sValidationTextGlobal);
+                        return Ok(sValidationTextGlobal);
                     }
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -374,7 +374,7 @@ namespace MROWebApi.Controllers
                         await facilitiesRepository.ToggleSoftDelete("bActiveStatus", location.nFacilityID);
                     }
                 }
-                return string.IsNullOrEmpty(location.sAuthTemplate) && checkPDF;
+                return !string.IsNullOrEmpty(location.sAuthTemplate) && checkPDF;
             }
         }
         #endregion

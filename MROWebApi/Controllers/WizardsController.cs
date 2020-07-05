@@ -247,28 +247,30 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private static int AddRequestor(Requesters requestor,DBConnectionInfo _info) 
+        private static int AddRequestor(Requesters requester,DBConnectionInfo _info) 
         {
 
                 try
                 {
                 #region Data Addition ! From UI
-                requestor.dtLastUpdate = DateTime.Now;
+                requester.dtLastUpdate = DateTime.Now;
                 #endregion
 
                 #region Array Processing
-                var PRArray = string.Join(",", requestor.sSelectedPrimaryReasons);
-                var SRArray = string.Join(",", requestor.sSelectedRecordTypes);
-                var STArray = string.Join(",", requestor.sSelectedShipmentTypes);
-                var SIArray = string.Join(",", requestor.selectedSensitiveInfo);
-                requestor.sSelectedPrimaryReasons = new string[] { PRArray };
-                requestor.sSelectedRecordTypes = new string[] { SRArray }; 
-                requestor.sSelectedShipmentTypes = new string[] { STArray }; 
-                requestor.selectedSensitiveInfo = new string[] { SIArray };
+                var PRArray = string.Join(",", requester.sSelectedPrimaryReasons);
+                var SRArray = string.Join(",", requester.sSelectedRecordTypes);
+                var STArray = string.Join(",", requester.sSelectedShipmentTypes);
+                var SIArray = string.Join(",", requester.selectedSensitiveInfo);
+                var relativeFileArray = string.Join(",", requester.sRelativeFileArray);
+                requester.sSelectedPrimaryReasons = new string[] { PRArray };
+                requester.sSelectedRecordTypes = new string[] { SRArray };
+                requester.sSelectedShipmentTypes = new string[] { STArray };
+                requester.selectedSensitiveInfo = new string[] { SIArray };
+                requester.sRelativeFileArray = new string[] { relativeFileArray };
                 #endregion
 
                 RequestorsRepository requestorsFac = new RequestorsRepository(_info);
-                    int GeneratedID = (int)requestorsFac.Insert(requestor);
+                    int GeneratedID = (int)requestorsFac.Insert(requester);
                     return GeneratedID;
                 }
                 catch (Exception ex)

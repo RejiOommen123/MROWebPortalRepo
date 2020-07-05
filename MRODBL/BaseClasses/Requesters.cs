@@ -23,6 +23,8 @@ namespace MRODBL.BaseClasses
         public string sRelativeName { get; set; }
         [StringLength(20, ErrorMessage = "Maximum 20 characters Relation to Patient allowed")]
         public string sRelationToPatient { get; set; }
+        [MaxLength]
+        public string[] sRelativeFileArray { get; set; }
         [Required]
         [StringLength(20, ErrorMessage = "Maximum 20 characters Patient First Name allowed")]
         public string sPatientFirstName { get; set; }
@@ -43,14 +45,14 @@ namespace MRODBL.BaseClasses
         //[StringLength(30, ErrorMessage = "Maximum 30 characters Confirm Email ID allowed")]
         //public string sConfirmEmailId { get; set; }
         public bool bConfirmReport { get; set; }
-        [Required]
+        //[Required]
         [StringLength(10, ErrorMessage = "Maximum 10 characters Zip Code allowed")]
         public string sAddZipCode { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters City allowed")]
         public string sAddCity { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters State allowed")]
         public string sAddState { get; set; }
-        [Required]
+        //[Required]
         [StringLength(20, ErrorMessage = "Maximum 20 characters Street Address allowed")]
         public string sAddStreetAddress { get; set; }
         public DateTime? dtRecordRangeStart { get; set; }
@@ -58,7 +60,7 @@ namespace MRODBL.BaseClasses
         public string[] sSelectedRecordTypes { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
         public string sOtherReasons { get; set; }
-        [Required]
+        //[Required]
         [StringLength(30, ErrorMessage = "Maximum 30 characters Release To allowed")]
         public string sReleaseTo { get; set; }
         public string[] sSelectedShipmentTypes { get; set; }
@@ -69,7 +71,7 @@ namespace MRODBL.BaseClasses
         public DateTime? dtDeadline { get; set; }
         public string sAdditionalData { get; set; }
         public string sIdentityIdName { get; set; }
-        [Required]
+        //[Required]
         [MaxLength]
         public string sIdentityImage { get; set; }
         [MaxLength]
@@ -78,7 +80,7 @@ namespace MRODBL.BaseClasses
         [Range(0, 5, ErrorMessage = "Rating can be between 0 to 5")]
         public int nFeedbackRating { get; set; }
         public string sFeedbackComment { get; set; }
-        [Required]
+        //[Required]
         [StringLength(15, ErrorMessage = "Maximum 15 characters Phone Number allowed")]
         public string sPhoneNo { get; set; }
         [MaxLength]
@@ -91,6 +93,8 @@ namespace MRODBL.BaseClasses
         //public string sSTConfirmEmailId { get; set; }
         public string sSTMailCompAdd { get; set; }
         public DateTime? dtPickUp { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Wizard Name allowed")]
+        public string sWizardName { get; set; }
         #endregion
     }
 }
