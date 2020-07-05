@@ -10,6 +10,7 @@ using MRODBL.BaseClassRepositories;
 using MRODBL.BaseClasses;
 using MROWebApi.Services;
 using Microsoft.AspNetCore.DataProtection;
+using System.Text.RegularExpressions;
 
 namespace MROWebAPI.Controllers
 {
@@ -34,7 +35,7 @@ namespace MROWebAPI.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetFacilities()
         {
-            try 
+            try
             {
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 IEnumerable<Facilities> facilities = await rpFac.GetAllASC(1000, "sFacilityName");
@@ -45,7 +46,7 @@ namespace MROWebAPI.Controllers
                     FacilitiesList list = new FacilitiesList();
                     list.Facilities = fac;
                     list.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
-                    
+
                     facilitiesList.Add(list);
                 }
                 return Ok(facilitiesList);
@@ -58,7 +59,7 @@ namespace MROWebAPI.Controllers
         [HttpGet("GetFacility/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<Facilities>> GetFacility(string sFacilityID,string sAdminUserID)
+        public async Task<ActionResult<Facilities>> GetFacility(string sFacilityID, string sAdminUserID)
         {
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
@@ -98,7 +99,7 @@ namespace MROWebAPI.Controllers
                     #region Data Addition ! from UI
                     facility.bFacilityLogging = false;
                     facility.bActiveStatus = false;
-                    facility.dtCreated = DateTime.Now;                    
+                    facility.dtCreated = DateTime.Now;
                     facility.dtLastUpdate = DateTime.Now;
                     facility.bRequestorEmailVerify = true;
                     #endregion
@@ -114,12 +115,12 @@ namespace MROWebAPI.Controllers
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + facility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: "+GeneratedID;
+                    string sDescription = "Admin with ID: " + facility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
                     logger.LogAdminRecords(facility.nCreatedAdminUserID, sDescription, "Add Facility", "Add Facility");
                     #endregion
 
                     Facilities dbFacility = await rpFac.Select(GeneratedID);
-                    rpFac.AddDependencyRecordsForFacility(GeneratedID,addFacility.sConnectionString, facility.nCreatedAdminUserID);
+                    rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.sConnectionString, facility.nCreatedAdminUserID);
                     return dbFacility;
                 }
                 catch (Exception ex)
@@ -140,7 +141,7 @@ namespace MROWebAPI.Controllers
         [HttpPost("EditFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public  ActionResult<Facilities> EditFacility(int id, Facilities facility)
+        public ActionResult<Facilities> EditFacility(int id, Facilities facility)
         {
             if (ModelState.IsValid) {
                 if (id != facility.nFacilityID)
@@ -161,7 +162,7 @@ namespace MROWebAPI.Controllers
                     string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
                     logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
                     #endregion
-                    return Ok(); 
+                    return Ok();
                 }
                 else
                 { return NotFound(); }
@@ -191,7 +192,7 @@ namespace MROWebAPI.Controllers
                 return BadRequest();
             }
             //Validate Facility Before Toggling Active Status
-            if (ValidateFacility(facilityDB, locationList,_info))
+            if (ValidateFacility(facilityDB, locationList, _info))
             {
                 if (await rpFac.ToggleSoftDelete("bActiveStatus", nFacilityID))
                 {
@@ -228,10 +229,10 @@ namespace MROWebAPI.Controllers
             try
             {
                 FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
-                IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID",nFacilityID);
+                IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID", nFacilityID);
 
-                if (connections!=null&&connections.Count()==1) {
-                    if (connections.First().sGUID!=null)
+                if (connections != null && connections.Count() == 1) {
+                    if (connections.First().sGUID != null)
                         return Ok(connections.First().sGUID);
                     else
                         return NoContent();
@@ -259,6 +260,36 @@ namespace MROWebAPI.Controllers
                 //Trying to activate
                 //Check Location Count for that Facility if its greater than 0 & then allow to activate, else don't
                 return locationList.Count() > 0;
+            }
+        }
+        #endregion
+
+        #region HTML Code Call
+        [HttpGet("GetHTMLButtonCode/sFacilityID={sFacilityID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<string>> GetHTMLButtonCode(string sFacilityID)
+        {
+            try
+            {
+                bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                Facilities dbFacility = await rpFac.Select(nFacilityID);
+                IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID", dbFacility.nFacilityID);
+                FacilityConnections connection = connections.FirstOrDefault();
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
+                string patternGUID = @"\bMROFacilityGuid\b";
+                string replaceGUID = connection.sGUID;
+                helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternGUID, replaceGUID);
+                string patternFname = @"\MROFacilityName\b";
+                string replaceFname = dbFacility.sFacilityName;
+                helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternFname, replaceFname);
+                return helper.sFacilityButtonHTMLCode;
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
             }
         }
         #endregion

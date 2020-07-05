@@ -7,9 +7,9 @@ using System.Text;
 
 namespace MRODBL.BaseClassRepositories
 {
-    public class RequestorsRepository : Repository<Requesters>
+    public class RequestersRepository : Repository<Requesters>
     {
-        public RequestorsRepository(DBConnectionInfo DBInfo)
+        public RequestersRepository(DBConnectionInfo DBInfo)
 
         {
             Init(DBInfo.ConnectionString);

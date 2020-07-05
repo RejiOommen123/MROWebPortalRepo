@@ -12,28 +12,28 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    public class RequestorsController : ControllerBase
+    public class RequestersController : ControllerBase
     {
-        #region Requestors Constructor
+        #region Requesters Constructor
         private readonly DBConnectionInfo _info;
-        public RequestorsController(DBConnectionInfo info)
+        public RequestersController(DBConnectionInfo info)
         {
             _info = info;
         }
         #endregion
 
-        #region Requestor Section
+        #region Requester Section
 
-        #region Get Requestor Data
+        #region Get Requester Data
         [HttpGet]
         [AllowAnonymous]
-        [Route("[action]/{requestorID}")]
-        public async Task<IActionResult> GetRequestor(int requestorID)
+        [Route("[action]/{requesterID}")]
+        public async Task<IActionResult> GetRequester(int requesterID)
         {
             try
             {
-                RequestorsRepository requestorsFac = new RequestorsRepository(_info);
-                Requesters requestor = await requestorsFac.Select(requestorID);
+                RequestersRepository requestorsFac = new RequestersRepository(_info);
+                Requesters requestor = await requestorsFac.Select(requesterID);
                 return Ok(requestor);
             }
             catch (Exception exp)
@@ -43,11 +43,11 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Add Requestor Data
+        #region Add Requester Data
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public  ActionResult<int> AddRequestor(Requesters requester)
+        public  ActionResult<int> AddRequester(Requesters requester)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace MROWebApi.Controllers
                 requester.dtLastUpdate = DateTime.Now;
                 #endregion
 
-                RequestorsRepository requestersFac = new RequestorsRepository(_info);
+                RequestersRepository requestersFac = new RequestersRepository(_info);
 
                 #region Array Processing
                 var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
@@ -88,18 +88,18 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Edit Requestor Data
-        [HttpPost("EditRequestor/{id}")]
+        #region Edit Requester Data
+        [HttpPost("EditRequester/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public ActionResult<Requesters> EditRequestor(int id, Requesters requestors)
+        public ActionResult<Requesters> EditRequestor(int id, Requesters requesters)
         {
-            if (id != requestors.nRequesterID)
+            if (id != requesters.nRequesterID)
             {
                 return BadRequest();
             }
-            RequestorsRepository requestorFac = new RequestorsRepository(_info);
-            if (requestorFac.Update(requestors))
+            RequestersRepository requestorFac = new RequestersRepository(_info);
+            if (requestorFac.Update(requesters))
             { return NoContent(); }
             else
             { return NotFound(); }

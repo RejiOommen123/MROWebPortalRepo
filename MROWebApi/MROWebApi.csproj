@@ -42,5 +42,9 @@
 		<NativeLibs Remove="Services\DataProtectionPurposeStrings.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="Controllers\RequestersController.cs" />
+	</ItemGroup>
+
 
 </Project>

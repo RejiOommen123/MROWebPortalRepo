@@ -269,7 +269,7 @@ namespace MROWebApi.Controllers
                 requester.sRelativeFileArray = new string[] { relativeFileArray };
                 #endregion
 
-                RequestorsRepository requestorsFac = new RequestorsRepository(_info);
+                RequestersRepository requestorsFac = new RequestersRepository(_info);
                     int GeneratedID = (int)requestorsFac.Insert(requester);
                     return GeneratedID;
                 }
