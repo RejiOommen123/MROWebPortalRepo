@@ -28,8 +28,8 @@
               <button class="btn btn-outline-secondary" @click="undo">Undo</button>
                           
             </v-col>
-            <v-col cols="3" offset-sm="6" sm="3">
-              <button class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Save</button>
+            <v-col cols="6" offset-sm="3" sm="6">
+              <button class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Add my signature</button>
             </v-col>
           </v-row>
         </v-card-text>
@@ -44,7 +44,7 @@
         <v-btn id="signHere" @click="showDialog" color="white">Sign request</v-btn>
       </div>
       <div v-else>
-        <v-btn id="submitRequest" @click="next" color="success">Submit Request</v-btn>
+        <v-btn id="submitRequest" @click="next" class="next">Submit Request</v-btn>
     </div>
     <!-- Loader dialog -->
     <v-dialog v-model="dialogLoader" persistent width="300">

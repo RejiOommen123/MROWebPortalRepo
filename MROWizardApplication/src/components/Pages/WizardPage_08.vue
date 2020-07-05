@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1>Specify an approximate*<br/>Date Range for records.</h1>
+    <h1>Please specify an approximate date range for records.</h1>
     <form>
     <v-row>
       <!-- Start Date input -->
@@ -46,7 +46,7 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage"  color="success">Next</v-btn>
+          <v-btn  :disabled="$v.$invalid" @click.prevent="nextPage"  class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -84,9 +84,20 @@ export default {
   },
   methods: {
     nextPage() {
-      this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeEnd);
       this.$store.commit("requestermodule/dtRecordRangeEnd", this.dtRecordRangeEnd);
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End
+    
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },

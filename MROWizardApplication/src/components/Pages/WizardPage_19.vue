@@ -12,7 +12,7 @@
             dark
             class="checkboxBorder"
             label= "Drivers License"
-            color="green"
+            color="#e84700"
             value="MRODrivingLicID"
             v-model="nSelectedCheckBox"
             @change="check('MRODrivingLicID')"
@@ -24,16 +24,19 @@
             dark
             class="checkboxBorder"
             label="Other Government Photo Id"
-            color="green"
+            color="#e84700"
             value="MROOtherGovID"
             v-model="nSelectedCheckBox"
             @change="check('MROOtherGovID')"
           ></v-checkbox>
         </v-col>
+        <v-col cols="12" offset-sm="2" sm="8">
+          <div class="disclaimer">{{disclaimer}}</div>
+        </v-col>
       </v-layout>
     </template>
     <div>
-      <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
+      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
     </div>
   </div>
 </template>
@@ -44,12 +47,25 @@ export default {
   data() {
     return {
       nSelectedCheckBox:[],
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
     };
   },
   methods: {
     nextPage() {
-        this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
-        this.$store.state.ConfigModule.showBackBtn = true;  
+      
+      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
+       
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End
+
         this.$store.commit("ConfigModule/mutateNextIndex");
     },
     check(id) {

@@ -1,7 +1,7 @@
 <template>
   <div class="center">
-    <div class="disclaimer">{{disclaimer}}</div>
-    <h1>Please tell us how we can make this tool better?</h1>
+    <!-- <div class="disclaimer">{{disclaimer}}</div> -->
+    <h1>Please tell us how we can make this tool better.</h1>
     <div class="form-group ">
       <div>
       <v-rating v-if="MROFeedbackRating" v-model="nFeedbackRating" background-color="green lighten-3" color="green" large></v-rating>
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div>
-      <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
+      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
     return {
       nFeedbackRating: 4,
       sFeedbackComment: "",
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
+      // disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
       //Show and Hide Fields Values
       MROFeedbackRating : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackRating,
       MROFeedbackComment : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackComment

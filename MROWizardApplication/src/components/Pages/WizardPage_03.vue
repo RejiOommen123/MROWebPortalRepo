@@ -16,8 +16,7 @@
           <button 
             :class="{active: sActiveBtn === 'No'}"
             @click.prevent="setNotPatient" class="wizardSelectionButton">
-            No, I am requesting records
-            <br />for someone else.
+            No, I am requesting medical records for someone else (Child, Dependent, Decedent).
           </button>
         </v-col>
       </div>
@@ -38,16 +37,36 @@
             <v-text-field
               v-model="sRelationToPatient"
               :error-messages="sRelationToPatientErrors"
-              label="Relation With Patient"
+              label="Please indicate your relationship to the patient."
               required
               @input="$v.sRelationToPatient.$touch()"
               @blur="$v.sRelationToPatient.$touch()"
             ></v-text-field>
+              <template>
+              <v-file-input
+                ref="file"
+                @change="filesChange"
+                v-model="files"
+                placeholder="Upload your documents"
+                label="File input"
+                multiple
+                prepend-icon="mdi-paperclip"
+              >
+                <template v-slot:selection="{ text }">
+                  <v-chip
+                    small
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
+              </v-file-input>
+            </template>
             <v-btn
               @click.prevent="continueAhead"
               :disabled="$v.$invalid"
-              class="mr-4"
-              color="success"
+              class="mr-4 next"
             >Continue</v-btn>
           </v-col>
         </v-row>
@@ -67,11 +86,15 @@ export default {
     return {
       sRelativeName: this.$store.state.requestermodule.sRelativeName,
       sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
+      files:[],
+      sRelativeFileArray:[],
+
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer02,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer03,
       sActiveBtn:''
+      //TODO: Fetch disclaimer03 for multiple dile upload
     };
   },
   //Relative name and realtion validations
@@ -114,13 +137,23 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
+      this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
       this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
       this.$store.commit(
         "requestermodule/sRelationToPatient",
         this.sRelationToPatient
       );
       this.$store.commit("ConfigModule/mutateNextIndex");
-    }
+    },
+    filesChange(files){
+      for( var i = 0; i < files.length; i++ ){        
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          this.sRelativeFileArray.push(reader.result);
+        });
+        reader.readAsDataURL(files[i]);
+      }    
+    },
   }
 };
 </script>

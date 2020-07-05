@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1>Which types of<br/>records would you like?</h1>
+    <h1>Which types of records would like to request?</h1>
     
     <template>
        <!-- Get all record types associated to facility and displayed as checkbox for selection-->
@@ -11,7 +11,7 @@
             v-model="sSelectedRecordTypes"
             class="checkboxBorder"
             :label="recordType.sRecordTypeName"
-            color="green"
+            color="#e84700"
             :value="recordType.sNormalizedRecordTypeName"
           wrap>
           <!-- This for 'i' button to give disclaimers/info about option -->
@@ -28,7 +28,7 @@
       </v-layout>
     </template>
     <div>
-      <v-btn @click.prevent="nextPage" color="success">Next</v-btn>
+      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
     </div>
   </div>
 </template>
@@ -44,8 +44,19 @@ export default {
   },
   methods: {
     nextPage() {
-      this.$store.state.ConfigModule.showBackBtn = true;
       this.$store.commit("requestermodule/sSelectedRecordTypes", this.sSelectedRecordTypes);
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End
+
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

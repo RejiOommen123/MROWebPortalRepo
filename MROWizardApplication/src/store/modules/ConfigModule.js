@@ -13,16 +13,16 @@ const state = {
     apiResponseDataByFacilityGUID: '',
     apiResponseDataByLocation: '',
     oReleaseRequestTo: [{
-            "sReleaseTo": "Me (The patient)",
-            "sNormalizedReleaseTo": "MROReleaseToMe"
+            "sReleaseTo": "Myself",
+            "sNormalizedReleaseTo": "MROReleaseToMyself"
         },
         {
             "sReleaseTo": "A family member/caregiver",
-            "sNormalizedReleaseTo": "MROReleaseToFamily/Caregiver"
+            "sNormalizedReleaseTo": "MROReleaseToFamilyCaregiver"
         },
         {
-            "sReleaseTo": "Provider/Doctor",
-            "sNormalizedReleaseTo": "MROReleaseToProvider/Doctor"
+            "sReleaseTo": "Doctor",
+            "sNormalizedReleaseTo": "MROReleaseToDoctor"
         },
         {
             "sReleaseTo": "A third party (Attorney, Insurance Co., Payer, etc.)",
@@ -33,7 +33,8 @@ const state = {
     bDeadlineStatus:true,
     nTotalWizardPages:0,
     nProgressBar:0,
-    nProgressBarIncrValue:0
+    nProgressBarIncrValue:0,
+    // oShipmentTypes:[{"sNormalizedShipmentTypeName":"MROPatientPortal","sShipmentTypeName":"Patient Portal","sFieldToolTip":"Please contact your healthcare provider to setup a patient portal if you do not have one already setup for guidance on how to do so."},{"sNormalizedShipmentTypeName":"MROEmail","sShipmentTypeName":"Email","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROMailShipment","sShipmentTypeName":"Mail","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROIn-Person","sShipmentTypeName":"In-Person","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROFax","sShipmentTypeName":"Fax","sFieldToolTip":"Over certain number of pages will be sent by mail – paper or CD or specify only fax to providers, etc."}]
  
 }
 const mutations = {

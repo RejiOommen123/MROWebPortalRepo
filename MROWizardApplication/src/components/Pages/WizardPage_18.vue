@@ -1,39 +1,41 @@
 <template>
   <div class="center">
     <div class="form-group">
-      <h1>
-        Let us send you a text
-        <br />to verify your phone
-      </h1>
+      <h1>Let us send you a text to verify your phone number.</h1>
+      <p>{{disclaimer01}}</p>
       <form>
         <v-row>
           <!-- Phone no input box -->
-          <v-col cols="12" offset-sm="3" sm="6">
+          <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
+            <label class="input-group-addon">+91</label>
+          </v-col>
+          <v-col id="phoneNo" cols="10" sm="5">
             <v-text-field
-              placeholder="+(XX) (XXX) XXX-XXXX"
+              placeholder="(XXX) XXX-XXXX"
               v-model="sPhoneNo"
               label="Enter Mobile No"
               required
+              :disabled="disableInput"
               :error-messages="sPhoneNoError"
               @input="$v.sPhoneNo.$touch()"
               @blur="$v.sPhoneNo.$touch()"
             ></v-text-field>
           </v-col>
           <v-col cols="12" offset-sm="1" sm="10">
-            <p>
-              NOTE: A verified phone number helps us trust that this
-              <br />request is from a reliable source and allows us to follow-up
-              <br />with any questions and/or updates.
+            <p class="disclaimer">
+              {{disclaimer02}}
             </p>
           </v-col>
           <v-col cols="12" offset-sm="3" sm="6">
+            <div v-show="showSendVerify">
             <v-btn
               @click.prevent="submit"
-              :disabled="this.isDisable"
-              class="ma-2"
-              color="success"
+              :disabled="$v.sPhoneNo.$invalid"
+              class="ma-2 next"
             >Send Verification Code</v-btn>
-            <!-- Below fields will shown only after requestor click on "Send Verification Code" button -->
+              <v-btn @click.prevent="skipPage" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
+            </div>
+            <!-- Below fields will shown only after requester click on "Send Verification Code" button -->
             <div v-show="bOtpSend">
               <div>
                 <v-text-field
@@ -45,15 +47,20 @@
                   required
                 ></v-text-field>
 
-                <v-btn @click.prevent="submit" color="success">Resend OTP</v-btn>
+                <v-btn @click.prevent="submit" class="next">Resend OTP</v-btn>
 
                 <v-btn
                   @click.prevent="verifyCode"
-                  :disabled="$v.$invalid"
+                  :disabled="$v.sVerify.$invalid"
                   style="margin-left:10px"
-                  color="success"
+                 class="next"
                 >Verify</v-btn>
               </div>
+            </div>
+             <div v-if="showSuccessBlock">
+              <p v-if="pageskip" class="disclaimer">Mobile Not Verified.</p>
+              <p v-else class="disclaimer">Mobile Verification Successful.</p>
+              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
             </div>
           </v-col>
         </v-row>
@@ -66,13 +73,19 @@
 import { validationMixin } from "vuelidate";
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_12",
+  name: "WizardPage_18",
   data() {
     return {
       isDisable: false,
       bOtpSend: false,
+      showSuccessBlock:false,
+      disableInput:false,
+      showSendVerify:true,
+      pageskip:false,
+      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
+      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer02,
 
-      sPhoneNo: "+91",
+      sPhoneNo: "",
       sApp_Key: "tu9ete3u9ocidovebefu",
       sApi_Key: "51bdcc70021d29097aedce2a39ecb2beaa379e1b",
       sVerify: "",
@@ -84,7 +97,7 @@ export default {
   mixins: [validationMixin],
   validations: {
     sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) },
-    sPhoneNo: { required, maxLength: maxLength(13), minLength: minLength(13) }
+    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) }
   },
   created() {
     this.$vuetify.theme.dark = true;
@@ -95,9 +108,9 @@ export default {
       const errors = [];
       if (!this.$v.sPhoneNo.$dirty) return errors;
       !this.$v.sPhoneNo.maxLength &&
-        errors.push("Enter mobile no with prefix(+91)");
+        errors.push("Enter 10 digit mobile no.");
       !this.$v.sPhoneNo.minLength &&
-        errors.push("Enter mobile no with prefix(+91)");
+        errors.push("Enter 10 digit mobile no.");
       !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
       return errors;
     },
@@ -115,11 +128,12 @@ export default {
     submit() {
       this.isDisable = true;
       this.bOtpSend = true;
+      this.showSendVerify=false;
       var obj = {};
-      obj["phone"] = this.sPhoneNo;
+      obj["phone"] = "+91"+this.sPhoneNo;
       obj["api_key"] = this.sApi_Key;
       var formData = new FormData();
-      formData.append("phone", this.sPhoneNo);
+      formData.append("phone", "+91"+this.sPhoneNo);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
 
@@ -135,13 +149,13 @@ export default {
           self.subData = response;
         });
     },
-    //Verify OPT entered by requestor
+    //Verify OPT entered by requester
     verifyCode() {
       var obj = {};
-      obj["phone"] = this.sPhoneNo;
+      obj["phone"] = "+91"+this.sPhoneNo;
       obj["code"] = this.sVerify;
       var formData = new FormData();
-      formData.append("phone", this.sPhoneNo);
+      formData.append("phone", "+91"+this.sPhoneNo);
       formData.append("code", this.sVerify);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
@@ -155,13 +169,34 @@ export default {
         })
         .then(response => {
           if (response.data.status == "SUCCESS") {
-            this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
-            this.$store.commit("ConfigModule/mutateNextIndex");
+            this.bOtpSend=false;
+            this.showSuccessBlock=true;
+            this.disableInput=true;
           }
           if (response.data.status == "ERROR") {
             alert("Invalid OTP");
           }
         });
+    },
+    nextPage(){
+      this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+      {
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      }
+      //Partial Requester Data Save End
+
+      this.$store.commit("ConfigModule/mutateNextIndex");
+    },
+    skipPage(){
+      this.pageskip=true;
+      this.nextPage();
     }
   }
 };
