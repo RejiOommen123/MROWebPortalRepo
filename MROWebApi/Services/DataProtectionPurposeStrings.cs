@@ -51,17 +51,17 @@ namespace MROWebApi.Services
         /// <summary>
         /// Requester Module Logger Method
         /// </summary>
-        /// <param name="nRequesterID">Requester ID</param>
-        /// <param name="sFacilityGUID">Facility GUID</param>
-        /// <param name="sUserIPAddress">Requester IP Address</param>
-        /// <param name="sWizardName">Name of Wizard</param>
-        public void LogRequesterRecords(int nRequesterID,string sFacilityGUID,string sUserIPAddress, string sWizardName) {
+        /// <param name="nRequesterID">Requester Unique ID</param>
+        /// <param name="nFacilityID">Facility Unique ID</param>
+        /// <param name="sDescription">Description about Event</param>
+        /// <param name="sWizardName">Wizard Name</param>
+        public void LogRequesterRecords(int nRequesterID,int nFacilityID, string sDescription, string sWizardName) {
             RequesterModuleLoggerRepository patientModuleLoggerRepository = new RequesterModuleLoggerRepository(_info);
             RequesterModuleLogger logRequesterDetails = new RequesterModuleLogger()
             {
                 nRequesterID = nRequesterID,
-                sFacilityGUID = sFacilityGUID,
-                sUserIPAddress = sUserIPAddress,
+                sDescription = sDescription,
+                nFacilityID = nFacilityID,
                 sWizardName = sWizardName,
                 dtLogTime = DateTime.Now
             };

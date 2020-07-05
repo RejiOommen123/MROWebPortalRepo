@@ -611,7 +611,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region ROI Email - Structure Up Call & End Logo MRO Remaining
+        #region ROI Email
         private static async Task<bool> SendROIEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, IDataProtector _protector)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
@@ -624,6 +624,11 @@ namespace MROWebApi.Controllers
 
                 #region Decrypt SMTP Password
                 dbFacility.sSMTPPassword = _protector.Unprotect(dbFacility.sSMTPPassword);
+                #endregion
+
+                #region Get Footer Image
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
                 #endregion
 
                 //From 
@@ -639,9 +644,9 @@ namespace MROWebApi.Controllers
                 message.Subject = "Request Confirmation";
                 BodyBuilder bodyBuilder = new BodyBuilder();
 
-                dbLocation.sConfigLogoData = Regex.Replace(dbLocation.sConfigLogoData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
-                byte[] locationLogo = Convert.FromBase64String(dbLocation.sConfigLogoData);
-                var image = bodyBuilder.LinkedResources.Add("locationlogo", locationLogo);
+                helper.sMROEmailFooterImage = Regex.Replace(helper.sMROEmailFooterImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+                byte[] footerLogo = Convert.FromBase64String(helper.sMROEmailFooterImage);
+                var image = bodyBuilder.LinkedResources.Add("footerlogo", footerLogo);
                 image.ContentId = MimeUtils.GenerateMessageId();
                 //                string bodyText = string.Format(@"Thank you!
 
@@ -670,17 +675,16 @@ namespace MROWebApi.Controllers
             <li>Call us at <b><a href='(610) 994-7500'>(610) 994-7500</a></b> to use our automated status system or speak with a Customer Service Expert, Mon-Fri 8:30AM-8:00PM (EST)</li>
         </ul>
         <p>Kindly,</p>
-        <img src=""cid:{3}"">
+        <p><em>Team</em> {3}</p>
     </div>
     <div style='margin: 20px;'>
         <p>
         <h4  style='text-align:center;'>CONFIDENTIALITY NOTICE</p>
         </h4>
         <p style='text-align:justify;text-justify: inter-word;'>This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.</p>
-        <img style='display: flex; justify-content: center;' src=""cid:{4}"">
-    </div>
-</div>
-", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"), sFullName,requestor.nRequesterID, image.ContentId, image.ContentId);
+        <div style='text-align:center'><a href='https://mrocorp.com/' target='_blank'><img src=""cid:{4}""></a></div>
+    </ div >
+</ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"), sFullName,requestor.nRequesterID, dbFacility.sFacilityName, image.ContentId);
 
                 //bodyBuilder.TextBody = bodyText;
                 bodyBuilder.HtmlBody = htmlText;
