@@ -18,7 +18,7 @@ const routes = [{
         path: '',
         component: DashboardPage,
         beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Administration Module");
+            store.commit("mutatepageHeader", "Manage Facilities");
             next()
         }
     },

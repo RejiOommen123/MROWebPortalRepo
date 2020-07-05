@@ -1,0 +1,158 @@
+/* Common Styles */
+
+
+/* App.vue */
+
+body,
+html {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow-x: hidden !important;
+}
+
+#footer {
+    margin-top: -1.5625em;
+    font-size: 1.0625em;
+}
+
+
+/* Header.vue */
+
+#pageHeaderH1 {
+    font-size: 1.5em;
+    color: white;
+    margin-right: 3.75em;
+}
+
+.pageheaderLinksWhite {
+    color: white !important;
+    margin: 0 1em;
+    text-decoration: none;
+    color: white;
+}
+
+.myUL {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+}
+
+li a.pageheaderLinksWhite:hover,
+li a.pageheaderLinksWhite:active,
+li a.pageheaderLinksWhite:router-link-active {
+    color: #fba437;
+}
+
+
+/* Facility.vue */
+
+#FacilitiesPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 2em;
+}
+
+#addFacility {
+    margin-bottom: 1.25em;
+    margin-top: 0.9375em
+}
+
+#facilityLocationCount {
+    margin-right: 1.25em;
+}
+
+#facilityLocations {
+    margin-right: 0.25em;
+}
+
+#addFacBtn {
+    font-size: 1.5em;
+}
+
+
+/* EditFacility.vue */
+
+#EditFacilityPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 0.75em;
+}
+
+#fieldsMandate {
+    font-size: 0.9375em
+}
+
+#editFormDiv {
+    margin-top: -0.9375em;
+    margin-left: -1.25em;
+}
+
+
+/* AddFacility.vue */
+
+#AddFacilityPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 0.75em;
+}
+
+#spanMandate {
+    font-size: 0.875em;
+}
+
+#addFormDiv {
+    margin-top: -0.9375em;
+    margin-left: -1.25em;
+}
+
+
+/* Locations.vue */
+
+#LocationsPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 2em;
+}
+
+.mrorouterlink {
+    text-decoration: none;
+}
+
+#addlocation {
+    margin-bottom: 0.9375em;
+    margin-top: 1.25em;
+}
+
+#AddLoc {
+    font-size: 1.5em;
+}
+
+
+/* EditLocation.vue */
+
+#EditLocationsPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 2em;
+}
+
+
+/* AddLocation.vue */
+
+#AddLocationsPageBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 2em;
+}
+
+
+/* EditFields.vue */
+
+#EditFieldsBox {
+    margin-right: 7em;
+    margin-left: 7em;
+    margin-top: 2em;
+}

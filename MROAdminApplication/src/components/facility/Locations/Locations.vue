@@ -1,8 +1,8 @@
 <template>
-  <div id="demo">
+  <div id="LocationsPageBox">
     <!-- Add Location Button which will redirect to Add Location Page -->
     <v-row no-gutters>
-      <v-col cols="6" sm="2" md="6">
+      <v-col cols="12" sm="2" md="6">
         <div class="my-2">
           <v-btn
             depressed
@@ -16,7 +16,7 @@
           >
             <v-icon box-shadow:none>mdi-plus</v-icon>
           </v-btn>
-          <span id="AddLoc" style="font-size:24px">Add Location</span>
+          <span id="AddLoc">Add Location</span>
         </div>
       </v-col>
     </v-row>
@@ -50,7 +50,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nFacilityLocationID">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-2">mdi-pencil</v-icon>
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
               </router-link>
             </template>
             <span>Edit Location</span>
@@ -88,7 +88,7 @@
       </v-card>
     </v-dialog>
     <!-- Dialog box for Auth Doc (PDF) Validation  -->
-    <v-dialog v-model="locationAlert" max-width="360" width="350">
+    <v-dialog v-model="locationAlert" max-width="360px" width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>Provide Valid Authorization Document to Activate Location</v-card-text>
@@ -98,6 +98,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Common Loader -->
+        <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="rgb(0, 91, 168)" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
 
@@ -105,6 +114,7 @@
 export default {
   data() {
     return {
+      dialogLoader:false,
       dialog: false,
       locationAlert: false,
       search: "",
@@ -116,9 +126,9 @@ export default {
           width: "20%"
         },
         { text: "Address", value: "sLocationAddress", width: "50%" },
-        { text: "Code", value: "sLocationCode", align: "center", width: "15%" },
-        { text: "Active", value: "bLocationActiveStatus" },
-        { text: "Edit", value: "actions", sortable: false, align: "center" }
+        { text: "Code", value: "sLocationCode", width: "15%" },
+        { text: "Active", value: "bLocationActiveStatus", sortable: false },
+        { text: "Edit", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
       facilityName: "",
@@ -131,15 +141,17 @@ export default {
   methods: {
     // API Call to Get all Locations
     getGridData() {
+      this.dialogLoader = true;
       this.$http
         .get(
-          "FacilityLocations/GetFacilityLocationByFacilityID/" +
-            this.$route.params.id
+          "FacilityLocations/GetFacilityLocationByFacilityID/sFacilityID=" 
+            + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
         )
         .then(
           response => {
             this.gridData = JSON.parse(response.bodyText)["locations"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
+            this.dialogLoader = false;
           },
           response => {
             // error callback
@@ -155,14 +167,28 @@ export default {
     },
     //On Agree in dialog box API call to Toggle Active status for Location
     deleteLocation(id) {
+      this.dialogLoader =true;
+      var combinedObj = {
+        nfacilityLocationID: id,
+        nAdminUserID: this.$store.state.adminUserId 
+      };
       this.dialog = false;
       this.$http
-        .post("FacilityLocations/DeleteFacilityLocation/", id)
+        .post("FacilityLocations/ToggleFacilityLocation/",combinedObj )
         .then(response => {
-          if (response.ok == true) {
-            if (response.body == "Provide Valid Authorization PDF") {
+          if (response.ok == true) 
+          {
+            this.dialogLoader =false;
+            if (response.body == "Provide Valid Authorization PDF") 
+            {
+              this.dialogLoader =false;
               this.locationAlert = true;
-            } else this.$router.go();
+            } 
+            else
+            { 
+              this.dialogLoader =false;
+              this.$router.go();
+            }
           }
         });
     }
@@ -171,29 +197,34 @@ export default {
 </script>
 
 <style scoped>
-.mrorouterlink {
-  text-decoration: none;
-}
-#addlocation {
-  margin-bottom: 20px;
-}
-#editlocation {
-  margin-right: 10px;
-}
-button {
-  margin: 10px;
-}
-#demo {
-  margin: 0 100px;
-  padding: 20px;
+@media screen and (max-width: 500px) {
+  #LocationsPageBox {
+    margin: 0 0em;
+  }
+  h1 {
+    font-size: 14px;
+  }
+  .v-data-table table tbody tr:nth-child(odd) {
+    /* border-left: 4px solid white !important;
+  border-collapse: collapse !important; */
+    border-spacing: 10 10rem !important;
+    padding-top: 10px !important;
+  }
+
+  .v-data-table table tbody tr:nth-child(even) {
+    /* border-left: 4px solid white !important;
+   border-collapse: collapse !important; */
+    border-spacing: 10 10rem !important;
+    padding-top: 10px !important;
+  }
+  .v-data-table table tbody tr:nth-child(even) td {
+    border-left: 4px solid cyan !important;
+  }
+  .v-data-table table tbody tr:nth-child(odd) td {
+    border-left: 4px solid deeppink !important;
+  }
 }
 #search {
-  padding-bottom: 30px;
-}
-#AddLoc {
-  font-size: 24px;
-}
-#addlocation {
-  margin-top: 15px;
+  padding-bottom: 1.875em;
 }
 </style>

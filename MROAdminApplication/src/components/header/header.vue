@@ -1,62 +1,77 @@
 <template>
-  <header id="header">
-    <div class="logo">
-      <h3>
-        <router-link to="/">MRO Portal Administration</router-link>
-      </h3>
-    </div>
-    <div class="pageheader">
+  <div>
+    <v-app-bar color="#005ba8" dark>
+      <span class="hidden-md-and-up">
+        <v-menu transition="slide-x-transition" bottom right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="#005ba8" dark v-bind="attrs" v-on="on">
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, i) in menuItems" :key="i" :to="item.path">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </span>
+      <v-toolbar-title class="myUL hidden-xs-only hidden-sm-only">MRO Admin</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <h1 id="pageHeaderH1">{{this.pageHeader}}</h1>
-    </div>
-    <nav>
-      <!-- Nav Bar Starts From Here -->
-      <ul>
+      <v-spacer></v-spacer>
+      <ul class="myUL">
         <li>
-          <router-link to="/index">Dashboard</router-link>
+          <router-link
+            to="/index"
+            class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
+          >Dashboard</router-link>
         </li>
         <li>
-          <router-link to="/facility">Manage Facilities</router-link>
+          <router-link
+            to="/facility"
+            class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
+          >Manage Facilities</router-link>
         </li>
         <li>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="warning" 
-                    fab
-                    small
-                    dark                  
-                    v-bind="attrs"
-                    v-on="on"
-                  ><v-icon>mdi-account-circle</v-icon></v-btn>
-                </template>
-                <span>{{userName}}</span>
-              </v-tooltip>
-            </li>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="#fba437" fab small dark v-bind="attrs" v-on="on">
+                <v-icon>mdi-account-circle</v-icon>
+              </v-btn>
+            </template>
+            <span>{{userName}}</span>
+          </v-tooltip>
+        </li>
         <!-- <li>
                 <button @click="onLogout" class="logout">Logout</button>
         </li>-->
       </ul>
-    </nav>
-  </header>
+    </v-app-bar>
+  </div>
 </template>
 
 <script>
-import { AuthenticationContext } from 'vue-adal'
+import { AuthenticationContext } from "vue-adal";
 export default {
-
   computed: {
     pageHeader() {
       return this.$store.state.pageheader;
     }
   },
- data() {
-          return {
-            userName: AuthenticationContext.user.userName
-          };
-        },
+  data() {
+    return {
+      sidebar: false,
+      userName: AuthenticationContext.user.userName,
+      menuItems: [
+        { title: "Dashboard", path: "/index", icon: "mdi-home" },
+        { title: "Manage Facilites", path: "/facility", icon: "mdi-briefcase" }
+      ]
+    };
+  },
   methods: {
     onLogout() {
-      //call for logout
+      //Call for logout
       // this.$store.commit("mutateIsSignIn", false);
       // this.$router.push('/')
     }
@@ -65,69 +80,4 @@ export default {
 </script>
 
 <style scoped>
-#pageHeaderH1 {
-  color: white;
-}
-#header {
-  height: 70px;
-  display: flex;
-  flex-flow: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgb(0, 91, 168);
-  padding: 0 20px;
-}
-
-.logo {
-  font-weight: bold;
-  color: white;
-}
-
-.logo a {
-  text-decoration: none;
-  color: white;
-}
-
-nav {
-  height: 100%;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-}
-
-li {
-  margin: 0 16px;
-}
-
-li a {
-  text-decoration: none;
-  color: white;
-}
-
-li a:hover,
-li a:active,
-li a.router-link-active {
-  color: #fba437;
-}
-.logout {
-  background-color: transparent;
-  border: none;
-  font: inherit;
-  color: white;
-  cursor: pointer;
-}
-#pageheader {
-  width: 62%;
-  text-align: center;
-}
-#pagheader h1 {
-  color: white !important;
-}
 </style>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
+using MROWebApi.Services;
 
 namespace MROWebApi.Controllers
 {
@@ -47,7 +48,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public  ActionResult<int> AddRequester(Requesters requester)
+        public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
             try
             {
@@ -70,16 +71,30 @@ namespace MROWebApi.Controllers
                 requester.sRelativeFileArray = new string[] { relativeFileArray };
                 #endregion
 
+                int nRequesterId = 0;
                 if (requester.nRequesterID==0) {
                     //Insert in Table
-                    int GeneratedID = (int)requestersFac.Insert(requester);
-                    return GeneratedID;
+                    nRequesterId = (int)requestersFac.Insert(requester);
                 }
                 else {
                     //update in table 
                     requestersFac.Update(requester);
-                    return requester.nRequesterID;
+                    nRequesterId = requester.nRequesterID;
                 }
+
+                #region Requestor Logger
+                FacilitiesRepository facRepo = new FacilitiesRepository(_info);
+                Facilities dbFacility = await facRepo.Select(requester.nFacilityID);
+                if (dbFacility.bFacilityLogging)
+                {
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescrption = "Requester " + nRequesterId + " of Facility " + dbFacility.nFacilityID + " has filled data till Wizard: " + requester.sWizardName;
+                    logger.LogRequesterRecords(nRequesterId, requester.nFacilityID, sDescrption, requester.sWizardName);
+                }
+                #endregion
+
+                return nRequesterId;
+
             }
             catch (Exception ex)
             {

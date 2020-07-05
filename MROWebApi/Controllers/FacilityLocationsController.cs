@@ -43,9 +43,13 @@ namespace MROWebApi.Controllers
             FacilityLocations location =  await facilityLocationsRepository.Select(nFacilitylocationID);
 
             #region Logging
-            MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Location Method for Location ID: " + sFacilitylocationID;
-            logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
+            FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+            Facilities facility = await rpFac.Select(location.nFacilityID);
+            if (facility.bFacilityLogging) {
+                MROLogger logger = new MROLogger(_info);
+                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Location Method for Location ID: " + sFacilitylocationID;
+                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
+            }
             #endregion
             return location;
         }
@@ -79,9 +83,13 @@ namespace MROWebApi.Controllers
                     return NotFound();
                 var faciName = facility.sFacilityName;
                 #region Logging
-                MROLogger logger = new MROLogger(_info);
-                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility locations Method for Facility ID: " + sFacilityID;
-                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
+
+                if (facility.bFacilityLogging)
+                {
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility locations Method for Facility ID: " + sFacilityID;
+                    logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
+                }
                 #endregion
                 return Ok(new { locations, faciName });
             }
@@ -167,9 +175,14 @@ namespace MROWebApi.Controllers
                         facilityLocationsRepository.AddDependencyRecordsForFacilityLocation((int)addedLocationID, facilityLocation.nFacilityID);
 
                         #region Logging
-                        MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + facilityLocation.nCreatedAdminUserID + " called Add Location Method & Created Location with ID: " + addedLocationID;
-                        logger.LogAdminRecords(facilityLocation.nCreatedAdminUserID, sDescription, "Add Location", "Add Location");
+                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                        Facilities facility = await rpFac.Select(facilityLocation.nFacilityID);
+                        if (facility.bFacilityLogging)
+                        {
+                            MROLogger logger = new MROLogger(_info);
+                            string sDescription = "Admin with ID: " + facilityLocation.nCreatedAdminUserID + " called Add Location Method & Created Location with ID: " + addedLocationID;
+                            logger.LogAdminRecords(facilityLocation.nCreatedAdminUserID, sDescription, "Add Location", "Add Location");
+                        }
                         #endregion
                     }
                     else
@@ -236,10 +249,16 @@ namespace MROWebApi.Controllers
                     {
                         facilityLocation.bLocationActiveStatus = true;
                         facilityLocationsRepository.Update(facilityLocation);
+
                         #region Logging
-                        MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
-                        logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                        Facilities facility = await rpFac.Select(facilityLocation.nFacilityID);
+                        if (facility.bFacilityLogging)
+                        {
+                            MROLogger logger = new MROLogger(_info);
+                            string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
+                            logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                        }
                         #endregion
                         return Ok(sValidationTextGlobal);
                     }
@@ -304,9 +323,14 @@ namespace MROWebApi.Controllers
                     if (await facilityLocationsRepository.ToggleSoftDelete("bLocationActiveStatus", nFacilityLocationID))
                     {
                         #region Logging
-                        MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + toggleLocation.nAdminUserID + " called Toggle Location Method for Location ID: " + toggleLocation.nFacilityLocationID;
-                        logger.LogAdminRecords(toggleLocation.nAdminUserID, sDescription, "Toggle Location", "Manage Locations");
+                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                        Facilities facility = await rpFac.Select(location.nFacilityID);
+                        if (facility.bFacilityLogging)
+                        {
+                            MROLogger logger = new MROLogger(_info);
+                            string sDescription = "Admin with ID: " + toggleLocation.nAdminUserID + " called Toggle Location Method for Location ID: " + toggleLocation.nFacilityLocationID;
+                            logger.LogAdminRecords(toggleLocation.nAdminUserID, sDescription, "Toggle Location", "Manage Locations");
+                        }
                         #endregion
                         return Ok("Success");
                     }

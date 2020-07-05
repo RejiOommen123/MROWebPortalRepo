@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="box">
+    <div id="AddLocationsPageBox">
       <form @submit.prevent="onSubmit" class="addlocation-form">
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
@@ -75,6 +75,7 @@
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:</label>
             <v-file-input
+              ref="sPDFFile"
               chips
               show-size
               dense
@@ -88,10 +89,11 @@
             ></v-file-input>
             <label for="sConfigFacilityLogo">Logo Image:</label>
             <div v-show="location.sConfigLogoName!=''">
-            <v-img :src="location.sConfigLogoData" width="20%"></v-img>
+              <v-img :src="location.sConfigLogoData" width="20%"></v-img>
             </div>
             <br />
             <v-file-input
+              ref="sLogoImage"
               lazy-src
               chips
               show-size
@@ -108,15 +110,16 @@
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
                 </template>
-                <span>Please upload logo with height 50px</span>
+                <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
             </v-file-input>
             <label for="sConfigBackgroundImg">Background Image:</label>
             <div v-show="location.sConfigBackgroundName!=''">
-            <v-img :src="location.sConfigBackgroundData" width="20%"></v-img>
+              <v-img :src="location.sConfigBackgroundData" width="20%"></v-img>
             </div>
             <br />
             <v-file-input
+              ref="sBGImage"
               chips
               show-size
               dense
@@ -132,31 +135,20 @@
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
                 </template>
-                <span>Please upload logo with height 50px</span>
+                <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
             </v-file-input>
           </v-col>
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
-          <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary">Cancel</v-btn>
+          <v-btn :to="'/locations/'+this.location.nFacilityID" type="cancel" color="primary">Cancel</v-btn>
         </div>
         <br />
       </form>
     </div>
-    <!-- Dialog Alert for Auth Doc Not added -->
-    <v-dialog v-model="authDocNotAdded" width ="350px" max-width="360px">
-      <v-card>
-        <v-card-title class="headline">Alert</v-card-title>
-        <v-card-text>Authorization PDF not added, Location can't be activated</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="authDocNotAdded = false">Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <!-- Dialog Alert for Auth Doc errors -->
-    <v-dialog v-model="authDocErrors" width ="425px" max-width="425px">
+    <v-dialog v-model="authDocErrors" width="425px" max-width="425px">
       <v-card>
         <v-card-title class="headline">PDF missing following fields</v-card-title>
         <v-card-text v-html="this.authDocErrorsText"></v-card-text>
@@ -167,13 +159,57 @@
       </v-card>
     </v-dialog>
     <!-- Dialog Alert for Same name facility -->
-    <v-dialog v-model="sameLocNameAlert" width ="360px" max-width="350px">
+    <v-dialog v-model="sameLocNameAlert" width="360px" max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>Location with Same Name Exists</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="sameLocNameAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Common Loader -->
+    <v-dialog v-model="dialogLoader" persistent width="300">
+      <v-card color="rgb(0, 91, 168)" dark>
+        <v-card-text>
+          Please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- PDF Clearer -->
+    <v-dialog v-model="PDFClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select PDF File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearPDFField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Logo Clearer -->
+    <v-dialog v-model="LogoClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearLogoField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Background Clearer -->
+    <v-dialog v-model="BGClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -283,10 +319,13 @@ export default {
   name: "AddLocation",
   data() {
     return {
-      authDocNotAdded:false,
-      authDocErrorsText:'',
-      authDocErrors:false,
-      sameLocNameAlert:false,
+      BGClearer:false,
+      LogoClearer:false,
+      PDFClearer: false,
+      dialogLoader: false,
+      authDocErrorsText: "",
+      authDocErrors: false,
+      sameLocNameAlert: false,
       location: {
         nFacilityID: parseInt(this.$route.params.id),
         nFacilityLocationID: 0,
@@ -301,7 +340,9 @@ export default {
         sConfigBackgroundData: "",
         nROILocationID: "",
         sAuthTemplate: "",
-        sAuthTemplateName: ""
+        sAuthTemplateName: "",
+        nCreatedAdminUserID: this.$store.state.adminUserId,
+        nUpdatedAdminUserID: this.$store.state.adminUserId
       }
     };
   },
@@ -316,81 +357,120 @@ export default {
       });
   },
   methods: {
-    authDocErrorsContinue(){
+    clearBGField() {
+      this.BGClearer = false;
+      this.location.sConfigBackgroundName = "";
+      this.location.sConfigBackgroundData = "";
+      this.$refs.sBGImage.clearableCallback();
+    },
+    clearLogoField() {
+      this.LogoClearer = false;
+      this.location.sConfigLogoName = "";
+      this.location.sConfigLogoData = "";
+      this.$refs.sLogoImage.clearableCallback();
+    },
+    clearPDFField() {
+      this.PDFClearer = false;
+      this.location.sAuthTemplate = "";
+      this.location.sAuthTemplateName = "";
+      this.$refs.sPDFFile.clearableCallback();
+    },
+    authDocErrorsContinue() {
       this.authDocErrors = false;
       this.$router.push("/locations/" + parseInt(this.$route.params.id));
     },
     onLogoFileChanged(file) {
       if (file) {
-        const reader = new FileReader();
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
+          const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigLogoData = reader.result;
         });
         reader.readAsDataURL(file);
         this.location.sConfigLogoName = file.name;
-      }
-      else{
-        this.location.sConfigLogoName='';
-        this.location.sConfigLogoData='';
+        }
+        else {
+          this.LogoClearer = true;
+        }
+      } else {
+        this.location.sConfigLogoName = "";
+        this.location.sConfigLogoData = "";
       }
     },
     onPDFFileChanged(file) {
-      var file_name_array = file.name.split(".");
-      var file_extension = file_name_array[file_name_array.length - 1];
-      if(file_extension=="pdf")
-      {
-        if (file) {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.location.sAuthTemplate = reader.result;
-        });
-        reader.readAsDataURL(file);
-        this.location.sAuthTemplateName = file.name;
-      }
-      }
-      else{
-        alert("Please Select PDF File");
+      if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if (file_extension == "pdf") {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            this.location.sAuthTemplate = reader.result;
+          });
+          reader.readAsDataURL(file);
+          this.location.sAuthTemplateName = file.name;
+        } else {
+          this.PDFClearer = true;
+        }
+      } else {
+        this.location.sAuthTemplate = "";
+        this.location.sAuthTemplateName = "";
       }
     },
     onBackgroundFileChanged(file) {
       if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
         const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigBackgroundData = reader.result;
         });
         reader.readAsDataURL(file);
         this.location.sConfigBackgroundName = file.name;
-      }
-      else{
-        this.location.sConfigBackgroundName='';
-        this.location.sConfigBackgroundData='';
+        }
+        else{
+          this.BGClearer=true;
+        }
+      } else {
+        this.location.sConfigBackgroundName = "";
+        this.location.sConfigBackgroundData = "";
       }
     },
     // API Call to add Location
     onSubmit() {
-      if(this.location.sAuthTemplate==""){
-        this.authDocNotAdded=true;
-      }
+      this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       console.log(this.location);
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
-        .then(response => {
-          if (response.ok == true) {
-            if(response.bodyText!=""){
-              this.authDocErrorsText=response.bodyText;
-              this.authDocErrors=true;
+        .then(
+          response => {
+            if (response.ok == true) {
+              this.dialogLoader = false;
+              if (response.bodyText != "") {
+                this.dialogLoader = false;
+                this.authDocErrorsText = response.bodyText;
+                this.authDocErrors = true;
+              } else {
+                this.dialogLoader = false;
+                this.$router.push(
+                  "/locations/" + parseInt(this.$route.params.id)
+                );
+              }
             }
-            else{
-              this.$router.push("/locations/" + parseInt(this.$route.params.id));
+          },
+          error => {
+            // Error Callback
+            if (
+              error.status == 400 &&
+              error.bodyText == "Cannot Add Location with Same Name"
+            ) {
+              this.dialogLoader = false;
+              this.sameLocNameAlert = true;
             }
           }
-        },error => {
-          // Error Callback
-          if(error.status==400&&error.bodyText=="Cannot Add Location with Same Name"){
-          this.sameLocNameAlert = true;
-        }
-        }
         );
     }
   }
@@ -398,63 +478,39 @@ export default {
 </script>
 
 <style scoped>
+@media screen and (max-width: 500px) {
+  #AddLocationsPageBox {
+    margin: 0 0em;
+  }
+  h1 {
+    font-size: 14px;
+  }
+}
 .submit {
   text-align: center;
 }
-#box {
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-bottom: 25px;
-  margin-top: 15px;
-}
 button {
-  margin-right: 25px;
+  margin-right: 1em;
 }
 .addlocation-form {
-  border: 3px solid #eee;
-  box-shadow: 0 4px 6px #ccc;
+  border: 0.1875em solid #eee;
+  box-shadow: 0 0.25em 0.375em #ccc;
 }
 .input label {
   display: block;
   color: #4e4e4e;
+  color: #4e4e4e;
 }
-.input.inline label {
-  display: inline;
-}
-.input input {
-  font: inherit;
-  width: 100%;
 
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-}
-.input.inline input {
-  width: auto;
-}
-.input input:focus {
-  outline: none;
-  border: 1px solid #521751;
-  background-color: #eee;
-}
-.input select {
-  border: 1px solid #ccc;
-  font: inherit;
-}
 .submit button {
-  border: 1px solid #521751;
-  color: #521751;
   font: inherit;
   cursor: pointer;
 }
-.submit button:hover,
-.submit button:active {
-  background-color: #521751;
-  color: white;
-}
+
 .submit button[disabled],
 .submit button[disabled]:hover,
 .submit button[disabled]:active {
-  border: 1px solid #ccc;
+  border: 0.0625em solid #ccc;
   background-color: transparent;
   color: #ccc;
   cursor: not-allowed;
@@ -464,6 +520,6 @@ button {
   color: red;
 }
 label {
-  margin-top: 4px;
+  margin-top: 0.25em;
 }
 </style>

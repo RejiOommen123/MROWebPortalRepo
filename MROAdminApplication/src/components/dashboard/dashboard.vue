@@ -25,10 +25,10 @@ export default {
 <style scoped>
 h1,
 p {
-  text-align: center;
+    text-align: center;
 }
 
 p {
-  color: red;
+    color: red;
 }
 </style>

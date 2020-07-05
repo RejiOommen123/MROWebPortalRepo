@@ -63,9 +63,12 @@ namespace MROWebApi.Controllers
                     return NotFound();
                 var faciName = facility.sFacilityName;
                 #region Logging
-                MROLogger logger = new MROLogger(_info);
-                string sDescription = "Admin with ID: " + nAdminUserID + " called Get Facility Fields Method for Facility ID: " + nFacilityID;
-                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
+                if (facility.bFacilityLogging)
+                {
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + nAdminUserID + " called Get Facility Fields Method for Facility ID: " + nFacilityID;
+                    logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
+                }
                 #endregion
                 return Ok(new { fields, faciName });
             }
@@ -211,9 +214,13 @@ namespace MROWebApi.Controllers
                     var mapTable = FMList.FirstOrDefault();
                     int nAdminUserID = mapTable.nUpdatedAdminUserID;
                     int nFacilityID = mapTable.nFacilityID;
-                    MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Fields Method for Facility ID: " + nFacilityID + " and Updated Fields";
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Fields", "Edit Fields");
+                    FacilitiesRepository facRepo = new FacilitiesRepository(_info);
+                    Facilities facility = await facRepo.Select(nFacilityID);
+                    if (facility.bFacilityLogging) {
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Fields Method for Facility ID: " + nFacilityID + " and Updated Fields";
+                        logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Fields", "Edit Fields");
+                    }
                     #endregion
 
                     return Ok("Success");

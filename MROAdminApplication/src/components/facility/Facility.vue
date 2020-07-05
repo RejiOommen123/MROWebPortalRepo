@@ -1,8 +1,8 @@
 <template>
-  <div id="demo">
+  <div id="FacilitiesPageBox">
     <!-- Add Facility Button which will redirect to Add Facility Page -->
     <v-row no-gutters>
-      <v-col cols="6" sm="2" md="6">
+      <v-col cols="12" sm="12" md="6">
         <v-btn
           depressed
           small
@@ -10,12 +10,12 @@
           fab
           dark
           color="rgb(0, 91, 168)"
-          id="addfacility"
+          id="addFacility"
           to="/AddFacility"
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
-        <span id="AddFac" style="font-size:24px">Add Facility</span>
+        <span id="addFacBtn">Add Facility</span>
       </v-col>
     </v-row>
     <!-- Vuetify Card with Facility List Title and Search Text Box  -->
@@ -42,14 +42,14 @@
         :items-per-page="5"
         class="body-1"
       >
-      <!-- Facility Location Count Template -->
+        <!-- Facility Location Count Template -->
         <template v-slot:item.nFacLocCount="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link
                 class="mrorouterlink"
                 v-on="on"
-                id="facilitylocation"
+                id="facilityLocationCount"
                 :to="'/Locations/'+item.facilities.nFacilityID"
                 color="rgb(0, 91, 168)"
               >{{item.nFacLocCount}}</router-link>
@@ -62,7 +62,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-2">assignment</v-icon>
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-1">assignment</v-icon>
               </router-link>
             </template>
             <span>Edit Form</span>
@@ -71,8 +71,8 @@
         <!-- Facility Active Status Template -->
         <template v-slot:item.bActiveStatus="{ item }">
           <v-switch
+            class="ml-6"
             color="#1AA260"
-            style="padding-left:40px"
             @click="deleteItem(item.facilities.nFacilityID,item.facilities.sFacilityName)"
             v-model="item.facilities.bActiveStatus"
           ></v-switch>
@@ -82,7 +82,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditFacility/'+item.facilities.nFacilityID">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-2">mdi-pencil</v-icon>
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
               </router-link>
             </template>
             <span>Edit Facility</span>
@@ -91,7 +91,7 @@
             <template v-slot:activator="{ on }">
               <router-link
                 class="mrorouterlink"
-                id="facilitylocation"
+                id="facilityLocations"
                 :to="'/Locations/'+item.facilities.nFacilityID"
               >
                 <v-icon v-on="on" medium>mdi-location_on</v-icon>
@@ -130,13 +130,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+     <!-- Common Loader -->
+        <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="rgb(0, 91, 168)" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
+
 
 <script>
 export default {
   data() {
     return {
+      dialogLoader:false,
       dialog: false,
       facilityAlert: false,
       search: "",
@@ -148,7 +159,12 @@ export default {
         },
         { text: "Description", value: "facilities.sDescription", width: "50%" },
         { text: "Locations", value: "nFacLocCount", align: "center" },
-        { text: "Patient Form", value: "Fields", sortable: false, align: "center"},
+        {
+          text: "Patient Form",
+          value: "Fields",
+          sortable: false,
+          align: "center"
+        },
         { text: "Active", value: "bActiveStatus", align: "center" },
         { text: "Edit", value: "actions", sortable: false, align: "center" }
       ],
@@ -162,9 +178,11 @@ export default {
   methods: {
     // API Call to Get all Facilities
     getGridData() {
-      this.$http.get("facility/GetFacility").then(
+      this.dialogLoader = true;
+      this.$http.get("facility/GetFacilities").then(
         response => {
           this.gridData = JSON.parse(response.bodyText);
+          this.dialogLoader = false;
         },
         response => {
           // Error Callback
@@ -180,48 +198,58 @@ export default {
     },
     //On Agree in dialog box API Call to Toggle Active Status of Facility
     deleteFacility(id) {
+      this.dialogLoader =true;
+      var combinedObj = {
+        nFacilityID: id,
+        nAdminUserID: this.$store.state.adminUserId 
+      };
       this.dialog = false;
-      this.$http.post("facility/DeleteFacility/", id).then(response => {
-        if (response.ok == true) {
-          if (response.body == "Cannot Activate Facility, Location Count = 0") {
+      this.$http.post("facility/ToggleFacility/", combinedObj).then(response => {
+        if (response.ok == true) 
+        {
+          this.dialogLoader =false;
+          if (response.body == "Cannot Activate Facility, Location Count = 0") 
+          {
+            this.dialogLoader =false;
             this.facilityAlert = true;
-          } else {
+          } else 
+          {
+            this.dialogLoader =false;
             this.$router.go();
           }
         }
       });
-    },
+    }
   }
 };
 </script>
 
 <style scoped>
-.mrorouterlink {
-  text-decoration: none;
-}
-#addfacility {
-  margin-bottom: 20px;
-}
-#facilitylocation {
-  margin-right: 10px;
-}
-button {
-  margin: 10px;
-}
-#demo {
-  margin: 0 100px;
-  padding: 20px;
-}
-#search {
-  padding-bottom: 30px;
-}
-#AddFac {
-  font-size: 24px;
-}
-#addfacility {
-  margin-top: 15px;
-}
-#addUnderline {
-  text-decoration: underline;
+@media screen and (max-width: 500px) {
+  #FacilitiesPageBox {
+    margin: 0 0em;
+  }
+  h1 {
+    font-size: 14px;
+  }
+  .v-data-table table tbody tr:nth-child(odd) {
+    /* border-left: 4px solid white !important;
+  border-collapse: collapse !important; */
+    border-spacing: 10 10rem !important;
+    padding-top: 10px !important;
+  }
+
+  .v-data-table table tbody tr:nth-child(even) {
+    /* border-left: 4px solid white !important;
+   border-collapse: collapse !important; */
+    border-spacing: 10 10rem !important;
+    padding-top: 10px !important;
+  }
+  .v-data-table table tbody tr:nth-child(even) td {
+    border-left: 4px solid cyan !important;
+  }
+  .v-data-table table tbody tr:nth-child(odd) td {
+    border-left: 4px solid deeppink !important;
+  }
 }
 </style>

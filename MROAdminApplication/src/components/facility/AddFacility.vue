@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div id="box">
+    <div id="AddFacilityPageBox">
       <form @submit.prevent="onSubmit" class="addfacility-form">
-        <div id="formDiv">
+        <div id="addFormDiv">
           <span id="spanMandate">
             <i>All the fields are mandatory</i>
           </span>
@@ -121,7 +121,7 @@
               :error-messages="sConnectionStringErrors"
               solo
             ></v-text-field>
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
+            <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
             <v-switch
               inset
               flat
@@ -133,7 +133,7 @@
           </v-col>
         </v-row>
         <div class="submit">
-          <v-btn to="/facility" type="submit" color="primary">Cancel</v-btn>
+          <v-btn to="/facility" type="button" color="primary">Cancel</v-btn>
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
           <v-btn
             @click="goToLoc"
@@ -145,7 +145,7 @@
       </form>
     </div>
     <!-- Dialog Alert for Same name facility -->
-    <v-dialog v-model="sameNameAlert" width ="350px" max-width="360px">
+    <v-dialog v-model="sameNameAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>Facility with Same Name Exists</v-card-text>
@@ -155,6 +155,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Common Loader -->
+        <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
+          <v-card color="rgb(0, 91, 168)" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
 
@@ -184,35 +193,31 @@ export default {
         maxLength: maxLength(80),
         minLength: minLength(2)
       },
-      sSMTPUsername: 
-      { 
+      sSMTPUsername: {
         required,
-        maxLength: maxLength(100), 
+        maxLength: maxLength(100)
       },
       sSMTPPassword: {
         required,
         maxLength: maxLength(20),
         minLength: minLength(5)
       },
-      sSMTPUrl: 
-      { 
+      sSMTPUrl: {
         required,
-        maxLength: maxLength(200),
+        maxLength: maxLength(200)
       },
-      sFTPUsername: 
-      { 
+      sFTPUsername: {
         required,
-        maxLength: maxLength(100),  
+        maxLength: maxLength(100)
       },
       sFTPPassword: {
         required,
-        maxLength: maxLength(20),
+        maxLength: maxLength(1000),
         minLength: minLength(5)
       },
-      sFTPUrl: 
-      { 
+      sFTPUrl: {
         required,
-        maxLength: maxLength(200),
+        maxLength: maxLength(200)
       },
       sOutboundEmail: { required, email }
     }
@@ -293,7 +298,7 @@ export default {
       !this.$v.facility.sFTPPassword.minLength &&
         errors.push("FTP Password must be at least 5 characters long");
       !this.$v.facility.sFTPPassword.maxLength &&
-        errors.push("FTP Password must be at most 20 characters long");
+        errors.push("FTP Password must be at most 1000 characters long");
       !this.$v.facility.sFTPPassword.required &&
         errors.push("FTP Password is required.");
       return errors;
@@ -303,7 +308,7 @@ export default {
       if (!this.$v.facility.sFTPUrl.$dirty) return errors;
       !this.$v.facility.sFTPUrl.maxLength &&
         errors.push("FTP Url must be at most 200 characters long");
-      !this.$v.facility.sFTPUrl.required && errors.push("FTP Url is required.");
+      !this.$v.facility.sFTPUrl.required && errors.push("FTP URL is required.");
       return errors;
     },
     sOutboundEmailErrors() {
@@ -319,9 +324,9 @@ export default {
   name: "AddFacility",
   data() {
     return {
-      sameNameAlert:false,
+      dialogLoader:false,
+      sameNameAlert: false,
       sConnectionString: "",
-      genFacId: "",
       facility: {
         nFacilityID: 0,
         nROIFacilityID: 0,
@@ -335,47 +340,65 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm: true
+        bRequestorEmailConfirm: true,
+        nCreatedAdminUserID: this.$store.state.adminUserId,
+        nUpdatedAdminUserID: this.$store.state.adminUserId
       }
     };
   },
   methods: {
     // API Call to add facility
     goToLoc() {
+      this.dialogLoader = true;
       var combinedObj = {
         cFacility: this.facility,
         sConnectionString: this.sConnectionString
       };
-      this.$http.post("facility/AddFacility", combinedObj).then(response => {
-        if (response.ok == true) {
-          //if reponse ok then redirect to Add Location Page with Generated Facility ID
-          this.$router.push("/AddLocation/" + response.body.nFacilityID);
-        }
-      },error => {
+      this.$http.post("facility/AddFacility", combinedObj).then(
+        response => {
+          if (response.ok == true) {
+            this.dialogLoader =false;
+            //if reponse ok then redirect to Add Location Page with Generated Facility ID
+            this.$router.push("/AddLocation/" + response.body.nFacilityID);
+          }
+        },
+        error => {
           // Error Callback
-          if(error.status==400&&error.bodyText=="Cannot Add Facility with Same Name"){
-          this.sameNameAlert = true;
-        }
+          if (
+            error.status == 400 &&
+            error.bodyText == "Cannot Add Facility with Same Name"
+          ) {
+            this.dialogLoader = false;
+            this.sameNameAlert = true;
+          }
           console.log(error.body);
         }
       );
     },
     onSubmit() {
       // API Call to add facility
+      this.dialogLoader =true;
       var combinedObj = {
         cFacility: this.facility,
         sConnectionString: this.sConnectionString
       };
-      this.$http.post("facility/AddFacility", combinedObj).then(response => {
-        if (response.ok == true) {
-          //if reponse ok then redirect to Facility List Page
-          this.$router.push("/facility");
-        }
-      },error => {
+      this.$http.post("facility/AddFacility", combinedObj).then(
+        response => {
+          if (response.ok == true) {
+            this.dialogLoader =false;
+            //if reponse ok then redirect to Facility List Page
+            this.$router.push("/facility");
+          }
+        },
+        error => {
           // Error Callback
-          if(error.status==400&&error.bodyText=="Cannot Add Facility with Same Name"){
-          this.sameNameAlert = true;
-        }
+          if (
+            error.status == 400 &&
+            error.bodyText == "Cannot Add Facility with Same Name"
+          ) {
+            this.dialogLoader =false;
+            this.sameNameAlert = true;
+          }
           console.log(error.body);
         }
       );
@@ -385,85 +408,44 @@ export default {
 </script>
 
 <style scoped>
-#spanMandate {
-  font-size: 14px;
+button,a{
+  margin-right: 1.25em;
 }
-#formDiv {
-  margin-top: -15px;
-  margin-left: -20px;
+@media screen and (max-width: 500px) {
+  #AddFacilityPageBox {
+    margin: 0 0px;
+  }
+  h1 {
+    font-size: 14px;
+  }
 }
 .submit {
   text-align: center;
 }
-#box {
-  margin: 10px;
-}
-* {
-  margin: 5px;
-}
-.addfacility-form {
-  margin: 10px auto;
-  border: 1px solid #eee;
-  padding: 20px;
-  box-shadow: 0 2px 3px #ccc;
-  font-size: 15px;
-}
 
-.input {
-  margin: 10px auto;
+.addfacility-form {
+  margin: 0.625em auto;
+  border: 0.0625em solid #eee;
+  padding: 1.25em;
+  box-shadow: 0 0.125em 0.1875em #ccc;
+  font-size: 0.9375em;
 }
 
 .input label {
   display: block;
   color: #4e4e4e;
-  margin-bottom: 6px;
-}
-
-.input.inline label {
-  display: inline;
-}
-
-.input input {
-  font: inherit;
-  width: 100%;
-  padding: 6px 12px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-}
-
-.input.inline input {
-  width: auto;
-}
-
-.input input:focus {
-  outline: none;
-  border: 1px solid #521751;
-  background-color: #eee;
-}
-
-.input select {
-  border: 1px solid #ccc;
-  font: inherit;
+  margin-bottom: 0.375em;
 }
 
 .submit button {
-  border: 1px solid #521751;
-  color: #521751;
-  padding: 10px 20px;
   font: inherit;
   cursor: pointer;
-}
-
-.submit button:hover,
-.submit button:active {
-  background-color: #521751;
-  color: white;
 }
 
 .submit button[disabled],
 .submit button[disabled]:hover,
 .submit button[disabled]:active {
-  border: 1px solid #ccc;
+  border: 0.078125em solid #ccc;
   background-color: transparent;
   color: #ccc;
   cursor: not-allowed;
@@ -472,10 +454,10 @@ i {
   color: rgb(40, 40, 40);
 }
 label {
-  margin-top: 4px;
-  margin-left: -1px;
+  margin-top: 0.25em;
+  margin-left: -0.0625em;
 }
 .row {
-  margin: 1px;
+  margin: 0.0625em;
 }
 </style>

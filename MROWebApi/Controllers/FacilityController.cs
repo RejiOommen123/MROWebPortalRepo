@@ -67,9 +67,11 @@ namespace MROWebAPI.Controllers
             Facilities facility = await rpFac.Select(nFacilityID);
 
             #region Logging
-            MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility Method for Facility ID: " + sFacilityID;
-            logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility By ID", "Manage Facilities");
+            if (facility.bFacilityLogging) {
+                MROLogger logger = new MROLogger(_info);
+                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility Method for Facility ID: " + sFacilityID;
+                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility By ID", "Manage Facilities");
+            }
             #endregion
 
             if (facility == null)
@@ -114,9 +116,12 @@ namespace MROWebAPI.Controllers
                     int GeneratedID = (int)rpFac.Insert(facility);
 
                     #region Logging
-                    MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + facility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
-                    logger.LogAdminRecords(facility.nCreatedAdminUserID, sDescription, "Add Facility", "Add Facility");
+                    if (facility.bFacilityLogging)
+                    {
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + facility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
+                        logger.LogAdminRecords(facility.nCreatedAdminUserID, sDescription, "Add Facility", "Add Facility");
+                    }
                     #endregion
 
                     Facilities dbFacility = await rpFac.Select(GeneratedID);
@@ -158,9 +163,12 @@ namespace MROWebAPI.Controllers
                 if (rpFac.Update(facility))
                 {
                     #region Logging
-                    MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
-                    logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
+                    if (facility.bFacilityLogging)
+                    {
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
+                        logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
+                    }
                     #endregion
                     return Ok();
                 }
@@ -197,9 +205,12 @@ namespace MROWebAPI.Controllers
                 if (await rpFac.ToggleSoftDelete("bActiveStatus", nFacilityID))
                 {
                     #region Logging
-                    MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + toggleFacility.nAdminuserID + " called Toggle Facility Method for Facility ID: " + nFacilityID;
-                    logger.LogAdminRecords(toggleFacility.nAdminuserID, sDescription, "Toggle Facility By ID", "Manage Facilities");
+                    if (facilityDB.bFacilityLogging)
+                    {
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + toggleFacility.nAdminuserID + " called Toggle Facility Method for Facility ID: " + nFacilityID;
+                        logger.LogAdminRecords(toggleFacility.nAdminuserID, sDescription, "Toggle Facility By ID", "Manage Facilities");
+                    }
                     #endregion
                     return Ok();
                 }

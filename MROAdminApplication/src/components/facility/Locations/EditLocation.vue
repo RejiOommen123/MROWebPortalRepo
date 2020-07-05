@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="box">
+    <div id="EditLocationsPageBox">
       <form @submit.prevent="onSubmit" class="editlocation-form">
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
@@ -75,6 +75,7 @@
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:</label>
             <v-file-input
+            ref="sPDFFile"
               chips
               show-size
               dense
@@ -91,6 +92,7 @@
             <v-img :src="location.sConfigLogoData" width="20%"></v-img>
             <br />
             <v-file-input
+            ref="sLogoImage"
               lazy-src
               chips
               show-size
@@ -108,13 +110,14 @@
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
                 </template>
-                <span>Please upload logo with height 50px</span>
+                <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
             </v-file-input>
             <label for="sConfigBackgroundImg">Background Image:</label>
             <v-img :src="location.sConfigBackgroundData" width="20%"></v-img>
             <br />
             <v-file-input
+            ref="sBGImage"
               chips
               show-size
               dense
@@ -132,18 +135,71 @@
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
                 </template>
-                <span>Please upload logo with height 50px</span>
+                <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
             </v-file-input>
           </v-col>
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
-          <v-btn :to="'/locations/'+this.location.nFacilityID" type="submit" color="primary">Cancel</v-btn>
+          <v-btn :to="'/locations/'+this.location.nFacilityID" type="button" color="primary">Cancel</v-btn>
         </div>
         <br />
       </form>
     </div>
+    <!-- Dialog Alert for Auth Doc errors -->
+    <v-dialog v-model="authDocErrors" width="425px" max-width="425px">
+      <v-card>
+        <v-card-title class="headline">PDF missing following fields</v-card-title>
+        <v-card-text v-html="this.authDocErrorsText"></v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="authDocErrorsContinue()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Common Loader -->
+        <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="rgb(0, 91, 168)" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+         <!-- PDF Clearer -->
+    <v-dialog v-model="PDFClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select PDF File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearPDFField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Logo Clearer -->
+    <v-dialog v-model="LogoClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearLogoField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Background Clearer -->
+    <v-dialog v-model="BGClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -238,6 +294,8 @@ export default {
     sFaxNoErrors() {
       const errors = [];
       if (!this.$v.location.sFaxNo.$dirty) return errors;
+      !this.$v.location.sFaxNo.numeric &&	
+        errors.push("Fax Number can only have numbers");
       !this.$v.location.sFaxNo.minLength &&
         errors.push("Fax Number must be at least 10 characters long");
       !this.$v.location.sFaxNo.maxLength &&
@@ -248,6 +306,13 @@ export default {
   name: "EditLocation",
   data() {
     return {
+      BGClearer:false,
+      LogoClearer:false,
+      PDFClearer: false,
+      dialogLoader:false,
+      authDocNotAdded:false,
+      authDocErrorsText:'',
+      authDocErrors:false,
       location: {
         nROIFacilityID: null,
         nFacilityID: null,
@@ -263,20 +328,24 @@ export default {
         sConfigBackgroundData: "",
         sAuthTemplate: "",
         nROILocationID: "",
-        sAuthTemplateName: ""
+        sAuthTemplateName: "",
+        nCreatedAdminUserID: this.$store.state.adminUserId,
+        nUpdatedAdminUserID: this.$store.state.adminUserId
       }
     };
   },
   mounted() {
     // API to get single facility for Loading into the form
+    this.dialogLoader =true;
     this.$http
       .get(
-        "FacilityLocations/GetFacilityLocationSingle/" + this.$route.params.id
+        "FacilityLocations/GetFacilityLocationSingle/sFacilitylocationID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
       )
       .then(
         response => {
           // get body data
           this.location = JSON.parse(response.bodyText);
+          this.dialogLoader =false;
         },
         response => {
           // error callback
@@ -285,38 +354,90 @@ export default {
       );
   },
   methods: {
-    onPDFFileChanged(file) {
-      if (file) {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.location.sAuthTemplate = reader.result;
-        });
-        reader.readAsDataURL(file);
-        this.location.sAuthTemplateName = file.name;
-      }
+    clearBGField() {
+      this.BGClearer = false;
+      this.location.sConfigBackgroundName = "";
+      this.location.sConfigBackgroundData = "";
+      this.$refs.sBGImage.clearableCallback();
+    },
+    clearLogoField() {
+      this.LogoClearer = false;
+      this.location.sConfigLogoName = "";
+      this.location.sConfigLogoData = "";
+      this.$refs.sLogoImage.clearableCallback();
+    },
+    clearPDFField() {
+      this.PDFClearer = false;
+      this.location.sAuthTemplate = "";
+      this.location.sAuthTemplateName = "";
+      this.$refs.sPDFFile.clearableCallback();
+    },
+    authDocErrorsContinue() {
+      this.authDocErrors = false;
+      this.$router.push("/locations/" + parseInt(this.location.nFacilityID));
     },
     onLogoFileChanged(file) {
       if (file) {
-        const reader = new FileReader();
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
+          const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigLogoData = reader.result;
         });
         reader.readAsDataURL(file);
         this.location.sConfigLogoName = file.name;
+        }
+        else {
+          this.LogoClearer = true;
+        }
+      } else {
+        this.location.sConfigLogoName = "";
+        this.location.sConfigLogoData = "";
+      }
+    },
+    onPDFFileChanged(file) {
+      if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if (file_extension == "pdf") {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            this.location.sAuthTemplate = reader.result;
+          });
+          reader.readAsDataURL(file);
+          this.location.sAuthTemplateName = file.name;
+        } else {
+          this.PDFClearer = true;
+        }
+      } else {
+        this.location.sAuthTemplate = "";
+        this.location.sAuthTemplateName = "";
       }
     },
     onBackgroundFileChanged(file) {
       if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
         const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigBackgroundData = reader.result;
         });
         reader.readAsDataURL(file);
         this.location.sConfigBackgroundName = file.name;
+        }
+        else{
+          this.BGClearer=true;
+        }
+      } else {
+        this.location.sConfigBackgroundName = "";
+        this.location.sConfigBackgroundData = "";
       }
     },
     // API to Update location
     onSubmit() {
+      this.dialogLoader =true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nFacilityLocationID = parseInt(
         this.location.nFacilityLocationID
@@ -330,7 +451,17 @@ export default {
         )
         .then(response => {
           if (response.ok == true) {
-            this.$router.push("/Locations/" + this.location.nFacilityID);
+            this.dialogLoader =false;
+            if (response.bodyText != "") {
+                this.dialogLoader = false;
+                this.authDocErrorsText = response.bodyText;
+                this.authDocErrors = true;
+              } else {
+                this.dialogLoader = false;
+                this.$router.push(
+                  "/locations/" + parseInt(this.location.nFacilityID)
+                );
+              }
           }
         });
     }
@@ -339,62 +470,37 @@ export default {
 </script>
 
 <style scoped>
+@media screen and (max-width: 500px) {
+  #EditLocationsPageBox {
+    margin: 0 0em;
+  }
+  h1 {
+    font-size: 14px;
+  }
+}
 .submit {
   text-align: center;
 }
-#box {
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-bottom: 25px;
-  margin-top: 15px;
-}
-button {
-  margin-right: 25px;
-}
+
 .editlocation-form {
-  border: 3px solid #eee;
-  box-shadow: 0 4px 6px #ccc;
+  border: 0.1875em solid #eee;
+  box-shadow: 0 0.25em 0.375em #ccc;
 }
 .input label {
   display: block;
   color: #4e4e4e;
+  color: #4e4e4e;
 }
-.input.inline label {
-  display: inline;
-}
-.input input {
-  font: inherit;
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-}
-.input.inline input {
-  width: auto;
-}
-.input input:focus {
-  outline: none;
-  border: 1px solid #521751;
-  background-color: #eee;
-}
-.input select {
-  border: 1px solid #ccc;
-  font: inherit;
-}
+
 .submit button {
-  border: 1px solid #521751;
-  color: #521751;
   font: inherit;
   cursor: pointer;
 }
-.submit button:hover,
-.submit button:active {
-  background-color: #521751;
-  color: white;
-}
+
 .submit button[disabled],
 .submit button[disabled]:hover,
 .submit button[disabled]:active {
-  border: 1px solid #ccc;
+  border: 0.0625em solid #ccc;
   background-color: transparent;
   color: #ccc;
   cursor: not-allowed;
@@ -404,9 +510,12 @@ button {
   color: red;
 }
 label {
-  margin-top: 4px;
+  margin-top: 0.0625em;
 }
 .row {
-  margin: 1px;
+  margin: 0.0625em;
+}
+button{
+  margin-right: 1em;
 }
 </style>
