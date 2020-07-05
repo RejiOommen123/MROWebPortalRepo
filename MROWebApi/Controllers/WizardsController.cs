@@ -228,7 +228,7 @@ namespace MROWebApi.Controllers
                 reqStream.Write(buffer, 0, buffer.Length);
                 reqStream.Close();
                 //Add Requestor
-                AddRequestor(requestors, _info);
+                //AddRequestor(requestors, _info);
 
                 //Send Email to Patient
                 if (await SendEmail(requestors, signedPDF, _info, _protector))
@@ -247,37 +247,37 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private static int AddRequestor(Requesters requester,DBConnectionInfo _info) 
-        {
+        //private static int AddRequestor(Requesters requester,DBConnectionInfo _info) 
+        //{
 
-                try
-                {
-                #region Data Addition ! From UI
-                requester.dtLastUpdate = DateTime.Now;
-                #endregion
+        //        try
+        //        {
+        //        #region Data Addition ! From UI
+        //        requester.dtLastUpdate = DateTime.Now;
+        //        #endregion
 
-                #region Array Processing
-                var PRArray = string.Join(",", requester.sSelectedPrimaryReasons);
-                var SRArray = string.Join(",", requester.sSelectedRecordTypes);
-                var STArray = string.Join(",", requester.sSelectedShipmentTypes);
-                var SIArray = string.Join(",", requester.selectedSensitiveInfo);
-                var relativeFileArray = string.Join(",", requester.sRelativeFileArray);
-                requester.sSelectedPrimaryReasons = new string[] { PRArray };
-                requester.sSelectedRecordTypes = new string[] { SRArray };
-                requester.sSelectedShipmentTypes = new string[] { STArray };
-                requester.selectedSensitiveInfo = new string[] { SIArray };
-                requester.sRelativeFileArray = new string[] { relativeFileArray };
-                #endregion
+        //        #region Array Processing
+        //        var PRArray = string.Join(",", requester.sSelectedPrimaryReasons);
+        //        var SRArray = string.Join(",", requester.sSelectedRecordTypes);
+        //        var STArray = string.Join(",", requester.sSelectedShipmentTypes);
+        //        var SIArray = string.Join(",", requester.selectedSensitiveInfo);
+        //        var relativeFileArray = string.Join(",", requester.sRelativeFileArray);
+        //        requester.sSelectedPrimaryReasons = new string[] { PRArray };
+        //        requester.sSelectedRecordTypes = new string[] { SRArray };
+        //        requester.sSelectedShipmentTypes = new string[] { STArray };
+        //        requester.selectedSensitiveInfo = new string[] { SIArray };
+        //        requester.sRelativeFileArray = new string[] { relativeFileArray };
+        //        #endregion
 
-                RequestersRepository requestorsFac = new RequestersRepository(_info);
-                    int GeneratedID = (int)requestorsFac.Insert(requester);
-                    return GeneratedID;
-                }
-                catch (Exception ex)
-                {
-                        return 0;
-                }
-        }
+        //        RequestersRepository requestorsFac = new RequestersRepository(_info);
+        //            int GeneratedID = (int)requestorsFac.Insert(requester);
+        //            return GeneratedID;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //                return 0;
+        //        }
+        //}
         private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, IDataProtector _protector)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
