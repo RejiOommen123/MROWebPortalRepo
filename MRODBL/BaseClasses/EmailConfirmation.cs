@@ -13,7 +13,7 @@ namespace MRODBL.BaseClasses
         public int nFacilityID { get; set; }
         [Required]
         [StringLength(30, ErrorMessage = "Maximum 30 characters Email ID allowed")]
-        public string sPatientEmailId { get; set; }
+        public string sRequesterEmailId { get; set; }
         [Required]
         [StringLength(20, ErrorMessage = "Maximum 20 characters Patient First Name allowed")]
         public string sPatientFirstName { get; set; }

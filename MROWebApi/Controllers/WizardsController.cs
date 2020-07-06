@@ -402,7 +402,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sPatientEmailId);
+                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
