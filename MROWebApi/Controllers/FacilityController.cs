@@ -9,7 +9,6 @@ using MRODBL.Entities;
 using MRODBL.BaseClassRepositories;
 using MRODBL.BaseClasses;
 using MROWebApi.Services;
-using Microsoft.AspNetCore.DataProtection;
 using System.Text.RegularExpressions;
 
 namespace MROWebAPI.Controllers
@@ -17,6 +16,7 @@ namespace MROWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class FacilityController : ControllerBase
     {
         #region Facility Constructor
