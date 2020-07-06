@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     nextPage() {
-      this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeEnd);
+      this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeStart);
       this.$store.commit("requestermodule/dtRecordRangeEnd", this.dtRecordRangeEnd);
 
       //Partial Requester Data Save Start

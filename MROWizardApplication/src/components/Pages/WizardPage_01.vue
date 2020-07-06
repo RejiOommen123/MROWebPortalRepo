@@ -14,6 +14,7 @@
     </div>
     <div>
       <a
+        @click="printForm"
         href="#"
         id="pdfFormLink"
       >{{disclaimer03}}</a>
@@ -38,10 +39,13 @@ export default {
   },
   methods: {
     nextPage() {
-      this.$store.state.ConfigModule.showBackBtn = true;
-     
+      this.$store.state.ConfigModule.showBackBtn = true;     
       this.$store.commit("ConfigModule/mutateNextIndex");
-
+    },
+    printForm(){
+      // let blobFile = new Blob('data:application/pdf;base64,'+[this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sAuthTemplate], { type: "application/pdf" });
+      // var fileURL = URL.createObjectURL(blobFile);
+      //window.open("data:application/pdf," + this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sAuthTemplate);
     }
   }
 };

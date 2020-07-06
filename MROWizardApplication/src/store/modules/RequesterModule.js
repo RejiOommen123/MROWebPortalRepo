@@ -28,10 +28,12 @@ const state = {
     sOtherReasons: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
+    nSTFaxNo:0,
     sSTFaxCompAdd:'',
     sSTEmailId:'',
     sSTMailCompAdd:'',
     dtSTPickUp:'',
+    sSTRecordFormat:'',
 
     selectedSensitiveInfo: [],
     dAuthExpire : null,
@@ -133,6 +135,9 @@ const mutations = {
     sSTEmailId(state, payload) {
         state.sSTEmailId = payload;
     },
+    nSTFaxNo(state, payload) {
+        state.nSTFaxNo = payload;
+    },
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
     },
@@ -141,6 +146,9 @@ const mutations = {
     },
     dtSTPickUp(state, payload) {
         state.dtSTPickUp = payload;
+    },
+    sSTRecordFormat(state, payload) {
+        state.sSTRecordFormat = payload;
     },
 
 

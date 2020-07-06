@@ -4,7 +4,7 @@
     <p>{{disclaimer01}}</p>
     <div>
       <v-row>
-        <v-col  cols="12" offset-sm="3" sm="6">
+        <v-col  cols="12" offset-sm="2" sm="8">
           <form>
             <label for="sRequesterEmailId" class="control-label">Email</label>
             <v-text-field
@@ -50,6 +50,7 @@
                 class="next"
               >Send Email Verification</v-btn>
               <div v-if="showVerifyInput==true">
+                <v-col cols="12" offset-sm="3" sm="6">
                 <v-text-field
                   :error-messages="sVerifyError"
                   @input="$v.sVerify.$touch()"
@@ -58,6 +59,7 @@
                   label="Enter OTP"
                   required
                 ></v-text-field>
+                </v-col>
 
                 <v-btn @click.prevent="sendEmail" class="next">Resend OTP</v-btn>
 
@@ -175,7 +177,7 @@ export default {
       this.showVerifyInput = true;
       var emailConfirm = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
+        sRequesterEmailId: this.emailValid.sRequesterEmailId,
         sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
         sPatientLastName: this.$store.state.requestermodule.sPatientLastName
       };

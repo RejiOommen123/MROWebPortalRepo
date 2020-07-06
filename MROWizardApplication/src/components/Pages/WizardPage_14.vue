@@ -153,6 +153,10 @@ export default {
       this.nSelectedCheckBox.push(id);
     },
     skipPage(){
+      var dt = new Date();
+      dt.setMonth(dt.getMonth() + this.nAuthMonths);  
+      this.dAuthExpire = dt.toISOString();
+      this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },

@@ -3,7 +3,7 @@
     <h1>Are you requesting records for yourself?</h1>
     <v-row>
       <div style="width:100%">
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col cols="12" offset-sm="1" sm="10">
           <button
             :class="{active: sActiveBtn === 'Yes'}"
             @click.prevent="setPatient"
@@ -12,7 +12,7 @@
         </v-col>
       </div>
       <div style="width:100%">
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col cols="12" offset-sm="1" sm="10">
           <button 
             :class="{active: sActiveBtn === 'No'}"
             @click.prevent="setNotPatient" class="wizardSelectionButton">
@@ -25,7 +25,7 @@
     <div v-show="!bAreYouPatient">
       <form>
         <v-row>
-          <v-col cols="12" offset-sm="3" sm="6">
+          <v-col cols="12" offset-sm="2" sm="8">
             <v-text-field
               v-model="sRelativeName"
               :error-messages="sRelativeNameErrors"
@@ -129,6 +129,7 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", true);
       this.$store.commit("requestermodule/sRelativeName", "");
       this.$store.commit("requestermodule/sRelationToPatient", "");
+      this.$store.commit("requestermodule/sRelativeFileArray", []);
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     // This will set bAreYouPatient status to false and set realtives variables
@@ -146,6 +147,7 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     filesChange(files){
+      this.sRelativeFileArray=[];
       for( var i = 0; i < files.length; i++ ){        
         const reader = new FileReader();
         reader.addEventListener("load", () => {
