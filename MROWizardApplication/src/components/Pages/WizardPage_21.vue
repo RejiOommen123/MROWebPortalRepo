@@ -150,9 +150,6 @@ export default {
       .post("Wizards/GenerateXML/", 
       this.$store.state.requestermodule,
       )
-      .then(response => {
-        console.log(response.body);
-      });
         this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
         this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
