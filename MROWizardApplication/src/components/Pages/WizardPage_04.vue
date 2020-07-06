@@ -19,6 +19,8 @@
         <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3" xs="3">
           <label for="sPatientMiddleInitial" class="control-label">Middle Initial</label>
           <v-text-field
+            style="max-width:50%; margin-right:auto;margin-left:auto"
+            maxlength="1"
             v-model="sPatientMiddleInitial"
             :error-messages="sPatientMiddleInitialError"
             required

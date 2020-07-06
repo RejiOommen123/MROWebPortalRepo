@@ -4,16 +4,17 @@
       <h1>It only takes a few minutes to request your health records. Please have a copy of your Government or Photo ID ready.</h1>
     </div> -->
     <div>
-      <p class="subHeadings">
+      <p  class="subHeadings">
         {{disclaimer01}}
       </p>
     </div>
-    <div class="disclaimer">{{this.disclaimer02}}</div>
+    <div style="margin-bottom:10%; margin-top:10%" class="disclaimer">{{this.disclaimer02}}</div>
     <div>
-      <v-btn @click.prevent="nextPage" x-large color="#e84700" id="letsGoBtn">Get Started</v-btn>
+      <v-btn style="margin-bottom:10%" @click.prevent="nextPage" x-large color="#e84700" id="letsGoBtn">Get Started</v-btn>
     </div>
     <div>
       <a
+      style="margin-bottom:10%"
         @click="printForm"
         href="#"
         id="pdfFormLink"
