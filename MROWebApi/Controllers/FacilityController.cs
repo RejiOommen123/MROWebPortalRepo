@@ -20,12 +20,12 @@ namespace MROWebAPI.Controllers
     public class FacilityController : ControllerBase
     {
         #region Facility Constructor
-        private readonly IDataProtector _protector;
+        //private readonly IDataProtector _protector;
         private readonly DBConnectionInfo _info;
-        public FacilityController(DBConnectionInfo info, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings)
+        public FacilityController(DBConnectionInfo info)
         {
             _info = info;
-            this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
+            //this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
         }
         #endregion
 
@@ -109,8 +109,9 @@ namespace MROWebAPI.Controllers
                     FacilitiesRepository rpFac = new FacilitiesRepository(_info);
 
                     #region Encrypt Passwords
-                    facility.sSMTPPassword = _protector.Protect(facility.sSMTPPassword);
-                    facility.sFTPPassword = _protector.Protect(facility.sFTPPassword);
+                    MROLogger password = new MROLogger(_info);
+                    facility.sSMTPPassword = password.EncryptString(facility.sSMTPPassword);
+                    facility.sFTPPassword = password.EncryptString(facility.sFTPPassword);
                     #endregion
 
                     int GeneratedID = (int)rpFac.Insert(facility);
@@ -156,8 +157,9 @@ namespace MROWebAPI.Controllers
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
 
                 #region Encrypt Passwords
-                facility.sSMTPPassword = _protector.Protect(facility.sSMTPPassword);
-                facility.sFTPPassword = _protector.Protect(facility.sFTPPassword);
+                MROLogger password = new MROLogger(_info);
+                facility.sSMTPPassword = password.EncryptString(facility.sSMTPPassword);
+                facility.sFTPPassword = password.EncryptString(facility.sFTPPassword);
                 #endregion
 
                 if (rpFac.Update(facility))

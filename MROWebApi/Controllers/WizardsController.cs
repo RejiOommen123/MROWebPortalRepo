@@ -30,11 +30,11 @@ namespace MROWebApi.Controllers
     {
         #region Wizards Constructor
         private readonly DBConnectionInfo _info;
-        private readonly IDataProtector _protector;
-        public WizardsController(DBConnectionInfo info, IDataProtectionProvider dataProtectionProvider, DataProtectionPurposeStrings dataProtectionPurposeStrings)
+        //private readonly IDataProtector _protector;
+        public WizardsController(DBConnectionInfo info)
         {
             _info = info;
-            this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
+            //this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
         }
         #endregion  
 
@@ -208,7 +208,8 @@ namespace MROWebApi.Controllers
                 writer.Flush();
 
                 #region Decrypt FTP Password
-                facility.sFTPPassword = _protector.Unprotect(facility.sFTPPassword);
+                MROLogger password = new MROLogger(_info);
+                facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
                 #endregion
 
                 FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + facility.sFacilityName+"_"+requestors.sPatientFirstName+requestors.sPatientLastName+"_"+ DateTime.Now.ToString("MM-dd-yyyy") + ".xml");
@@ -224,16 +225,22 @@ namespace MROWebApi.Controllers
                 byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
 
                 //Upload file
-                Stream reqStream = request.GetRequestStream();
-                reqStream.Write(buffer, 0, buffer.Length);
-                reqStream.Close();
+                try {
+                    Stream reqStream = request.GetRequestStream();
+                    reqStream.Write(buffer, 0, buffer.Length);
+                    reqStream.Close();
+                }
+                catch (Exception ex) {
+                    //return Content(ex.Message);
+                }
                 //Add Requestor
                 //AddRequestor(requestors, _info);
 
                 //Send Email to Patient
-                if (await SendEmail(requestors, signedPDF, _info, _protector))
+                MROLogger passwordDecrypt = new MROLogger(_info);
+                if (await SendEmail(requestors, signedPDF, _info, passwordDecrypt))
                 {
-                        await SendROIEmail(requestors, signedPDF, _info, _protector);
+                        await SendROIEmail(requestors, signedPDF, _info, passwordDecrypt);
                         return Ok(xmlString.ToString());
                 }
                 else
@@ -278,7 +285,7 @@ namespace MROWebApi.Controllers
         //                return 0;
         //        }
         //}
-        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, IDataProtector _protector)
+        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info,MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
@@ -289,7 +296,7 @@ namespace MROWebApi.Controllers
             {
 
                 #region Decrypt SMTP Password
-                dbFacility.sSMTPPassword = _protector.Unprotect(dbFacility.sSMTPPassword);
+                dbFacility.sSMTPPassword = passwordDecrypt.DecryptString(dbFacility.sSMTPPassword);
                 #endregion
 
                 //From 
@@ -393,7 +400,8 @@ namespace MROWebApi.Controllers
                 var sOTP = GenerateRandomNo().ToString();
 
                 #region Decrypt SMTP Password
-                dbFacility.sSMTPPassword = _protector.Unprotect(dbFacility.sSMTPPassword);
+                MROLogger password = new MROLogger(_info);
+                dbFacility.sSMTPPassword = password.DecryptString(dbFacility.sSMTPPassword);
                 #endregion
 
                 //From 
@@ -614,7 +622,7 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region ROI Email
-        private static async Task<bool> SendROIEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, IDataProtector _protector)
+        private static async Task<bool> SendROIEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
@@ -625,7 +633,7 @@ namespace MROWebApi.Controllers
             {
 
                 #region Decrypt SMTP Password
-                dbFacility.sSMTPPassword = _protector.Unprotect(dbFacility.sSMTPPassword);
+                dbFacility.sSMTPPassword = passwordDecrypt.DecryptString(dbFacility.sSMTPPassword);
                 #endregion
 
                 #region Get Footer Image

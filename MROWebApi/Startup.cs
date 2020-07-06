@@ -38,8 +38,8 @@ namespace MROWebApi
                 #endregion
 
                 #region Encrypt Decrypt - Don't Change Order
-                services.AddAuthentication();
-                services.AddSingleton<DataProtectionPurposeStrings>();
+                //services.AddAuthentication();
+                //services.AddSingleton<DataProtectionPurposeStrings>();
                 #endregion
 
                 services.AddControllers();
