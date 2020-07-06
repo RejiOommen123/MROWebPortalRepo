@@ -32,7 +32,7 @@
           </v-menu>
         </v-col>
         <v-spacer></v-spacer>
-        <br />
+
         <v-col cols="12" offset-sm="3" sm="6">
           <div>
             <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
@@ -99,7 +99,7 @@ export default {
     dateErrors() {
       const errors = [];
       if (!this.$v.dtDeadline.$dirty) return errors;
-      !this.$v.dtDeadline.minValue && errors.push("Invalid Date");
+      !this.$v.dtDeadline.minValue && errors.push("Deadline date must be greater than today's date.");
       !this.$v.dtDeadline.required && errors.push("Date is required");
       return errors;
     }

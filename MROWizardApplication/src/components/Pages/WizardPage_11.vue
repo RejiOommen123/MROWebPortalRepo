@@ -12,7 +12,7 @@
         row
         wrap
       >
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col cols="12" offset-sm="1" sm="10">
           <v-checkbox
             dark
             class="checkboxBorder"
@@ -86,6 +86,10 @@ export default {
     checkOther(prName) {
       if (prName == "MROOtherPrimaryReason") {
         this.bOther = !this.bOther;
+        if(this.bOther==false)
+        {
+          this.sOtherReasons='';
+        }
       }
     }
   }

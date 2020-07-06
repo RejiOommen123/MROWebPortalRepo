@@ -60,8 +60,7 @@
                 v-if="sSelectedShipmentTypes[0]=='MROMailShipment'"
                 slot="MROMailShipment"
                 cols="12"
-                offset-sm="2"
-                sm="8"
+                sm="12"
               >
                 <v-textarea 
                 v-model="sSTMailCompAdd"
@@ -97,8 +96,7 @@
                 v-if="sSelectedShipmentTypes[0]=='MROIn-Person'"
                 slot="MROIn-Person"
                 cols="12"
-                offset-sm="2"
-                sm="8"
+                sm="12"
               >
                 <v-text-field
                   v-model="sSTRecordFormat"
@@ -142,8 +140,7 @@
                 v-if="sSelectedShipmentTypes[0]=='MROFax'"
                 slot="MROFax"
                 cols="12"
-                offset-sm="2"
-                sm="8"
+                sm="12"
               >
                 <v-text-field
                   type="number"
@@ -197,7 +194,7 @@ export default {
     return {
       oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
       // oShipmentTypeArray: this.$store.state.ConfigModule.oShipmentTypes,
-       sSelectedShipmentTypes: [],
+      sSelectedShipmentTypes: [],
       // combine previously entered data by requester
       sSTFaxCompAdd:
         this.$store.state.requestermodule.sAddStreetAddress +
@@ -313,14 +310,10 @@ export default {
   },
   methods: {
     nextPage() {
+      // Before switching shipment type reset state data for shipment type
+        this.resetSTState();
       //Switch based on selection and set state data
       switch (this.sSelectedShipmentTypes[0]) {
-        case "MROFax":
-          this.$store.commit(
-            "requestermodule/sSTFaxCompAdd",
-            this.sSTFaxCompAdd
-          );
-          break;
         case "MROEmail":
           this.$store.commit("requestermodule/sSTEmailId", this.sSTEmailId);
           break;
@@ -332,8 +325,12 @@ export default {
           this.$store.commit("requestermodule/sSTEmailId", this.sSTEmailId);
           break;
         case "MROIn-Person":
-          this.$store.commit("requestermodule/sSTEmailId", this.sSTEmailId);
+          this.$store.commit("requestermodule/sSTRecordFormat", this.sSTRecordFormat);
           this.$store.commit("requestermodule/dtSTPickUp", this.dtSTPickUp);
+          break;
+        case "MROFax":
+          this.$store.commit("requestermodule/nSTFaxNo",this.nSTFaxNo);
+          this.$store.commit("requestermodule/sSTFaxCompAdd",this.sSTFaxCompAdd);
           break;
       }
 
@@ -356,6 +353,14 @@ export default {
     check(id) {
       this.sSelectedShipmentTypes = [];
       this.sSelectedShipmentTypes.push(id);
+    },
+    resetSTState(){
+      this.$store.commit("requestermodule/sSTEmailId", '');
+      this.$store.commit("requestermodule/sSTMailCompAdd",'');
+      this.$store.commit("requestermodule/sSTRecordFormat", '');
+      this.$store.commit("requestermodule/dtSTPickUp", '');
+      this.$store.commit("requestermodule/nSTFaxNo",0);
+      this.$store.commit("requestermodule/sSTFaxCompAdd",'');
     }
   }
 };

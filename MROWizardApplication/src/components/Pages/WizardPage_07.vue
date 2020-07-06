@@ -71,7 +71,7 @@ export default {
       sAddState: this.$store.state.requestermodule.sAddState,
       sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
 
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
 
       //Show and Hide Fields Values
       MROAddZipCode: this.$store.state.ConfigModule.apiResponseDataByLocation

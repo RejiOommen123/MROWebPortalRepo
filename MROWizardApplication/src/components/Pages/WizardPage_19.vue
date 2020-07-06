@@ -30,7 +30,7 @@
             @change="check('MROOtherGovID')"
           ></v-checkbox>
         </v-col>
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col cols="12" offset-sm="1" sm="10">
           <div class="disclaimer">{{disclaimer}}</div>
         </v-col>
       </v-layout>
