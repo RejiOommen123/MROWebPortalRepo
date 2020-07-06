@@ -9,11 +9,12 @@ import VueSignature from "vue-signature-pad";
 Vue.use(VueSignature);
 Vue.use(VueResource);
 //REplace Root - TODO: Reji
-Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
+// Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
 //Vue.http.options.root = "https://devmroportalapi-dev.azurewebsites.net/api";
-//Vue.http.options.root = "http://localhost:57364/api";
+Vue.http.options.root = "http://localhost:57364/api";
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
+
 
 new Vue({
     vuetify,
