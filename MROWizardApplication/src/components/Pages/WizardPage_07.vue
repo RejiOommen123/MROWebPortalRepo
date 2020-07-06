@@ -33,15 +33,17 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddZipCode" cols="12" sm="4">
+        <v-col v-if="MROAddZipCode" cols="12" sm="3">
           <v-text-field
-            type="number"
+            type="tel"
             v-model="sAddZipCode"
             :error-messages="sAddZipCodeErrors"
-            label="ZipCode"
+            label="Zip Code"
             required
             @input="$v.sAddZipCode.$touch()"
             @blur="$v.sAddZipCode.$touch()"
+            minlength="5"
+            maxlength="5"
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="2" sm="8">

@@ -34,19 +34,19 @@
             <!-- MROEmail Block -->
             <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROEmail'">
               <v-col v-if="sSelectedShipmentTypes[0]=='MROEmail'" slot="MROEmail" cols="12" sm="12">
-                <label for="sSTEmailId" class="control-label">Email</label>
                 <v-text-field
                   v-model="sSTEmailId"
                   :error-messages="sSTEmailIdErrors"
+                  label="Email"
                   required
                   @input="$v.sSTEmailId.$touch()"
                   @blur="$v.sSTEmailId.$touch()"
                 ></v-text-field>
-                <label for="sSTConfirmEmailId" class="control-label">Confirm Email</label>
                 <v-text-field
                   @paste.prevent
                   v-model="sSTConfirmEmailId"
                   :error-messages="sSTConfirmEmailIdErrors"
+                  label="Confirm Email"
                   required
                   @input="$v.sSTConfirmEmailId.$touch()"
                   @blur="$v.sSTConfirmEmailId.$touch()"
@@ -70,19 +70,19 @@
                 @input="$v.sSTMailCompAdd.$touch()"
                 @blur="$v.sSTMailCompAdd.$touch()"
                 ></v-textarea>
-                <label for="sSTEmailId" class="control-label">Email</label>
                 <v-text-field
                   v-model="sSTEmailId"
                   :error-messages="sSTEmailIdErrors"
+                  label="Email"
                   required
                   @input="$v.sSTEmailId.$touch()"
                   @blur="$v.sSTEmailId.$touch()"
                 ></v-text-field>
-                <label for="sSTConfirmEmailId" class="control-label">Confirm Email</label>
                 <v-text-field
                   @paste.prevent
                   v-model="sSTConfirmEmailId"
                   :error-messages="sSTConfirmEmailIdErrors"
+                  label="Confirm Email"
                   required
                   @input="$v.sSTConfirmEmailId.$touch()"
                   @blur="$v.sSTConfirmEmailId.$touch()"

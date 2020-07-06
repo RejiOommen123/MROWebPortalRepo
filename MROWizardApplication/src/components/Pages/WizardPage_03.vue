@@ -90,9 +90,9 @@ export default {
       sRelativeFileArray:[],
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer02,
+        .wizardHelper.Wizard_03_disclaimer01,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer03,
+        .wizardHelper.Wizard_03_disclaimer02,
       sActiveBtn:''
       //TODO: Fetch disclaimer03 for multiple dile upload
     };

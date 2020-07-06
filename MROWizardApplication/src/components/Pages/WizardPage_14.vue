@@ -5,7 +5,7 @@
     <template>
        <!--Auth expiration selection box-->
       <v-layout row wrap>
-        <v-col v-if="MROAuthExpireDateAfterNMonths" cols="12" offset-sm="3" sm="6">
+        <v-col v-if="MROAuthExpireDateAfterNMonths" cols="12" offset-sm="2" sm="8">
           <v-checkbox
             dark
             class="checkboxBorder"
@@ -16,7 +16,7 @@
             @change="check(1)"
           ></v-checkbox>
         </v-col>
-        <v-col v-if="MROAuthExpireDateSpecificDate" cols="12" offset-sm="3" sm="6">
+        <v-col v-if="MROAuthExpireDateSpecificDate" cols="12" offset-sm="2" sm="8">
           <v-checkbox
             dark
             class="checkboxBorder"
@@ -54,7 +54,7 @@
           </div>
         </v-col>
 
-        <v-col v-if="MROAuthExpireDateEventOccurs" cols="12" offset-sm="3" sm="6">
+        <v-col v-if="MROAuthExpireDateEventOccurs" cols="12" offset-sm="2" sm="8">
           <v-checkbox
             dark
             class="checkboxBorder"

@@ -15,6 +15,8 @@
               @input="$v.emailValid.sRequesterEmailId.$touch()"
               @blur="$v.emailValid.sRequesterEmailId.$touch()"
             ></v-text-field>
+            <!-- <div :class="{emailVerified: !$v.emailValid.sRequesterEmailId.$invalid}">
+            </div> -->
             <label for="sConfirmEmailId" class="control-label">Confirm Email</label>
             <v-text-field
               @paste.prevent
@@ -25,6 +27,8 @@
               @input="$v.emailValid.sConfirmEmailId.$touch()"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
+             <!-- <div :class="{emailVerified: !$v.emailValid.sConfirmEmailId.$invalid}">
+            </div> -->
             <v-checkbox
               v-if="MROConfirmReport"
               v-model="bConfirmReport"
