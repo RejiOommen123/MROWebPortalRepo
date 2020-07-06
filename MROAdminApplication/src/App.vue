@@ -53,7 +53,7 @@ export default {
     });
 
     let elHtml = document.getElementsByTagName("html")[0];
-    elHtml.style.overflowY = "hidden";
+    elHtml.style.overflowY = "auto";
     //elHtml.style.overflowX = "hidden";
   },
   destroyed: function() {
