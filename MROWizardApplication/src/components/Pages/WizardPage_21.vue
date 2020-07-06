@@ -1,13 +1,12 @@
 <template>
   <div>
-    <h3 class="page-title">
-      Almost done! Review and sign when ready. (
-      <a @click="previous">Edit Request</a>)
-    </h3>
+    <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
     <v-dialog v-model="dialog" max-width="400px" style="backgroundColor:white">
       <v-card id="signatureCard">
-        <v-btn class="wizardClose" icon @click="dialog = false">X</v-btn>
-        <v-card-title>Draw your signature below</v-card-title>
+        <v-btn class="wizardClose" icon @click="dialog = false">
+            X
+          </v-btn>
+        <v-card-title >Draw your signature below</v-card-title>
 
         <v-card-text>
           <div class="row">
@@ -19,22 +18,18 @@
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
               />
-              <!-- width="350px"
-              "-->
+               <!-- width="350px"
+                " -->
               <!--<VueSignaturePad :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}" ref="signaturePad" />-->
             </v-col>
           </div>
           <v-row>
             <v-col cols="3" sm="3">
               <button class="btn btn-outline-secondary" @click="undo">Undo</button>
+                          
             </v-col>
             <v-col cols="6" offset-sm="3" sm="6">
-              <button
-                class="btn btn-outline-primary"
-                style="align right"
-                @click="save"
-                data-dismiss="modal"
-              >Add my signature</button>
+              <button class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Add my signature</button>
             </v-col>
           </v-row>
         </v-card-text>
@@ -50,21 +45,22 @@
       </div>
       <div v-else>
         <v-btn id="submitRequest" @click="next" class="next">Submit Request</v-btn>
-      </div>
-      <!-- Loader dialog -->
-      <v-dialog v-model="dialogLoader" persistent width="300">
-        <v-card color="primary" dark>
-          <v-card-text>
-            Generating PDF
-            <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
+    </div>
+    <!-- Loader dialog -->
+    <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Generating PDF
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -75,22 +71,24 @@ export default {
       currentPage: 0,
       pageCount: 0,
       pdf: null,
-      bFormSigned: false,
-      dialogLoader: false
+      bFormSigned:false,
+      dialogLoader:false
     };
   },
-  activated() {
+  activated(){
     this.$vuetify.theme.dark = false;
-    this.dialogLoader = true;
+    this.dialogLoader=true;
     this.$http
-      .post("wizards/GeneratePDF/", this.$store.state.requestermodule, {
+      .post("wizards/GeneratePDF/", 
+      this.$store.state.requestermodule,
+      {
         responseType: "arraybuffer"
       })
       .then(response => {
         let blobFile = new Blob([response.data], { type: "application/pdf" });
         var fileURL = URL.createObjectURL(blobFile);
         this.pdf = fileURL;
-        this.dialogLoader = false;
+        this.dialogLoader=false;
       });
   },
   methods: {
@@ -99,22 +97,24 @@ export default {
     },
     save() {
       this.dialog = false;
-      this.dialogLoader = true;
+      this.dialogLoader=true;
       const { data } = this.$refs.signaturePad.saveSignature();
       this.$store.commit("requestermodule/sSignatureData", data);
 
       this.$http
-
-        .post("wizards/GeneratePDF/", this.$store.state.requestermodule, {
-          responseType: "arraybuffer"
-        })
+      
+        .post(
+          "wizards/GeneratePDF/",
+          this.$store.state.requestermodule,
+          { responseType: "arraybuffer" }
+        )
         .then(response => {
           let blobFile = new Blob([response.data], { type: "application/pdf" });
           //let link = document.createElement('a');
-          this.bFormSigned = true;
+          this.bFormSigned=true;
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
-          this.dialogLoader = false;
+          this.dialogLoader=false;
         });
     },
     change() {
@@ -127,39 +127,42 @@ export default {
         penColor: "#c0f"
       };
     },
-    previous() {
-      this.pdf = null;
-      if (this.$refs.signaturePad != null) {
-        this.$refs.signaturePad.clearSignature();
-      }
-      this.bFormSigned = false;
-      this.$store.commit("requestermodule/sSignatureData", "");
-      this.$store.commit("ConfigModule/mutatedialogMinWidth", "600px");
-      this.$store.commit("ConfigModule/mutatedialogMaxWidth", "600px");
-      this.$store.commit("ConfigModule/mutatedialogMaxHeight", "653px");
-      this.$vuetify.theme.dark = true;
-      this.$store.commit("ConfigModule/mutatePreviousIndex");
+    previous(){
+        this.pdf=null;
+        if( this.$refs.signaturePad!=null)
+        {
+          this.$refs.signaturePad.clearSignature();
+        }
+        this.bFormSigned=false;
+        this.$store.commit("requestermodule/sSignatureData", '');
+        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        this.$vuetify.theme.dark = true;
+        this.$store.commit("ConfigModule/mutatePreviousIndex");
+       
     },
-    showDialog() {
-      this.dialog = true;
+    showDialog(){
+      this.dialog=true;
     },
-    next() {
-      this.$http.post(
-        "Wizards/GenerateXML/",
-        this.$store.state.requestermodule
-      );
-      // .then(response => {
-      //   console.log(response.body);
-      // });
-      this.$store.commit("ConfigModule/mutatedialogMinWidth", "600px");
-      this.$store.commit("ConfigModule/mutatedialogMaxWidth", "600px");
-      this.$store.commit("ConfigModule/mutatedialogMaxHeight", "653px");
-      this.$vuetify.theme.dark = true;
+    next(){
+        this.$http
+      .post("Wizards/GenerateXML/", 
+      this.$store.state.requestermodule,
+      )
+      .then(response => {
+        console.log(response.body);
+      });
+        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        this.$vuetify.theme.dark = true;
 
-      this.$store.commit("ConfigModule/mutateNextIndex");
+       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };
 </script>
 <style>
+
 </style>

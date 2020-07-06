@@ -186,6 +186,7 @@ export default {
                   singleLocation.nFacilityLocationID
               )
               .then(response => {
+                console.log(response);
                 var apiLocationResponse = response.body;
                 if (response.body) {
                   this.$store.commit(
