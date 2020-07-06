@@ -244,7 +244,14 @@ namespace MROWebAPI.Controllers
 
                 if (connections != null && connections.Count() == 1) {
                     if (connections.First().sGUID != null)
-                        return Ok(connections.First().sGUID);
+                    {
+                        MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                        MROHelper helper = await helperRepo.Select(1);
+                        string patternGUID = @"\bMROFacilityGuid\b";
+                        string replaceGUID = connections.First().sGUID;
+                        helper.sFacilityURL = Regex.Replace(helper.sFacilityURL, patternGUID, replaceGUID);
+                        return Ok(helper.sFacilityURL);
+                    }
                     else
                         return NoContent();
                 }
