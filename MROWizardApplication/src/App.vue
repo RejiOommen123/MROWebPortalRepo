@@ -68,7 +68,7 @@
                   <img alt="Qries" src="./assets/images/MRO-Web.png" height="30px">
                 </a>
                  <br />
-                <span>For assistance call (610) 994-7500 Option 1 Mon-Thu 8:30am-8pm Fri 8:30am-6pm</span>              
+                <span>{{phoneNo}}</span>              
               </v-col>
             </v-footer>
           </v-card>
