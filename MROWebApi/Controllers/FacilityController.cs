@@ -64,6 +64,11 @@ namespace MROWebAPI.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             Facilities facility = await rpFac.Select(nFacilityID);
 
+            //Decrypting
+            MROLogger decrypt = new MROLogger(_info);
+            facility.sSMTPPassword = decrypt.DecryptString(facility.sSMTPPassword);
+            facility.sFTPPassword = decrypt.DecryptString(facility.sFTPPassword);
+
             #region Logging
             if (facility.bFacilityLogging) {
                 MROLogger logger = new MROLogger(_info);
