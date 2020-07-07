@@ -56,9 +56,7 @@
         <v-btn type="submit" color="primary">Save</v-btn>
         <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
       </div>
-      
-
-
+      <br/>
       <!-- Common Loader -->
               <v-dialog v-model="dialogLoader" persistent width="300">
                 <v-card color="rgb(0, 91, 168)" dark>
