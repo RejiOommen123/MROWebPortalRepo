@@ -12,14 +12,14 @@
     <div>
       <v-btn style="margin-bottom:10%" @click.prevent="nextPage" x-large color="#e84700" id="letsGoBtn">Get Started</v-btn>
     </div>
-    <div>
+    <!-- <div>
       <a
       style="margin-bottom:10%"
         @click="printForm"
         href="#"
         id="pdfFormLink"
       >{{disclaimer03}}</a>
-    </div>
+    </div> -->
   </div>
 </template>
 

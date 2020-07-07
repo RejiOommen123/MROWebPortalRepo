@@ -11,7 +11,7 @@
         <v-textarea filled          
           rows="4"
           row-height="30"
-          shaped counter v-model="sAdditionalData" label="Additional Details"></v-textarea>    
+          shaped counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
     </v-col>
     </v-row>
     <div>

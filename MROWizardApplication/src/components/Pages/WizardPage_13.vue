@@ -37,7 +37,7 @@
                 <v-text-field
                   v-model="sSTEmailId"
                   :error-messages="sSTEmailIdErrors"
-                  label="Email"
+                  label="EMAIL"
                   required
                   @input="$v.sSTEmailId.$touch()"
                   @blur="$v.sSTEmailId.$touch()"
@@ -46,7 +46,7 @@
                   @paste.prevent
                   v-model="sSTConfirmEmailId"
                   :error-messages="sSTConfirmEmailIdErrors"
-                  label="Confirm Email"
+                  label="CONFIRM EMAIL"
                   required
                   @input="$v.sSTConfirmEmailId.$touch()"
                   @blur="$v.sSTConfirmEmailId.$touch()"
@@ -65,7 +65,7 @@
                 <v-textarea 
                 v-model="sSTMailCompAdd"
                 rows="2" 
-                counter label="Complete Address"
+                counter label="COMPLETE ADDRESS"
                 :error-messages="sSTMailCompAddErrors"
                 @input="$v.sSTMailCompAdd.$touch()"
                 @blur="$v.sSTMailCompAdd.$touch()"
@@ -73,7 +73,7 @@
                 <v-text-field
                   v-model="sSTEmailId"
                   :error-messages="sSTEmailIdErrors"
-                  label="Email"
+                  label="EMAIL"
                   required
                   @input="$v.sSTEmailId.$touch()"
                   @blur="$v.sSTEmailId.$touch()"
@@ -82,7 +82,7 @@
                   @paste.prevent
                   v-model="sSTConfirmEmailId"
                   :error-messages="sSTConfirmEmailIdErrors"
-                  label="Confirm Email"
+                  label="CONFIRM EMAIL"
                   required
                   @input="$v.sSTConfirmEmailId.$touch()"
                   @blur="$v.sSTConfirmEmailId.$touch()"
@@ -102,8 +102,8 @@
                   v-model="sSTRecordFormat"
                   :error-messages="sSTRecordFormatErrors"
                   required
-                  label="Provide Format of Record"
-                  placeholder="Paper,CD,etc"
+                  label="PROVIDE FORMAT OF RECORD"
+                  placeholder="Paper, CD, etc"
                   @input="$v.sSTRecordFormat.$touch()"
                   @blur="$v.sSTRecordFormat.$touch()"
                 ></v-text-field>
@@ -114,7 +114,7 @@
                       placeholder="MM-DD-YYYY"
                       :error-messages="dtSTPickUpErrors"
                       clearable
-                      label="Pick up date"
+                      label="PICK UP DATE"
                       readonly
                       v-bind="attrs"
                       v-on="on"
@@ -146,7 +146,7 @@
                   type="number"
                   v-model="nSTFaxNo"
                   :error-messages="nSTFaxNoErrors"
-                  label="Fax No"
+                  label="FAX NO"
                   required
                   @input="$v.nSTFaxNo.$touch()"
                   @blur="$v.nSTFaxNo.$touch()"
@@ -155,7 +155,7 @@
                 v-model="sSTFaxCompAdd" 
                 rows="2" 
                 counter 
-                label="Complete Address"
+                label="COMPLETE ADDRESS"
                 :error-messages="sSTFaxCompAddErrors"
                 @input="$v.sSTFaxCompAdd.$touch()"
                 @blur="$v.sSTFaxCompAdd.$touch()"

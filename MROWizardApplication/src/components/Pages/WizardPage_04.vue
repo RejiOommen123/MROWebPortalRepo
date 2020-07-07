@@ -7,7 +7,7 @@
     <form>
       <v-row>
         <v-col v-if="MROPatientFirstName" cols="12" offset-sm="1" sm="3" xs="3">
-          <label for="sPatientFirstName" class="control-label">First Name</label>
+          <label for="sPatientFirstName" class="control-label">FIRST NAME</label>
           <v-text-field
             v-model="sPatientFirstName"
             :error-messages="sPatientFirstNameError"
@@ -17,7 +17,7 @@
           ></v-text-field>
         </v-col>
         <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3" xs="3">
-          <label for="sPatientMiddleInitial" class="control-label">Middle Initial</label>
+          <label for="sPatientMiddleInitial" class="control-label">MIDDLE INITIAL</label>
           <v-text-field
             style="max-width:50%; margin-right:auto;margin-left:auto"
             maxlength="1"
@@ -29,7 +29,7 @@
           ></v-text-field>
         </v-col>
         <v-col v-if="MROPatientLastName" cols="12" sm="3" xs="3">
-          <label for="sPatientLastName" class="control-label">Last Name</label>
+          <label for="sPatientLastName" class="control-label">LAST NAME</label>
           <v-text-field
             v-model="sPatientLastName"
             :error-messages="sPatientLastNameError"

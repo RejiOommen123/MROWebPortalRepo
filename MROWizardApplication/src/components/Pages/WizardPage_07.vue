@@ -7,7 +7,7 @@
           <v-text-field
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
-            label="Street"
+            label="STREET"
             required
             @input="$v.sAddStreetAddress.$touch()"
             @blur="$v.sAddStreetAddress.$touch()"
@@ -17,7 +17,7 @@
           <v-text-field
             v-model="sAddCity"
             :error-messages="cityErrors"
-            label="City"
+            label="CITY"
             required
             @input="$v.sAddCity.$touch()"
             @blur="$v.sAddCity.$touch()"
@@ -27,7 +27,7 @@
           <v-text-field
             v-model="sAddState"
             :error-messages="stateErrors"
-            label="State"
+            label="STATE"
             required
             @input="$v.sAddState.$touch()"
             @blur="$v.sAddState.$touch()"
@@ -38,7 +38,7 @@
             type="tel"
             v-model="sAddZipCode"
             :error-messages="sAddZipCodeErrors"
-            label="Zip Code"
+            label="ZIP CODE"
             required
             @input="$v.sAddZipCode.$touch()"
             @blur="$v.sAddZipCode.$touch()"

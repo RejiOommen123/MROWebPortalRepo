@@ -11,7 +11,8 @@
               :value="dtRecordRangeStartFormatted"
               :error-messages="dtRecordRangeStartErrors"
               clearable
-              label="Start Date"
+              label="START DATE"
+              placeholder="MM-DD-YYYY"
               readonly
               v-bind="attrs"
               v-on="on"
@@ -31,7 +32,8 @@
               :value="dtRecordRangeEndFormatted"
               :error-messages="dtRecordRangeEndErrors"
               clearable
-              label="End Date"
+              label="END DATE"
+               placeholder="MM-DD-YYYY"
               readonly
               v-bind="attrs"
               v-on="on"

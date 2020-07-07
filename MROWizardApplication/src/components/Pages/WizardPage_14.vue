@@ -34,7 +34,7 @@
                   placeholder="MM-DD-YYYY"
                   :error-messages="dSpecificErrors"
                   clearable
-                  label="Specify Date"
+                  label="SPECIFY DATE"
                   readonly
                   v-bind="attrs"
                   v-on="on"
@@ -65,7 +65,7 @@
             @change="check(3)"
           ></v-checkbox>
           <div v-if="nSelectedCheckBox==3">
-            <v-textarea counter v-model="sAuthSpecificEvent" rows="2" label="Specify Event Here"></v-textarea>
+            <v-textarea counter v-model="sAuthSpecificEvent" rows="2" label="SPECIFY EVENT HERE"></v-textarea>
           </div>
         </v-col>
         <v-col cols="12" offset-sm="4" sm="2">
@@ -157,6 +157,7 @@ export default {
       dt.setMonth(dt.getMonth() + this.nAuthMonths);  
       this.dAuthExpire = dt.toISOString();
       this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
+      this.nSelectedCheckBox = [];
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },

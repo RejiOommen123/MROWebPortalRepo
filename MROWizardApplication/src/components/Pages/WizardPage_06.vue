@@ -6,7 +6,7 @@
       <v-row>
         <v-col  cols="12" offset-sm="2" sm="8">
           <form>
-            <label for="sRequesterEmailId" class="control-label">Email</label>
+            <label for="sRequesterEmailId" class="control-label">EMAIL</label>
             <v-text-field
               v-model="emailValid.sRequesterEmailId"
               :error-messages="emailErrors"
@@ -17,7 +17,7 @@
             ></v-text-field>
             <!-- <div :class="{emailVerified: !$v.emailValid.sRequesterEmailId.$invalid}">
             </div> -->
-            <label for="sConfirmEmailId" class="control-label">Confirm Email</label>
+            <label for="sConfirmEmailId" class="control-label">CONFIRM EMAIL</label>
             <v-text-field
               @paste.prevent
               v-model="emailValid.sConfirmEmailId"
@@ -197,7 +197,6 @@ export default {
     },
     //Check response opt and entered opt matched or not
     verifyCode() {
-      this.sResponseKey = 1234;
       if (this.sResponseKey == this.sVerify) {
         this.showSuccessBlock = true;
         this.verified = true;

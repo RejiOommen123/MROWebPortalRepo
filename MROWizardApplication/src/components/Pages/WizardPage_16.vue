@@ -13,7 +13,7 @@
                 placeholder="MM-DD-YYYY"
                 :error-messages="dateErrors"
                 clearable
-                label="Select Date"
+                label="SELECT DATE"
                 readonly
                 v-bind="attrs"
                 v-on="on"

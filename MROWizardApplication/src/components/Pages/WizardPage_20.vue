@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" sm="12" v-if="sStatus=='CapturingImg'">
         <h2>Camera</h2>
-        <code v-if="device">{{ device.label }}</code>
+        <!-- <code v-if="device">{{ device.label }}</code> -->
         <div class="border">
           <vue-web-cam
             ref="webcam"
@@ -71,7 +71,7 @@
             dense
             hint="Upload Identity Document Image"
             rounded
-            label="Identity Documnet"
+            label="IDENTITY DOCUMENT"
             filled
             prepend-icon="mdi-camera"
             @change="onFileChanged"
@@ -158,6 +158,12 @@ export default {
       });
       this.sStatus = "ImgCaptured";
       this.$refs.webcam.stop();
+    },
+    onStarted(stream) {
+      console.log("On Started Event", stream);
+    },
+    onStopped(stream) {
+      console.log("On Stopped Event", stream);
     },
     onStop() {
       this.$refs.webcam.stop();

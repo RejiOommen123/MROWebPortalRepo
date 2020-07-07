@@ -13,7 +13,7 @@
               placeholder="MM-DD-YYYY"
               :error-messages="dtPatientDOBErrors"
               clearable
-              label="Date of Birth"
+              label="DATE OF BIRTH"
               readonly
               v-bind="attrs"
               v-on="on"              

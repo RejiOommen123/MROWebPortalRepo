@@ -13,7 +13,7 @@
             <v-text-field
               placeholder="(XXX) XXX-XXXX"
               v-model="sPhoneNo"
-              label="Enter Mobile No"
+              label="ENTER MOBILE NO"
               required
               :disabled="disableInput"
               :error-messages="sPhoneNoError"
@@ -43,7 +43,7 @@
                   @input="$v.sVerify.$touch()"
                   @blur="$v.sVerify.$touch()"
                   v-model="sVerify"
-                  label="Enter OTP"
+                  label="ENTER OTP"
                   required
                 ></v-text-field>
 
