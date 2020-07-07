@@ -7,10 +7,6 @@ namespace MRODBL.BaseClasses
     public partial class FacilityFieldMaps : CommonModel
     {
         #region Props
-        //[Dapper.Contrib.Extensions.Key]
-        //[Required]
-        //[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        //public int nFacilityFieldMapID { get; set; }
         [Required]
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]

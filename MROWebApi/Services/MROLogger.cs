@@ -8,12 +8,6 @@ using System.Text;
 
 namespace MROWebApi.Services
 {
-    //public class DataProtectionPurposeStrings
-    //{
-    //    #region Data Protection Key
-    //    public readonly string Key = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    //    #endregion
-    //}
     public class MROLogger
     {
         #region Constructor

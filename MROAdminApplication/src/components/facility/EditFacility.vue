@@ -419,26 +419,33 @@ export default {
   },
   methods: {
     copySMTPDetails() {
-      navigator.clipboard.writeText(
+      if(navigator.clipboard != undefined){//Chrome
+        navigator.clipboard.writeText(
         this.facility.sSMTPUrl +
           "\n" +
           this.facility.sSMTPUsername +
           "\n" 
       );
+      }
     },
     copyFTPDetails() {
-      navigator.clipboard.writeText(
+      if(navigator.clipboard != undefined){//Chrome
+        navigator.clipboard.writeText(
         this.facility.sFTPUrl +
           "\n" +
           this.facility.sFTPUsername +
           "\n"
       );
+      }
     },
     copyGUID() {
-      navigator.clipboard.writeText(this.sGUID);
+      if(navigator.clipboard != undefined){//Chrome
+      navigator.clipboard.writeText(this.sGUID);}
     },
     copyBtnCode(){
- navigator.clipboard.writeText(this.sBtnCode);
+       if(navigator.clipboard != undefined){//Chrome
+          navigator.clipboard.writeText(this.sBtnCode);
+       }
     },
     // API call to post facility (Edit Facility)
     onSubmit() {

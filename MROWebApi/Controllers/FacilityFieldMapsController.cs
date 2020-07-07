@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using MRODBL.BaseClasses;
+using MRODBL.BaseClassRepositories;
+using MRODBL.Entities;
+using MROWebApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Authorization;
-using MRODBL.Entities;
-using MRODBL.BaseClassRepositories;
-using MRODBL.BaseClasses;
-using MROWebApi.Services;
 
 namespace MROWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class FacilityFieldMapsController : ControllerBase
     {
         #region Facility Field Maps Constructor
@@ -104,7 +105,26 @@ namespace MROWebApi.Controllers
                     var SIList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilitySensitiveInfo");
                     var STList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
                     var FMList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
-                    
+
+
+                    //Facility Shipment Types 
+                    List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
+                    foreach (var shipmentType in STList)
+                    {
+                        shipmentTypeList.Add(
+                            new FacilityShipmentTypes()
+                            {
+                                nShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                nFacilityID = shipmentType.nFacilityID,
+                                sShipmentTypeName = shipmentType.sFieldName,
+                                nFieldOrder = shipmentType.nFieldOrder,
+                                nWizardID = shipmentType.nWizardID,
+                                bShow = shipmentType.bShow,
+                                dtLastUpdate = DateTime.Now
+                            }
+                            );
+                    }
+                    shipmentTypeRepo.UpdateMany(shipmentTypeList);
 
                     //Facility PrimaryReasons
                     List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
@@ -123,29 +143,7 @@ namespace MROWebApi.Controllers
                             }
                             ); 
                     }
-                    await primaryReasonRepo.UpdateMany(primaryReasonsList);
-
-
-
-                    //Facility Shipment Types 
-                    List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
-                    foreach (var shipmentType in STList)
-                    {
-                        shipmentTypeList.Add(
-                            new FacilityShipmentTypes()
-                            {
-                                nShipmentTypeID = shipmentType.nFacilityFieldMapID,
-                                nFacilityID = shipmentType.nFacilityID,
-                                sShipmentTypeName = shipmentType.sFieldName,
-                                nFieldOrder = shipmentType.nFieldOrder,
-                                nWizardID = shipmentType.nWizardID,
-                                bShow = shipmentType.bShow,
-                                dtLastUpdate = DateTime.Now
-                            }
-                            ); 
-                    }
-                    await shipmentTypeRepo.UpdateMany(shipmentTypeList);
-
+                    primaryReasonRepo.UpdateMany(primaryReasonsList);
 
                     //Facility Sensitive Info
                     List<FacilitySensitiveInfo> sensitiveInfoList = new List<FacilitySensitiveInfo>();
@@ -165,8 +163,8 @@ namespace MROWebApi.Controllers
                             );
 
                     }
-                    await sensitiveInfoRepo.UpdateMany(sensitiveInfoList);
-
+                    sensitiveInfoRepo.UpdateMany(sensitiveInfoList);
+                    
 
                     //Facility Record Types 
                     List<FacilityRecordTypes> recordTypeList = new List<FacilityRecordTypes>();
@@ -186,7 +184,7 @@ namespace MROWebApi.Controllers
                             );
 
                     }
-                    await recordTypeRepo.UpdateMany(recordTypeList);
+                    recordTypeRepo.UpdateMany(recordTypeList);
 
                     //Facility Field Maps 
                     List<FacilityFieldMaps> fieldMapsList = new List<FacilityFieldMaps>();
@@ -208,7 +206,7 @@ namespace MROWebApi.Controllers
                             );
 
                     }
-                    await facilityFieldMapsRepository.UpdateMany(fieldMapsList);
+                    facilityFieldMapsRepository.UpdateMany(fieldMapsList);
 
                     #region Logging
                     var mapTable = FMList.FirstOrDefault();

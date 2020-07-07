@@ -1,40 +1,38 @@
-﻿using System;
+﻿using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using MimeKit;
+using MimeKit.Utils;
+using MRODBL.BaseClasses;
+using MRODBL.BaseClassRepositories;
+using MRODBL.Entities;
+using MROWebApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using MRODBL.BaseClasses;
-using MRODBL.BaseClassRepositories;
-using MRODBL.Entities;
-using WebSupergoo.ABCpdf11;
 using System.Net;
 using System.Text;
-using MailKit.Net.Smtp;
-using MimeKit;
 using System.Text.RegularExpressions;
-using MimeKit.Utils;
-using Microsoft.AspNetCore.DataProtection;
-using MROWebApi.Services;
+using System.Threading.Tasks;
+using System.Xml;
+using WebSupergoo.ABCpdf11;
 
 namespace MROWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
         private readonly DBConnectionInfo _info;
-        //private readonly IDataProtector _protector;
         public WizardsController(DBConnectionInfo info)
         {
             _info = info;
-            //this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
         }
         #endregion  
 
@@ -233,7 +231,7 @@ namespace MROWebApi.Controllers
                 catch (Exception ex) {
                     //return Content(ex.Message);
                 }
-                //Add Requestor
+
                 //AddRequestor(requestors, _info);
 
                 //Send Email to Patient
@@ -315,19 +313,7 @@ namespace MROWebApi.Controllers
                 dbLocation.sConfigLogoData = Regex.Replace(dbLocation.sConfigLogoData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
                 byte[] locationLogo = Convert.FromBase64String(dbLocation.sConfigLogoData);
                 var image = bodyBuilder.LinkedResources.Add("locationlogo",locationLogo);
-                image.ContentId = MimeUtils.GenerateMessageId();
-                //                string bodyText = string.Format(@"Thank you!
-
-                //You have successfully submitted your request. 
-
-                //Within 24 hours you will receive an email from MROeXpress@mrocorp.com containing your request confirmation that will include your Request ID and Tracking ID. If you have not received your confirmation email within 24 hours, please call us at 610-994-7500 to speak with a Customer Service Expert, who will be able to assist you further. 
-
-                //Our Experts are available Monday – Friday 8:30AM – 8:00PM EST. 
-
-
-                //CONFIDENTIALITY NOTICE
-                //This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.
-                //");           
+                image.ContentId = MimeUtils.GenerateMessageId();           
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
     <p style='text-align: right;'>{1}&nbsp;</p><img src=""cid:{0}""><br/><br/>
     <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
@@ -352,11 +338,11 @@ namespace MROWebApi.Controllers
             privacy@mrocorp.com immediately.</p>
     </div>
 </div>", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
-                //bodyBuilder.TextBody = bodyText;
                 bodyBuilder.HtmlBody = htmlText;
                 bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
+                //TODO:
                 //Get Port number
                 //Make SSL true
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
@@ -658,19 +644,6 @@ namespace MROWebApi.Controllers
                 byte[] footerLogo = Convert.FromBase64String(helper.sMROEmailFooterImage);
                 var image = bodyBuilder.LinkedResources.Add("footerlogo", footerLogo);
                 image.ContentId = MimeUtils.GenerateMessageId();
-                //                string bodyText = string.Format(@"Thank you!
-
-                //You have successfully submitted your request. 
-
-                //Within 24 hours you will receive an email from MROeXpress@mrocorp.com containing your request confirmation that will include your Request ID and Tracking ID. If you have not received your confirmation email within 24 hours, please call us at 610-994-7500 to speak with a Customer Service Expert, who will be able to assist you further. 
-
-                //Our Experts are available Monday – Friday 8:30AM – 8:00PM EST. 
-
-
-                //CONFIDENTIALITY NOTICE
-                //This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.
-                //");           
-                //string htmlText = string.Format(@"", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
                 var sFullName = requestor.sPatientFirstName + " " + requestor.sPatientLastName;
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
     <p style='text-align: right;'>{0}&nbsp;</p><br/>
@@ -696,11 +669,10 @@ namespace MROWebApi.Controllers
     </ div >
 </ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"), sFullName,requestor.nRequesterID, dbFacility.sFacilityName, image.ContentId);
 
-                //bodyBuilder.TextBody = bodyText;
                 bodyBuilder.HtmlBody = htmlText;
-                //bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
+                //TODO:
                 //Get Port number
                 //Make SSL true
                 client.Connect(dbFacility.sSMTPUrl, 25, false);

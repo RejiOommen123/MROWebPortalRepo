@@ -62,7 +62,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium class="mr-1">assignment</v-icon>
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
               </router-link>
             </template>
             <span>Edit Form</span>
@@ -71,7 +71,6 @@
         <!-- Facility Active Status Template -->
         <template v-slot:item.bActiveStatus="{ item }">
           <v-switch
-            class="ml-6"
             color="#1AA260"
             @click="deleteItem(item.facilities.nFacilityID,item.facilities.sFacilityName)"
             v-model="item.facilities.bActiveStatus"
@@ -155,18 +154,19 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "facilities.sFacilityName"
+          value: "facilities.sFacilityName",
+          width: "20%" 
         },
-        { text: "Description", value: "facilities.sDescription", width: "50%" },
-        { text: "Locations", value: "nFacLocCount", align: "center" },
+        { text: "Description", value: "facilities.sDescription", width: "40%" },
+        { text: "Locations", value: "nFacLocCount", align: "center", width: "10%"},
         {
           text: "Patient Form",
           value: "Fields",
           sortable: false,
           align: "center"
         },
-        { text: "Active", value: "bActiveStatus", align: "center" },
-        { text: "Edit", value: "actions", sortable: false, align: "center" }
+        { text: "Active", value: "bActiveStatus"},
+        { text: "Edit", value: "actions", sortable: false}
       ],
       gridData: this.getGridData(),
       editedItem: {

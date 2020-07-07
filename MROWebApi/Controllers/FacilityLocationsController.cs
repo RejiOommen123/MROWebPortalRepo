@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Authorization;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
-using System.Text.RegularExpressions;
 using MROWebApi.Services;
-using Microsoft.AspNetCore.DataProtection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MROWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class FacilityLocationsController : ControllerBase
     {
         #region Facility Locations Constructor
         private readonly DBConnectionInfo _info;
-        
-
         public FacilityLocationsController(DBConnectionInfo info)
         {
             _info = info;

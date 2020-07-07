@@ -7,9 +7,6 @@ namespace MRODBL.BaseClasses
     public partial class FacilityPrimaryReasons
     {
         #region Props
-        //[Required]
-        //[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        //public int nFacilityPrimaryReasonID { get; set; }
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nFacilityID { get; set; }

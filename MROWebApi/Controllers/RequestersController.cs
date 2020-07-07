@@ -1,18 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace MROWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class RequestersController : ControllerBase
     {
         #region Requesters Constructor
@@ -77,7 +78,7 @@ namespace MROWebApi.Controllers
                     nRequesterId = (int)requestersFac.Insert(requester);
                 }
                 else {
-                    //update in table 
+                    //Update in table 
                     requestersFac.Update(requester);
                     nRequesterId = requester.nRequesterID;
                 }

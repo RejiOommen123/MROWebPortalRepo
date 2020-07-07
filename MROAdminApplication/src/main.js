@@ -43,6 +43,15 @@ Vue.http.options.root = "http://localhost:57364/api";
 Vue.config.productionTip = false;
 
 
+// //Vuetify API Secret Key - Common Code for Adding Header
+// Vue.http.interceptors.push((request, next) => {
+//     var sAPIKey = "MROSecretKey@007"
+//     request.headers.set('sAPIKey', sAPIKey)
+//     next()
+// })
+
+
+
 //Vue Instance
 new Vue({
     vuetify,

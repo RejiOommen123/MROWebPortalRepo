@@ -124,7 +124,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="ourModels">List of Records to be Updated</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
-        Task<bool> UpdateMany(List<T> ourModels);
+        bool UpdateMany(List<T> ourModels);
         #endregion
 
         #region Stored Procedures

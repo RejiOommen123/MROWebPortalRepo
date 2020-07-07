@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
+using MROWebApi.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace MROWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    //[APIKeyAuth]
     public class AuthController : ControllerBase
     {
         #region Auth Constructor

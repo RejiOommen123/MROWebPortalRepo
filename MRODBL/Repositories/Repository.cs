@@ -220,16 +220,14 @@ namespace MRODBL.Repositories
             }
             return rowsAffected > 0;
         }
-        public async Task<bool> UpdateMany(List<T> ourModels)
+        public bool UpdateMany(List<T> ourModels)
         {
             try {
                 using (SqlConnection db = new SqlConnection(sConnect))
                 {
                     db.Open();
                     bool continueAhead = false;
-
-                    continueAhead = await db.UpdateAsync(ourModels);
-
+                    continueAhead = db.Update(ourModels);
                     return continueAhead;
                 }
             }

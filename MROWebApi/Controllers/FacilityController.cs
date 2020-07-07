@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using MRODBL.BaseClasses;
+using MRODBL.BaseClassRepositories;
+using MRODBL.Entities;
+using MROWebApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Authorization;
-using MRODBL.Entities;
-using MRODBL.BaseClassRepositories;
-using MRODBL.BaseClasses;
-using MROWebApi.Services;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MROWebAPI.Controllers
 {
@@ -20,12 +20,10 @@ namespace MROWebAPI.Controllers
     public class FacilityController : ControllerBase
     {
         #region Facility Constructor
-        //private readonly IDataProtector _protector;
         private readonly DBConnectionInfo _info;
         public FacilityController(DBConnectionInfo info)
         {
             _info = info;
-            //this._protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.Key);
         }
         #endregion
 

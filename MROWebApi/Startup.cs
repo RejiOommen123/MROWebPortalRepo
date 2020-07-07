@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MRODBL.Entities;
-using MROWebApi.Services;
 using System;
 
 namespace MROWebApi
@@ -37,10 +36,6 @@ namespace MROWebApi
                 services.AddSingleton(config);
                 #endregion
 
-                #region Encrypt Decrypt - Don't Change Order
-                //services.AddAuthentication();
-                //services.AddSingleton<DataProtectionPurposeStrings>();
-                #endregion
 
                 services.AddControllers();
                 services.AddControllers().AddNewtonsoftJson(options =>

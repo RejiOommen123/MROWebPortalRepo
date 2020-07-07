@@ -8,9 +8,6 @@ namespace MRODBL.BaseClasses
     public class FacilityShipmentTypes
     {
         #region Props
-        //[Required]
-        //[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        //public int nFacilityShipmentTypeID { get; set; }
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nShipmentTypeID { get; set; }
