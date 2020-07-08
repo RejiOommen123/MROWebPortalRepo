@@ -19,34 +19,59 @@
         </div>
 
         <v-row>
-          <v-col cols="12" sm="12">
+          <!-- <v-col cols="12" sm="12">
             <select v-model="camera">
               <option>-- Select Device --</option>
               <option v-for="device in devices" :key="device.deviceId">{{ device.label }}</option>
             </select>
+          </v-col>-->
+          <v-col cols="4" offset-sm="2" sm="3">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
+                  <v-icon dark>mdi-camera</v-icon>
+                </v-btn>
+              </template>
+              <span>Capture Image</span>
+            </v-tooltip>
           </v-col>
-          <v-col cols="12" sm="12">
-            <v-btn @click="onCapture" fab dark color="teal">
-              <v-icon dark>mdi-camera</v-icon>
-            </v-btn>
-            <!-- :value="device.deviceId" -->
-            <!-- <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button> -->
+
+          <v-col style="margin-top:2%" cols="4" sm="2">
+            <h3>OR</h3>
           </v-col>
+          <v-col cols="4" sm="3">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  color="teal"
+                  @click="sStatus = 'UploadImg'"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon dark>mdi-attachment</v-icon>
+                </v-btn>
+              </template>
+              <span>Upload Image</span>
+            </v-tooltip>
+          </v-col>
+          <!-- :value="device.deviceId" -->
         </v-row>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" sm="12" v-if="sStatus=='ImgCaptured'">
+    <v-row v-if="sStatus=='ImgCaptured'">
+      <v-col cols="12" sm="12">
         <h2>Captured Image</h2>
         <figure class="figure">
-          <img :src="sIdentityImage" width="500px" height="400px" class="img-responsive" />
+          <img :src="sIdentityImage" width="400px" height="250px" class="img-responsive" />
         </figure>
-        <div class="col-sm-12">
-          <v-btn type="button" class="next" @click="sStatus='CapturingImg'">Capture Again</v-btn>
-          <br />
-          <br />
-          <v-btn type="button" class="next" @click="nextPage">Next</v-btn>
-        </div>
+      </v-col>
+      <v-col cols="6" offset-sm="2" sm="3">
+        <v-btn class="next" @click="sStatus='CapturingImg'">Capture Again</v-btn>
+      </v-col>
+      <v-col cols="6" offset-sm="2" sm="3">
+        <v-btn class="next" @click="nextPage">Next</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -83,7 +108,7 @@
           >
             <v-tooltip slot="append" top>
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
+                <v-icon style="cursor:pointer" v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
               </template>
               <span>Please upload identity image document.</span>
             </v-tooltip>
@@ -173,7 +198,7 @@ export default {
     },
     onError(error) {
       if (error.name == "NotFoundError") {
-        alert("Camera Not Found");
+        alert("Camera Not Found. Redirecting to upload file page.");
         this.sStatus = "UploadImg";
       }
     },
@@ -197,7 +222,7 @@ export default {
           .wizardsSave[this.$store.state.ConfigModule.selectedWizard] == 1
       ) {
         this.$http
-          .post("requesters/AddRequester/",this.$store.state.requestermodule)
+          .post("requesters/AddRequester/", this.$store.state.requestermodule)
           .then(response => {
             this.$store.commit("requestermodule/nRequesterID", response.body);
           });

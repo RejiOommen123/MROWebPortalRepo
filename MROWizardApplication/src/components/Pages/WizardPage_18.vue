@@ -6,9 +6,15 @@
       <form>
         <v-row>
           <!-- Phone no input box -->
-          <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
-            <label class="input-group-addon">+91</label>
+          <v-col cols="2" offset-sm="3" sm="2">
+            <v-select
+               v-model="selectedCountry"
+              :items="countryCode"
+            ></v-select>
           </v-col>
+          <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
+            <label class="input-group-addon">+91</label>
+          </v-col> -->
           <v-col id="phoneNo" cols="10" sm="5">
             <v-text-field
               placeholder="(XXX) XXX-XXXX"
@@ -82,6 +88,8 @@ export default {
       disableInput:false,
       showSendVerify:true,
       pageskip:false,
+      countryCode: ['+1', '+91'],
+      selectedCountry:'+1',
       disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
       disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer02,
 
@@ -130,10 +138,10 @@ export default {
       this.bOtpSend = true;
       this.showSendVerify=false;
       var obj = {};
-      obj["phone"] = "+91"+this.sPhoneNo;
+      obj["phone"] = this.selectedCountry+this.sPhoneNo;
       obj["api_key"] = this.sApi_Key;
       var formData = new FormData();
-      formData.append("phone", "+91"+this.sPhoneNo);
+      formData.append("phone", this.selectedCountry+this.sPhoneNo);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
 
@@ -152,10 +160,10 @@ export default {
     //Verify OPT entered by requester
     verifyCode() {
       var obj = {};
-      obj["phone"] = "+91"+this.sPhoneNo;
+      obj["phone"] = this.selectedCountry+this.sPhoneNo;
       obj["code"] = this.sVerify;
       var formData = new FormData();
-      formData.append("phone", "+91"+this.sPhoneNo);
+      formData.append("phone", this.selectedCountry+this.sPhoneNo);
       formData.append("code", this.sVerify);
       formData.append("api_key", this.sApi_Key);
       var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";

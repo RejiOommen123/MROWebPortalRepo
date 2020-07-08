@@ -29,8 +29,15 @@
             ></v-text-field>
              <!-- <div :class="{emailVerified: !$v.emailValid.sConfirmEmailId.$invalid}">
             </div> -->
+            <div v-if="bRequestorEmailConfirm==false">
+               <v-btn
+              :disabled="$v.emailValid.$invalid"
+              class="mr-4 next"
+              @click.prevent="nextPage"
+            >Next</v-btn>
+            </div>
+            <div v-if="bRequestorEmailConfirm==true">
             <v-checkbox
-              v-if="MROConfirmReport"
               v-model="bConfirmReport"
               :disabled="inputDisabled"
               @change="checked()"
@@ -38,15 +45,16 @@
               :label="disclaimer02"
             ></v-checkbox>
             <v-btn
-              v-if="bConfirmReport!=true"
+              v-if="!showVerifyBlock || !bRequestorEmailVerify"
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
             >Next</v-btn>
+            </div>
           </form>
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-if="showVerifyBlock">
+            <div v-if="showVerifyBlock && bRequestorEmailVerify">
               <p>Click on "Send Email" for email verification.</p>
               <v-btn
                 @click="sendEmail"
@@ -121,7 +129,11 @@ export default {
       MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
         .oFields.MROPEmailId,
       MROConfirmReport: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROConfirmReport
+        .oFields.MROConfirmReport,
+      bRequestorEmailConfirm:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .facilityLogoandBackground[0].bRequestorEmailConfirm,
+      bRequestorEmailVerify:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .facilityLogoandBackground[0].bRequestorEmailVerify,
     };
   },
   //Email on verify OTP validations

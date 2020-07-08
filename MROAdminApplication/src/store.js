@@ -1,15 +1,15 @@
 //Imports
 import Vue from 'vue';
 import Vuex from 'vuex';
-import VuexPersist from 'vuex-persist';
+// import VuexPersist from 'vuex-persist';
 
 //Using Imports
 Vue.use(Vuex);
 
-const vuexPersist = new VuexPersist({
-    key: 'MroAuth',
-    storage: window.localStorage
-});
+// const vuexPersist = new VuexPersist({
+//     key: 'MroAuth',
+//     storage: window.localStorage
+// });
 export default new Vuex.Store({
     state: {
         pageheader: '',
@@ -28,6 +28,7 @@ export default new Vuex.Store({
     },
     getters: {
 
-    },
-    plugins: [vuexPersist.plugin]
+    }
+    // ,
+    // plugins: [vuexPersist.plugin]
 })
