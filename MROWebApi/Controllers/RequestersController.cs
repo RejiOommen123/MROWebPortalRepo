@@ -6,6 +6,9 @@ using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Services;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MROWebApi.Controllers
@@ -56,8 +59,13 @@ namespace MROWebApi.Controllers
                 #region Data Addition ! From UI
                 requester.dtLastUpdate = DateTime.Now;
                 #endregion
+                DBConnectionInfo _infoRequester  = new DBConnectionInfo();
+                FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                IEnumerable<FacilityConnections> facility = await connectionRepo.SelectWhere("nFacilityID",requester.nFacilityID);
 
-                RequestersRepository requestersFac = new RequestersRepository(_info);
+                 _infoRequester.ConnectionString=facility.FirstOrDefault().sConnectionString;
+
+                RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 
                 #region Array Processing
                 var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
