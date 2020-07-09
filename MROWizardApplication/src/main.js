@@ -13,10 +13,10 @@ Vue.use(VueResource);
 //Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
 
 //MRO DEV
-Vue.http.options.root = "https://mroadmindevapi.azurewebsites.net/api";
+//Vue.http.options.root = "https://mroadmindevapi.azurewebsites.net/api";
 
-
-//Vue.http.options.root = "https://mroadminuatapi.azurewebsites.net/api";
+//MRO UAT
+Vue.http.options.root = "https://mroadminuatapi.azurewebsites.net/api";
 //Vue.http.options.root = "https://devmroportalapi-dev.azurewebsites.net/api";
 //Vue.http.options.root = "http://localhost:57364/api";
 Vue.config.productionTip = false;
