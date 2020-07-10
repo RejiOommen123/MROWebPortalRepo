@@ -44,12 +44,14 @@
               color="#e84700"
               :label="disclaimer02"
             ></v-checkbox>
+            <div v-if="verified==false">
             <v-btn
               v-if="!showVerifyBlock || !bRequestorEmailVerify"
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
             >Next</v-btn>
+            </div>
             </div>
           </form>
           <form>
@@ -58,7 +60,7 @@
               <p>Click on "Send Email" for email verification.</p>
               <v-btn
                 @click="sendEmail"
-                :disabled="$v.emailValid.$invalid"
+                :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
               >Send Email Verification</v-btn>
               <div v-if="showVerifyInput==true">
@@ -119,6 +121,7 @@ export default {
       showVerifyBlock: false,
       showSuccessBlock: false,
       inputDisabled: false,
+      emailSent:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_06_disclaimer01,
@@ -189,6 +192,7 @@ export default {
         "requestermodule/sRequesterEmailId",
         this.sRequesterEmailId
       );
+      this.emailSent=true;
       this.isDisable = true;
       this.showVerifyInput = true;
       var emailConfirm = {

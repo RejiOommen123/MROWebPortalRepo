@@ -20,7 +20,7 @@
             color="#e84700"
             :value="primaryReason.sNormalizedPrimaryReasonName"
             v-model="sSelectedPrimaryReasons"
-            @change="checkOther(primaryReason.sNormalizedPrimaryReasonName)"
+            @change="check(primaryReason.sNormalizedPrimaryReasonName)"
           >
           <!-- This for 'i' button to give disclaimers/info about option -->
             <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" top>
@@ -41,9 +41,14 @@
         </div>
       </v-col>
     </template>
-    <div>
+    <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
       <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-    </div>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -82,15 +87,26 @@ export default {
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
+    skipPage(){
+      this.sSelectedPrimaryReasons = [];
+      this.bOther=false;
+      this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);
+      this.$store.commit("requestermodule/sOtherReasons", '');
+      this.$store.commit("ConfigModule/mutateNextIndex");
+    },
     // to check if selected checkbox is other reason
-    checkOther(prName) {
-      if (prName == "MROOtherPrimaryReason") {
-        this.bOther = !this.bOther;
-        if(this.bOther==false)
-        {
+    check(prName) {
+        this.sSelectedPrimaryReasons = [];
+        this.sSelectedPrimaryReasons.push(prName);
+
+        if (this.sSelectedPrimaryReasons == "MROOtherPrimaryReason") {
+          this.bOther = true;
+        }
+        else{
+          this.bOther=false;
           this.sOtherReasons='';
         }
-      }
+          
     }
   }
 };

@@ -93,7 +93,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Generate XML, Add Requestor to DB, Send Attachment Email
+        #region  Add Requestor to DB, Generate XML, Send Attachment Email and ROI Email
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -101,6 +101,9 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
+                RequestersController requestersController = new RequestersController(_info);
+                await requestersController.AddRequester(requestors);
+
                 byte[] signedPDF = await GetSignedPDF(requestors);
                 requestors.sPDF = Convert.ToBase64String(signedPDF);
                 requestors.sPDF = "data:application/pdf;base64," + requestors.sPDF;
@@ -448,7 +451,7 @@ namespace MROWebApi.Controllers
                     return File(pdfBytes, "application/pdf");
                 }
                 else
-                {
+                { 
                     byte[] pdfBytes = await GetSignedPDF(requestor);
                     return File(pdfBytes, "application/pdf");
                 }

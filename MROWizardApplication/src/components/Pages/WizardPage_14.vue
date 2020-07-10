@@ -68,10 +68,10 @@
             <v-textarea counter v-model="sAuthSpecificEvent" rows="2" label="SPECIFY EVENT HERE"></v-textarea>
           </div>
         </v-col>
-        <v-col cols="12" offset-sm="4" sm="2">
+        <v-col cols="6" offset-sm="4" sm="2">
            <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
         </v-col>
-        <v-col cols="12" sm="2">
+        <v-col cols="6" sm="2">
           <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
         </v-col>
       </v-layout>
