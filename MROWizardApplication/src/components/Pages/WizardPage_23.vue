@@ -43,6 +43,14 @@ export default {
     nextPage() {
       this.$store.commit("requestermodule/nFeedbackRating", this.nFeedbackRating);
       this.$store.commit("requestermodule/sFeedbackComment", this.sFeedbackComment);
+
+      //Partial Requester Data Save Start
+      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+        });
+      //Partial Requester Data Save End
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

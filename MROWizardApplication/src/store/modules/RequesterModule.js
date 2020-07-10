@@ -11,9 +11,7 @@ const state = {
     sRelativeFileArray:[],
     sPatientFirstName: '',
     sPatientLastName: '',
-    bIsPatientMinor: false,
     sPatientMiddleInitial: '',
-    bIsPatientDeceased: false,
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
@@ -83,12 +81,6 @@ const mutations = {
     },
     sPatientMiddleInitial(state, payload) {
         state.sPatientMiddleInitial = payload;
-    },
-    bIsPatientMinor(state, payload) {
-        state.bIsPatientMinor = payload
-    },
-    bIsPatientDeceased(state, payload) {
-        state.bIsPatientDeceased = payload
     },
     dtPatientDOB(state, payload) {
         state.dtPatientDOB = payload;
