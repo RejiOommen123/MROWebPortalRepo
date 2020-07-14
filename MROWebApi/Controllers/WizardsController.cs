@@ -445,16 +445,16 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrEmpty(requestor.sSignatureData))
-                {
-                    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
-                    return File(pdfBytes, "application/pdf");
-                }
-                else
-                { 
+                //if (string.IsNullOrEmpty(requestor.sSignatureData))
+                //{
+                //    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
+                //    return File(pdfBytes, "application/pdf");
+                //}
+                //else
+                //{ 
                     byte[] pdfBytes = await GetSignedPDF(requestor);
                     return File(pdfBytes, "application/pdf");
-                }
+                //}
             }
             else
             {
@@ -537,10 +537,12 @@ namespace MROWebApi.Controllers
             FacilityLocations location = await locRepo.Select(requester.nLocationID);
             location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
             byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValueWOStamp(pdfByteArray, allFields,requester ,out string sReplaceFieldsList);
+
+            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requester ,out string sReplaceFieldsList);
 
             allFields.Clear();
 
+            //Signing the Document
             Doc theDoc = new Doc();
 
             theDoc.Read(byteArrayToReturn);
@@ -577,80 +579,80 @@ namespace MROWebApi.Controllers
             byte[] pdfBytes = theDoc.GetData();
             return pdfBytes;
         }
-        private async static Task<byte[]> GetFilledPDF(Requesters requester, DBConnectionInfo _info)
-        {
-            Dictionary<string, string> allFields = new Dictionary<string, string>();
-            allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
-            allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
-            allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
-            allFields.Add("MROPatientLastName", requester.sPatientLastName);
-            allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
-            allFields.Add("MROPEmailId", requester.sRequesterEmailId);
-            allFields.Add("MROAddZipCode", requester.sAddZipCode);
-            allFields.Add("MROAddCity", requester.sAddCity);
-            allFields.Add("MROAddState", requester.sAddState);
-            allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
+        //private async static Task<byte[]> GetFilledPDF(Requesters requester, DBConnectionInfo _info)
+        //{
+        //    Dictionary<string, string> allFields = new Dictionary<string, string>();
+        //    allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
+        //    allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
+        //    allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
+        //    allFields.Add("MROPatientLastName", requester.sPatientLastName);
+        //    allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
+        //    allFields.Add("MROPEmailId", requester.sRequesterEmailId);
+        //    allFields.Add("MROAddZipCode", requester.sAddZipCode);
+        //    allFields.Add("MROAddCity", requester.sAddCity);
+        //    allFields.Add("MROAddState", requester.sAddState);
+        //    allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
 
-            //Record Types
-            for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
-            {
-                allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", requester.sSelectedRecordTypes[counter] == requester.sSelectedRecordTypes[counter] ? "On" : "");
-            }
+        //    //Record Types
+        //    for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
+        //    {
+        //        allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", requester.sSelectedRecordTypes[counter] == requester.sSelectedRecordTypes[counter] ? "On" : "");
+        //    }
 
-            //Primary Reasons
-            for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
-            {
-                allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", requester.sSelectedPrimaryReasons[counter] == requester.sSelectedPrimaryReasons[counter] ? "On" : "");
-            }
-            //Sensitive Info
-            for (int counter = 0; counter < requester.selectedSensitiveInfo.Length; counter++)
-            {
-                allFields.Add(requester.selectedSensitiveInfo[counter] + "=1", requester.selectedSensitiveInfo[counter] == requester.selectedSensitiveInfo[counter] ? "On" : "");
-            }
-            //Shipment Types 
-            for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
-            {
-                allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", requester.sSelectedShipmentTypes[counter] == requester.sSelectedShipmentTypes[counter] ? "On" : "");
-            }
+        //    //Primary Reasons
+        //    for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
+        //    {
+        //        allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", requester.sSelectedPrimaryReasons[counter] == requester.sSelectedPrimaryReasons[counter] ? "On" : "");
+        //    }
+        //    //Sensitive Info
+        //    for (int counter = 0; counter < requester.selectedSensitiveInfo.Length; counter++)
+        //    {
+        //        allFields.Add(requester.selectedSensitiveInfo[counter] + "=1", requester.selectedSensitiveInfo[counter] == requester.selectedSensitiveInfo[counter] ? "On" : "");
+        //    }
+        //    //Shipment Types 
+        //    for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
+        //    {
+        //        allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", requester.sSelectedShipmentTypes[counter] == requester.sSelectedShipmentTypes[counter] ? "On" : "");
+        //    }
 
-            //Shipment Type Related Fields
+        //    //Shipment Type Related Fields
 
-            //Shipment Type Mail Address
-            allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
-            allFields.Add("MROSTAddState", requester.sSTAddState);
-            allFields.Add("MROSTAddCity", requester.sSTAddCity);
-            allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
-            allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
-            allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
-                                                + requester.sSTAddStreetAddress + ", "
-                                                + requester.sSTAddCity + ", "
-                                                + requester.sSTAddState + ", "
-                                                + requester.sSTAddZipCode);
+        //    //Shipment Type Mail Address
+        //    allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
+        //    allFields.Add("MROSTAddState", requester.sSTAddState);
+        //    allFields.Add("MROSTAddCity", requester.sSTAddCity);
+        //    allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
+        //    allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
+        //    allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
+        //                                        + requester.sSTAddStreetAddress + ", "
+        //                                        + requester.sSTAddCity + ", "
+        //                                        + requester.sSTAddState + ", "
+        //                                        + requester.sSTAddZipCode);
 
-            //Shipment Type Email
-            allFields.Add("MROSTEmailId", requester.sSTEmailId);
-            //Shipment Type Fax Number
-            allFields.Add("MROSTFaxNo", requester.sSTFaxNo);
-
-
-            allFields.Add("MROPatientTelephoneNo", requester.sPhoneNo);
-
-            //Release To
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToMyself" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToFamilyCaregiver" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToDoctor" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToThirdParty" ? "On" : "");
+        //    //Shipment Type Email
+        //    allFields.Add("MROSTEmailId", requester.sSTEmailId);
+        //    //Shipment Type Fax Number
+        //    allFields.Add("MROSTFaxNo", requester.sSTFaxNo);
 
 
-            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locRepo.Select(requester.nLocationID);
-            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requester,out string sReplaceFieldsList);
+        //    allFields.Add("MROPatientTelephoneNo", requester.sPhoneNo);
 
-            allFields.Clear();
-            return byteArrayToReturn;
-        }
+        //    //Release To
+        //    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToMyself" ? "On" : "");
+        //    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToFamilyCaregiver" ? "On" : "");
+        //    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToDoctor" ? "On" : "");
+        //    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToThirdParty" ? "On" : "");
+
+
+        //    FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+        //    FacilityLocations location = await locRepo.Select(requester.nLocationID);
+        //    location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+        //    byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+        //    byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requester,out string sReplaceFieldsList);
+
+        //    allFields.Clear();
+        //    return byteArrayToReturn;
+        //}
         #endregion
 
         #region ROI Email

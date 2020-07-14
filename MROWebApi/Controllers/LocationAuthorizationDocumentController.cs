@@ -90,71 +90,73 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         }
         #endregion
 
-        #region Replace values & Don't Stamp
-        public byte[] ReplaceFieldKeywordsWithValueWOStamp(byte[] PDFFile, Dictionary<string, string> allFields,Requesters requestor ,out string sReplaceFieldsList)
-        {
-            Doc thePDFAuthDoc = new Doc();
-            thePDFAuthDoc.Read(PDFFile);
-            foreach (Field frm in thePDFAuthDoc.Form.Fields)
-            {
-                //check for MRO Appended Keyword
-                try
-                {
-                    if (frm.Name.Substring(0, 3) == "MRO" && frm.Name != "MROSignature")
-                    {
-                        string sValue = null;
-                        string sName = frm.Name;
-                        string sNewValue;
-                        if (InList(sName, allFields, out sNewValue))
-                            sValue += sNewValue + " ";
-                        Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
-                    }
-                }
-                catch (Exception e)
-                {
-                    continue;
-                }
+        //#region Replace values & Don't Stamp
+        //public byte[] ReplaceFieldKeywordsWithValue(byte[] PDFFile, Dictionary<string, string> allFields,Requesters requestor ,out string sReplaceFieldsList)
+        //{
+        //    Doc thePDFAuthDoc = new Doc();
+        //    thePDFAuthDoc.Read(PDFFile);
+        //    foreach (Field frm in thePDFAuthDoc.Form.Fields)
+        //    {
+        //        //check for MRO Appended Keyword
+        //        try
+        //        {
+        //            if (frm.Name.Substring(0, 3) == "MRO" && frm.Name != "MROSignature")
+        //            {
+        //                string sValue = null;
+        //                string sName = frm.Name;
+        //                string sNewValue;
+        //                if (InList(sName, allFields, out sNewValue))
+        //                    sValue += sNewValue + " ";
+        //                Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
+        //            }
+        //        }
+        //        catch (Exception e)
+        //        {
 
-            }
+        //            //TODO Logging
+        //            continue;
+        //        }
 
-            //Adding the Photo of Driving License
-            string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
-            XImage theDrivingLicense = new XImage();
-            byte[] dlArray = Convert.FromBase64String(result);
-            theDrivingLicense.SetData(dlArray);
+        //    }
 
-            //Adding new page in Authorization PDF
-            thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
-            int theID = 0;
-            string theText = requestor.sPatientFirstName + " " + requestor.sPatientLastName + " " + "(D.O.B. " + requestor.dtPatientDOB.Value.ToShortDateString() + ")";
-            thePDFAuthDoc.Width = 4;
-            thePDFAuthDoc.FontSize = 20;
-            thePDFAuthDoc.TextStyle.Justification = 1;
-            thePDFAuthDoc.Rect.Inset(20, 20);
-            thePDFAuthDoc.FrameRect();
-            theID = thePDFAuthDoc.AddTextStyled(theText);
-            thePDFAuthDoc.FontSize = 12;
-            thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address (User Confirmed)<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
+        //    //Adding the Photo of Driving License
+        //    string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+        //    XImage theDrivingLicense = new XImage();
+        //    byte[] dlArray = Convert.FromBase64String(result);
+        //    theDrivingLicense.SetData(dlArray);
+
+        //    //Adding new page in Authorization PDF
+        //    thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
+        //    int theID = 0;
+        //    string theText = requestor.sPatientFirstName + " " + requestor.sPatientLastName + " " + "(D.O.B. " + requestor.dtPatientDOB.Value.ToShortDateString() + ")";
+        //    thePDFAuthDoc.Width = 4;
+        //    thePDFAuthDoc.FontSize = 20;
+        //    thePDFAuthDoc.TextStyle.Justification = 1;
+        //    thePDFAuthDoc.Rect.Inset(20, 20);
+        //    thePDFAuthDoc.FrameRect();
+        //    theID = thePDFAuthDoc.AddTextStyled(theText);
+        //    thePDFAuthDoc.FontSize = 12;
+        //    thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
+        //    thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
+        //    thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address (User Confirmed)<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+        //    thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
+        //    thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
+        //    thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
 
 
-            // Image insertion on a specific location on new page
-            thePDFAuthDoc.Rect.Left = 50;
-            thePDFAuthDoc.Rect.Bottom = 400;
-            thePDFAuthDoc.Rect.Width = 200;
-            thePDFAuthDoc.Rect.Height = 150;
+        //    // Image insertion on a specific location on new page
+        //    thePDFAuthDoc.Rect.Left = 50;
+        //    thePDFAuthDoc.Rect.Bottom = 400;
+        //    thePDFAuthDoc.Rect.Width = 200;
+        //    thePDFAuthDoc.Rect.Height = 150;
 
-            thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
-            
-            byte[] ArrayToReturn = thePDFAuthDoc.GetData();
-            sReplaceFieldsList = "";
-            return ArrayToReturn;
-        }
-        #endregion
+        //    thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
+
+        //    byte[] ArrayToReturn = thePDFAuthDoc.GetData();
+        //    sReplaceFieldsList = "";
+        //    return ArrayToReturn;
+        //}
+        //#endregion
 
         #region ReplaceFieldKeywordsWithValue & Stamp as well
         /// <summary>
@@ -184,6 +186,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                 }
                 catch (Exception e)
                 {
+                    //TODO Logging
                     continue;
                 }
 
@@ -198,7 +201,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             //Adding new page in Authorization PDF
             thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
             int theID = 0;
-            string theText = requestor.sPatientFirstName+" "+requestor.sPatientLastName + " "+"(D.O.B. "+requestor.dtPatientDOB.Value.ToShortDateString()+")";
+            string theText = requestor.sPatientFirstName + " " + requestor.sPatientLastName + " " + "(D.O.B. " + requestor.dtPatientDOB.Value.ToShortDateString() + ")";
             thePDFAuthDoc.Width = 4;
             thePDFAuthDoc.FontSize = 20;
             thePDFAuthDoc.TextStyle.Justification = 1;
@@ -222,8 +225,11 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             thePDFAuthDoc.Rect.Height = 150;
             //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
             thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
-            
-            thePDFAuthDoc.Form.Stamp();
+
+            if(!string.IsNullOrEmpty(requestor.sSignatureData))
+            {
+                thePDFAuthDoc.Form.Stamp();
+            }
             byte[] ArrayToReturn = thePDFAuthDoc.GetData();
             sReplaceFieldsList = "";
             return ArrayToReturn;
