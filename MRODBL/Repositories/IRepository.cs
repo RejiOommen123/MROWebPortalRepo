@@ -42,6 +42,21 @@ namespace MRODBL.Repositories
         /// <param name="paramValue">Condition Column Value</param>
         /// <returns>List of Matching Records/Single Record</returns>
         Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue);
+        /// <summary>
+        /// Select Location By LocationName for validation
+        /// </summary>
+        /// <param name="nFacilityLocationID"></param>
+        /// <param name="sFacilityLocationName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> SelectLocationByLocationName(int nFacilityLocationID, string sFacilityLocationName);
+
+        /// <summary>
+        /// Simple GetLocationByNormalizedName Based on Single Condition
+        /// </summary>
+        /// <param name="nFacilityID">Condition Facility Id</param>
+        /// <param name="sNormalizedLocationName">Condition sNormalizedLocationName</param>
+        /// <returns>List of Matching Records/Single Record</returns>
+        Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName);
 
         /// <summary>
         /// Count of Rows Matching given Condition

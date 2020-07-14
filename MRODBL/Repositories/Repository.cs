@@ -93,6 +93,41 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString, new { ID = paramValue });
             }
         }
+        public async Task<IEnumerable<T>> SelectLocationByLocationName( int nFacilityLocationID, string sLocationName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "tblFacilityLocations " +
+                     "INNER JOIN " +
+                     "tblFacilities " +
+                     "ON " +
+                     "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                       "WHERE " +
+                       "tblFacilityLocations.nFacilityLocationID <> @nFacilityLocationID AND " +
+                        "tblFacilityLocations.sLocationName = @sLocationName";
+                return await db.QueryAsync<T>(SqlString, new {@nFacilityLocationID = nFacilityLocationID, @sLocationName = sLocationName });
+            }
+        }
+        public async Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "tblFacilityLocations " +
+                     "INNER JOIN " +
+                     "tblFacilities " +
+                     "ON " +
+                     "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                       "WHERE " +
+                       "tblFacilityLocations.sNormalizedLocationName = @sNormalizedLocationName AND " +
+                       "tblFacilityLocations.nFacilityLocationID <> @nFacilityLocationID AND " +
+                        "tblFacilities.nFacilityID = @nFacilityID";
+                return await db.QueryAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sNormalizedLocationName  = sNormalizedLocationName });
+            }
+        }
         public async Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -300,7 +335,7 @@ namespace MRODBL.Repositories
                 String[] oWizards = soWizard.ToArray();
                 var wizardHelper = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var locationDetails = logoBackgroundFacility.Read().ToList();
-                var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequestor);
+                var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequester);
                 object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails, wizardsSave };
                 return newObject;
             }
