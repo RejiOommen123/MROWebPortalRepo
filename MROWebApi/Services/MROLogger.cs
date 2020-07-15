@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MROWebApi.Services
 {
-    public class MROLogger
+    public  class MROLogger
     {
         #region Constructor
         private DBConnectionInfo _info;
@@ -26,7 +26,7 @@ namespace MROWebApi.Services
         /// <param name="sDescription">Description of Event</param>
         /// <param name="sEventName">Event Name</param>
         /// <param name="sModuleName">Module Name</param>
-        public void LogAdminRecords(int nAdminUserID,string sDescription,string sEventName,string sModuleName)
+        public  void LogAdminRecords(int nAdminUserID,string sDescription,string sEventName,string sModuleName)
         {
             try {
                 AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
@@ -64,6 +64,28 @@ namespace MROWebApi.Services
             };
             patientModuleLoggerRepository.Insert(logRequesterDetails);
         }
+
+        public static void LogExceptionRecords(string sStatusName, string sModuleName, string sDescription, DBConnectionInfo _info)
+        {
+            try
+            {
+                ExceptionLoggerRepository exceptionLoggerRepository = new ExceptionLoggerRepository(_info);
+                ExceptionLogger exceptionLoggerDetails = new ExceptionLogger()
+                {
+                    sStatusName = sStatusName,
+                    sModuleName = sModuleName,
+                    sDescription = sDescription,
+                    dtExceptionTime = DateTime.Now
+                };
+                exceptionLoggerRepository.Insert(exceptionLoggerDetails);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
         #endregion
 
         #region Encrypt Decrypt Strings
