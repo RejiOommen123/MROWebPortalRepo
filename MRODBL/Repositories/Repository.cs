@@ -291,7 +291,7 @@ namespace MRODBL.Repositories
         }
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
         {
-            string SqlString = "spGetWizardConfigBynFacilityId";
+            string SqlString = "spGetWizardConfigBynFacilityIdAndnFacilityLocationId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
