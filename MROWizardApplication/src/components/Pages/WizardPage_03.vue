@@ -25,23 +25,74 @@
     <div v-show="!bAreYouPatient">
       <form>
         <v-row>
-          <v-col cols="12" offset-sm="2" sm="8">
+          <v-col cols="12" offset="2" sm="4">
             <v-text-field
-              v-model="sRelativeName"
-              :error-messages="sRelativeNameErrors"
-              label="Relative Full Name"
+              v-model="sRelativeFirstName"
+              :error-messages="sRelativeFirstNameErrors"
+              label="Relative First Name"
               required
-              @input="$v.sRelativeName.$touch()"
-              @blur="$v.sRelativeName.$touch()"
+              @input="$v.sRelativeFirstName.$touch()"
+              @blur="$v.sRelativeFirstName.$touch()"
             ></v-text-field>
+          </v-col>
+            <v-col cols="12"  sm="4">
             <v-text-field
-              v-model="sRelationToPatient"
-              :error-messages="sRelationToPatientErrors"
-              label="Please indicate your relationship to the patient."
+              v-model="sRelativeLastName"
+              :error-messages="sRelativeLastNameErrors"
+              label="Relative Last Name"
               required
-              @input="$v.sRelationToPatient.$touch()"
-              @blur="$v.sRelationToPatient.$touch()"
+              @input="$v.sRelativeLastName.$touch()"
+              @blur="$v.sRelativeLastName.$touch()"
             ></v-text-field>
+            </v-col>
+            <v-col cols="12" offset-sm="2" sm="8">
+            <v-checkbox
+              hide-details
+              dark
+              class="checkboxBorder"
+              label="Parent/Legal Guardian"
+              color="#e84700"
+              value="MRORelationshipParentLegalGuardian"
+              v-model="sSelectedRelation"
+              @change="check('MRORelationshipParentLegalGuardian')"
+            ></v-checkbox>
+            </v-col>
+            <v-col  cols="12" offset-sm="2" sm="8">
+            <v-checkbox
+              hide-details
+              dark
+              class="checkboxBorder"
+              label="Legal Representative (Executor, Patient Rep., HCPOA, etc.)"
+              color="#e84700"
+              value="MRORelationshipLegalRepresentative"
+              v-model="sSelectedRelation"
+              @change="check('MRORelationshipLegalRepresentative')"
+            ></v-checkbox>
+            </v-col>
+            <v-col cols="12" offset-sm="2" sm="8">
+            <v-checkbox
+              hide-details
+              dark
+              class="checkboxBorder"
+              label="Other"
+              color="#e84700"
+              value="MRORelationshipOther"
+              v-model="sSelectedRelation"
+              @change="check('MRORelationshipOther')"
+            ></v-checkbox>
+            </v-col>
+            <v-col  cols="12" offset="3" sm="6">
+            <v-text-field
+              v-if="bShowOtherRelation"
+              v-model="sOtherRelation"
+              :error-messages="sOtherRelationErrors"
+              label="Other Relation"
+              required
+              @input="$v.sOtherRelation.$touch()"
+              @blur="$v.sOtherRelation.$touch()"
+            ></v-text-field>
+            </v-col>
+            <v-col  cols="12" offset="3" sm="6">
               <template>
               <v-file-input
                 ref="file"
@@ -63,9 +114,18 @@
                 </template>
               </v-file-input>
             </template>
+            </v-col>
+            <v-col cols="12" offset="3" sm="6">
             <v-btn
+              v-if="sSelectedRelation=='MRORelationshipOther'"
               @click.prevent="continueAhead"
               :disabled="$v.$invalid"
+              class="mr-4 next"
+            >Continue</v-btn>
+            <v-btn
+              v-else
+              @click.prevent="continueAhead"
+              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedRelation==''"
               class="mr-4 next"
             >Continue</v-btn>
           </v-col>
@@ -84,10 +144,13 @@ export default {
   name: "WizardPage_03",
   data() {
     return {
-      sRelativeName: this.$store.state.requestermodule.sRelativeName,
-      sRelationToPatient: this.$store.state.requestermodule.sRelationToPatient,
+      sRelativeFirstName: '',
+      sRelativeLastName: '',
+      sOtherRelation: '',
       files:[],
       sRelativeFileArray:[],
+      sSelectedRelation: '',
+      bShowOtherRelation:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer01,
@@ -100,25 +163,32 @@ export default {
   //Relative name and realtion validations
   mixins: [validationMixin],
   validations: {
-    sRelativeName: { required },
-    sRelationToPatient: { required }
+    sRelativeFirstName: { required },
+    sRelativeLastName: { required },
+    sOtherRelation: { required }
   },
   computed: {
     bAreYouPatient() {
       return this.$store.state.requestermodule.bAreYouPatient;
     },
     //Relative name and realtion validation error message setter
-    sRelativeNameErrors() {
+    sRelativeFirstNameErrors() {
       const errors = [];
-      if (!this.$v.sRelativeName.$dirty) return errors;
-      !this.$v.sRelativeName.required && errors.push("Name is required.");
+      if (!this.$v.sRelativeFirstName.$dirty) return errors;
+      !this.$v.sRelativeFirstName.required && errors.push("First Name is required.");
       return errors;
     },
-    sRelationToPatientErrors() {
+    sRelativeLastNameErrors() {
       const errors = [];
-      if (!this.$v.sRelationToPatient.$dirty) return errors;
-      !this.$v.sRelationToPatient.required &&
-        errors.push("Realtion to patient is required");
+      if (!this.$v.sRelativeLastName.$dirty) return errors;
+      !this.$v.sRelativeLastName.required && errors.push("Last Name is required.");
+      return errors;
+    },
+    sOtherRelationErrors() {
+      const errors = [];
+      if (!this.$v.sOtherRelation.$dirty) return errors;
+      !this.$v.sOtherRelation.required &&
+        errors.push("Required if you select Other option.");
       return errors;
     }
   },
@@ -127,8 +197,10 @@ export default {
     setPatient() {
       this.sActiveBtn='Yes';
       this.$store.commit("requestermodule/bAreYouPatient", true);
-      this.$store.commit("requestermodule/sRelativeName", "");
-      this.$store.commit("requestermodule/sRelationToPatient", "");
+      this.$store.commit("requestermodule/sRelativeFirstName", "");
+      this.$store.commit("requestermodule/sRelativeLastName", "");
+      this.$store.commit("requestermodule/sOtherRelation", "");
+      this.$store.commit("requestermodule/sSelectedRelation", "");
       this.$store.commit("requestermodule/sRelativeFileArray", []);
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
@@ -139,11 +211,10 @@ export default {
     },
     continueAhead() {
       this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
-      this.$store.commit("requestermodule/sRelativeName", this.sRelativeName);
-      this.$store.commit(
-        "requestermodule/sRelationToPatient",
-        this.sRelationToPatient
-      );
+      this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
+      this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
+      this.$store.commit("requestermodule/sOtherRelation",this.sOtherRelation);
+      this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedRelation);
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     filesChange(files){
@@ -155,6 +226,17 @@ export default {
         });
         reader.readAsDataURL(files[i]);
       }    
+    },
+    check(id) {
+      this.sSelectedRelation = id;
+      // this.sSelectedRelation.push(id);
+        if (this.sSelectedRelation == "MRORelationshipOther") {
+          this.bShowOtherRelation = true;
+        }
+        else{
+          this.bShowOtherRelation=false;
+          this.sOtherRelation='';
+        }
     },
   }
 };

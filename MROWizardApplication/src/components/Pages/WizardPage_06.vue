@@ -6,8 +6,9 @@
       <v-row>
         <v-col  cols="12" offset-sm="2" sm="8">
           <form>
-            <label for="sRequesterEmailId" class="control-label">EMAIL</label>
+            <!-- <label for="sRequesterEmailId" class="control-label">EMAIL</label> -->
             <v-text-field
+              label="EMAIL"
               v-model="emailValid.sRequesterEmailId"
               :error-messages="emailErrors"
               required
@@ -17,8 +18,9 @@
             ></v-text-field>
             <!-- <div :class="{emailVerified: !$v.emailValid.sRequesterEmailId.$invalid}">
             </div> -->
-            <label for="sConfirmEmailId" class="control-label">CONFIRM EMAIL</label>
+            <!-- <label for="sConfirmEmailId" class="control-label">CONFIRM EMAIL</label> -->
             <v-text-field
+            label="CONFIRM EMAIL"
               @paste.prevent
               v-model="emailValid.sConfirmEmailId"
               :error-messages="confirmEmailErrors"
@@ -34,7 +36,7 @@
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
-            >Next</v-btn>
+              >Next</v-btn>
             </div>
             <div v-if="bRequestorEmailConfirm==true">
             <v-checkbox

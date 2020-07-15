@@ -3,7 +3,14 @@
     <form>
       <h1>What is your mailing address?</h1>
       <v-row>
-        <v-col v-if="MROAddStreetAddress" cols="12" offset-sm="1" sm="6">
+        <!-- TODO: v-if="MROAddApartment" -->
+         <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="sAddApartment"
+            label="Apartment/Building"
+          ></v-text-field>
+        </v-col>
+        <v-col v-if="MROAddStreetAddress" cols="12" sm="6">
           <v-text-field
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
@@ -13,7 +20,7 @@
             @blur="$v.sAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddCity" cols="12" sm="4">
+        <v-col v-if="MROAddCity" offset-sm="1" cols="12" sm="3">
           <v-text-field
             v-model="sAddCity"
             :error-messages="cityErrors"
@@ -23,7 +30,7 @@
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddState" cols="12" offset-sm="2" sm="4">
+        <v-col v-if="MROAddState" offset-sm="1" cols="12"  sm="2">
           <v-text-field
             v-model="sAddState"
             :error-messages="stateErrors"
@@ -33,7 +40,7 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddZipCode" cols="12" sm="3">
+        <v-col v-if="MROAddZipCode" offset-sm="1" cols="12" sm="3">
           <v-text-field
             type="tel"
             v-model="sAddZipCode"
@@ -68,10 +75,11 @@ export default {
   name: "WizardPage_06",
   data() {
     return {
-      sAddZipCode: this.$store.state.requestermodule.sAddZipCode,
-      sAddCity: this.$store.state.requestermodule.sAddCity,
-      sAddState: this.$store.state.requestermodule.sAddState,
-      sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
+      sAddZipCode: '',
+      sAddCity:'',
+      sAddState: '',
+      sAddStreetAddress: '',
+      sAddApartment:'',
 
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
 
@@ -140,6 +148,7 @@ export default {
         "requestermodule/sAddStreetAddress",
         this.sAddStreetAddress
       );
+      this.$store.commit("requestermodule/sAddApartment",this.sAddApartment);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
@@ -151,7 +160,7 @@ export default {
         });
       }
       //Partial Requester Data Save End
-      
+      // console.log(JSON.stringify(this.$store.state.requestermodule));
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

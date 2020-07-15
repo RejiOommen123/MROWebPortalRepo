@@ -1,26 +1,27 @@
 <template>
   <div class="center">
-    <h1>Is there any sensitive info you<br/>would also like to be included?</h1>
+    <h1>Which types of records would like to request?</h1>
+    
     <template>
-      <!-- Get all Sensitive Information associated to facility and displayed as checkbox for selection-->
-      <v-layout v-for="sensitiveInfo in oSensitiveInfoArray" :key="sensitiveInfo.sNormalizedSensitiveInfoName" row wrap>
+       <!-- Get all record types associated to facility and displayed as checkbox for selection-->
+      <v-layout v-for="recordType in RecordTypeArray" :key="recordType.sNormalizedRecordTypeName" row wrap>
         <v-col cols="12" offset-sm="2" sm="8">
-          <v-checkbox
+          <v-checkbox offset-sm="2" sm="8"
+            hide-details
             dark
-            v-model="selectedSensitiveInfo"
+            v-model="sSelectedRecordTypes"
             class="checkboxBorder"
-            :label="sensitiveInfo.sSensitiveInfoName"
+            :label="recordType.sRecordTypeName"
             color="#e84700"
-            :value="sensitiveInfo.sNormalizedSensitiveInfoName"
-          >
+            :value="recordType.sNormalizedRecordTypeName"
+          wrap>
           <!-- This for 'i' button to give disclaimers/info about option -->
-          <!-- display info only if it exist else no i button -->
-            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" top>
+            <v-tooltip  v-if="recordType.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
+                  <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:200px">{{sensitiveInfo.sFieldToolTip}}</p>
+                  <p style="width:200px; background-color:transparent">{{recordType.sFieldToolTip}}</p>
                 </v-col>
             </v-tooltip>
           </v-checkbox>
@@ -35,16 +36,16 @@
 
 <script>
 export default {
-  name: "WizardPage_09",
+  name: "WizardPage_10",
   data() {
     return {
-      oSensitiveInfoArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
-      selectedSensitiveInfo: []
+      RecordTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oRecordTypes,
+      sSelectedRecordTypes: []
     };
   },
   methods: {
     nextPage() {
-      this.$store.commit("requestermodule/selectedSensitiveInfo", this.selectedSensitiveInfo);
+      this.$store.commit("requestermodule/sSelectedRecordTypes", this.sSelectedRecordTypes);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

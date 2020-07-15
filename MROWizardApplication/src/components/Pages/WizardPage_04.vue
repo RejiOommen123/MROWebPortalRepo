@@ -16,17 +16,9 @@
             @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROPatientMiddleInitial" cols="12" sm="3" xs="3">
-          <label for="sPatientMiddleInitial" class="control-label">MIDDLE INITIAL</label>
-          <v-text-field
-            style="max-width:50%; margin-right:auto;margin-left:auto"
-            maxlength="1"
-            v-model="sPatientMiddleInitial"
-            :error-messages="sPatientMiddleInitialError"
-            required
-            @input="$v.sPatientMiddleInitial.$touch()"
-            @blur="$v.sPatientMiddleInitial.$touch()"
-          ></v-text-field>
+        <v-col v-if="MROPatientMiddleName" cols="12" sm="3" xs="3">
+          <label for="sPatientMiddleName" class="control-label">MIDDLE NAME</label>
+          <v-text-field v-model="sPatientMiddleName"></v-text-field>
         </v-col>
         <v-col v-if="MROPatientLastName" cols="12" sm="3" xs="3">
           <label for="sPatientLastName" class="control-label">LAST NAME</label>
@@ -38,8 +30,47 @@
             @blur="$v.sPatientLastName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" offset-sm="3" sm="6">
-          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.$invalid" >Next</v-btn>
+        <!-- bPatientNameChanged -->
+        <v-col cols="12" offset-sm="2" sm="8">
+          <v-checkbox
+            v-model="bPatientNameChanged"
+            color="#e84700"
+            @change="checked()"
+            label="If different from above, please provide full name given at time of visit (for records requested)"
+          ></v-checkbox>
+        </v-col>
+        <!-- TODO:add show and hide for previous name after adding these fields in db -->
+        <template v-if="bPatientNameChanged">
+          <v-col v-if="MROPatientFirstName" cols="12" offset-sm="1" sm="3" xs="3">
+            <label for="sPreviousPatientFirstName" class="control-label">FIRST NAME</label>
+            <v-text-field
+              v-model="sPreviousPatientFirstName"
+              :error-messages="sPreviousPatientFirstNameError"
+              required
+              @input="$v.sPreviousPatientFirstName.$touch()"
+              @blur="$v.sPreviousPatientFirstName.$touch()"
+            ></v-text-field>
+          </v-col>
+          <v-col v-if="MROPatientMiddleName" cols="12" sm="3" xs="3">
+            <label for="sPreviousPatientMiddleName" class="control-label">MIDDLE NAME</label>
+            <v-text-field v-model="sPreviousPatientMiddleName"></v-text-field>
+          </v-col>
+          <v-col v-if="MROPatientLastName" cols="12" sm="3" xs="3">
+            <label for="sPreviousPatientLastName" class="control-label">LAST NAME</label>
+            <v-text-field
+              v-model="sPreviousPatientLastName"
+              :error-messages="sPreviousPatientLastNameError"
+              required
+              @input="$v.sPreviousPatientLastName.$touch()"
+              @blur="$v.sPreviousPatientLastName.$touch()"
+            ></v-text-field>
+          </v-col>
+        </template>
+        <v-col v-if="bPatientNameChanged" cols="12" offset-sm="3" sm="6">
+          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.$invalid">Next</v-btn>
+        </v-col>
+        <v-col v-else cols="12" offset-sm="3" sm="6">
+          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.sPatientFirstName.$invalid  || $v.sPatientLastName.$invalid ">Next</v-btn>
         </v-col>
         <div class="disclaimer">{{disclaimer}}</div>
       </v-row>
@@ -53,23 +84,21 @@ export default {
   name: "WizardPage_05",
   data() {
     return {
-      sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-      sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
-      sPatientMiddleInitial: this.$store.state.requestermodule
-        .sPatientMiddleInitial,
-
+      sPatientFirstName: "",
+      sPatientLastName: "",
+      sPatientMiddleName: "",
+      sPreviousPatientFirstName: "",
+      sPreviousPatientLastName: "",
+      sPreviousPatientMiddleName: "",
+      bPatientNameChanged: false,
 
       //Show and Hide Fields Values fetch from store
       MROPatientFirstName: this.$store.state.ConfigModule
         .apiResponseDataByLocation.oFields.MROPatientFirstName,
-      MROPatientMiddleInitial: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROPatientMiddleInitial,
+      MROPatientMiddleName: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROPatientMiddleName,
       MROPatientLastName: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROPatientLastName,
-      MROIsPatientMinor: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROIsPatientMinor,
-      MROIsPatientDeceased: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROIsPatientDeceased
+        .apiResponseDataByLocation.oFields.MROPatientLastName
     };
   },
   //Requester name validations
@@ -77,7 +106,9 @@ export default {
   validations: {
     sPatientFirstName: { required, maxLength: maxLength(15) },
     sPatientLastName: { required, maxLength: maxLength(15) },
-    sPatientMiddleInitial: { maxLength: maxLength(1) }
+    sPreviousPatientFirstName: { required, maxLength: maxLength(15) },
+    sPreviousPatientLastName: { required, maxLength: maxLength(15) }
+    // sPatientMiddleName: { maxLength: maxLength(1) }
   },
   computed: {
     bAreYouPatient() {
@@ -106,15 +137,42 @@ export default {
         errors.push("Last Name is required.");
       return errors;
     },
-    sPatientMiddleInitialError() {
+    sPreviousPatientFirstNameError() {
       const errors = [];
-      if (!this.$v.sPatientMiddleInitial.$dirty) return errors;
-      !this.$v.sPatientMiddleInitial.maxLength &&
-        errors.push("One character only.");
+      if (!this.$v.sPreviousPatientFirstName.$dirty) return errors;
+      !this.$v.sPreviousPatientFirstName.maxLength &&
+        errors.push("First Name must be at most 15 characters long");
+      !this.$v.sPreviousPatientFirstName.required &&
+        errors.push("First Name is required.");
+      return errors;
+    },
+    sPreviousPatientLastNameError() {
+      const errors = [];
+      if (!this.$v.sPreviousPatientLastName.$dirty) return errors;
+      !this.$v.sPreviousPatientLastName.maxLength &&
+        errors.push("Last Name must be at most 15 characters long");
+      !this.$v.sPreviousPatientLastName.required &&
+        errors.push("Last Name is required.");
       return errors;
     }
+    // sPatientMiddleNameError() {
+    //    const errors = [];
+    //   if (!this.$v.sPatientMiddleName.$dirty) return errors;
+    //   !this.$v.sPatientMiddleName.maxLength &&
+    //     errors.push("Middle Name must be at most 15 characters long");
+    //   !this.$v.sPatientMiddleName.required &&
+    //     errors.push("Middle Name is required.");
+    //   return errors;
+    // }
   },
   methods: {
+    checked() {
+      if (!this.bPatientNameChanged) {
+        this.sPreviousPatientFirstName = "";
+        this.sPreviousPatientLastName = "";
+        this.sPreviousPatientMiddleName = "";
+      }
+    },
     nextPage() {
       this.$store.commit(
         "requestermodule/sPatientFirstName",
@@ -125,8 +183,20 @@ export default {
         this.sPatientLastName
       );
       this.$store.commit(
-        "requestermodule/sPatientMiddleInitial",
-        this.sPatientMiddleInitial
+        "requestermodule/sPatientMiddleName",
+        this.sPatientMiddleName
+      );
+      this.$store.commit(
+        "requestermodule/sPreviousPatientFirstName",
+        this.sPreviousPatientFirstName
+      );
+      this.$store.commit(
+        "requestermodule/sPreviousPatientLastName",
+        this.sPreviousPatientLastName
+      );
+      this.$store.commit(
+        "requestermodule/sPreviousPatientMiddleName",
+        this.sPreviousPatientMiddleName
       );
       this.$store.commit("ConfigModule/mutateNextIndex");
     }

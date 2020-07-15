@@ -10,12 +10,12 @@
           v-model="dialog"
           scrollable
           :max-width="dialogMaxWidth"
-          :height="dialogMaxHeight"
+          height=100%          
         >
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card
             id="bgImg"
-            :style="selectedWizard=='Wizard_21'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
+            :style="selectedWizard=='Wizard_23'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
             <!-- Wizard top progress bar -->
             <v-progress-linear  color="#e84700"  height="5" :value="nProgressBar"></v-progress-linear>
@@ -38,7 +38,7 @@
                       <v-icon>mdi-close</v-icon>
                     </v-btn>      
                   <!-- Wizard logo image set here -->
-                  <div v-if="selectedWizard!='Wizard_21'">
+                  <div v-if="selectedWizard!='Wizard_23'">
                     <img
                       :src="this.logoImg"
                       alt="Vue JS"
@@ -125,6 +125,8 @@ import Wizard_21 from "./components/Pages/WizardPage_21";
 import Wizard_22 from "./components/Pages/WizardPage_22";
 import Wizard_23 from "./components/Pages/WizardPage_23";
 import Wizard_24 from "./components/Pages/WizardPage_24";
+import Wizard_25 from "./components/Pages/WizardPage_25";
+import Wizard_26 from "./components/Pages/WizardPage_26";
 export default {
   name: "App",
   data() {
@@ -288,7 +290,9 @@ export default {
     Wizard_21: Wizard_21,
     Wizard_22: Wizard_22,
     Wizard_23: Wizard_23,
-    Wizard_24: Wizard_24
+    Wizard_24: Wizard_24,
+    Wizard_25: Wizard_25,
+    Wizard_26: Wizard_26
   }
 };
 

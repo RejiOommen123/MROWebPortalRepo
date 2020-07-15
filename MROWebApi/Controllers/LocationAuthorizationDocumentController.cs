@@ -226,7 +226,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
             thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
 
-            if(!string.IsNullOrEmpty(requestor.sSignatureData))
+            if(string.IsNullOrEmpty(requestor.sSignatureData))
             {
                 thePDFAuthDoc.Form.Stamp();
             }

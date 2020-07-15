@@ -25,8 +25,6 @@ namespace MRODBL.BaseClasses
         public string sRelativeLastName { get; set; }
         public string sSelectedRelation { get; set; }
         public string sSelectedRelationName { get; set; }
-
-        [MaxLength]
         public string[] sRelativeFileArray { get; set; }
         [Required]
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient First Name allowed")]
@@ -37,10 +35,10 @@ namespace MRODBL.BaseClasses
         [StringLength(50, ErrorMessage = "Maximum 50 character Middle Name allowed")]
         public string sPatientMiddleName { get; set; }
 
-        [Required]
+        
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient First Name allowed")]
         public string sPreviousPatientFirstName { get; set; }
-        [Required]
+       
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient Last Name allowed")]
         public string sPreviousPatientLastName { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 character Middle Name allowed")]
@@ -91,7 +89,6 @@ namespace MRODBL.BaseClasses
         [MaxLength]
         public string sPDF { get; set; }
 
-        [StringLength(100, ErrorMessage = "Maximum 100 characters Shipment Type Email ID allowed")]
 
         public string[] sSelectedShipmentTypes { get; set; }
 

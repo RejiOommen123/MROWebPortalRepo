@@ -1,193 +1,78 @@
 <template>
   <div class="center">
-    <div class="form-group">
-      <h1>Let us send you a text to verify your phone number.</h1>
-      <p>{{disclaimer01}}</p>
+    <h1>What date do you need record(s) by?</h1>
+    <v-row>
       <form>
-        <v-row>
-          <!-- Phone no input box -->
-          <v-col cols="2" offset-sm="3" sm="2">
-            <v-select
-               v-model="selectedCountry"
-              :items="countryCode"
-            ></v-select>
-          </v-col>
-          <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
-            <label class="input-group-addon">+91</label>
-          </v-col> -->
-          <v-col id="phoneNo" cols="10" sm="5">
-            <v-text-field
-              placeholder="(XXX) XXX-XXXX"
-              v-model="sPhoneNo"
-              label="ENTER MOBILE NO"
-              required
-              :disabled="disableInput"
-              :error-messages="sPhoneNoError"
-              @input="$v.sPhoneNo.$touch()"
-              @blur="$v.sPhoneNo.$touch()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" offset-sm="1" sm="10">
-            <p class="disclaimer">
-              {{disclaimer02}}
-            </p>
-          </v-col>
-          <v-col cols="12" offset-sm="3" sm="6">
-            <div v-show="showSendVerify">
-            <v-btn
-              @click.prevent="submit"
-              :disabled="$v.sPhoneNo.$invalid"
-              class="ma-2 next"
-            >Send Verification Code</v-btn>
-              <v-btn @click.prevent="skipPage" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
-            </div>
-            <!-- Below fields will shown only after requester click on "Send Verification Code" button -->
-            <div v-show="bOtpSend">
-              <div>
-                <v-text-field
-                  :error-messages="sVerifyError"
-                  @input="$v.sVerify.$touch()"
-                  @blur="$v.sVerify.$touch()"
-                  v-model="sVerify"
-                  label="ENTER OTP"
-                  required
-                ></v-text-field>
+        <!-- Date picker input to set deadline -->
+        <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
+          <div class="disclaimer">{{disclaimer}}</div>
+          <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                :value="dateFormatted"
+                placeholder="MM-DD-YYYY"
+                :error-messages="dateErrors"
+                clearable
+                label="SELECT DATE"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                @click:clear="dtDeadline  = null"
+                @input="$v.dtDeadline .$touch()"
+                @blur="$v.dtDeadline .$touch()"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="dtDeadline "
+              color="green lighten-1"
+              header-color="primary"
+              light
+              @change="menu1 = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-spacer></v-spacer>
 
-                <v-btn @click.prevent="submit" class="next">Resend OTP</v-btn>
-
-                <v-btn
-                  @click.prevent="verifyCode"
-                  :disabled="$v.sVerify.$invalid"
-                  style="margin-left:10px"
-                 class="next"
-                >Verify</v-btn>
-              </div>
-            </div>
-             <div v-if="showSuccessBlock">
-              <p v-if="pageskip" class="disclaimer">Mobile Not Verified.</p>
-              <p v-else class="disclaimer">Mobile Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
-            </div>
-          </v-col>
-        </v-row>
+        <v-col cols="12" offset-sm="3" sm="6">
+          <div>
+            <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+          </div>
+        </v-col>
       </form>
-    </div>
+    </v-row>
   </div>
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength, minLength } from "vuelidate/lib/validators";
+import moment from "moment";
+import { required } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_18",
+  name: "WizardPage_16",
   data() {
     return {
-      isDisable: false,
-      bOtpSend: false,
-      showSuccessBlock:false,
-      disableInput:false,
-      showSendVerify:true,
-      pageskip:false,
-      countryCode: ['+1', '+91'],
-      selectedCountry:'+1',
-      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
-      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer02,
+      dtDeadline: moment()
+        .add(1, "days")
+        .toISOString()
+        .substr(0, 10),
+      menu1: false,
+      disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_16_disclaimer01,
 
-      sPhoneNo: "",
-      sApp_Key: "tu9ete3u9ocidovebefu",
-      sApi_Key: "51bdcc70021d29097aedce2a39ecb2beaa379e1b",
-      sVerify: "",
-      service: "",
-      subData: {}
+      //Show and Hide Fields Values
+      MRORequestDeadlineDate: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORequestDeadlineDate
     };
   },
-  // OTP and phono validations
-  mixins: [validationMixin],
+  //Date Validation
   validations: {
-    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) },
-    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) }
-  },
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
-  computed: {
-    //OTP and Phone no Validation message setter
-    sPhoneNoError() {
-      const errors = [];
-      if (!this.$v.sPhoneNo.$dirty) return errors;
-      !this.$v.sPhoneNo.maxLength &&
-        errors.push("Enter 10 digit mobile no.");
-      !this.$v.sPhoneNo.minLength &&
-        errors.push("Enter 10 digit mobile no.");
-      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
-      return errors;
-    },
-    sVerifyError() {
-      const errors = [];
-      if (!this.$v.sVerify.$dirty) return errors;
-      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.minLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.required && errors.push("OTP required");
-      return errors;
+    dtDeadline: {
+      required,
+      minValue: value => value > new Date().toISOString()
     }
   },
   methods: {
-    //send otp on send verification no and resend button
-    submit() {
-      this.isDisable = true;
-      this.bOtpSend = true;
-      this.showSendVerify=false;
-      var obj = {};
-      obj["phone"] = this.selectedCountry+this.sPhoneNo;
-      obj["api_key"] = this.sApi_Key;
-      var formData = new FormData();
-      formData.append("phone", this.selectedCountry+this.sPhoneNo);
-      formData.append("api_key", this.sApi_Key);
-      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
-
-      var self = this;
-      this.$http
-        .post(url, formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-          }
-        })
-        .then(response => {
-          self.subData = response;
-        });
-    },
-    //Verify OPT entered by requester
-    verifyCode() {
-      var obj = {};
-      obj["phone"] = this.selectedCountry+this.sPhoneNo;
-      obj["code"] = this.sVerify;
-      var formData = new FormData();
-      formData.append("phone", this.selectedCountry+this.sPhoneNo);
-      formData.append("code", this.sVerify);
-      formData.append("api_key", this.sApi_Key);
-      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
-
-      this.$http
-        .post(url, formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-          }
-        })
-        .then(response => {
-          if (response.data.status == "SUCCESS") {
-            this.bOtpSend=false;
-            this.showSuccessBlock=true;
-            this.disableInput=true;
-          }
-          if (response.data.status == "ERROR") {
-            alert("Invalid OTP");
-          }
-        });
-    },
-    nextPage(){
-      this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
+    nextPage() {
+      this.$store.commit("requestermodule/dtDeadline ", this.dtDeadline);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
@@ -201,10 +86,22 @@ export default {
       //Partial Requester Data Save End
 
       this.$store.commit("ConfigModule/mutateNextIndex");
+    }
+  },
+  computed: {
+    //Date Format setter
+    dateFormatted() {
+      return this.dtDeadline
+        ? moment(this.dtDeadline).format("MM-DD-YYYY")
+        : "";
     },
-    skipPage(){
-      this.pageskip=true;
-      this.nextPage();
+    //Date validation error message setter
+    dateErrors() {
+      const errors = [];
+      if (!this.$v.dtDeadline.$dirty) return errors;
+      !this.$v.dtDeadline.minValue && errors.push("Deadline date must be greater than today's date.");
+      !this.$v.dtDeadline.required && errors.push("Date is required");
+      return errors;
     }
   }
 };

@@ -6,12 +6,17 @@ const state = {
     nLocationID:0,
     sSelectedLocation: "",
     bAreYouPatient: true,
-    sRelativeName: '',
-    sRelationToPatient: '',
+    sRelativeFirstName: '',
+    sRelativeLastName: '',
+    sOtherRelation:'',
+    sSelectedRelation: '',
     sRelativeFileArray:[],
     sPatientFirstName: '',
     sPatientLastName: '',
-    sPatientMiddleInitial: '',
+    sPatientMiddleName: '',
+    sPreviousPatientFirstName: '',
+    sPreviousPatientLastName: '',
+    sPreviousPatientMiddleName: '',
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
@@ -19,8 +24,11 @@ const state = {
     sAddCity: '',
     sAddState: '',
     sAddStreetAddress: '',
+    sAddApartment:'',
     dtRecordRangeStart: '',
     dtRecordRangeEnd: '',
+    bDRMostRecentVisit:false,
+    bRTManualSelection:false,
     sSelectedRecordTypes: [],
     sSelectedPrimaryReasons: [],
     sOtherReasons: '',
@@ -29,9 +37,21 @@ const state = {
     nSTFaxNo:0,
     sSTFaxCompAdd:'',
     sSTEmailId:'',
-    sSTMailCompAdd:'',
-    dtSTPickUp:'',
-    sSTRecordFormat:'',
+    sSTAddZipCode: '',
+    sSTAddCity: '',
+    sSTAddState: '',
+    sSTAddStreetAddress:'',
+    sSTAddApartment:'',
+    sRecipientFirstName: '',
+    sRecipientLastName: '',
+    sRecipientMiddleName: '',
+    sRecipientAddZipCode: '',
+    sRecipientAddCity:'',
+    sRecipientAddState: '',
+    sRecipientAddStreetAddress: '',
+    sRecipientAddApartment:'',
+
+   
 
     selectedSensitiveInfo: [],
     dAuthExpire : null,
@@ -64,11 +84,17 @@ const mutations = {
     bAreYouPatient(state, payload) {
         state.bAreYouPatient = payload;
     },
-    sRelativeName(state, payload) {
-        state.sRelativeName = payload;
+    sRelativeFirstName(state, payload) {
+        state.sRelativeFirstName = payload;
     },
-    sRelationToPatient(state, payload) {
-        state.sRelationToPatient = payload;
+    sRelativeLastName(state, payload) {
+        state.sRelativeLastName = payload;
+    },
+    sOtherRelation(state, payload) {
+        state.sOtherRelation = payload;
+    },
+    sSelectedRelation(state, payload) {
+        state.sSelectedRelation = payload;
     },
     sRelativeFileArray(state, payload){
         state.sRelativeFileArray = payload;
@@ -79,8 +105,17 @@ const mutations = {
     sPatientLastName(state, payload) {
         state.sPatientLastName = payload;
     },
-    sPatientMiddleInitial(state, payload) {
-        state.sPatientMiddleInitial = payload;
+    sPatientMiddleName(state, payload) {
+        state.sPatientMiddleName = payload;
+    },
+    sPreviousPatientFirstName(state, payload) {
+        state.sPreviousPatientFirstName = payload;
+    },
+    sPreviousPatientLastName(state, payload) {
+        state.sPreviousPatientLastName = payload;
+    },
+    sPreviousPatientMiddleName(state, payload) {
+        state.sPreviousPatientMiddleName = payload;
     },
     dtPatientDOB(state, payload) {
         state.dtPatientDOB = payload;
@@ -103,11 +138,20 @@ const mutations = {
     sAddStreetAddress(state, payload) {
         state.sAddStreetAddress = payload;
     },
+    sAddApartment(state, payload) {
+        state.sAddApartment = payload;
+    },
     dtRecordRangeStart(state, payload) {
         state.dtRecordRangeStart = payload;
     },
     dtRecordRangeEnd(state, payload) {
         state.dtRecordRangeEnd = payload;
+    },
+    bDRMostRecentVisit(state, payload) {
+        state.bDRMostRecentVisit = payload;
+    },
+    bRTManualSelection(state, payload) {
+        state.bRTManualSelection = payload;
     },
     sSelectedRecordTypes(state, payload) {
         state.sSelectedRecordTypes = payload;
@@ -133,16 +177,47 @@ const mutations = {
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
     },
-    sSTMailCompAdd(state, payload) {
-        state.sSTMailCompAdd = payload;
+    sSTAddZipCode(state, payload) {
+        state.sAddZipCode = payload;
     },
-    dtSTPickUp(state, payload) {
-        state.dtSTPickUp = payload;
+    sSTAddCity(state, payload) {
+        state.sAddCity = payload;
     },
-    sSTRecordFormat(state, payload) {
-        state.sSTRecordFormat = payload;
+    sSTAddState(state, payload) {
+        state.sAddState = payload;
+    },
+    sSTAddStreetAddress(state, payload) {
+        state.sAddStreetAddress = payload;
+    },
+    sStAddApartment(state, payload) {
+        state.sStAddApartment = payload;
+    },
+    sRecipientFirstName(state, payload) {
+        state.sRecipientFirstName = payload;
+    },
+    sRecipientMiddleName(state, payload) {
+        state.sRecipientMiddleName = payload;
+    },
+    sRecipientLastName(state, payload) {
+        state.sRecipientLastName = payload;
+    },
+    sRecipientAddApartment(state, payload) {
+        state.sRecipientAddApartment = payload;
+    },
+    sRecipientAddStreetAddress(state, payload) {
+        state.sRecipientAddStreetAddress = payload;
+    },
+    sRecipientAddCity(state, payload) {
+        state.sRecipientAddCity = payload;
+    },
+    sRecipientAddState(state, payload) {
+        state.sRecipientAddState = payload;
+    },
+    sRecipientAddZipCode(state, payload) {
+        state.sRecipientAddZipCode = payload;
     },
 
+    
 
 
 

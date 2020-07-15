@@ -68,8 +68,8 @@ h1 {
 }
 
 .next {
-  margin-top: 5%;
-  margin-bottom: 5%;
+  margin-top: 2%;
+  margin-bottom: 2%;
   background-color: #e84700 !important;
 }
 
@@ -88,12 +88,14 @@ h1 {
 /* Pages contains Checkbox List */
 
 .checkboxBorder {
-  height: 40px;
+  height: auto;
   line-height: 40px;
   padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   font-size: 14px;
   background-color: rgba(0,0,0,0.18);
-  white-space: nowrap;
+  white-space: normal;
   text-overflow: ellipsis;
   overflow: visible;
   border: 1px solid #f6efef;

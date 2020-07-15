@@ -526,11 +526,9 @@ namespace MROWebApi.Controllers
 
             allFields.Add("MROPatientTelephoneNo", requester.sPhoneNo);
 
-            //Release To
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToMyself" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToFamilyCaregiver" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToDoctor" ? "On" : "");
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == "MROReleaseToThirdParty" ? "On" : "");
+            //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
+            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == requester.sReleaseTo ? "On" : "");
+          
 
 
             FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
@@ -542,42 +540,47 @@ namespace MROWebApi.Controllers
 
             allFields.Clear();
 
-            //Signing the Document
-            Doc theDoc = new Doc();
+            if (!string.IsNullOrEmpty(requester.sSignatureData))
+            {
+                //Signing the Document
+                Doc theDoc = new Doc();
 
-            theDoc.Read(byteArrayToReturn);
-            string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
-            byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
-            Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+                theDoc.Read(byteArrayToReturn);
+                string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+                byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+                Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
 
-            MROHelperRepository helperRepo = new MROHelperRepository(_info);
-            MROHelper helper = await helperRepo.Select(1);
-            helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
-            byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
+                helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+                byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
 
-            System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
-            Graphics gra = Graphics.FromImage(canvas);
-            Bitmap smallImg = new Bitmap(image2);
-            gra.DrawImage(smallImg, new Point(0, 0));
-
-
-            var mssignaturewithbg = new MemoryStream();
-            canvas.Save(mssignaturewithbg, canvas.RawFormat);
-            mssignaturewithbg.ToArray();
+                System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
+                Graphics gra = Graphics.FromImage(canvas);
+                Bitmap smallImg = new Bitmap(image2);
+                gra.DrawImage(smallImg, new Point(0, 0));
 
 
-            XImage theImg = new XImage();
-            theImg.SetStream(mssignaturewithbg);
-            theDoc.Rect.String = theImg.Selection.String;
-            theDoc.Rect.Magnify(0.15, 0.2);
-            theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
-            theDoc.AddImageObject(theImg, false);
-            theImg.Clear();
+                var mssignaturewithbg = new MemoryStream();
+                canvas.Save(mssignaturewithbg, canvas.RawFormat);
+                mssignaturewithbg.ToArray();
 
-            theDoc.Form.Stamp();
 
-            byte[] pdfBytes = theDoc.GetData();
-            return pdfBytes;
+                XImage theImg = new XImage();
+                theImg.SetStream(mssignaturewithbg);
+                theDoc.Rect.String = theImg.Selection.String;
+                theDoc.Rect.Magnify(0.15, 0.2);
+                theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
+                theDoc.AddImageObject(theImg, false);
+                theImg.Clear();
+
+                theDoc.Form.Stamp();
+
+                byte[] pdfBytes = theDoc.GetData();
+                return pdfBytes;
+            }
+            
+            return byteArrayToReturn;
         }
         //private async static Task<byte[]> GetFilledPDF(Requesters requester, DBConnectionInfo _info)
         //{
