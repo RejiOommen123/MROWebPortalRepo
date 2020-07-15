@@ -61,7 +61,7 @@ namespace MRODBL.BaseClasses
         public string sAddApartment { get; set; }
         public DateTime? dtRecordRangeStart { get; set; }
         public DateTime? dtRecordRangeEnd { get; set; }
-        public bool bDRMostRecentVisit { get; set; }
+        public bool bRecordMostRecentVisit { get; set; }
         public string[] sSelectedRecordTypes { get; set; }
         public bool bRTManualSelection { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
