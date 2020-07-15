@@ -71,12 +71,12 @@ namespace MROWebApi.Controllers
                 var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
                 var SRArray = requester.sSelectedRecordTypes.Length != 0 ? string.Join(",", requester.sSelectedRecordTypes) : "";
                 var STArray = requester.sSelectedShipmentTypes.Length != 0 ? string.Join(",", requester.sSelectedShipmentTypes) : "";
-                var SIArray = requester.selectedSensitiveInfo.Length != 0 ? string.Join(",", requester.selectedSensitiveInfo) : "";
+                var SIArray = requester.sSelectedSensitiveInfo.Length != 0 ? string.Join(",", requester.sSelectedSensitiveInfo) : "";
                 var relativeFileArray = requester.sRelativeFileArray.Length != 0 ? string.Join(",", requester.sRelativeFileArray) : "";
                 requester.sSelectedPrimaryReasons = new string[] { PRArray };
                 requester.sSelectedRecordTypes = new string[] { SRArray };
                 requester.sSelectedShipmentTypes = new string[] { STArray };
-                requester.selectedSensitiveInfo = new string[] { SIArray };
+                requester.sSelectedSensitiveInfo = new string[] { SIArray };
                 requester.sRelativeFileArray = new string[] { relativeFileArray };
                 #endregion
 

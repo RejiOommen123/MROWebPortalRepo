@@ -17,6 +17,7 @@ namespace MRODBL.BaseClasses
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nLocationID { get; set; }
         public string sSelectedLocation { get; set; }
+        public string sSelectedLocationName { get; set; }
         [Required]
         public bool bAreYouPatient { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters Relative Name allowed")]
@@ -69,7 +70,7 @@ namespace MRODBL.BaseClasses
         public string sOtherReasons { get; set; }
         [StringLength(30, ErrorMessage = "Maximum 30 characters Release To allowed")]
         public string sReleaseTo { get; set; }
-        public string[] selectedSensitiveInfo { get; set; }
+        public string[] sSelectedSensitiveInfo { get; set; }
         public DateTime? dtAuthExpire { get; set; }
         public string sAuthSpecificEvent { get; set; }
         public bool bDeadlineStatus { get; set; }
