@@ -105,12 +105,8 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                //DB Storing
-                RequestersController requestersController = new RequestersController(_info);
-                await requestersController.AddRequester(requester);
-
-
                 byte[] signedPDF = await GetSignedPDF(requester);
+                
                 requester.sPDF = Convert.ToBase64String(signedPDF);
                 requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
@@ -125,8 +121,22 @@ namespace MROWebApi.Controllers
                 var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
                 var sOtherReasons = string.IsNullOrEmpty(requester.sOtherReasons) ? "" : requester.sOtherReasons;
                 var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
-                
 
+                //DB Storing
+                RequestersController requestersController = new RequestersController(_info);
+                await requestersController.AddRequester(requester);
+
+                //Send Email to Patient
+                MROLogger passwordDecrypt = new MROLogger(_info);
+                if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                {
+                    await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+
+                }
+                else
+                {
+                    return Content("Email Not Sent");
+                }
                 XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
                 {
                     OmitXmlDeclaration = false,
@@ -301,17 +311,9 @@ namespace MROWebApi.Controllers
                     }
                 }
 
-                //AddRequestor(requestors, _info);
+                //return Ok(xmlString.ToString());
+                return Ok();
 
-                //Send Email to Patient
-                MROLogger passwordDecrypt = new MROLogger(_info);
-                if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
-                {
-                        await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
-                        return Ok(xmlString.ToString());
-                }
-                else
-                    return Content("Email Not Sent");
             }
             else
             {
