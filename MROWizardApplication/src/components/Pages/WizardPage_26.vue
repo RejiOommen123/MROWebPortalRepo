@@ -15,9 +15,9 @@ export default {
   name: "WizardPage_24",
   data() {
     return {
-        disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01,
-        disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer02,
-        disclaimer03 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer03
+        disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer01,
+        disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer02,
+        disclaimer03 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer03
     };
   },
   methods: {

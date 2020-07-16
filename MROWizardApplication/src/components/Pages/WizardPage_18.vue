@@ -56,7 +56,7 @@ export default {
         .substr(0, 10),
       menu1: false,
       disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_16_disclaimer01,
+        .wizardHelper.Wizard_18_disclaimer01,
 
       //Show and Hide Fields Values
       MRORequestDeadlineDate: this.$store.state.ConfigModule

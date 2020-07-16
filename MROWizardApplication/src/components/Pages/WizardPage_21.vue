@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       nSelectedCheckBox:[],
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_21_disclaimer01,
     };
   },
   methods: {

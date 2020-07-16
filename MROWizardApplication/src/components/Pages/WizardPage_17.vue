@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       sActiveBtn:'',
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_disclaimer01
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer01
     };
   },
   methods: {

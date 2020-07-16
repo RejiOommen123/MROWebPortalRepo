@@ -20,7 +20,7 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:350px; background-color:transparent">An abstract contains key documents about a visit to your healthcare provider. Choose this option if you need records to take to another healthcare facility/doctor or if needed for your own personal files. An abstract will include: ID (face) sheet, Discharge summary, History & Physical, Consultation reports, Operative reports, Pathology reports, Radiology reports, EKG/ECG reports, CT scan reports, Cardia related reports, and Lab summary.</p>
+                  <p style="width:350px; background-color:transparent">{{disclaimer01}}</p>
                 </v-col>
             </v-tooltip>
         </v-checkbox>
@@ -41,7 +41,7 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:350px; background-color:transparent">If you are looking for specific document types (not included in the Abstract above), you can choose the ‘manual option' to allow you to choose the record type(s) you need.</p>
+                  <p style="width:350px; background-color:transparent">{{disclaimer02}}</p>
                 </v-col>
             </v-tooltip>
         </v-checkbox>
@@ -58,7 +58,10 @@ export default {
   data() {
     return {
       bRTManualSelection : false,
-      option:1
+      option:1,
+
+      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
+      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,
     };
   },
   methods: {
@@ -106,6 +109,7 @@ export default {
 </script>
 <style scoped>
 .v-tooltip__content{
+  color: black;
   background: white;
 }
 </style>

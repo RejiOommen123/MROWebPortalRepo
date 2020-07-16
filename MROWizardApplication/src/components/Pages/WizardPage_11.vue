@@ -65,6 +65,7 @@ export default {
 </script>
 <style scoped>
 .v-tooltip__content{
+  color: black;
   background: white;
 }
 </style>

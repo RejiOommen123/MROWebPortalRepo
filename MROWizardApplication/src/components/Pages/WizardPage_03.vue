@@ -47,7 +47,7 @@
             </v-col>
             <v-col>
               <label cols="12" offset-sm="2" sm="8">
-              Please indicate your relationship to the patient.
+              {{disclaimer03}}
               </label>
             </v-col>
             <v-col v-if="MRORelationshipParentLegalGuardian" cols="12" offset-sm="2" sm="8">
@@ -161,6 +161,8 @@ export default {
         .wizardHelper.Wizard_03_disclaimer01,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer02,
+      disclaimer03: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer03,
       sActiveBtn:'',
       //TODO: Fetch disclaimer03 for multiple dile upload
 

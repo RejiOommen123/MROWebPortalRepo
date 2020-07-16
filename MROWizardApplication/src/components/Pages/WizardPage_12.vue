@@ -65,7 +65,7 @@ export default {
       sOtherPrimaryReasons: '',
       sSelectedPrimaryReasonsName:'',
 
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_11_disclaimer01
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_12_disclaimer01
     };
   },
   methods: {
@@ -119,6 +119,7 @@ export default {
 </script>
 <style scoped>
 .v-tooltip__content{
+  color: black;
   background: white;
 }
 </style>

@@ -125,7 +125,7 @@
                 cols="12"
                 sm="12"
               >
-              <div class="disclaimer">{{disclaimer}}</div>
+              <!-- <div class="disclaimer">{{disclaimer}}</div> -->
               <div class="disclaimer">{{pickUpInstruction}}</div>               
               </v-col>                
             </div>
@@ -184,7 +184,7 @@
 import { validationMixin } from "vuelidate";
 import { required, email, sameAs, numeric ,maxLength,minLength} from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_12",
+  name: "WizardPage_14",
   data() {
     return {
       oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
@@ -204,7 +204,7 @@ export default {
       sSTAddApartment:this.$store.state.requestermodule.sAddApartment,
       menu1: false,
 
-      disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
+      // disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
       pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.pickUpInstruction,
     };
   },
@@ -374,6 +374,7 @@ export default {
 </script>
 <style scoped>
 .v-tooltip__content{
+  color: black;
   background: white;
 }
 </style>

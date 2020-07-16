@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1>What's your Email Address?</h1>
+    <h1>What is your email address?</h1>
     <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
     <div>
       <v-row>
@@ -34,6 +34,7 @@
             </div>
             <div v-if="bRequestorEmailConfirm==true">
             <v-checkbox
+              id="checkbox"
               v-model="bConfirmReport"
               :disabled="inputDisabled"
               @change="checked()"
@@ -246,4 +247,7 @@ export default {
 };
 </script>
 <style scoped>
+#checkbox label{
+  font-size: 14px;
+}
 </style>

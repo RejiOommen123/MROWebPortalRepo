@@ -63,7 +63,7 @@
         >
       <v-card>
         <v-card-text style="padding-top:20px">
-          Once you provide a copy of your Government or Photo ID, you will be taken to a new screen to review your request, make edits, sign and submit your request.
+          First screen- add pop-up that states: ‘Review your request form and sign your request. Please verify all sections for accuracy. Any incorrect information may cause a delay in your records request delivery.
         </v-card-text>
 
         <v-card-actions>

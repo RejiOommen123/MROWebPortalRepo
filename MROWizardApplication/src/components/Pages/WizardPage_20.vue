@@ -90,8 +90,8 @@ export default {
       pageskip:false,
       countryCode: ['+1', '+91'],
       selectedCountry:'+1',
-      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
-      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer02,
+      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer01,
+      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer02,
 
       sPhoneNo: "",
       sApp_Key: "tu9ete3u9ocidovebefu",

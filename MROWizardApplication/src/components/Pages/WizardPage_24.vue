@@ -20,7 +20,7 @@ export default {
   name: "WizardPage_22",
   data() {
     return {
-       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01
+       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01
     };
   },
   created(){ 
