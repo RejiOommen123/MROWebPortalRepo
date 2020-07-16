@@ -2,7 +2,7 @@
   <div class="center">
     <h1>What is the primary reason for requesting records?</h1>
     <!-- TODO:Check for subheading -->
-    <h6>{{disclaimer}}</h6>
+    <h6 v-if="disclaimer!=''">{{disclaimer}}</h6>
 
     <template>
       <!-- Get all Primary Reasons associated to facility and displayed as checkbox for selection-->
@@ -21,7 +21,7 @@
             color="#e84700"
             :value="primaryReason.sNormalizedPrimaryReasonName"
             v-model="sSelectedPrimaryReasons"
-            @change="check(primaryReason.sNormalizedPrimaryReasonName)"
+            @change="check(primaryReason)"
           >
           <!-- This for 'i' button to give disclaimers/info about option -->
             <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" top>
@@ -38,7 +38,7 @@
       <!-- If requester selects other reason then free text box will appear to enter data -->
       <v-col cols="12" offset-sm="3" sm="6">
         <div v-if="this.bOther==true">
-          <v-textarea v-model="sOtherReasons" rows="3" counter label="Other Reason"></v-textarea>
+          <v-textarea v-model="sOtherPrimaryReasons" rows="3" counter label="Other Reason"></v-textarea>
         </div>
       </v-col>
     </template>
@@ -62,7 +62,8 @@ export default {
         .apiResponseDataByLocation.oPrimaryReason,
       bOther: false,
       sSelectedPrimaryReasons: [],
-      sOtherReasons: "",
+      sOtherPrimaryReasons: '',
+      sSelectedPrimaryReasonsName:'',
 
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_11_disclaimer01
     };
@@ -73,7 +74,10 @@ export default {
         "requestermodule/sSelectedPrimaryReasons",
         this.sSelectedPrimaryReasons
       );
-      this.$store.commit("requestermodule/sOtherReasons", this.sOtherReasons);
+        if (this.sSelectedPrimaryReasons == "MROOtherPrimaryReason") {
+          this.sSelectedPrimaryReasonsName=this.sOtherPrimaryReasons;
+        }
+      this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", this.sSelectedPrimaryReasonsName);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
@@ -92,23 +96,29 @@ export default {
       this.sSelectedPrimaryReasons = [];
       this.bOther=false;
       this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);
-      this.$store.commit("requestermodule/sOtherReasons", '');
+      this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", '');
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     // to check if selected checkbox is other reason
-    check(prName) {
+    check(primaryReason) {
         this.sSelectedPrimaryReasons = [];
-        this.sSelectedPrimaryReasons.push(prName);
-
+        this.sSelectedPrimaryReasons.push(primaryReason.sNormalizedPrimaryReasonName);
+        this.sSelectedPrimaryReasonsName=primaryReason.sPrimaryReasonName;
         if (this.sSelectedPrimaryReasons == "MROOtherPrimaryReason") {
           this.bOther = true;
+          this.sSelectedPrimaryReasonsName=this.sOtherPrimaryReasons;
         }
         else{
           this.bOther=false;
-          this.sOtherReasons='';
+          this.sOtherPrimaryReasons='';
         }
           
     }
   }
 };
 </script>
+<style scoped>
+.v-tooltip__content{
+  background: white;
+}
+</style>

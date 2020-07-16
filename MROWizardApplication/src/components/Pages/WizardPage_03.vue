@@ -26,26 +26,31 @@
       <form>
         <v-row>
           <v-col cols="12" offset="2" sm="4">
-            <v-text-field
+            <v-text-field 
               v-model="sRelativeFirstName"
               :error-messages="sRelativeFirstNameErrors"
-              label="Relative First Name"
+              label="First Name"
               required
               @input="$v.sRelativeFirstName.$touch()"
               @blur="$v.sRelativeFirstName.$touch()"
             ></v-text-field>
           </v-col>
             <v-col cols="12"  sm="4">
-            <v-text-field
+            <v-text-field 
               v-model="sRelativeLastName"
               :error-messages="sRelativeLastNameErrors"
-              label="Relative Last Name"
+              label="Last Name"
               required
               @input="$v.sRelativeLastName.$touch()"
               @blur="$v.sRelativeLastName.$touch()"
             ></v-text-field>
             </v-col>
-            <v-col cols="12" offset-sm="2" sm="8">
+            <v-col>
+              <label cols="12" offset-sm="2" sm="8">
+              Please indicate your relationship to the patient.
+              </label>
+            </v-col>
+            <v-col v-if="MRORelationshipParentLegalGuardian" cols="12" offset-sm="2" sm="8">
             <v-checkbox
               hide-details
               dark
@@ -57,7 +62,7 @@
               @change="check('MRORelationshipParentLegalGuardian')"
             ></v-checkbox>
             </v-col>
-            <v-col  cols="12" offset-sm="2" sm="8">
+            <v-col v-if="MRORelationshipLegalRepresentative"  cols="12" offset-sm="2" sm="8">
             <v-checkbox
               hide-details
               dark
@@ -69,7 +74,7 @@
               @change="check('MRORelationshipLegalRepresentative')"
             ></v-checkbox>
             </v-col>
-            <v-col cols="12" offset-sm="2" sm="8">
+            <v-col v-if="MRORelationshipOther" cols="12" offset-sm="2" sm="8">
             <v-checkbox
               hide-details
               dark
@@ -92,7 +97,7 @@
               @blur="$v.sOtherRelation.$touch()"
             ></v-text-field>
             </v-col>
-            <v-col  cols="12" offset="3" sm="6">
+            <v-col v-if="MRORelationMultipleDocument"  cols="12" offset="3" sm="6">
               <template>
               <v-file-input
                 ref="file"
@@ -132,8 +137,8 @@
         </v-row>
       </form>
     </div>
-    <div v-if="bAreYouPatient" class="disclaimer">{{this.disclaimer01}}</div>
-    <div v-else class="disclaimer">{{this.disclaimer02}}</div>
+    <div v-if="bAreYouPatient && disclaimer01!='' " class="disclaimer">{{this.disclaimer01}}</div>
+    <div v-if="!bAreYouPatient && disclaimer02!='' " class="disclaimer">{{this.disclaimer02}}</div>
   </div>
 </template>
 
@@ -156,8 +161,17 @@ export default {
         .wizardHelper.Wizard_03_disclaimer01,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer02,
-      sActiveBtn:''
+      sActiveBtn:'',
       //TODO: Fetch disclaimer03 for multiple dile upload
+
+      MRORelationshipParentLegalGuardian: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipParentLegalGuardian,
+       MRORelationshipLegalRepresentative: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipLegalRepresentative,
+      MRORelationshipOther: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipOther,
+      MRORelationMultipleDocument: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationMultipleDocument
     };
   },
   //Relative name and realtion validations
@@ -199,7 +213,7 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", true);
       this.$store.commit("requestermodule/sRelativeFirstName", "");
       this.$store.commit("requestermodule/sRelativeLastName", "");
-      this.$store.commit("requestermodule/sOtherRelation", "");
+      this.$store.commit("requestermodule/sSelectedRelationName", "");
       this.$store.commit("requestermodule/sSelectedRelation", "");
       this.$store.commit("requestermodule/sRelativeFileArray", []);
       this.$store.commit("ConfigModule/mutateNextIndex");
@@ -210,10 +224,18 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
+      if(this.sSelectedRelation=='MRORelationshipParentLegalGuardian'){
+        this.$store.commit("requestermodule/sSelectedRelationName","Parent/Legal Guardian");
+      }
+      if(this.sSelectedRelation=='MRORelationshipLegalRepresentative'){
+        this.$store.commit("requestermodule/sSelectedRelationName","Legal Representative (Executor, Patient Rep., HCPOA, etc.)");
+      }
+      if(this.sSelectedRelation=='MRORelationshipOther'){
+        this.$store.commit("requestermodule/sSelectedRelationName",this.sOtherRelation);
+      }
       this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
       this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
       this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
-      this.$store.commit("requestermodule/sOtherRelation",this.sOtherRelation);
       this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedRelation);
       this.$store.commit("ConfigModule/mutateNextIndex");
     },

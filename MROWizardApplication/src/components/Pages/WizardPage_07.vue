@@ -4,13 +4,13 @@
       <h1>What is your mailing address?</h1>
       <v-row>
         <!-- TODO: v-if="MROAddApartment" -->
-         <v-col cols="12" sm="6">
+         <v-col v-if="MROAddApartment" cols="12" sm="6">
           <v-text-field
             v-model="sAddApartment"
-            label="Apartment/Building"
+            label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddStreetAddress" cols="12" sm="6">
+        <v-col cols="12" sm="6">
           <v-text-field
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
@@ -20,7 +20,7 @@
             @blur="$v.sAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddCity" offset-sm="1" cols="12" sm="3">
+        <v-col offset-sm="1" cols="12" sm="3">
           <v-text-field
             v-model="sAddCity"
             :error-messages="cityErrors"
@@ -30,7 +30,7 @@
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddState" offset-sm="1" cols="12"  sm="2">
+        <v-col offset-sm="1" cols="12"  sm="2">
           <v-text-field
             v-model="sAddState"
             :error-messages="stateErrors"
@@ -40,7 +40,7 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROAddZipCode" offset-sm="1" cols="12" sm="3">
+        <v-col offset-sm="1" cols="12" sm="3">
           <v-text-field
             type="tel"
             v-model="sAddZipCode"
@@ -54,7 +54,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="2" sm="8">
-          <div class="disclaimer">{{disclaimer}}</div>
+          <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
           <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
@@ -84,14 +84,8 @@ export default {
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
 
       //Show and Hide Fields Values
-      MROAddZipCode: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROAddZipCode,
-      MROAddCity: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROAddCity,
-      MROAddState: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROAddState,
-      MROAddStreetAddress: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROAddStreetAddress
+      MROAddApartment: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROAddApartment,
     };
   },
   //Requester address validations

@@ -4,7 +4,7 @@
     <form>
     <v-row>
       <!-- Start Date input -->
-      <v-col cols="12" offset-sm="1" sm="3" md="4">
+      <v-col v-if="MRORecordsDateRange" cols="12" offset-sm="1" sm="3" md="4">
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -19,14 +19,14 @@
               @click:clear="dtRecordRangeStart = null"
               @input="$v.dtRecordRangeStart.$touch()"
               @blur="$v.dtRecordRangeStart.$touch()"
-              :disabled="bDRMostRecentVisit"
+              :disabled="bRecordMostRecentVisit"
             ></v-text-field>
           </template>
           <v-date-picker v-model="dtRecordRangeStart" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
         </v-menu>
       </v-col>
       <!-- End Date input -->
-      <v-col cols="12" offset-sm="2" sm="3" md="4">
+      <v-col v-if="MRORecordsDateRange" cols="12" offset-sm="2" sm="3" md="4">
         <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -41,18 +41,17 @@
               @click:clear="dtRecordRangeEnd = null"
                @input="$v.dtRecordRangeEnd.$touch()"
               @blur="$v.dtRecordRangeEnd.$touch()"
-              :disabled="bDRMostRecentVisit"
+              :disabled="bRecordMostRecentVisit"
             ></v-text-field>
           </template>
           <v-date-picker v-model="dtRecordRangeEnd" color="green lighten-1" header-color="primary" light @change="menu2 = false"></v-date-picker>
         </v-menu>
       </v-col>
-      <!-- TODO: Dynamic label and MRODRMostRecentVisit -->
-      <v-col cols="12" offset-sm="3" sm="6" >
+      <v-col v-if="MRORecordsMostRecentVisit" cols="12" offset-sm="3" sm="6" >
         <v-checkbox
           hide-details
           class="checkboxBorder"
-          v-model="bDRMostRecentVisit"
+          v-model="bRecordMostRecentVisit"
           color="#e84700"
           label="Most Recent Visit."
       ></v-checkbox>
@@ -60,12 +59,12 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn v-if="bDRMostRecentVisit"  @click.prevent="nextPage"  class="next">Next</v-btn>
+          <v-btn v-if="bRecordMostRecentVisit"  @click.prevent="nextPage"  class="next">Next</v-btn>
           <v-btn v-else :disabled="$v.$invalid" @click.prevent="nextPage"  class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
-     <div class="disclaimer">{{this.disclaimer}}</div>
+     <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
     </form>
     </div>
     
@@ -80,10 +79,15 @@ export default {
     return {
       dtRecordRangeStart: '',
       dtRecordRangeEnd: '',
-      bDRMostRecentVisit:false,
+      bRecordMostRecentVisit:false,
       menu1: false,
       menu2: false,
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01,
+
+      MRORecordsDateRange: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecordsDateRange,
+      MRORecordsMostRecentVisit: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecordsMostRecentVisit,
     };
   },
   // Start and end date validations
@@ -100,13 +104,13 @@ export default {
   },
   methods: {
     nextPage() {
-      if(this.bDRMostRecentVisit){
-        this.$store.commit("requestermodule/bDRMostRecentVisit", this.bDRMostRecentVisit);
+      if(this.bRecordMostRecentVisit){
+        this.$store.commit("requestermodule/bRecordMostRecentVisit", this.bRecordMostRecentVisit);
         this.$store.commit("requestermodule/dtRecordRangeStart", '');
         this.$store.commit("requestermodule/dtRecordRangeEnd", '');
       }
       else{
-        this.$store.commit("requestermodule/bDRMostRecentVisit", this.bDRMostRecentVisit);
+        this.$store.commit("requestermodule/bRecordMostRecentVisit", this.bRecordMostRecentVisit);
         this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeStart);
         this.$store.commit("requestermodule/dtRecordRangeEnd", this.dtRecordRangeEnd);
       }
@@ -124,14 +128,7 @@ export default {
       //Partial Requester Data Save End
     
       this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    // checked(){
-    //   if(this.bDRMostRecentVisit){
-    //     this.$v.$error.$clear;
-    //     this.dtRecordRangeStart='';
-    //     this.dtRecordRangeEnd='';
-    //   }
-    // }
+    }
   },
   computed: {
      //Date Format setter

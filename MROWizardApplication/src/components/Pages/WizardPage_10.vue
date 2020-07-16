@@ -14,14 +14,15 @@
             :label="recordType.sRecordTypeName"
             color="#e84700"
             :value="recordType.sNormalizedRecordTypeName"
-          wrap>
+            wrap
+          >
           <!-- This for 'i' button to give disclaimers/info about option -->
             <v-tooltip  v-if="recordType.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:200px; background-color:transparent">{{recordType.sFieldToolTip}}</p>
+                  <p style="width:200px; background-color:white;color:black">{{recordType.sFieldToolTip}}</p>
                 </v-col>
             </v-tooltip>
           </v-checkbox>
@@ -63,3 +64,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.v-tooltip__content{
+  background: white;
+}
+</style>

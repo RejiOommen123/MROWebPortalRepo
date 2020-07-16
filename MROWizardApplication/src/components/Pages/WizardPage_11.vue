@@ -8,7 +8,7 @@
           <v-checkbox
             hide-details
             dark
-            v-model="selectedSensitiveInfo"
+            v-model="sSelectedSensitiveInfo"
             class="checkboxBorder"
             :label="sensitiveInfo.sSensitiveInfoName"
             color="#e84700"
@@ -40,12 +40,12 @@ export default {
   data() {
     return {
       oSensitiveInfoArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
-      selectedSensitiveInfo: []
+      sSelectedSensitiveInfo: []
     };
   },
   methods: {
     nextPage() {
-      this.$store.commit("requestermodule/selectedSensitiveInfo", this.selectedSensitiveInfo);
+      this.$store.commit("requestermodule/sSelectedSensitiveInfo", this.sSelectedSensitiveInfo);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
@@ -63,3 +63,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.v-tooltip__content{
+  background: white;
+}
+</style>

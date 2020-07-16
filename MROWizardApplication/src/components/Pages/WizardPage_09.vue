@@ -4,7 +4,6 @@
       <h1>Which types of records would like to request?</h1>
     </div>
     <v-row>
-      <!-- TODO : v-if="MROAuthExpireDateAfterNMonths" -->
       <v-col cols="12" offset-sm="2" sm="8">
         <v-checkbox
           hide-details
@@ -105,3 +104,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.v-tooltip__content{
+  background: white;
+}
+</style>

@@ -5,18 +5,20 @@ const state = {
     nFacilityID:0,
     nLocationID:0,
     sSelectedLocation: "",
+    sSelectedLocationName:"",
     bAreYouPatient: true,
     sRelativeFirstName: '',
     sRelativeLastName: '',
-    sOtherRelation:'',
-    sSelectedRelation: '',
+    sSelectedRelation:'',
+    sSelectedRelationName: '',
     sRelativeFileArray:[],
     sPatientFirstName: '',
     sPatientLastName: '',
     sPatientMiddleName: '',
-    sPreviousPatientFirstName: '',
-    sPreviousPatientLastName: '',
-    sPreviousPatientMiddleName: '',
+    sPatientPreviousFirstName: '',
+    sPatientPreviousLastName: '',
+    sPatientPreviousMiddleName: '',
+    bPatientNameChanged:false,
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
@@ -27,11 +29,11 @@ const state = {
     sAddApartment:'',
     dtRecordRangeStart: '',
     dtRecordRangeEnd: '',
-    bDRMostRecentVisit:false,
+    bRecordMostRecentVisit:false,
     bRTManualSelection:false,
     sSelectedRecordTypes: [],
     sSelectedPrimaryReasons: [],
-    sOtherReasons: '',
+    sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
     nSTFaxNo:0,
@@ -53,7 +55,7 @@ const state = {
 
    
 
-    selectedSensitiveInfo: [],
+    sSelectedSensitiveInfo: [],
     dAuthExpire : null,
     sAuthSpecificEvent : '',
     bDeadlineStatus:false,
@@ -81,6 +83,9 @@ const mutations = {
     sSelectedLocation(state, payload) {
         state.sSelectedLocation = payload;
     },
+    sSelectedLocationName(state, payload) {
+        state.sSelectedLocationName = payload;
+    },
     bAreYouPatient(state, payload) {
         state.bAreYouPatient = payload;
     },
@@ -90,11 +95,11 @@ const mutations = {
     sRelativeLastName(state, payload) {
         state.sRelativeLastName = payload;
     },
-    sOtherRelation(state, payload) {
-        state.sOtherRelation = payload;
-    },
     sSelectedRelation(state, payload) {
         state.sSelectedRelation = payload;
+    },
+    sSelectedRelationName(state, payload) {
+        state.sSelectedRelationName = payload;
     },
     sRelativeFileArray(state, payload){
         state.sRelativeFileArray = payload;
@@ -108,14 +113,17 @@ const mutations = {
     sPatientMiddleName(state, payload) {
         state.sPatientMiddleName = payload;
     },
-    sPreviousPatientFirstName(state, payload) {
-        state.sPreviousPatientFirstName = payload;
+    sPatientPreviousFirstName(state, payload) {
+        state.sPatientPreviousFirstName = payload;
     },
-    sPreviousPatientLastName(state, payload) {
-        state.sPreviousPatientLastName = payload;
+    sPatientPreviousLastName(state, payload) {
+        state.sPatientPreviousLastName = payload;
     },
-    sPreviousPatientMiddleName(state, payload) {
-        state.sPreviousPatientMiddleName = payload;
+    sPatientPreviousMiddleName(state, payload) {
+        state.sPatientPreviousMiddleName = payload;
+    },
+    bPatientNameChanged(state, payload) {
+        state.bPatientNameChanged = payload;
     },
     dtPatientDOB(state, payload) {
         state.dtPatientDOB = payload;
@@ -147,8 +155,8 @@ const mutations = {
     dtRecordRangeEnd(state, payload) {
         state.dtRecordRangeEnd = payload;
     },
-    bDRMostRecentVisit(state, payload) {
-        state.bDRMostRecentVisit = payload;
+    bRecordMostRecentVisit(state, payload) {
+        state.bRecordMostRecentVisit = payload;
     },
     bRTManualSelection(state, payload) {
         state.bRTManualSelection = payload;
@@ -159,8 +167,8 @@ const mutations = {
     sSelectedPrimaryReasons(state, payload) {
         state.sSelectedPrimaryReasons = payload;
     },
-    sOtherReasons(state, payload) {
-        state.sOtherReasons = payload;
+    sSelectedPrimaryReasonsName(state, payload) {
+        state.sSelectedPrimaryReasonsName = payload;
     },
     sReleaseTo(state, payload) {
         state.sReleaseTo = payload;
@@ -221,8 +229,8 @@ const mutations = {
 
 
 
-    selectedSensitiveInfo(state, payload) {
-        state.selectedSensitiveInfo = payload;
+    sSelectedSensitiveInfo(state, payload) {
+        state.sSelectedSensitiveInfo = payload;
     },
     dAuthExpire(state, payload) {
         state.dAuthExpire = payload;

@@ -22,6 +22,24 @@
               :value="location.sNormalizedLocationName"
             >{{location.sLocationName}}</button>
           </v-col>
+          <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
+            <v-col v-if="showOtherLoactionBox" cols="6" offset-sm="3" sm="6">
+              <v-text-field
+                type="text"
+                v-model="sSelectedLocationName"
+                :error-messages="sSelectedLocationNameErrors"
+                label="OTHER LOCATION NAME"
+                required
+                @input="$v.sSelectedLocationName.$touch()"
+                @blur="$v.sSelectedLocationName.$touch()"
+              ></v-text-field>
+              <v-btn
+                :disabled="$v.sSelectedLocationName.$invalid"
+                @click.prevent="next(location)"
+                class="next"
+              >Next</v-btn>
+            </v-col>
+          </div>
         </div>
       </div>
     </v-row>
@@ -38,6 +56,8 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_02",
   data() {
@@ -45,68 +65,108 @@ export default {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
       dialogLoader: false,
-      sActiveBtn: ""
+      sActiveBtn: "",
+      showOtherLoactionBox: false,
+      sSelectedLocationName: ""
     };
   },
-  methods: {
-    locationRequest(location) {
-      // Using sActiveBtn variable to set background color to show button selection
-      this.sActiveBtn = location.sNormalizedLocationName;
-      this.dialogLoader = true;
-      //Getting back from next slide and then again selecting location. if selecting same location  then it
-      //will not fetch wizard data based on location id as it already fetch previously
-      if (
-        location.sNormalizedLocationName !=
-        this.$store.state.requestermodule.sSelectedLocation
-      ) {
-        this.$http
-          .get(
-            "Wizards/GetWizardConfig/fID=" +
-              location.nFacilityID +
-              "&lID=" +
-              location.nFacilityLocationID
-          )
-          .then(response => {
-            var apiLocationResponse = response.body;
-            if (response.body) {
-              this.$store.commit(
-                "ConfigModule/apiResponseDataByLocation",
-                apiLocationResponse
-              );
-              this.$store.commit(
-                "ConfigModule/wizardLogo",
-                apiLocationResponse.oLocations[0].sConfigLogoData
-              );
-              this.$store.commit(
-                "ConfigModule/wizardBackground",
-                apiLocationResponse.oLocations[0].sConfigBackgroundData
-              );
-              this.$store.commit(
-                "requestermodule/nFacilityID",
-                location.nFacilityID
-              );
-              this.$store.commit(
-                "requestermodule/nLocationID",
+  mixins: [validationMixin],
+  validations: {
+    sSelectedLocationName: {
+      required
+    },
+  },
+    computed: {
+      //validations error message setter
+      sSelectedLocationNameErrors() {
+        const errors = [];
+        if (!this.$v.sSelectedLocationName.$dirty) return errors;
+        !this.$v.sSelectedLocationName.required &&
+          errors.push("Other Location Name is required.");
+        return errors;
+      }
+    },
+    methods: {
+      locationRequest(location) {
+        // Using sActiveBtn variable to set background color to show button selection
+        this.sActiveBtn = location.sNormalizedLocationName;
+
+        //Getting back from next slide and then again selecting location. if selecting same location  then it
+        //will not fetch wizard data based on location id as it already fetch previously
+        if (location.sNormalizedLocationName == "MROLocationOther") {
+          this.showOtherLoactionBox = true;
+        } else {
+          this.showOtherLoactionBox = false;
+          this.sSelectedLocationName = "";
+          this.$store.commit(
+            "requestermodule/sSelectedLocationName",
+            location.sLocationName
+          );
+          this.apiRequestByLocationId(location);
+        }
+      },
+      next(location) {
+        this.$store.commit(
+          "requestermodule/sSelectedLocationName",
+          this.sSelectedLocationName
+        );
+        this.apiRequestByLocationId(location);
+      },
+      apiRequestByLocationId(location) {
+        this.dialogLoader = true;
+        if (
+          location.sNormalizedLocationName !=
+          this.$store.state.requestermodule.sSelectedLocation
+        ) {
+          this.$http
+            .get(
+              "Wizards/GetWizardConfig/fID=" +
+                location.nFacilityID +
+                "&lID=" +
                 location.nFacilityLocationID
-              );
-              this.$store.commit(
-                "requestermodule/sSelectedLocation",
-                location.sNormalizedLocationName
-              );
-              this.$store.commit(
-                "ConfigModule/nAuthExpirationMonths",
-                location.nAuthExpirationMonths
-              );
-              this.dialogLoader = false;
-              this.$store.commit("ConfigModule/mutateNextIndex");
-            }
-          });
-      } else {
-        this.dialogLoader = false;
-        this.$store.commit("ConfigModule/mutateNextIndex");
+            )
+            .then(response => {
+              var apiLocationResponse = response.body;
+              if (response.body) {
+                this.$store.commit(
+                  "ConfigModule/apiResponseDataByLocation",
+                  apiLocationResponse
+                );
+                this.$store.commit(
+                  "ConfigModule/wizardLogo",
+                  apiLocationResponse.oLocations[0].sConfigLogoData
+                );
+                this.$store.commit(
+                  "ConfigModule/wizardBackground",
+                  apiLocationResponse.oLocations[0].sConfigBackgroundData
+                );
+                this.$store.commit(
+                  "requestermodule/nFacilityID",
+                  location.nFacilityID
+                );
+                this.$store.commit(
+                  "requestermodule/nLocationID",
+                  location.nFacilityLocationID
+                );
+                this.$store.commit(
+                  "requestermodule/sSelectedLocation",
+                  location.sNormalizedLocationName
+                );
+                this.$store.commit(
+                  "ConfigModule/nAuthExpirationMonths",
+                  location.nAuthExpirationMonths
+                );
+                this.dialogLoader = false;
+                this.$store.commit("ConfigModule/mutateNextIndex");
+              }
+            });
+        } else {
+          this.dialogLoader = false;
+          this.$store.commit("ConfigModule/mutateNextIndex");
+        }
       }
     }
-  }
+  
 };
 </script>
 <style scoped>

@@ -1,12 +1,11 @@
 <template>
   <div class="center">
     <h1>What's your Email Address?</h1>
-    <p>{{disclaimer01}}</p>
+    <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
     <div>
       <v-row>
         <v-col  cols="12" offset-sm="2" sm="8">
           <form>
-            <!-- <label for="sRequesterEmailId" class="control-label">EMAIL</label> -->
             <v-text-field
               label="EMAIL"
               v-model="emailValid.sRequesterEmailId"
@@ -16,9 +15,6 @@
               @input="$v.emailValid.sRequesterEmailId.$touch()"
               @blur="$v.emailValid.sRequesterEmailId.$touch()"
             ></v-text-field>
-            <!-- <div :class="{emailVerified: !$v.emailValid.sRequesterEmailId.$invalid}">
-            </div> -->
-            <!-- <label for="sConfirmEmailId" class="control-label">CONFIRM EMAIL</label> -->
             <v-text-field
             label="CONFIRM EMAIL"
               @paste.prevent
@@ -29,8 +25,6 @@
               @input="$v.emailValid.sConfirmEmailId.$touch()"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
-             <!-- <div :class="{emailVerified: !$v.emailValid.sConfirmEmailId.$invalid}">
-            </div> -->
             <div v-if="bRequestorEmailConfirm==false">
                <v-btn
               :disabled="$v.emailValid.$invalid"
