@@ -67,7 +67,7 @@ namespace MRODBL.BaseClasses
         public bool bRTManualSelection { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
         public string sSelectedPrimaryReasonsName { get; set; }
-        public string sOtherReasons { get; set; }
+
         [StringLength(30, ErrorMessage = "Maximum 30 characters Release To allowed")]
         public string sReleaseTo { get; set; }
         public string[] sSelectedSensitiveInfo { get; set; }

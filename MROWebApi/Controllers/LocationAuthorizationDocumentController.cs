@@ -214,7 +214,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address (User Confirmed)<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number (Verified)<b> " + requestor.sPhoneNo + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasons) + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasonsName) + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
 
             // Image insertion on a specific location on new page

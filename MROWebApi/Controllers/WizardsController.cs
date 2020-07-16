@@ -119,7 +119,7 @@ namespace MROWebApi.Controllers
                 var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
                 var sRelationToPatient = string.IsNullOrEmpty(requester.sSelectedRelationName) ? "" : requester.sSelectedRelationName;
                 var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
-                var sOtherReasons = string.IsNullOrEmpty(requester.sOtherReasons) ? "" : requester.sOtherReasons;
+                var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
                 var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
 
                 //DB Storing
@@ -161,7 +161,7 @@ namespace MROWebApi.Controllers
                 //For Date, Reason,Comments
                 writer.WriteElementString("date", DateTime.Now.ToString());
                 writer.WriteElementString("date_required_by", requester.dtDeadline.ToString());
-                writer.WriteElementString("reason", sOtherReasons);
+                writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
                 writer.WriteElementString("comments", sComments);
                 writer.WriteElementString("expiration", requester.dtAuthExpire.ToString());
                 writer.WriteEndElement();
