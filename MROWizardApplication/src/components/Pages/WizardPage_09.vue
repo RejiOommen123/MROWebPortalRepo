@@ -11,9 +11,9 @@
           class="checkboxBorder"
           label="I would like to request my medical records abstract."
           color="#e84700"
-          value=1
+          value="abstract"
           v-model="option"
-          @change="checked(1)"
+          @change="checked('abstract')"
         >
         <v-tooltip  slot="append" left>
                 <template v-slot:activator="{ on }">
@@ -32,9 +32,9 @@
           class="checkboxBorder"
           label="I would like to manually select which records I need."
           color="#e84700"
-          value=2
+          value="manual"
           v-model="option"
-          @change="checked(2)"
+          @change="checked('manual')"
         >
         <v-tooltip  slot="append" left>
                 <template v-slot:activator="{ on }">
@@ -47,7 +47,7 @@
         </v-checkbox>
       </v-col>
       <v-col cols="12" offset-sm="5" sm="2">
-        <v-btn  class="next" @click="next">Next</v-btn>
+        <v-btn :disabled="option[0]==null"  class="next" @click="next">Next</v-btn>
       </v-col>
     </v-row>
   </div>
@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       bRTManualSelection : false,
-      option:1,
+      option:[],
 
       disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
       disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,
@@ -66,6 +66,12 @@ export default {
   },
   methods: {
     next() {
+      if(this.option[0]=='abstract'){
+        this.bRTManualSelection=false;
+      }
+      else{
+        this.bRTManualSelection=true;
+      }
       this.$store.commit(
         "ConfigModule/bRTManualSelection",
         this.bRTManualSelection
@@ -95,14 +101,8 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     checked(status) {
-      this.option = status;
-
-      if(this.option==1){
-        this.bRTManualSelection=false;
-      }
-      else{
-        this.bRTManualSelection=true;
-      }
+      this.option=[];
+      this.option.push(status);
     }
   }
 };
