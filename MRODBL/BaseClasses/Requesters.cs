@@ -87,6 +87,8 @@ namespace MRODBL.BaseClasses
         public string sFeedbackComment { get; set; }
         [StringLength(15, ErrorMessage = "Maximum 15 characters Phone Number allowed")]
         public string sPhoneNo { get; set; }
+        public bool bPhoneNoVerified { get; set; }
+        
         [MaxLength]
         public string sPDF { get; set; }
 
@@ -110,6 +112,7 @@ namespace MRODBL.BaseClasses
         public string sRecipientAddState { get; set; }
         public string sRecipientAddStreetAddress { get; set; }
         public string sRecipientAddApartment { get; set; }
+
 
         [StringLength(50, ErrorMessage = "Maximum 50 characters Wizard Name allowed")]
         public string sWizardName { get; set; }

@@ -105,14 +105,15 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                byte[] signedPDF = await GetSignedPDF(requester);
-
-                requester.sPDF = Convert.ToBase64String(signedPDF);
-                requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 Facilities facility = await rpFac.Select(requester.nFacilityID);
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                 FacilityLocations location = await locaFac.Select(requester.nLocationID);
+
+                byte[] signedPDF = await GetSignedPDF(requester, facility);
+
+                requester.sPDF = Convert.ToBase64String(signedPDF);
+                requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
                 //var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
                 var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
                 var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
@@ -484,11 +485,11 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GeneratePDF(Requesters requestor)
+        public async Task<IActionResult> GeneratePDF(Requesters requestor,Facilities facility)
         {
             if (ModelState.IsValid)
             {
-                byte[] pdfBytes = await GetSignedPDF(requestor);
+                byte[] pdfBytes = await GetSignedPDF(requestor, facility);
                 return File(pdfBytes, "application/pdf");
             }
             else
@@ -499,143 +500,203 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private async Task<byte[]> GetSignedPDF(Requesters requester)
+        private async Task<byte[]> GetSignedPDF(Requesters requester, Facilities facility)
         {
-            Dictionary<string, string> allFields = new Dictionary<string, string>();
-            allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
-            allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
-            allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
-            allFields.Add("MROPatientLastName", requester.sPatientLastName);
-            allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
-            allFields.Add("MROPEmailId", requester.sRequesterEmailId);
-            allFields.Add("MROAddZipCode", requester.sAddZipCode);
-            allFields.Add("MROAddCity", requester.sAddCity);
-            allFields.Add("MROAddState", requester.sAddState);
-            allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
-
-
-            //Record Types
-            for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
+            try
             {
-                if (requester.sSelectedRecordTypes[counter] != "")
+                Dictionary<string, string> allFields = new Dictionary<string, string>();
+                allFields.Add("MROFacilityName", facility.sFacilityName);
+                allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
+                allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
+                allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
+                allFields.Add("MROPatientLastName", requester.sPatientLastName);
+                allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
+                allFields.Add("MROPEmailId", requester.sRequesterEmailId);
+                allFields.Add("MROAddZipCode", requester.sAddZipCode);
+                allFields.Add("MROAddCity", requester.sAddCity);
+                allFields.Add("MROAddState", requester.sAddState);
+                allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
+                allFields.Add("MROAddAppartment", requester.sAddApartment);
+
+                //Date Range
+                if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
                 {
-                    allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                    allFields.Add("MRORecordsDateRange", requester.dtRecordRangeStart.Value.ToShortDateString());
+                    allFields.Add("MRODateRangeEnd", requester.dtRecordRangeEnd.Value.ToShortDateString());
                 }
-            }
-
-            //Primary Reasons
-            for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
-            {
-                if (requester.sSelectedPrimaryReasons[counter] != "")
+                else
                 {
-                    allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                    allFields.Add("MRORecordsDateRange", string.Empty);
+                    allFields.Add("MRODateRangeEnd", string.Empty);
                 }
-            }
-            //Sensitive Info
-            for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
-            {
-                if (requester.sSelectedPrimaryReasons[counter] != "")
+
+
+
+                //Record Types
+                for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
                 {
-                    allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                    if (requester.sSelectedRecordTypes[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                    }
                 }
-            }
 
-            //Shipment Types 
-            for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
-            {
-                if (requester.sSelectedShipmentTypes[counter] != "")
+                //Primary Reasons
+                for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
                 {
-                    allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                    if (requester.sSelectedPrimaryReasons[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                    }
                 }
+                //Sensitive Info
+                for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
+                {
+                    if (requester.sSelectedPrimaryReasons[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                    }
+                }
+
+                //Shipment Types 
+                for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
+                {
+                    if (requester.sSelectedShipmentTypes[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                    }
+                }
+
+                //Shipment Type Related Fields
+                allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
+                allFields.Add("MROSTAddState", requester.sSTAddState);
+                allFields.Add("MROSTAddCity", requester.sSTAddCity);
+                allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
+                allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
+                allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
+                                                    + requester.sSTAddStreetAddress + ", "
+                                                    + requester.sSTAddCity + ", "
+                                                    + requester.sSTAddState + ", "
+                                                    + requester.sSTAddZipCode);
+
+
+
+                //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
+                if (requester.sReleaseTo != "")
+                {
+                    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == requester.sReleaseTo ? "On" : "");
+                }
+
+                //Recipient 
+                allFields.Add("MRORecipientAddZipCode", requester.sRecipientAddZipCode);
+                allFields.Add("MRORecipientAddState", requester.sRecipientAddState);
+                allFields.Add("MRORecipientAddCity", requester.sRecipientAddCity);
+                allFields.Add("MRORecipientAddStreetAddress", requester.sRecipientAddStreetAddress);
+                allFields.Add("MRORecipientAddApartment", requester.sRecipientAddApartment);
+                allFields.Add("MRORecipientFirstName", requester.sRecipientFirstName);
+                allFields.Add("MRORecipientLastName", requester.sRecipientLastName);
+                allFields.Add("MRORecipientMiddleName", requester.sRecipientMiddleName);
+
+
+                //Auth exipry date
+                if ((requester.dtAuthExpire != null))
+                {
+                    allFields.Add("MROAuthExpireDateSpecificDate", requester.dtAuthExpire.Value.ToShortDateString());
+                }
+                else
+                {
+                    allFields.Add("MROAuthExpireDateSpecificDate", string.Empty);
+                }
+                allFields.Add("MROAuthExpireDateEventOccurs", requester.sAuthSpecificEvent);
+
+                //Is Deadline - bDeadlineStatus
+                allFields.Add("MRORequestDeadline=1", requester.bDeadlineStatus ? "On" : "");
+
+                //Deadline Date
+                if ((requester.dtDeadline != null))
+                {
+                    allFields.Add("MRORequestDeadlineDate", requester.dtDeadline.Value.ToShortDateString());
+                }
+                else
+                {
+                    allFields.Add("MRORequestDeadlineDate", string.Empty);
+                }
+
+                //Additional Data - sAdditionalData
+                allFields.Add("MROPatientAdditionalDetails", requester.sAdditionalData);
+
+                //Phone number - sPhoneNo
+                allFields.Add("MRORequesterPhoneNumber", requester.sPhoneNo);
+                //Is Phone Number Verified - 
+                allFields.Add("MRORequesterPhoneNumber=1", requester.bPhoneNoVerified ? "On" : "");
+
+                // Is idententity is DL or Other
+                if (requester.sIdentityIdName == "MRODLIdentity")
+                {
+                    allFields.Add("MRODLIdentity=1", "On");
+                }
+                else
+                {
+                    allFields.Add("MROOtherGovIdentity=1", "On");
+                }
+
+
+                FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+                FacilityLocations location = await locRepo.Select(requester.nLocationID);
+                location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+                byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+
+                byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, requester, out string sReplaceFieldsList);
+
+                allFields.Clear();
+
+                if (!string.IsNullOrEmpty(requester.sSignatureData))
+                {
+                    //Signing the Document
+                    Doc theDoc = new Doc();
+
+                    theDoc.Read(byteArrayToReturn);
+                    string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+                    byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+                    Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+
+                    MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                    MROHelper helper = await helperRepo.Select(1);
+                    helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+                    byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+
+                    System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
+                    Graphics gra = Graphics.FromImage(canvas);
+                    Bitmap smallImg = new Bitmap(image2);
+                    gra.DrawImage(smallImg, new Point(0, 0));
+
+
+                    var mssignaturewithbg = new MemoryStream();
+                    canvas.Save(mssignaturewithbg, canvas.RawFormat);
+                    mssignaturewithbg.ToArray();
+
+
+                    XImage theImg = new XImage();
+                    theImg.SetStream(mssignaturewithbg);
+                    theDoc.Rect.String = theDoc.Form["MROSignature"].Rect.String;
+                    theDoc.Rect.Magnify(0.5, 1.2);
+                    theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
+                    theDoc.AddImageObject(theImg, false);
+                    theImg.Clear();
+
+                    theDoc.Form.Stamp();
+
+                    byte[] pdfBytes = theDoc.GetData();
+                    return pdfBytes;
+                }
+                return byteArrayToReturn;
+
             }
-
-            //Shipment Type Related Fields
-
-            //Shipment Type Mail Address
-            allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
-            allFields.Add("MROSTAddState", requester.sSTAddState);
-            allFields.Add("MROSTAddCity", requester.sSTAddCity);
-            allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
-            allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
-            allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
-                                                + requester.sSTAddStreetAddress + ", "
-                                                + requester.sSTAddCity + ", "
-                                                + requester.sSTAddState + ", "
-                                                + requester.sSTAddZipCode);
-
-            //Shipment Type Email
-            allFields.Add("MROSTEmailAddress", requester.sSTEmailAddress);
-            //Shipment Type Fax Number
-            allFields.Add("MROSTFaxNumber", requester.sSTFaxNumber);
-            //Shipment Type Address Zip Code
-            allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
-            //Shipment Type Address State
-            allFields.Add("MROSTAddState", requester.sSTAddState);
-            //Shipment Type Address City
-            allFields.Add("MROSTAddCity", requester.sSTAddCity);
-            //Shipment Type Address StreetAddress
-            allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
-            //Shipment Type Address Apartment
-            allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
-
-
-            allFields.Add("MROPatientTelephoneNo", requester.sPhoneNo);
-
-            //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
-            allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == requester.sReleaseTo ? "On" : "");
-
-
-
-            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locRepo.Select(requester.nLocationID);
-            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, requester, out string sReplaceFieldsList);
-
-            allFields.Clear();
-
-            if (!string.IsNullOrEmpty(requester.sSignatureData))
+            catch (Exception ex)
             {
-                //Signing the Document
-                Doc theDoc = new Doc();
-
-                theDoc.Read(byteArrayToReturn);
-                string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
-                byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
-                Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
-
-                MROHelperRepository helperRepo = new MROHelperRepository(_info);
-                MROHelper helper = await helperRepo.Select(1);
-                helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
-                byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
-
-                System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
-                Graphics gra = Graphics.FromImage(canvas);
-                Bitmap smallImg = new Bitmap(image2);
-                gra.DrawImage(smallImg, new Point(0, 0));
-
-
-                var mssignaturewithbg = new MemoryStream();
-                canvas.Save(mssignaturewithbg, canvas.RawFormat);
-                mssignaturewithbg.ToArray();
-
-
-                XImage theImg = new XImage();
-                theImg.SetStream(mssignaturewithbg);
-                theDoc.Rect.String = theDoc.Form["MROSignature"].Rect.String;
-                theDoc.Rect.Magnify(0.5, 1.2);
-                theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
-                theDoc.AddImageObject(theImg, false);
-                theImg.Clear();
-
-                theDoc.Form.Stamp();
-
-                byte[] pdfBytes = theDoc.GetData();
-                return pdfBytes;
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation Error", ex.Message, _info);
+                return null;
             }
-
-            return byteArrayToReturn;
         }
 
         #endregion
