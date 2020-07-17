@@ -605,11 +605,11 @@ namespace MROWebApi.Controllers
                 canvas.Save(mssignaturewithbg, canvas.RawFormat);
                 mssignaturewithbg.ToArray();
 
-
+                var a = theDoc.Form["MROSignature"].Rect.String;
                 XImage theImg = new XImage();
                 theImg.SetStream(mssignaturewithbg);
-                theDoc.Rect.String = theImg.Selection.String;
-                theDoc.Rect.Magnify(0.15, 0.2);
+                theDoc.Rect.String = theDoc.Form["MROSignature"].Rect.String;
+                theDoc.Rect.Magnify(0.5, 1.2);
                 theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
                 theDoc.AddImageObject(theImg, false);
                 theImg.Clear();

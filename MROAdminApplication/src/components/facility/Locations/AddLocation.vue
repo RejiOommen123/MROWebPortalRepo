@@ -347,16 +347,16 @@ export default {
       }
     };
   },
-  mounted() {
-    this.$http
-      .get("FacilityLocations/GetROILocationID/" + this.$route.params.id)
-      .then(resp => {
-        if (resp.ok == true) {
-          this.location.nROILocationID = resp.body;
-          this.location.nROILocationID++;
-        }
-      });
-  },
+  // mounted() {
+  //   this.$http
+  //     .get("FacilityLocations/GetROILocationID/" + this.$route.params.id)
+  //     .then(resp => {
+  //       if (resp.ok == true) {
+  //         this.location.nROILocationID = resp.body;
+  //         this.location.nROILocationID++;
+  //       }
+  //     });
+  // },
   methods: {
     clearBGField() {
       this.BGClearer = false;

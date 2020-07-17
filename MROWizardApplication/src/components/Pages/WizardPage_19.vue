@@ -15,7 +15,7 @@
     </v-col>
     </v-row>
     <div>
-      <v-btn @click.prevent="nextPage"  class="next">Next</v-btn>
+      <v-btn @click.prevent="nextPage" style="margin-top:0px;" class="next">Next</v-btn>
     </div>
   </div>
 </template>

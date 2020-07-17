@@ -73,7 +73,7 @@ namespace MRODBL.Repositories
         /// <param name="paramKeyName">Column Name</param>
         /// <param name="paramValue">Column Name Value</param>
         /// <returns></returns>
-        int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
+        //int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
 
         /// <summary>
         /// Get Locations for a Facility based on Facility ID

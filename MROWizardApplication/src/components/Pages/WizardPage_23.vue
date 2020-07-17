@@ -63,7 +63,7 @@
         >
       <v-card>
         <v-card-text style="padding-top:20px">
-          First screen- add pop-up that states: ‘Review your request form and sign your request. Please verify all sections for accuracy. Any incorrect information may cause a delay in your records request delivery.
+         {{disclaimer}}
         </v-card-text>
 
         <v-card-actions>
@@ -96,7 +96,8 @@ export default {
       pageCount: 0,
       pdf: null,
       bFormSigned:false,
-      dialogLoader:false
+      dialogLoader:false,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
     };
   },
   activated(){
@@ -139,6 +140,7 @@ export default {
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
           this.dialogLoader=false;
+          
         });
     },
     change() {

@@ -436,15 +436,15 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Get ROI Location ID
-        [HttpGet]
-        [Route("[action]/{id}")]
-        public int GetROILocationID(string id)
-        {
-            FacilityLocationsRepository locationsRepository = new FacilityLocationsRepository(_info);
-            bool reslt = Int32.TryParse(id, out int number);
-            int nROILocationID = locationsRepository.GetROILocationID("nFacilityID", number);
-            return nROILocationID;
-        }
+        //[HttpGet]
+        //[Route("[action]/{id}")]
+        //public int GetROILocationID(string id)
+        //{
+        //    FacilityLocationsRepository locationsRepository = new FacilityLocationsRepository(_info);
+        //    bool reslt = Int32.TryParse(id, out int number);
+        //    int nROILocationID = locationsRepository.GetROILocationID("nFacilityID", number);
+        //    return nROILocationID;
+        //}
         #endregion
 
         #region Server Validation for Duplicate Location names and check for only one 'Other' Location

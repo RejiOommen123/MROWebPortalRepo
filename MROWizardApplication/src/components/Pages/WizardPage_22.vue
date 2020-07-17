@@ -126,7 +126,7 @@
         >
       <v-card>
         <v-card-text style="padding-top:20px">
-          Once you provide a copy of your Government or Photo ID, you will be taken to a new screen to review your request, make edits, sign and submit your request.
+          {{disclaimer}}
         </v-card-text>
 
         <v-card-actions>
@@ -162,7 +162,8 @@ export default {
       sStatus: "CapturingImg",
       fileInput: "",
       bShowImage: "",
-      dialog:true
+      dialog:true,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };
   },
   mixins: [validationMixin],
@@ -256,7 +257,6 @@ export default {
       this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
       this.$vuetify.theme.dark = false;
-      console.log(JSON.stringify(this.$store.state.requestermodule));
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     onFileChanged(file) {

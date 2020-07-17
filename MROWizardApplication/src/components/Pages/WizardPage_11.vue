@@ -18,7 +18,7 @@
           <!-- display info only if it exist else no i button -->
             <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="grey" top>mdi-information</v-icon>
+                  <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
                   <p style="width:200px">{{sensitiveInfo.sFieldToolTip}}</p>

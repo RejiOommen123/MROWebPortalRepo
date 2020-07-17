@@ -77,14 +77,14 @@ namespace MRODBL.Repositories
                                     new { ID = Id });
             }
         }
-        public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
-        {
-            using (SqlConnection db = new SqlConnection(sConnect))
-            {
-                string SqlString = "SELECT TOP(1) nROILocationID FROM " + sTableName + " WHERE " + paramKeyName + " =" + paramValue + " ORDER BY nROILocationID DESC";
-                return db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
-            }
-        }
+        //public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
+        //{
+        //    using (SqlConnection db = new SqlConnection(sConnect))
+        //    {
+        //        string SqlString = "SELECT TOP(1) nROILocationID FROM " + sTableName + " WHERE " + paramKeyName + " =" + paramValue + " ORDER BY nROILocationID DESC";
+        //        return db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
+        //    }
+        //}
         public async Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue)
         {
             using (SqlConnection db = new SqlConnection(sConnect))

@@ -34,7 +34,7 @@
                     <br/>
                     <br/>
                     </div>
-                    <v-btn style="font-size:36px" class="wizardClose" icon dark @click="dialogConfirm=true">
+                    <v-btn style="font-size:36px"  class="wizardClose" icon dark @click="dialogConfirm=true" :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>      
                   <!-- Wizard logo image set here -->
@@ -86,7 +86,7 @@
         <v-dialog v-model="dialogConfirm" light persistent max-width="280">
           <v-card>
             <v-card-title class="headline">Are you sure to close this request?</v-card-title>
-            <v-card-text>Closing wizard will clear all data previously enter by you.</v-card-text>
+            <v-card-text v-if="(selectedWizard !='Wizard_24') && (selectedWizard != 'Wizard_25') && (selectedWizard !='Wizard_26') ">Closing wizard will clear all data previously enter by you.</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
