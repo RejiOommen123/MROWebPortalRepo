@@ -137,7 +137,7 @@
         </v-row>
       </form>
     </div>
-    <div v-if="bAreYouPatient && disclaimer01!='' " class="disclaimer">{{this.disclaimer01}}</div>
+    <div v-if="bAreYouPatient && disclaimer01!=null " class="disclaimer">{{this.disclaimer01}}</div>
     <div v-if="!bAreYouPatient && disclaimer02!='' " class="disclaimer">{{this.disclaimer02}}</div>
   </div>
 </template>

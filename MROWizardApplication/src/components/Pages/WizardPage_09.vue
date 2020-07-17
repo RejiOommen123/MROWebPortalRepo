@@ -47,7 +47,7 @@
         </v-checkbox>
       </v-col>
       <v-col cols="12" offset-sm="5" sm="2">
-        <v-btn class="next" @click="next">Next</v-btn>
+        <v-btn  class="next" @click="next">Next</v-btn>
       </v-col>
     </v-row>
   </div>

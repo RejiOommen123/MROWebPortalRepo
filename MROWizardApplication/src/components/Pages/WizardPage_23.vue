@@ -140,7 +140,7 @@ export default {
           var fileURL = URL.createObjectURL(blobFile);
           this.pdf = fileURL;
           this.dialogLoader=false;
-          
+          console.log(JSON.stringify(this.$store.state.requestermodule));          
         });
     },
     change() {

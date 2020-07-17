@@ -36,9 +36,9 @@ const state = {
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
-    nSTFaxNo:0,
+    nSTFaxNumber:0,
     sSTFaxCompAdd:'',
-    sSTEmailId:'',
+    sSTEmailAddress:'',
     sSTAddZipCode: '',
     sSTAddCity: '',
     sSTAddState: '',
@@ -176,11 +176,11 @@ const mutations = {
     sSelectedShipmentTypes(state, payload) {
         state.sSelectedShipmentTypes = payload;
     },
-    sSTEmailId(state, payload) {
-        state.sSTEmailId = payload;
+    sSTEmailAddress(state, payload) {
+        state.sSTEmailAddress = payload;
     },
-    nSTFaxNo(state, payload) {
-        state.nSTFaxNo = payload;
+    nSTFaxNumber(state, payload) {
+        state.nSTFaxNumber = payload;
     },
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
