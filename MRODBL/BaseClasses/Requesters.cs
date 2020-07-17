@@ -93,9 +93,8 @@ namespace MRODBL.BaseClasses
 
         public string[] sSelectedShipmentTypes { get; set; }
 
-        public string sSTEmailId { get; set; }
-        public string sSTFaxNo { get; set; }
-
+        public string sSTEmailAddress { get; set; }
+        public string sSTFaxNumber { get; set; }
         public string sSTAddZipCode { get; set; }
         public string sSTAddCity { get; set; }
         public string sSTAddState { get; set; }

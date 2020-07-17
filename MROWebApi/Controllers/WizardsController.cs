@@ -564,11 +564,19 @@ namespace MROWebApi.Controllers
                                                 + requester.sSTAddZipCode);
 
             //Shipment Type Email
-            allFields.Add("MROSTEmailId", requester.sSTEmailId);
+            allFields.Add("MROSTEmailAddress", requester.sSTEmailAddress);
             //Shipment Type Fax Number
-            allFields.Add("MROSTFaxNo", requester.sSTFaxNo);
-
-
+            allFields.Add("MROSTFaxNumber", requester.sSTFaxNumber);
+            //Shipment Type Address Zip Code
+            allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
+            //Shipment Type Address State
+            allFields.Add("MROSTAddState", requester.sSTAddState);
+            //Shipment Type Address City
+            allFields.Add("MROSTAddCity", requester.sSTAddCity);
+            //Shipment Type Address StreetAddress
+            allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
+            //Shipment Type Address Apartment
+            allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
 
 
             allFields.Add("MROPatientTelephoneNo", requester.sPhoneNo);
