@@ -110,7 +110,7 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                 FacilityLocations location = await locaFac.Select(requester.nLocationID);
 
-                byte[] signedPDF = await GetSignedPDF(requester, facility);
+                byte[] signedPDF = await GetSignedPDF(requester);
 
                 requester.sPDF = Convert.ToBase64String(signedPDF);
                 requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
@@ -485,11 +485,11 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GeneratePDF(Requesters requestor,Facilities facility)
+        public async Task<IActionResult> GeneratePDF(Requesters requestor)
         {
             if (ModelState.IsValid)
             {
-                byte[] pdfBytes = await GetSignedPDF(requestor, facility);
+                byte[] pdfBytes = await GetSignedPDF(requestor);
                 return File(pdfBytes, "application/pdf");
             }
             else
@@ -500,12 +500,12 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private async Task<byte[]> GetSignedPDF(Requesters requester, Facilities facility)
+        private async Task<byte[]> GetSignedPDF(Requesters requester)
         {
             try
             {
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
-                allFields.Add("MROFacilityName", facility.sFacilityName);
+                //allFields.Add("MROFacilityName", facility.sFacilityName);
                 allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
                 allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
                 allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
