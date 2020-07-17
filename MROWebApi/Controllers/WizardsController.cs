@@ -106,7 +106,7 @@ namespace MROWebApi.Controllers
             if (ModelState.IsValid)
             {
                 byte[] signedPDF = await GetSignedPDF(requester);
-                
+
                 requester.sPDF = Convert.ToBase64String(signedPDF);
                 requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
@@ -135,8 +135,10 @@ namespace MROWebApi.Controllers
                 }
                 else
                 {
-                    return Content("Email Not Sent");
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                    //return Content("Email Not Sent");
                 }
+
                 XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
                 {
                     OmitXmlDeclaration = false,
@@ -146,6 +148,7 @@ namespace MROWebApi.Controllers
                 using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
                 writer.WriteStartElement("request");
                 writer.WriteStartElement("facility");
+                writer.WriteElementString("code", facility.nROIFacilityID.ToString());
                 writer.WriteElementString("name", facility.sFacilityName);
                 writer.WriteElementString("ID", facility.nFacilityID.ToString());
                 writer.WriteEndElement();
@@ -239,7 +242,7 @@ namespace MROWebApi.Controllers
 
                 //XML File Genration 
                 //File Name
-                string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + ".xml";
+                string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + "_" + Guid.NewGuid().ToString() + ".xml";
 
                 if ((facility.sFTPUrl.ToLower().Contains("ftp://")
                     && !facility.sFTPUrl.ToLower().Contains("sftp://"))
@@ -323,15 +326,15 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-       
-        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info,MROLogger passwordDecrypt)
+
+        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
             Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
             FacilityLocations dbLocation = await lRep.Select(requestor.nLocationID);
             //Check if Facility is Allowed to Send Mail
-            if (dbFacility.bRequestorEmailConfirm) 
+            if (dbFacility.bRequestorEmailConfirm)
             {
 
                 #region Decrypt SMTP Password
@@ -353,8 +356,8 @@ namespace MROWebApi.Controllers
 
                 dbLocation.sConfigLogoData = Regex.Replace(dbLocation.sConfigLogoData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
                 byte[] locationLogo = Convert.FromBase64String(dbLocation.sConfigLogoData);
-                var image = bodyBuilder.LinkedResources.Add("locationlogo",locationLogo);
-                image.ContentId = MimeUtils.GenerateMessageId();           
+                var image = bodyBuilder.LinkedResources.Add("locationlogo", locationLogo);
+                image.ContentId = MimeUtils.GenerateMessageId();
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
     <p style='text-align: right;'>{1}&nbsp;</p><img src=""cid:{0}""><br/><br/>
     <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
@@ -389,7 +392,7 @@ namespace MROWebApi.Controllers
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
@@ -424,7 +427,7 @@ namespace MROWebApi.Controllers
 
             if (dbFacility.bRequestorEmailVerify)
             {
-                
+
                 var sOTP = GenerateRandomNo().ToString();
 
                 #region Decrypt SMTP Password
@@ -453,7 +456,7 @@ namespace MROWebApi.Controllers
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
@@ -485,16 +488,8 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                //if (string.IsNullOrEmpty(requestor.sSignatureData))
-                //{
-                //    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
-                //    return File(pdfBytes, "application/pdf");
-                //}
-                //else
-                //{ 
-                    byte[] pdfBytes = await GetSignedPDF(requestor);
-                    return File(pdfBytes, "application/pdf");
-                //}
+                byte[] pdfBytes = await GetSignedPDF(requestor);
+                return File(pdfBytes, "application/pdf");
             }
             else
             {
@@ -522,24 +517,36 @@ namespace MROWebApi.Controllers
             //Record Types
             for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
             {
-                allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                if (requester.sSelectedRecordTypes[counter] != "")
+                {
+                    allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                }
             }
 
             //Primary Reasons
             for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
             {
-                allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                if (requester.sSelectedPrimaryReasons[counter] != "")
+                {
+                    allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                }
             }
             //Sensitive Info
             for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
             {
-                allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                if (requester.sSelectedPrimaryReasons[counter] != "")
+                {
+                    allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                }
             }
 
             //Shipment Types 
             for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
             {
-                allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                if (requester.sSelectedShipmentTypes[counter] != "")
+                {
+                    allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                }
             }
 
             //Shipment Type Related Fields
@@ -550,7 +557,7 @@ namespace MROWebApi.Controllers
             allFields.Add("MROSTAddCity", requester.sSTAddCity);
             allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
             allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
-            allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", " 
+            allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
                                                 + requester.sSTAddStreetAddress + ", "
                                                 + requester.sSTAddCity + ", "
                                                 + requester.sSTAddState + ", "
@@ -568,7 +575,7 @@ namespace MROWebApi.Controllers
 
             //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
             allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == requester.sReleaseTo ? "On" : "");
-          
+
 
 
             FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
@@ -576,7 +583,7 @@ namespace MROWebApi.Controllers
             location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
             byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
 
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requester ,out string sReplaceFieldsList);
+            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, requester, out string sReplaceFieldsList);
 
             allFields.Clear();
 
@@ -605,7 +612,7 @@ namespace MROWebApi.Controllers
                 canvas.Save(mssignaturewithbg, canvas.RawFormat);
                 mssignaturewithbg.ToArray();
 
-                var a = theDoc.Form["MROSignature"].Rect.String;
+
                 XImage theImg = new XImage();
                 theImg.SetStream(mssignaturewithbg);
                 theDoc.Rect.String = theDoc.Form["MROSignature"].Rect.String;
@@ -619,10 +626,10 @@ namespace MROWebApi.Controllers
                 byte[] pdfBytes = theDoc.GetData();
                 return pdfBytes;
             }
-            
+
             return byteArrayToReturn;
         }
-       
+
         #endregion
 
         #region ROI Email
@@ -685,9 +692,9 @@ namespace MROWebApi.Controllers
                                         <p style='text-align:justify;text-justify: inter-word;'>This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.</p>
                                         <div style='text-align:center'><a href='https://mrocorp.com/' target='_blank'><img src=""cid:{4}""></a></div>
                                     </ div >
-                                   </ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"), 
-                                            sFullName,requestor.nRequesterID, 
-                                            dbFacility.sFacilityName, 
+                                   </ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"),
+                                            sFullName, requestor.nRequesterID,
+                                            dbFacility.sFacilityName,
                                             image.ContentId);
 
                 bodyBuilder.HtmlBody = htmlText;
@@ -699,7 +706,7 @@ namespace MROWebApi.Controllers
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
