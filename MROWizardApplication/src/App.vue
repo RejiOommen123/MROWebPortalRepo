@@ -5,12 +5,13 @@
       <v-row justify="center">
         <!-- Pop up wizard screen -->
         <v-dialog 
+          id="mainDialog"
           class="wizardDialog"
           persistent
           v-model="dialog"
           scrollable
           :max-width="dialogMaxWidth"
-          height=100%          
+          style="height:100%"
         >
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card

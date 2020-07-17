@@ -20,6 +20,18 @@
               :error-messages="sFacilityNameErrors"
               solo
             ></v-text-field>
+            <label class="required" for="ROI Facility ID">ROI Facility Id:</label>
+            <v-text-field
+              type="number"
+              id="nROIFacilityID"
+              placeholder="Enter ROI Facility Id"
+              v-model="facility.nROIFacilityID"
+              @input="$v.facility.nROIFacilityID.$touch()"
+              @blur="$v.facility.nROIFacilityID.$touch()"
+              :error-messages="nROIFacilityIDErrors"
+              solo
+              min="1"
+            ></v-text-field>
             <label for="sDescription">Facility Description:</label>
             <v-text-field
               type="text"
@@ -173,7 +185,8 @@ import {
   required,
   minLength,
   maxLength,
-  email
+  email,
+  numeric
 } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
@@ -188,6 +201,7 @@ export default {
         maxLength: maxLength(40),
         minLength: minLength(2)
       },
+      nROIFacilityID: { required, numeric },
       sDescription: {
         required,
         maxLength: maxLength(80),
@@ -241,6 +255,15 @@ export default {
         errors.push("Facility Name must be at most 40 characters long");
       !this.$v.facility.sFacilityName.required &&
         errors.push("Facility Name is required.");
+      return errors;
+    },
+    nROIFacilityIDErrors() {
+      const errors = [];
+      if (!this.$v.facility.nROIFacilityID.$dirty) return errors;
+      !this.$v.facility.nROIFacilityID.numeric &&
+        errors.push("Facility ROI Id Must be Numeric");
+      !this.$v.facility.nROIFacilityID.required &&
+        errors.push("Facility ROI Id is required.");
       return errors;
     },
     sDescriptionErrors() {
@@ -329,7 +352,7 @@ export default {
       sConnectionString: "",
       facility: {
         nFacilityID: 0,
-        nROIFacilityID: 0,
+        nROIFacilityID: "",
         sFacilityName: "",
         sDescription: "",
         sSMTPUsername: "",
@@ -350,6 +373,7 @@ export default {
     // API Call to add facility
     goToLoc() {
       this.dialogLoader = true;
+      this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
         sConnectionString: this.sConnectionString
@@ -378,6 +402,7 @@ export default {
     onSubmit() {
       // API Call to add facility
       this.dialogLoader =true;
+      this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
         sConnectionString: this.sConnectionString

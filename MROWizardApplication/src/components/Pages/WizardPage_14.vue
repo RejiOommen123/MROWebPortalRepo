@@ -126,7 +126,7 @@
                 sm="12"
               >
               <!-- <div class="disclaimer">{{disclaimer}}</div> -->
-              <div class="disclaimer">{{pickUpInstruction}}</div>               
+              <div v-if="pickUpInstruction!=''" class="disclaimer">{{pickUpInstruction}}</div>               
               </v-col>                
             </div>
 

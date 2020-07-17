@@ -7,8 +7,8 @@
     <form>
       <v-row>
         <v-col cols="12" offset-sm="1" sm="3" xs="3">
-          <label for="sPatientFirstName" class="control-label">FIRST NAME</label>
           <v-text-field
+            label="FIRST NAME"
             v-model="sPatientFirstName"
             :error-messages="sPatientFirstNameError"
             required
@@ -17,12 +17,11 @@
           ></v-text-field>
         </v-col>
         <v-col v-if="MROPatientMiddleName" cols="12" sm="3" xs="3">
-          <label for="sPatientMiddleName" class="control-label">MIDDLE NAME</label>
-          <v-text-field v-model="sPatientMiddleName"></v-text-field>
+          <v-text-field label="MIDDLE NAME" v-model="sPatientMiddleName"></v-text-field>
         </v-col>
         <v-col cols="12" sm="3" xs="3">
-          <label for="sPatientLastName" class="control-label">LAST NAME</label>
           <v-text-field
+            label="LAST NAME"
             v-model="sPatientLastName"
             :error-messages="sPatientLastNameError"
             required
@@ -31,7 +30,7 @@
           ></v-text-field>
         </v-col>
         <!-- bPatientNameChanged -->
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="2" sm="8">
           <v-checkbox
             v-model="bPatientNameChanged"
             color="#e84700"
@@ -42,8 +41,8 @@
         <!-- TODO:add show and hide for previous name after adding these fields in db -->
         <template v-if="bPatientNameChanged">
           <v-col cols="12" offset-sm="1" sm="3" xs="3">
-            <label for="sPatientPreviousFirstName" class="control-label">FIRST NAME</label>
             <v-text-field
+              label="FIRST NAME"
               v-model="sPatientPreviousFirstName"
               :error-messages="sPatientPreviousFirstNameError"
               required
@@ -52,12 +51,11 @@
             ></v-text-field>
           </v-col>
           <v-col v-if="MROPatientPreviousMiddleName" cols="12" sm="3" xs="3">
-            <label for="sPatientPreviousMiddleName" class="control-label">MIDDLE NAME</label>
-            <v-text-field v-model="sPatientPreviousMiddleName"></v-text-field>
+            <v-text-field label="MIDDLE NAME" v-model="sPatientPreviousMiddleName"></v-text-field>
           </v-col>
           <v-col cols="12" sm="3" xs="3">
-            <label for="sPatientPreviousLastName" class="control-label">LAST NAME</label>
             <v-text-field
+              label="LAST NAME"
               v-model="sPatientPreviousLastName"
               :error-messages="sPatientPreviousLastNameError"
               required

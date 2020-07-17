@@ -17,6 +17,8 @@
           </v-col> -->
           <v-col id="phoneNo" cols="10" sm="5">
             <v-text-field
+              type="tel"
+              maxlength="10"
               placeholder="(XXX) XXX-XXXX"
               v-model="sPhoneNo"
               label="ENTER MOBILE NO"

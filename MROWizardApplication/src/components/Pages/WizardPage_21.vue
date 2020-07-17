@@ -38,7 +38,7 @@
       </v-layout>
     </template>
     <div>
-      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
+      <v-btn :disabled="nSelectedCheckBox==''" @click.prevent="nextPage" class="next">Next</v-btn>
     </div>
   </div>
 </template>
