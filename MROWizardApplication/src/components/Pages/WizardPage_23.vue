@@ -171,7 +171,8 @@ export default {
     showDialog(){
       this.dialog=true;
     },
-    next(){
+    next(){      
+      this.$store.commit("requestermodule/bRequestorFormSubmitted", true)
         this.$http
       .post("Wizards/GenerateXML/", 
       this.$store.state.requestermodule,

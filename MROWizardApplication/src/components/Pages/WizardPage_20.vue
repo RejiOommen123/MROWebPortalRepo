@@ -2,8 +2,8 @@
   <div class="center">
     <div class="form-group">
       <h1>Let us send you a text to verify your phone number.</h1>
-      <p>{{disclaimer01}}</p>
-      <form>
+      <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
+      <form v-if="MRORequesterPhoneNumber">
         <v-row>
           <!-- Phone no input box -->
           <v-col cols="2" offset-sm="3" sm="2">
@@ -30,7 +30,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" offset-sm="1" sm="10">
-            <p class="disclaimer">
+            <p v-if="disclaimer02!=''" class="disclaimer">
               {{disclaimer02}}
             </p>
           </v-col>
@@ -94,6 +94,8 @@ export default {
       selectedCountry:'+1',
       disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer01,
       disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer02,
+
+      MRORequesterPhoneNumber : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
 
       sPhoneNo: "",
       sApp_Key: "tu9ete3u9ocidovebefu",
@@ -191,6 +193,7 @@ export default {
     },
     nextPage(){
       this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
+      this.$store.commit("requestermodule/bPhoneNoVerified", this.showSuccessBlock);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

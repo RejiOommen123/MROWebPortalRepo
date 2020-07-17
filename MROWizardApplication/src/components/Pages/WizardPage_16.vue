@@ -93,7 +93,7 @@ export default {
       nSelectedCheckBox: [],
       dSpecific: null,
       menu1: false,
-      dAuthExpire: "",
+      dtAuthExpire: "",
       sAuthSpecificEvent: "",
 
       //Show and Hide Fields Values
@@ -119,19 +119,19 @@ export default {
         case 1:
           var dt = new Date();
           dt.setMonth(dt.getMonth() + this.nAuthMonths);
-          this.dAuthExpire = dt.toISOString();
+          this.dtAuthExpire = dt.toISOString();
           break;
         case 2:
-          this.dAuthExpire = this.dSpecific;
+          this.dtAuthExpire = this.dSpecific;
           break;
         case 3:
-          this.dAuthExpire = null;
+          this.dtAuthExpire = null;
           break;
         default:
           var dt1 = new Date();
-          this.dAuthExpire = dt1.setMonth(dt1.getMonth() + this.nAuthMonths);
+          this.dtAuthExpire = dt1.setMonth(dt1.getMonth() + this.nAuthMonths);
       }
-      this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
+      this.$store.commit("requestermodule/dtAuthExpire", this.dtAuthExpire);
       this.$store.commit(
         "requestermodule/sAuthSpecificEvent",
         this.sAuthSpecificEvent
@@ -158,8 +158,8 @@ export default {
     skipPage(){
       var dt = new Date();
       dt.setMonth(dt.getMonth() + this.nAuthMonths);  
-      this.dAuthExpire = dt.toISOString();
-      this.$store.commit("requestermodule/dAuthExpire", this.dAuthExpire);
+      this.dtAuthExpire = dt.toISOString();
+      this.$store.commit("requestermodule/dtAuthExpire", this.dtAuthExpire);
       this.nSelectedCheckBox = [];
       this.$store.commit("ConfigModule/mutateNextIndex");
     }

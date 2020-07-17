@@ -4,7 +4,7 @@
       Your request was received!
     </h1>
     
-    <div class="disclaimer">{{disclaimer}}</div>
+    <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
   
     <div class="form-group">     
       <v-col cols="12" offset-sm="2" sm="8">

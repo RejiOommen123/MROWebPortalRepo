@@ -4,8 +4,8 @@
     <v-row>
     
     <v-col cols="12" offset-sm="1" sm="10">
-    <div class="disclaimer">{{disclaimer01}}</div>
-    <div class="disclaimer">{{disclaimer02}}</div>
+    <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
+    <div v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</div>
     </v-col>
     <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
         <v-textarea filled          

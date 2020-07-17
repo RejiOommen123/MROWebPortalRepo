@@ -5,7 +5,7 @@
       <form>
         <!-- Date picker input to set deadline -->
         <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
-          <div class="disclaimer">{{disclaimer}}</div>
+          <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
           <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field

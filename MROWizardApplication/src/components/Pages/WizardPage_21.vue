@@ -14,9 +14,9 @@
             class="checkboxBorder"
             label= "Drivers License"
             color="#e84700"
-            value="MRODrivingLicID"
+            value="MRODLIdentity"
             v-model="nSelectedCheckBox"
-            @change="check('MRODrivingLicID')"
+            @change="check('MRODLIdentity')"
 
           ></v-checkbox>
         </v-col>
@@ -27,9 +27,9 @@
             class="checkboxBorder"
             label="Other Government Photo Id"
             color="#e84700"
-            value="MROOtherGovID"
+            value="MROOtherGovIdentity"
             v-model="nSelectedCheckBox"
-            @change="check('MROOtherGovID')"
+            @change="check('MROOtherGovIdentity')"
           ></v-checkbox>
         </v-col>
         <v-col cols="12" offset-sm="1" sm="10">

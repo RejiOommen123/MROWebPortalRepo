@@ -252,12 +252,13 @@ export default {
           });
       }
       //Partial Requester Data Save End
-
+      console.log(JSON.stringify(this.$store.state.requestermodule));   
       this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
       this.$vuetify.theme.dark = false;
       this.$store.commit("ConfigModule/mutateNextIndex");
+
     },
     onFileChanged(file) {
       if (file) {

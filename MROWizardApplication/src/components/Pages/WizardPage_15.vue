@@ -4,8 +4,8 @@
       <h1>Please provide recipient information.</h1>
       <v-row>
          <v-col  cols="12" offset-sm="1" sm="3" xs="3">
-          <label for="sRecipientFirstName" class="control-label">FIRST NAME</label>
           <v-text-field
+            label="FIRST NAME"
             v-model="sRecipientFirstName"
             :error-messages="sRecipientFirstNameError"
             required
@@ -13,13 +13,12 @@
             @blur="$v.sRecipientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col  cols="12" sm="3" xs="3">
-          <label for="sRecipientMiddleName" class="control-label">MIDDLE NAME</label>
-          <v-text-field v-model="sRecipientMiddleName"></v-text-field>
+        <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
+          <v-text-field label="MIDDLE NAME" v-model="sRecipientMiddleName"></v-text-field>
         </v-col>
         <v-col cols="12" sm="3" xs="3">
-          <label for="sRecipientLastName" class="control-label">LAST NAME</label>
           <v-text-field
+            label="LAST NAME"
             v-model="sRecipientLastName"
             :error-messages="sRecipientLastNameError"
             required
@@ -27,12 +26,11 @@
             @blur="$v.sRecipientLastName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-divider></v-divider>
         <!-- TODO: v-if="MROAddApartment" -->
-         <v-col cols="12" sm="6">
+         <v-col v-if="MRORecipientAddApartment" cols="12" sm="6">
           <v-text-field
             v-model="sRecipientAddApartment"
-            label="Apartment/Building"
+            label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
         <v-col  cols="12" sm="6">
@@ -78,11 +76,11 @@
             maxlength="5"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" offset-sm="2" sm="8">
+        <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
           <div class="disclaimer">{{disclaimer}}</div>
         </v-col>
-        <v-col cols="12" offset-sm="3" sm="6">
-          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+        <v-col  style="padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-btn  @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
         </v-col>
       </v-row>
     </form>
@@ -111,15 +109,11 @@ export default {
 
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
 
-      //Show and Hide Fields Values
-    //   MROAddZipCode: this.$store.state.ConfigModule.apiResponseDataByLocation
-    //     .oFields.MROAddZipCode,
-    //   MROAddCity: this.$store.state.ConfigModule.apiResponseDataByLocation
-    //     .oFields.MROAddCity,
-    //   MROAddState: this.$store.state.ConfigModule.apiResponseDataByLocation
-    //     .oFields.MROAddState,
-    //   MROAddStreetAddress: this.$store.state.ConfigModule
-    //     .apiResponseDataByLocation.oFields.MROAddStreetAddress
+     // Show and Hide Fields Values
+      MRORecipientMiddleName: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientMiddleName,
+      MRORecipientAddApartment: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientAddApartment,
     };
   },
   //Requester address validations

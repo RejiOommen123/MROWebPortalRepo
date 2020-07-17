@@ -3,7 +3,7 @@
     <div>
       <h1>Is there a deadline for this request?</h1>
     </div>
-    <p class="disclaimer">{{disclaimer}}</p>
+    <p v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</p>
     <v-row>
        <div style="width:100%">
         <v-col name="Yes" cols="12" offset-sm="2" sm="8">

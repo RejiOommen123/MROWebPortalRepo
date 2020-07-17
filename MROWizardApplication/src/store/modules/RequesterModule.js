@@ -56,15 +56,17 @@ const state = {
    
 
     sSelectedSensitiveInfo: [],
-    dAuthExpire : null,
+    dtAuthExpire : null,
     sAuthSpecificEvent : '',
     bDeadlineStatus:false,
     dtDeadline :'',
     sAdditionalData:'',
     sPhoneNo:'',
+    bPhoneNoVerified:false,
     sIdentityIdName:'',
     sIdentityImage:'',
     sSignatureData:'',
+    bRequestorFormSubmitted:false,
     bRequestAnotherRecord:false,
     nFeedbackRating:0,
     sFeedbackComment:'',   
@@ -186,16 +188,16 @@ const mutations = {
         state.sSTFaxCompAdd = payload;
     },
     sSTAddZipCode(state, payload) {
-        state.sAddZipCode = payload;
+        state.sSTAddZipCode = payload;
     },
     sSTAddCity(state, payload) {
-        state.sAddCity = payload;
+        state.sSTAddCity = payload;
     },
     sSTAddState(state, payload) {
-        state.sAddState = payload;
+        state.sSTAddState = payload;
     },
     sSTAddStreetAddress(state, payload) {
-        state.sAddStreetAddress = payload;
+        state.sSTAddStreetAddress = payload;
     },
     sStAddApartment(state, payload) {
         state.sStAddApartment = payload;
@@ -232,8 +234,8 @@ const mutations = {
     sSelectedSensitiveInfo(state, payload) {
         state.sSelectedSensitiveInfo = payload;
     },
-    dAuthExpire(state, payload) {
-        state.dAuthExpire = payload;
+    dtAuthExpire(state, payload) {
+        state.dtAuthExpire = payload;
     },
     sAuthSpecificEvent(state, payload) {
         state.sAuthSpecificEvent = payload;
@@ -247,6 +249,9 @@ const mutations = {
     sPhoneNo(state, payload) {
         state.sPhoneNo = payload;
     },
+    bPhoneNoVerified(state, payload) {
+        state.bPhoneNoVerified = payload;
+    },
     sAdditionalData(state, payload) {
         state.sAdditionalData = payload;
     },
@@ -258,6 +263,9 @@ const mutations = {
     },
     sSignatureData(state, payload) {
         state.sSignatureData = payload;
+    },
+    bRequestorFormSubmitted(state, payload) {
+        state.bRequestorFormSubmitted = payload;
     },
     bRequestAnotherRecord(state, payload) {
         state.requestAnotherRecord = payload;
