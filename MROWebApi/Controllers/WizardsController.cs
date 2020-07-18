@@ -97,7 +97,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region  Add Requestor to DB, Generate XML, Send Attachment Email and ROI Email
+        #region  Add Requester to DB, Generate XML, Send Attachment Email and ROI Email
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -114,7 +114,6 @@ namespace MROWebApi.Controllers
 
                 requester.sPDF = Convert.ToBase64String(signedPDF);
                 requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
-                //var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
                 var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
                 var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
                 var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
@@ -184,14 +183,14 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("phone_number", requester.sPhoneNo);
                 writer.WriteEndElement();
 
-                //Requestor - Part
-                #region Requestor Part
-                writer.WriteStartElement("requestor");
+                //Requester - Part
+                #region Requester Part
+                writer.WriteStartElement("requester");
                 writer.WriteElementString("name", sRelativeName);
-                //Requestor Last Name
-                //writer.WriteElementString("lastname", requestors.sPatientLastName);
+                //Requester Last Name
+                //writer.WriteElementString("lastname", requesters.sPatientLastName);
                 //Organization - Skipped
-                //writer.WriteElementString("organization", requestors.);
+                //writer.WriteElementString("organization", requesters.);
                 writer.WriteElementString("is_patient", requester.bAreYouPatient.ToString());
                 writer.WriteElementString("relation", sRelationToPatient);
                 writer.WriteElementString("email", requester.sRequesterEmailId);
@@ -203,9 +202,9 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
                 writer.WriteEndElement();
                 writer.WriteElementString("phone_number", requester.sPhoneNo);
-                //writer.WriteElementString("fax_number", requestors.sPhoneNo);
+                //writer.WriteElementString("fax_number", requesters.sPhoneNo);
                 writer.WriteEndElement();
-                //Requestor Part Ends Here
+                //Requester Part Ends Here
                 #endregion
 
                 writer.WriteStartElement("requested_information");
@@ -328,12 +327,12 @@ namespace MROWebApi.Controllers
             }
         }
 
-        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
+        private static async Task<bool> SendEmail(Requesters requester, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
-            FacilityLocations dbLocation = await lRep.Select(requestor.nLocationID);
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            FacilityLocations dbLocation = await lRep.Select(requester.nLocationID);
             //Check if Facility is Allowed to Send Mail
             if (dbFacility.bRequestorEmailConfirm)
             {
@@ -348,7 +347,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -384,7 +383,7 @@ namespace MROWebApi.Controllers
     </div>
 </div>", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
                 bodyBuilder.HtmlBody = htmlText;
-                bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
+                bodyBuilder.Attachments.Add(requester.sPatientFirstName + " " + requester.sPatientLastName + " request.pdf", signedPDF);
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
                 //TODO:
@@ -421,10 +420,10 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requestor)
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
             if (dbFacility.bRequestorEmailVerify)
             {
@@ -442,13 +441,13 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
                 message.Subject = "Here's Your 4 Digit Verification Code " + sOTP;
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                string bodyText = "<h1>Hello " + requestor.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
+                string bodyText = "<h1>Hello " + requester.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
@@ -485,11 +484,11 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GeneratePDF(Requesters requestor)
+        public async Task<IActionResult> GeneratePDF(Requesters requester)
         {
             if (ModelState.IsValid)
             {
-                byte[] pdfBytes = await GetSignedPDF(requestor);
+                byte[] pdfBytes = await GetSignedPDF(requester);
                 return File(pdfBytes, "application/pdf");
             }
             else
@@ -504,8 +503,11 @@ namespace MROWebApi.Controllers
         {
             try
             {
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
-                //allFields.Add("MROFacilityName", facility.sFacilityName);
+                allFields.Add("MROFacilityName", dbFacility.sFacilityName);
                 allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
                 allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
                 allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
@@ -552,7 +554,7 @@ namespace MROWebApi.Controllers
                 //Sensitive Info
                 for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
                 {
-                    if (requester.sSelectedPrimaryReasons[counter] != "")
+                    if (requester.sSelectedSensitiveInfo[counter] != "")
                     {
                         allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
                     }
@@ -628,7 +630,7 @@ namespace MROWebApi.Controllers
                 //Phone number - sPhoneNo
                 allFields.Add("MRORequesterPhoneNumber", requester.sPhoneNo);
                 //Is Phone Number Verified - 
-                allFields.Add("MRORequesterPhoneNumber=1", requester.bPhoneNoVerified ? "On" : "");
+                allFields.Add("MRORequesterPhoneVerified=1", requester.bPhoneNoVerified ? "On" : "");
 
                 // Is idententity is DL or Other
                 if (requester.sIdentityIdName == "MRODLIdentity")
@@ -702,12 +704,12 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region ROI Email
-        private static async Task<bool> SendROIEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
+        private static async Task<bool> SendROIEmail(Requesters requester, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
-            FacilityLocations dbLocation = await lRep.Select(requestor.nLocationID);
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            FacilityLocations dbLocation = await lRep.Select(requester.nLocationID);
             //Check if Facility is Allowed to Send Mail
             if (dbFacility.bRequestorEmailConfirm)
             {
@@ -727,7 +729,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -738,7 +740,7 @@ namespace MROWebApi.Controllers
                 byte[] footerLogo = Convert.FromBase64String(helper.sMROEmailFooterImage);
                 var image = bodyBuilder.LinkedResources.Add("footerlogo", footerLogo);
                 image.ContentId = MimeUtils.GenerateMessageId();
-                var sFullName = requestor.sPatientFirstName + " " + requestor.sPatientLastName;
+                var sFullName = requester.sPatientFirstName + " " + requester.sPatientLastName;
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
                                     <p style='text-align: right;'>{0}&nbsp;</p><br/>
                                     <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
@@ -762,7 +764,7 @@ namespace MROWebApi.Controllers
                                         <div style='text-align:center'><a href='https://mrocorp.com/' target='_blank'><img src=""cid:{4}""></a></div>
                                     </ div >
                                    </ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"),
-                                            sFullName, requestor.nRequesterID,
+                                            sFullName, requester.nRequesterID,
                                             dbFacility.sFacilityName,
                                             image.ContentId);
 
