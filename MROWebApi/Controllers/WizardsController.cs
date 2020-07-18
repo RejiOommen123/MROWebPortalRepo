@@ -529,10 +529,10 @@ namespace MROWebApi.Controllers
                     allFields.Add(requester.sSelectedRelation + "=1", "On");
                 }
                 //Previous Patient Name
-                allFields.Add("MROPatientPreviousFullName", requester.sPreviousPatientFirstName + " " + requester.sPreviousPatientMiddleName + " " + requester.sPreviousPatientLastName);
-                allFields.Add("MROPatientPreviousFirstName", requester.sPreviousPatientFirstName);
-                allFields.Add("MROPatientPreviousLastName", requester.sPreviousPatientLastName);
-                allFields.Add("MROPatientPreviousMiddleName", requester.sPreviousPatientMiddleName);
+                allFields.Add("MROPatientPreviousFullName", requester.sPatientPreviousFirstName + " " + requester.sPatientPreviousMiddleName + " " + requester.sPatientPreviousLastName);
+                allFields.Add("MROPatientPreviousFirstName", requester.sPatientPreviousFirstName);
+                allFields.Add("MROPatientPreviousLastName", requester.sPatientPreviousLastName);
+                allFields.Add("MROPatientPreviousMiddleName", requester.sPatientPreviousMiddleName);
                 if (requester.bPatientNameChanged)
                 {
                     allFields.Add("MROPatientNameChanged=1", "On");
@@ -668,8 +668,7 @@ namespace MROWebApi.Controllers
                                                     + requester.sRecipientAddZipCode);
                 allFields.Add("MRORecipientFirstName", requester.sRecipientFirstName);
                 allFields.Add("MRORecipientLastName", requester.sRecipientLastName);
-                allFields.Add("MRORecipientMiddleName", requester.sRecipientMiddleName);
-                allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientMiddleName + " " + requester.sRecipientLastName);
+                allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientLastName);
                 allFields.Add("MRORecipientOrganizationName", requester.sRecipientOrganizationName);
 
 

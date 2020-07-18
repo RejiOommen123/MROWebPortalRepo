@@ -38,12 +38,12 @@ namespace MRODBL.BaseClasses
 
         
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient First Name allowed")]
-        public string sPreviousPatientFirstName { get; set; }
+        public string sPatientPreviousFirstName { get; set; }
        
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient Last Name allowed")]
-        public string sPreviousPatientLastName { get; set; }
+        public string sPatientPreviousLastName { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 character Middle Name allowed")]
-        public string sPreviousPatientMiddleName { get; set; }
+        public string sPatientPreviousMiddleName { get; set; }
         public bool bPatientNameChanged { get; set; }
 
         [Required]
@@ -107,7 +107,6 @@ namespace MRODBL.BaseClasses
 
         public string sRecipientFirstName { get; set; }
         public string sRecipientLastName { get; set; }
-        public string sRecipientMiddleName { get; set; }
         public string sRecipientOrganizationName { get; set; }
 
 
@@ -120,6 +119,7 @@ namespace MRODBL.BaseClasses
 
         [StringLength(50, ErrorMessage = "Maximum 50 characters Wizard Name allowed")]
         public string sWizardName { get; set; }
+        public bool bRequestorFormSubmitted { get; set; }
 
         public DateTime dtLastUpdate { get; set; }
 
