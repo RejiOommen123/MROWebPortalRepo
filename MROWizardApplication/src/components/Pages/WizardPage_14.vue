@@ -64,7 +64,7 @@
                 sm="12"
               >
               <v-row>
-              <v-col cols="12" sm="6">
+              <v-col cols="12" offset-sm="2" sm="8">
               <v-text-field
                 v-model="sSTAddStreetAddress"
                 :error-messages="streetErrors"
@@ -74,7 +74,7 @@
                 @blur="$v.sSTAddStreetAddress.$touch()"
               ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6">
+              <v-col cols="12" offset-sm="2" sm="8">
                 <v-text-field
                   v-model="sSTAddApartment"
                   label="Apartment/Building"
@@ -140,12 +140,12 @@
               >
                 <v-text-field
                   type="tel"
-                  v-model="nSTFaxNumber"
-                  :error-messages="nSTFaxNumberErrors"
+                  v-model="sSTFaxNumber"
+                  :error-messages="sSTFaxNumberErrors"
                   label="FAX NO"
                   required
-                  @input="$v.nSTFaxNumber.$touch()"
-                  @blur="$v.nSTFaxNumber.$touch()"
+                  @input="$v.sSTFaxNumber.$touch()"
+                  @blur="$v.sSTFaxNumber.$touch()"
                 ></v-text-field>
                 <v-text-field
                   type="tel"
@@ -173,7 +173,7 @@
           <v-btn  @click.prevent="nextPage" class="next">Next</v-btn>
         </div>
         <div v-if="sSelectedShipmentTypes[0]=='MROSTFax'">
-          <v-btn :disabled="$v.nSTFaxNumber.$invalid || $v.nSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.nSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
         </div>
       </form>
     </template>
@@ -192,8 +192,8 @@ export default {
       sSelectedShipmentTypes: [],
       // combine previously entered data by requester
 
-      nSTFaxNumber: 0,
-      nSTConfirmFaxNumber:0,
+      sSTFaxNumber: '',
+      nSTConfirmFaxNumber:'',
       sSTEmailAddress: this.$store.state.requestermodule.sRequesterEmailId,
       sSTConfirmEmailId: this.$store.state.requestermodule.sRequesterEmailId,
       // combine previously entered data by requester
@@ -205,19 +205,18 @@ export default {
       menu1: false,
 
       // disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
-      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.pickUpInstruction,
+      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_pickUpInstruction,
     };
   },
   //Shipment type validations
   mixins: [validationMixin],
   validations: {
-    nSTFaxNumber: {
-      required,
-      numeric
+    sSTFaxNumber: {
+      required
     },
     nSTConfirmFaxNumber:{
       required,
-      sameAsFaxNo: sameAs("nSTFaxNumber")
+      sameAsFaxNo: sameAs("sSTFaxNumber")
     },
     sSTEmailAddress: {
       required,
@@ -240,11 +239,10 @@ export default {
   },
   computed: {
     //validations error message setter
-    nSTFaxNumberErrors() {
+    sSTFaxNumberErrors() {
       const errors = [];
-      if (!this.$v.nSTFaxNumber.$dirty) return errors;
-      !this.$v.nSTFaxNumber.numeric && errors.push("Fax No must me numeric.");
-      !this.$v.nSTFaxNumber.required && errors.push("Fax No is required.");
+      if (!this.$v.sSTFaxNumber.$dirty) return errors;
+      !this.$v.sSTFaxNumber.required && errors.push("Fax No is required.");
       return errors;
     },
     nSTConfirmFaxNumberErrors() {
@@ -252,7 +250,6 @@ export default {
       if (!this.$v.nSTConfirmFaxNumber.$dirty) return errors;
       !this.$v.nSTConfirmFaxNumber.sameAsFaxNo &&
         errors.push("Please enter correct Fax No");
-      !this.$v.nSTConfirmFaxNumber.numeric && errors.push("Fax No must me numeric.");
       !this.$v.nSTConfirmFaxNumber.required && errors.push("Fax No is required.");
       return errors;
     },
@@ -322,7 +319,7 @@ export default {
           this.$store.commit("requestermodule/sSTAddApartment",this.sSTAddApartment);
           break;
         case "MROSTFax":
-          this.$store.commit("requestermodule/nSTFaxNumber",this.nSTFaxNumber);
+          this.$store.commit("requestermodule/sSTFaxNumber",this.sSTFaxNumber);
           this.$store.commit("ConfigModule/bShowRecipientPage",true);
           break;
         default:
@@ -358,7 +355,7 @@ export default {
       this.$store.commit("requestermodule/sSTAddState",'');
       this.$store.commit("requestermodule/sSTAddStreetAddress", '');
       this.$store.commit("requestermodule/sSTAddApartment",'');
-      this.$store.commit("requestermodule/nSTFaxNumber",0);
+      this.$store.commit("requestermodule/sSTFaxNumber",0);
 
       this.$store.commit("requestermodule/sRecipientFirstName",'');
       this.$store.commit("requestermodule/sRecipientLastName",'');

@@ -3,7 +3,7 @@
     <form>
       <h1>Please provide recipient information.</h1>
       <v-row>
-         <v-col  cols="6" offset-sm="2" sm="4">
+         <v-col style="padding-bottom:0px;padding-top:0px" cols="6" offset-sm="2" sm="4">
           <v-text-field
             label="FIRST NAME"
             v-model="sRecipientFirstName"
@@ -16,7 +16,7 @@
         <!-- <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
           <v-text-field label="MIDDLE NAME" v-model="sRecipientMiddleName"></v-text-field>
         </v-col> -->
-        <v-col cols="6" sm="4">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="6" sm="4">
           <v-text-field
             label="LAST NAME"
             v-model="sRecipientLastName"
@@ -26,14 +26,20 @@
             @blur="$v.sRecipientLastName.$touch()"
           ></v-text-field>
         </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-text-field
+            label="ORGANIZATION NAME"
+            v-model="sRecipientOrganizationName"
+          ></v-text-field>
+        </v-col>
         <!-- TODO: v-if="MROAddApartment" -->
-         <v-col v-if="MRORecipientAddApartment" cols="12" sm="6">
+         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" sm="6">
           <v-text-field
             v-model="sRecipientAddApartment"
             label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
-        <v-col  cols="12" sm="6">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" sm="6">
           <v-text-field
             v-model="sRecipientAddStreetAddress"
             :error-messages="streetErrors"
@@ -43,7 +49,7 @@
             @blur="$v.sRecipientAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col offset-sm="1" cols="12" sm="3">
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
           <v-text-field
             v-model="sRecipientAddCity"
             :error-messages="cityErrors"
@@ -53,7 +59,7 @@
             @blur="$v.sRecipientAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col  offset-sm="1" cols="12"  sm="2">
+        <v-col style="padding-bottom:0px;padding-top:0px"  offset-sm="1" cols="12"  sm="2">
           <v-text-field
             v-model="sRecipientAddState"
             :error-messages="stateErrors"
@@ -63,7 +69,7 @@
             @blur="$v.sRecipientAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col  offset-sm="1" cols="12" sm="3">
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
           <v-text-field
             type="tel"
             v-model="sRecipientAddZipCode"
@@ -100,7 +106,7 @@ export default {
     return {
       sRecipientFirstName: "",
       sRecipientLastName: "",
-      // sRecipientMiddleName: "",
+      sRecipientOrganizationName: "",
       sRecipientAddZipCode: '',
       sRecipientAddCity:'',
       sRecipientAddState: '',
@@ -184,11 +190,12 @@ export default {
     nextPage() {
       this.$store.commit("requestermodule/sRecipientFirstName",this.sRecipientFirstName);
       this.$store.commit("requestermodule/sRecipientLastName",this.sRecipientLastName);
-      // this.$store.commit("requestermodule/sRecipientMiddleName",this.sRecipientMiddleName);
+      this.$store.commit("requestermodule/sRecipientOrganizationName",this.sRecipientOrganizationName);
       this.$store.commit("requestermodule/sRecipientAddZipCode", this.sRecipientAddZipCode);
       this.$store.commit("requestermodule/sRecipientAddCity", this.sRecipientAddCity);
       this.$store.commit("requestermodule/sRecipientAddState", this.sRecipientAddState);
       this.$store.commit("requestermodule/sRecipientAddStreetAddress",this.sRecipientAddStreetAddress);
+      this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
       this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
 
       //Partial Requester Data Save Start

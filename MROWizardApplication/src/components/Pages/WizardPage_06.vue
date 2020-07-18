@@ -55,6 +55,14 @@
             <!-- if please email copy checkbox is check then below fields are visible -->
             <div v-if="showVerifyBlock && bRequestorEmailVerify">
               <p>Click on "Send Email" for email verification.</p>
+               <v-alert
+                    v-if="otpSentAlert"
+                    dense
+                    text
+                    type="success"
+                  >
+                   Sending Email
+                  </v-alert>
               <v-btn
                 @click="sendEmail"
                 :disabled="$v.emailValid.$invalid || emailSent==true"
@@ -119,6 +127,7 @@ export default {
       showSuccessBlock: false,
       inputDisabled: false,
       emailSent:false,
+      otpSentAlert:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_06_disclaimer01,
@@ -189,6 +198,7 @@ export default {
         "requestermodule/sRequesterEmailId",
         this.sRequesterEmailId
       );
+      this.otpSentAlert=true;
       this.emailSent=true;
       this.isDisable = true;
       this.showVerifyInput = true;
@@ -207,6 +217,9 @@ export default {
             this.sResponseKey = response.body;
           }
         });
+        setTimeout(() => {
+        this.otpSentAlert=false;
+      }, 5000)
     },
     //Check response opt and entered opt matched or not
     verifyCode() {

@@ -47,7 +47,7 @@ export default {
       this.$store.commit(
         "requestermodule/dtDeadline",
         moment()
-          .add(1, "days")
+          .add(30, "days")
           .toISOString()
           .substr(0, 10)
       );

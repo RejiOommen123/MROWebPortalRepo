@@ -5,7 +5,7 @@
       <v-col cols="12" offset-sm="2" sm="6" md="8">
         <h1 v-if="bAreYouPatient">What is your date of birth?</h1>
         <h1 v-else>What is the patient’s date of birth?</h1>
-        <p>Disclaimer here Pending</p>
+        <p v-if="disclaimer!=''">{{disclaimer}}</p>
         <!-- date picker menu and date picker -->
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
@@ -56,6 +56,8 @@ export default {
     return {
       dtPatientDOB: this.$store.state.requestermodule.dtPatientDOB,
       menu1: false,
+      disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_05_disclaimer01,
     };
   },
   // Date Validation

@@ -50,6 +50,7 @@
               <v-date-picker
                 ref="picker"
                 :min="new Date().toISOString().substr(0, 10)"
+                :max="maxdate"
                 v-model="dSpecific"
                 color="green lighten-1"
                 header-color="primary"
@@ -99,6 +100,7 @@ export default {
       menu1: false,
       dtAuthExpire: "",
       sAuthSpecificEvent: "",
+      maxdate:'',
 
       //Show and Hide Fields Values
       MROAuthExpireDateAfterNMonths: this.$store.state.ConfigModule
@@ -114,6 +116,11 @@ export default {
         val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
       },
     },
+    activated(){
+      var dt = new Date();
+      dt.setMonth(dt.getMonth() + 60);
+      this.maxdate = dt.toISOString();
+   },
   //Auth expiration validations
   validations: {
     dSpecific: {

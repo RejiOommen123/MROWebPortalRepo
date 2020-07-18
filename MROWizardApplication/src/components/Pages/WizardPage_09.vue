@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       bRTManualSelection : false,
-      option:[],
+      option:['abstract'],
 
       disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
       disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,

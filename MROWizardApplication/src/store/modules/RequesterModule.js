@@ -36,7 +36,7 @@ const state = {
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
-    nSTFaxNumber:0,
+    sSTFaxNumber:0,
     sSTFaxCompAdd:'',
     sSTEmailAddress:'',
     sSTAddZipCode: '',
@@ -46,7 +46,7 @@ const state = {
     sSTAddApartment:'',
     sRecipientFirstName: '',
     sRecipientLastName: '',
-    // sRecipientMiddleName: '',
+    sRecipientOrganizationName: '',
     sRecipientAddZipCode: '',
     sRecipientAddCity:'',
     sRecipientAddState: '',
@@ -181,8 +181,8 @@ const mutations = {
     sSTEmailAddress(state, payload) {
         state.sSTEmailAddress = payload;
     },
-    nSTFaxNumber(state, payload) {
-        state.nSTFaxNumber = payload;
+    sSTFaxNumber(state, payload) {
+        state.sSTFaxNumber = payload;
     },
     sSTFaxCompAdd(state, payload) {
         state.sSTFaxCompAdd = payload;
@@ -205,9 +205,9 @@ const mutations = {
     sRecipientFirstName(state, payload) {
         state.sRecipientFirstName = payload;
     },
-    // sRecipientMiddleName(state, payload) {
-    //     state.sRecipientMiddleName = payload;
-    // },
+    sRecipientOrganizationName(state, payload) {
+        state.sRecipientOrganizationName = payload;
+    },
     sRecipientLastName(state, payload) {
         state.sRecipientLastName = payload;
     },

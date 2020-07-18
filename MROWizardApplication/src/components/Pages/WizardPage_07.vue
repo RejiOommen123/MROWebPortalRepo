@@ -4,7 +4,7 @@
       <h1>What is your mailing address?</h1>
       <v-row>
         <!-- TODO: v-if="MROAddApartment" -->
-        <v-col cols="12" sm="6">
+        <v-col cols="12" style="padding-bottom:0px" offset-sm="2" sm="8">
           <v-text-field
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
@@ -14,13 +14,13 @@
             @blur="$v.sAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-         <v-col v-if="MROAddApartment" cols="12" sm="6">
+         <v-col  style="padding-bottom:0px" v-if="MROAddApartment" cols="12" offset-sm="2" sm="8">
           <v-text-field
             v-model="sAddApartment"
             label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
-        <v-col offset-sm="1" cols="12" sm="3">
+        <v-col  style="padding-bottom:0px" offset-sm="1" cols="12" sm="3">
           <v-text-field
             v-model="sAddCity"
             :error-messages="cityErrors"
@@ -30,7 +30,7 @@
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col offset-sm="1" cols="12"  sm="2">
+        <v-col  style="padding-bottom:0px" offset-sm="1" cols="12"  sm="2">
           <v-text-field
             v-model="sAddState"
             :error-messages="stateErrors"
@@ -40,7 +40,7 @@
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col offset-sm="1" cols="12" sm="3">
+        <v-col  style="padding-bottom:0px" offset-sm="1" cols="12" sm="3">
           <v-text-field
             type="tel"
             v-model="sAddZipCode"
