@@ -513,13 +513,22 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
                 allFields.Add("MROPatientLastName", requester.sPatientLastName);
                 allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
+                allFields.Add("MROPatientDOBDAY", requester.dtPatientDOB.Value.Day.ToString());
+                allFields.Add("MROPatientDOBMONTH", requester.dtPatientDOB.Value.Month.ToString());
+                allFields.Add("MROPatientDOBYEAR", requester.dtPatientDOB.Value.Year.ToString());
+
+
                 allFields.Add("MROPEmailId", requester.sRequesterEmailId);
                 allFields.Add("MROAddZipCode", requester.sAddZipCode);
                 allFields.Add("MROAddCity", requester.sAddCity);
                 allFields.Add("MROAddState", requester.sAddState);
                 allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
                 allFields.Add("MROAddAppartment", requester.sAddApartment);
+                
+                //Relationship
+                allFields.Add("MRORelationshipToPatient", requester.sSelectedRelationName);
 
+                
                 //Date Range
                 if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
                 {
@@ -549,8 +558,17 @@ namespace MROWebApi.Controllers
                     if (requester.sSelectedPrimaryReasons[counter] != "")
                     {
                         allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                        if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
+                        {
+                            allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
+                        }
                     }
+                    
                 }
+               
+
+
+
                 //Sensitive Info
                 for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
                 {
@@ -586,7 +604,7 @@ namespace MROWebApi.Controllers
                 //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
                 if (requester.sReleaseTo != "")
                 {
-                    allFields.Add(requester.sReleaseTo + "=1", requester.sReleaseTo == requester.sReleaseTo ? "On" : "");
+                    allFields.Add(requester.sReleaseTo + "=1", "On");
                 }
 
                 //Recipient 
