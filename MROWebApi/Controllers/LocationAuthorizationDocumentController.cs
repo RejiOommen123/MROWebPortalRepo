@@ -106,7 +106,9 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                 //check for MRO Appended Keyword
                 try
                 {
-                    if (frm.Name.Substring(0, 3) == "MRO" && frm.Name != "MROSignature")
+                    if (frm.Name.Substring(0, 3) == "MRO"   && frm.Name != "MROSignature01" 
+                                                            && frm.Name != "MROSignature02" 
+                                                            && frm.Name != "MROSignature03")
                     {
                         string sValue = null;
                         string sName = frm.Name;

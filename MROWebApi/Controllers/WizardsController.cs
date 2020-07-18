@@ -547,12 +547,19 @@ namespace MROWebApi.Controllers
 
 
                 //Record Types
-                for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
+                if (requester.bRTManualSelection)
                 {
-                    if (requester.sSelectedRecordTypes[counter] != "")
+                    for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
                     {
-                        allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                        if (requester.sSelectedRecordTypes[counter] != "")
+                        {
+                            allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                        }
                     }
+                }
+                else 
+                {
+                    allFields.Add("MRORecordTypeAbstract=1", "On");
                 }
 
                 //Primary Reasons
@@ -664,7 +671,7 @@ namespace MROWebApi.Controllers
                 }
 
                 //MROToday's Date
-                allFields.Add("MROTodaysDate", DateTime.Now.ToShortDateString());
+                allFields.Add("MROTodaysDate", DateTime.Now.ToString("MM-dd-yyyy"));
 
 
                 FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
@@ -682,39 +689,60 @@ namespace MROWebApi.Controllers
                     Doc theDoc = new Doc();
 
                     theDoc.Read(byteArrayToReturn);
-                    string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
-                    byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
-                    Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+                    if (theDoc.Form["MROSignature01"] != null)
+                    {
+                        string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+                        byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+                        Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
 
-                    MROHelperRepository helperRepo = new MROHelperRepository(_info);
-                    MROHelper helper = await helperRepo.Select(1);
-                    helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
-                    byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+                        MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                        MROHelper helper = await helperRepo.Select(1);
+                        helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+                        byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
 
-                    System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
-                    Graphics gra = Graphics.FromImage(canvas);
-                    Bitmap smallImg = new Bitmap(image2);
-                    gra.DrawImage(smallImg, new Point(0, 0));
-
-
-                    var mssignaturewithbg = new MemoryStream();
-                    canvas.Save(mssignaturewithbg, canvas.RawFormat);
-                    mssignaturewithbg.ToArray();
+                        System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
+                        Graphics gra = Graphics.FromImage(canvas);
+                        Bitmap smallImg = new Bitmap(image2);
+                        gra.DrawImage(smallImg, new Point(0, 0));
 
 
-                    XImage theImg = new XImage();
-                    theImg.SetStream(mssignaturewithbg);
-                    theDoc.Rect.String = theDoc.Form["MROSignature"].Rect.String;
-                    theDoc.Rect.Magnify(1, 1);
-                    theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
-                    theDoc.AddImageObject(theImg, false);
-                    theImg.Clear();
+                        var mssignaturewithbg = new MemoryStream();
+                        canvas.Save(mssignaturewithbg, canvas.RawFormat);
+                        mssignaturewithbg.ToArray();
 
-                    theDoc.Form.Stamp();
 
-                    byte[] pdfBytes = theDoc.GetData();
-                    return pdfBytes;
+                        XImage theImg = new XImage();
+                        theImg.SetStream(mssignaturewithbg);
+                        theDoc.Rect.String = theDoc.Form["MROSignature01"].Rect.String;
+                        theDoc.Rect.Magnify(1, 1);
+                        theDoc.Rect.Position(theDoc.Form["MROSignature01"].Rect.Left, theDoc.Form["MROSignature01"].Rect.Bottom);
+                        theDoc.AddImageObject(theImg, false);
+
+                        if (theDoc.Form["MROSignature02"] != null)
+                        {
+                            theDoc.Rect.String = theDoc.Form["MROSignature02"].Rect.String;
+                            theDoc.Rect.Magnify(1, 1);
+                            theDoc.Rect.Position(theDoc.Form["MROSignature02"].Rect.Left, theDoc.Form["MROSignature02"].Rect.Bottom);
+                            theDoc.AddImageObject(theImg, false);
+                        }
+
+                        if (theDoc.Form["MROSignature03"] != null)
+                        {
+                            theDoc.Rect.String = theDoc.Form["MROSignature03"].Rect.String;
+                            theDoc.Rect.Magnify(1, 1);
+                            theDoc.Rect.Position(theDoc.Form["MROSignature03"].Rect.Left, theDoc.Form["MROSignature03"].Rect.Bottom);
+                            theDoc.AddImageObject(theImg, false);
+                        }
+
+                        theImg.Clear();
+
+                        theDoc.Form.Stamp();
+
+                        byte[] pdfBytes = theDoc.GetData();
+                        return pdfBytes;
+                    }
                 }
+
                 return byteArrayToReturn;
 
             }
