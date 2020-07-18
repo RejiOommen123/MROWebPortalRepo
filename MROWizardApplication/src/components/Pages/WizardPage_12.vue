@@ -44,7 +44,7 @@
     </template>
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
+      <v-btn :disabled="sSelectedPrimaryReasons[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
       <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>

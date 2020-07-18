@@ -25,7 +25,7 @@
     <div v-show="!bAreYouPatient">
       <form>
         <v-row>
-          <v-col cols="12" offset="2" sm="4">
+          <v-col cols="6" offset-sm="2" sm="4">
             <v-text-field 
               v-model="sRelativeFirstName"
               :error-messages="sRelativeFirstNameErrors"
@@ -35,7 +35,7 @@
               @blur="$v.sRelativeFirstName.$touch()"
             ></v-text-field>
           </v-col>
-            <v-col cols="12"  sm="4">
+            <v-col cols="6"  sm="4">
             <v-text-field 
               v-model="sRelativeLastName"
               :error-messages="sRelativeLastNameErrors"
@@ -86,7 +86,7 @@
               @change="check('MRORelationshipOther')"
             ></v-checkbox>
             </v-col>
-            <v-col  cols="12" offset="3" sm="6">
+            <v-col  cols="12" offset-sm="3" sm="6">
             <v-text-field
               v-if="bShowOtherRelation"
               v-model="sOtherRelation"
@@ -97,7 +97,7 @@
               @blur="$v.sOtherRelation.$touch()"
             ></v-text-field>
             </v-col>
-            <v-col v-if="MRORelationMultipleDocument"  cols="12" offset="3" sm="6">
+            <v-col v-if="MRORelationMultipleDocument"  cols="12" offset-sm="3" sm="6">
               <template>
               <v-file-input
                 ref="file"
@@ -120,7 +120,7 @@
               </v-file-input>
             </template>
             </v-col>
-            <v-col cols="12" offset="3" sm="6">
+            <v-col cols="12" offset-sm="3" sm="6">
             <v-btn
               v-if="sSelectedRelation=='MRORelationshipOther'"
               @click.prevent="continueAhead"

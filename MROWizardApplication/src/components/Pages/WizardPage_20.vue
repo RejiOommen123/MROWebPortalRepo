@@ -6,7 +6,7 @@
       <form v-if="MRORequesterPhoneNumber">
         <v-row>
           <!-- Phone no input box -->
-          <v-col cols="2" offset-sm="3" sm="2">
+          <v-col cols="3" offset-sm="3" sm="2">
             <v-select
                v-model="selectedCountry"
               :items="countryCode"
@@ -15,7 +15,7 @@
           <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
             <label class="input-group-addon">+91</label>
           </v-col> -->
-          <v-col id="phoneNo" cols="10" sm="5">
+          <v-col id="phoneNo" cols="8" sm="5">
             <v-text-field
               type="tel"
               maxlength="10"

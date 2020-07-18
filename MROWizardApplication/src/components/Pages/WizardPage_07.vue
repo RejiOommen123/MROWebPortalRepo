@@ -4,12 +4,6 @@
       <h1>What is your mailing address?</h1>
       <v-row>
         <!-- TODO: v-if="MROAddApartment" -->
-         <v-col v-if="MROAddApartment" cols="12" sm="6">
-          <v-text-field
-            v-model="sAddApartment"
-            label="APARTMENT/BUILDING"
-          ></v-text-field>
-        </v-col>
         <v-col cols="12" sm="6">
           <v-text-field
             v-model="sAddStreetAddress"
@@ -18,6 +12,12 @@
             required
             @input="$v.sAddStreetAddress.$touch()"
             @blur="$v.sAddStreetAddress.$touch()"
+          ></v-text-field>
+        </v-col>
+         <v-col v-if="MROAddApartment" cols="12" sm="6">
+          <v-text-field
+            v-model="sAddApartment"
+            label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
         <v-col offset-sm="1" cols="12" sm="3">
