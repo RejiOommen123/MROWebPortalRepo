@@ -512,7 +512,7 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
                 allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
                 allFields.Add("MROPatientLastName", requester.sPatientLastName);
-                allFields.Add("MROPatientDOB", requester.dtPatientDOB.Value.ToShortDateString());
+                allFields.Add("MROPatientBirthDate", requester.dtPatientDOB.Value.ToShortDateString());
                 allFields.Add("MROPatientDOBDAY", requester.dtPatientDOB.Value.Day.ToString());
                 allFields.Add("MROPatientDOBMONTH", requester.dtPatientDOB.Value.Month.ToString());
                 allFields.Add("MROPatientDOBYEAR", requester.dtPatientDOB.Value.Year.ToString());
@@ -526,18 +526,21 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROAddAppartment", requester.sAddApartment);
                 
                 //Relationship
-                allFields.Add("MRORelationshipToPatient", requester.sSelectedRelationName);
+                allFields.Add("MRORelationshipToPatientText", requester.sSelectedRelationName);
+                if (requester.sSelectedRelation != "")
+                {
+                    allFields.Add(requester.sSelectedRelation + "=1", "On");
+                }
 
-                
                 //Date Range
                 if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
                 {
-                    allFields.Add("MRORecordsDateRange", requester.dtRecordRangeStart.Value.ToShortDateString());
+                    allFields.Add("MRODateRangeStart", requester.dtRecordRangeStart.Value.ToShortDateString());
                     allFields.Add("MRODateRangeEnd", requester.dtRecordRangeEnd.Value.ToShortDateString());
                 }
                 else
                 {
-                    allFields.Add("MRORecordsDateRange", string.Empty);
+                    allFields.Add("MRODateRangeStart", string.Empty);
                     allFields.Add("MRODateRangeEnd", string.Empty);
                 }
 
@@ -650,7 +653,7 @@ namespace MROWebApi.Controllers
                 //Is Phone Number Verified - 
                 allFields.Add("MRORequesterPhoneVerified=1", requester.bPhoneNoVerified ? "On" : "");
 
-                // Is idententity is DL or Other
+                // Is identity is DL or Other
                 if (requester.sIdentityIdName == "MRODLIdentity")
                 {
                     allFields.Add("MRODLIdentity=1", "On");
@@ -659,6 +662,9 @@ namespace MROWebApi.Controllers
                 {
                     allFields.Add("MROOtherGovIdentity=1", "On");
                 }
+
+                //MROToday's Date
+                allFields.Add("MROTodaysDate", DateTime.Now.ToShortDateString());
 
 
                 FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
