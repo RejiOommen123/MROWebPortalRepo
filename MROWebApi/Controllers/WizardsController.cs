@@ -508,6 +508,11 @@ namespace MROWebApi.Controllers
 
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
                 allFields.Add("MROFacilityName", dbFacility.sFacilityName);
+                allFields.Add("MROLocationName", requester.sSelectedLocationName);
+                if (requester.bAreYouPatient)
+                {
+                    allFields.Add("MROAreYouPatient=1", "On");
+                }
                 allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
                 allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
                 allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
@@ -517,20 +522,47 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROPatientDOBMONTH", requester.dtPatientDOB.Value.Month.ToString());
                 allFields.Add("MROPatientDOBYEAR", requester.dtPatientDOB.Value.Year.ToString());
 
+                allFields.Add("MRORequesterEmailId", requester.sRequesterEmailId);
+                //Confirm email send report
+                if (requester.sSelectedRelation != "")
+                {
+                    allFields.Add(requester.sSelectedRelation + "=1", "On");
+                }
+                //Previous Patient Name
+                allFields.Add("MROPatientPreviousFullName", requester.sPreviousPatientFirstName + " " + requester.sPreviousPatientMiddleName + " " + requester.sPreviousPatientLastName);
+                allFields.Add("MROPatientPreviousFirstName", requester.sPreviousPatientFirstName);
+                allFields.Add("MROPatientPreviousLastName", requester.sPreviousPatientLastName);
+                allFields.Add("MROPatientPreviousMiddleName", requester.sPreviousPatientMiddleName);
+                if (requester.bPatientNameChanged)
+                {
+                    allFields.Add("MROPatientNameChanged=1", "On");
+                }
 
-                allFields.Add("MROPEmailId", requester.sRequesterEmailId);
+                //Relationship
+                if (requester.sSelectedRelation != "")
+                {
+                    allFields.Add(requester.sSelectedRelation + "=1", "On");
+                }
+
                 allFields.Add("MROAddZipCode", requester.sAddZipCode);
                 allFields.Add("MROAddCity", requester.sAddCity);
                 allFields.Add("MROAddState", requester.sAddState);
                 allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
                 allFields.Add("MROAddAppartment", requester.sAddApartment);
-                
+                allFields.Add("MROAddCompleteAddress", requester.sAddApartment + ", "
+                                                    + requester.sAddStreetAddress + ", "
+                                                    + requester.sAddCity + ", "
+                                                    + requester.sAddState + ", "
+                                                    + requester.sAddZipCode);
                 //Relationship
-                allFields.Add("MRORelationshipToPatientText", requester.sSelectedRelationName);
                 if (requester.sSelectedRelation != "")
                 {
                     allFields.Add(requester.sSelectedRelation + "=1", "On");
                 }
+                allFields.Add("MRORelativeFirstName", requester.sRelativeFirstName);
+                allFields.Add("MRORelativeLastName", requester.sRelativeLastName);
+                allFields.Add("MRORelationshipToPatientText", requester.sSelectedRelationName);
+
 
                 //Date Range
                 if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
@@ -543,7 +575,10 @@ namespace MROWebApi.Controllers
                     allFields.Add("MRODateRangeStart", string.Empty);
                     allFields.Add("MRODateRangeEnd", string.Empty);
                 }
-
+                if (requester.bRecordMostRecentVisit)
+                {
+                    allFields.Add("MRORecordsMostRecentVisit=1", "On");
+                }
 
 
                 //Record Types
@@ -608,6 +643,9 @@ namespace MROWebApi.Controllers
                                                     + requester.sSTAddCity + ", "
                                                     + requester.sSTAddState + ", "
                                                     + requester.sSTAddZipCode);
+                allFields.Add("MROSTEmailAddress", requester.sSTEmailAddress);
+                allFields.Add("MROSTFaxNumber", requester.sSTFaxNumber);
+
 
 
 
@@ -623,9 +661,16 @@ namespace MROWebApi.Controllers
                 allFields.Add("MRORecipientAddCity", requester.sRecipientAddCity);
                 allFields.Add("MRORecipientAddStreetAddress", requester.sRecipientAddStreetAddress);
                 allFields.Add("MRORecipientAddApartment", requester.sRecipientAddApartment);
+                allFields.Add("MRORecipientCompleteAddress", requester.sRecipientAddApartment + ", "
+                                                    + requester.sRecipientAddStreetAddress + ", "
+                                                    + requester.sRecipientAddCity + ", "
+                                                    + requester.sRecipientAddState + ", "
+                                                    + requester.sRecipientAddZipCode);
                 allFields.Add("MRORecipientFirstName", requester.sRecipientFirstName);
                 allFields.Add("MRORecipientLastName", requester.sRecipientLastName);
                 allFields.Add("MRORecipientMiddleName", requester.sRecipientMiddleName);
+                allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientMiddleName + " " + requester.sRecipientLastName);
+                allFields.Add("MRORecipientOrganizationName", requester.sRecipientOrganizationName);
 
 
                 //Auth exipry date

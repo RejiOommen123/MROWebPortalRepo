@@ -44,6 +44,7 @@ namespace MRODBL.BaseClasses
         public string sPreviousPatientLastName { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 character Middle Name allowed")]
         public string sPreviousPatientMiddleName { get; set; }
+        public bool bPatientNameChanged { get; set; }
 
         [Required]
         public DateTime? dtPatientDOB { get; set; }
@@ -107,6 +108,9 @@ namespace MRODBL.BaseClasses
         public string sRecipientFirstName { get; set; }
         public string sRecipientLastName { get; set; }
         public string sRecipientMiddleName { get; set; }
+        public string sRecipientOrganizationName { get; set; }
+
+
         public string sRecipientAddZipCode { get; set; }
         public string sRecipientAddCity { get; set; }
         public string sRecipientAddState { get; set; }
