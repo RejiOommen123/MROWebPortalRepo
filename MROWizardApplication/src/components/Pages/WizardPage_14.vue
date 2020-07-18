@@ -65,19 +65,19 @@
               >
               <v-row>
               <v-col cols="12" sm="6">
-                <v-text-field
-                  v-model="sSTAddApartment"
-                  label="Apartment/Building"
-                ></v-text-field>
+              <v-text-field
+                v-model="sSTAddStreetAddress"
+                :error-messages="streetErrors"
+                label="STREET"
+                required
+                @input="$v.sSTAddStreetAddress.$touch()"
+                @blur="$v.sSTAddStreetAddress.$touch()"
+              ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
-                  v-model="sSTAddStreetAddress"
-                  :error-messages="streetErrors"
-                  label="STREET"
-                  required
-                  @input="$v.sSTAddStreetAddress.$touch()"
-                  @blur="$v.sSTAddStreetAddress.$touch()"
+                  v-model="sSTAddApartment"
+                  label="Apartment/Building"
                 ></v-text-field>
               </v-col>
               <v-col  cols="5" sm="5">
@@ -151,7 +151,7 @@
                   type="tel"
                   v-model="nSTConfirmFaxNumber"
                   :error-messages="nSTConfirmFaxNumberErrors"
-                  label="FAX NO"
+                  label="CONFIRM FAX NO"
                   required
                   @input="$v.nSTConfirmFaxNumber.$touch()"
                   @blur="$v.nSTConfirmFaxNumber.$touch()"
@@ -362,7 +362,7 @@ export default {
 
       this.$store.commit("requestermodule/sRecipientFirstName",'');
       this.$store.commit("requestermodule/sRecipientLastName",'');
-      this.$store.commit("requestermodule/sRecipientMiddleName",'');
+      // this.$store.commit("requestermodule/sRecipientMiddleName",'');
       this.$store.commit("requestermodule/sRecipientAddZipCode", '');
       this.$store.commit("requestermodule/sRecipientAddCity", '');
       this.$store.commit("requestermodule/sRecipientAddState", '');

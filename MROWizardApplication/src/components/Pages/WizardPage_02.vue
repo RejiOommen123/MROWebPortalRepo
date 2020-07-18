@@ -23,7 +23,7 @@
             >{{location.sLocationName}}</button>
           </v-col>
           <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
-            <v-col v-if="showOtherLoactionBox" cols="6" offset-sm="3" sm="6">
+            <v-col v-if="showOtherLoactionBox" offset="3" cols="6" offset-sm="3" sm="6">
               <v-text-field
                 type="text"
                 v-model="sSelectedLocationName"

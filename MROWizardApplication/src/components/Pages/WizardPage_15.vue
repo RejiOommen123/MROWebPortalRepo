@@ -3,7 +3,7 @@
     <form>
       <h1>Please provide recipient information.</h1>
       <v-row>
-         <v-col  cols="12" offset-sm="1" sm="3" xs="3">
+         <v-col  cols="6" offset-sm="2" sm="4">
           <v-text-field
             label="FIRST NAME"
             v-model="sRecipientFirstName"
@@ -13,10 +13,10 @@
             @blur="$v.sRecipientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
+        <!-- <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
           <v-text-field label="MIDDLE NAME" v-model="sRecipientMiddleName"></v-text-field>
-        </v-col>
-        <v-col cols="12" sm="3" xs="3">
+        </v-col> -->
+        <v-col cols="6" sm="4">
           <v-text-field
             label="LAST NAME"
             v-model="sRecipientLastName"
@@ -100,7 +100,7 @@ export default {
     return {
       sRecipientFirstName: "",
       sRecipientLastName: "",
-      sRecipientMiddleName: "",
+      // sRecipientMiddleName: "",
       sRecipientAddZipCode: '',
       sRecipientAddCity:'',
       sRecipientAddState: '',
@@ -184,7 +184,7 @@ export default {
     nextPage() {
       this.$store.commit("requestermodule/sRecipientFirstName",this.sRecipientFirstName);
       this.$store.commit("requestermodule/sRecipientLastName",this.sRecipientLastName);
-      this.$store.commit("requestermodule/sRecipientMiddleName",this.sRecipientMiddleName);
+      // this.$store.commit("requestermodule/sRecipientMiddleName",this.sRecipientMiddleName);
       this.$store.commit("requestermodule/sRecipientAddZipCode", this.sRecipientAddZipCode);
       this.$store.commit("requestermodule/sRecipientAddCity", this.sRecipientAddCity);
       this.$store.commit("requestermodule/sRecipientAddState", this.sRecipientAddState);

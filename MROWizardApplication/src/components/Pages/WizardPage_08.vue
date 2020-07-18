@@ -8,6 +8,8 @@
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              transition="scale-transition"
+              offset-y
               :value="dtRecordRangeStartFormatted"
               :error-messages="dtRecordRangeStartErrors"
               clearable
@@ -22,7 +24,14 @@
               :disabled="bRecordMostRecentVisit"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="dtRecordRangeStart" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
+          <v-date-picker 
+          ref="startpicker" 
+          v-model="dtRecordRangeStart" 
+          color="green lighten-1" 
+          header-color="primary" 
+          light @change="menu1 = false"
+          :max="new Date().toISOString().substr(0, 10)"
+          ></v-date-picker>
         </v-menu>
       </v-col>
       <!-- End Date input -->
@@ -30,6 +39,8 @@
         <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              transition="scale-transition"
+              offset-y
               :value="dtRecordRangeEndFormatted"
               :error-messages="dtRecordRangeEndErrors"
               clearable
@@ -44,7 +55,15 @@
               :disabled="bRecordMostRecentVisit"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="dtRecordRangeEnd" color="green lighten-1" header-color="primary" light @change="menu2 = false"></v-date-picker>
+          <v-date-picker 
+          ref="endpicker" 
+          v-model="dtRecordRangeEnd" 
+          color="green lighten-1" 
+          header-color="primary" 
+          light 
+          @change="menu2 = false"
+          :max="new Date().toISOString().substr(0, 10)"
+          ></v-date-picker>
         </v-menu>
       </v-col>
       <v-col v-if="MRORecordsMostRecentVisit" cols="12" offset-sm="3" sm="6" >
@@ -90,6 +109,14 @@ export default {
         .oFields.MRORecordsMostRecentVisit,
     };
   },
+   watch: {
+      menu1 (val) {
+        val && setTimeout(() => (this.$refs.startpicker.activePicker = 'YEAR'))
+      },
+      menu2 (val) {
+        val && setTimeout(() => (this.$refs.endpicker.activePicker = 'YEAR'))
+      },
+    },
   // Start and end date validations
   validations: {
     dtRecordRangeStart: {

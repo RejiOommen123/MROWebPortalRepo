@@ -9,6 +9,8 @@
           <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
+                transition="scale-transition"
+                offset-y
                 :value="dateFormatted"
                 placeholder="MM-DD-YYYY"
                 :error-messages="dateErrors"
@@ -23,7 +25,9 @@
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="dtDeadline "
+              ref="picker"
+              :min="mindate"
+              v-model="dtDeadline"
               color="green lighten-1"
               header-color="primary"
               light
@@ -55,6 +59,7 @@ export default {
         .toISOString()
         .substr(0, 10),
       menu1: false,
+      mindate:'',
       disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_18_disclaimer01,
 
@@ -69,6 +74,17 @@ export default {
       required,
       minValue: value => value > new Date().toISOString()
     }
+  },
+  watch: {
+      menu1 (val) {
+        val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+    },
+   activated(){
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    this.mindate=tomorrow.toISOString().substr(0, 10);
   },
   methods: {
     nextPage() {

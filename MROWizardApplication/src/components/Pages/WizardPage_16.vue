@@ -32,6 +32,8 @@
             <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
+                  transition="scale-transition"
+                  offset-y
                   :value="dSpecificFormatted"
                   placeholder="MM-DD-YYYY"
                   :error-messages="dSpecificErrors"
@@ -46,6 +48,8 @@
                 ></v-text-field>
               </template>
               <v-date-picker
+                ref="picker"
+                :min="new Date().toISOString().substr(0, 10)"
                 v-model="dSpecific"
                 color="green lighten-1"
                 header-color="primary"
@@ -72,7 +76,7 @@
           </div>
         </v-col>
         <v-col cols="6" offset-sm="4" sm="2">
-           <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
+           <v-btn :disabled="nSelectedCheckBox[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
         </v-col>
         <v-col cols="6" sm="2">
           <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
@@ -105,6 +109,11 @@ export default {
         .apiResponseDataByLocation.oFields.MROAuthExpireDateEventOccurs
     };
   },
+   watch: {
+      menu1 (val) {
+        val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+    },
   //Auth expiration validations
   validations: {
     dSpecific: {
@@ -173,8 +182,8 @@ export default {
     dSpecificErrors() {
       const errors = [];
       if (!this.$v.dSpecific.$dirty) return errors;
-      !this.$v.dSpecific.minValue && errors.push("Invalid Date");
-      !this.$v.dSpecific.required && errors.push("End Date is required");
+      !this.$v.dSpecific.minValue && errors.push("Date should be one day ahed from today.");
+      !this.$v.dSpecific.required && errors.push("Date is required");
       return errors;
     }
   }

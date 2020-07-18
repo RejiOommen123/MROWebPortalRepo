@@ -46,7 +46,7 @@ const state = {
     sSTAddApartment:'',
     sRecipientFirstName: '',
     sRecipientLastName: '',
-    sRecipientMiddleName: '',
+    // sRecipientMiddleName: '',
     sRecipientAddZipCode: '',
     sRecipientAddCity:'',
     sRecipientAddState: '',
@@ -205,9 +205,9 @@ const mutations = {
     sRecipientFirstName(state, payload) {
         state.sRecipientFirstName = payload;
     },
-    sRecipientMiddleName(state, payload) {
-        state.sRecipientMiddleName = payload;
-    },
+    // sRecipientMiddleName(state, payload) {
+    //     state.sRecipientMiddleName = payload;
+    // },
     sRecipientLastName(state, payload) {
         state.sRecipientLastName = payload;
     },
