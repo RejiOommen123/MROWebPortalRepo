@@ -524,9 +524,9 @@ namespace MROWebApi.Controllers
 
                 allFields.Add("MRORequesterEmailId", requester.sRequesterEmailId);
                 //Confirm email send report
-                if (requester.sSelectedRelation != "")
+                if (requester.bConfirmReport)
                 {
-                    allFields.Add(requester.sSelectedRelation + "=1", "On");
+                    allFields.Add("MROConfirmReport=1", "On");
                 }
                 //Previous Patient Name
                 allFields.Add("MROPatientPreviousFullName", requester.sPatientPreviousFirstName + " " + requester.sPatientPreviousMiddleName + " " + requester.sPatientPreviousLastName);
@@ -536,12 +536,6 @@ namespace MROWebApi.Controllers
                 if (requester.bPatientNameChanged)
                 {
                     allFields.Add("MROPatientNameChanged=1", "On");
-                }
-
-                //Relationship
-                if (requester.sSelectedRelation != "")
-                {
-                    allFields.Add(requester.sSelectedRelation + "=1", "On");
                 }
 
                 allFields.Add("MROAddZipCode", requester.sAddZipCode);
@@ -606,6 +600,11 @@ namespace MROWebApi.Controllers
                         if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
                         {
                             allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
+                        }
+                        else
+                        {
+                            //Clearing this label from PDf if request is "Patient Request"
+                            allFields.Add("MROOtherPrimaryReasonText", "");
                         }
                     }
                     
