@@ -9,6 +9,7 @@
             v-model="sAddStreetAddress"
             :error-messages="streetErrors"
             label="STREET"
+            maxlength="50"
             required
             @input="$v.sAddStreetAddress.$touch()"
             @blur="$v.sAddStreetAddress.$touch()"
@@ -18,6 +19,7 @@
           <v-text-field
             v-model="sAddApartment"
             label="APARTMENT/BUILDING"
+            maxlength="50"
           ></v-text-field>
         </v-col>
         <v-col  style="padding-bottom:0px" offset-sm="1" cols="12" sm="3">
@@ -26,6 +28,7 @@
             :error-messages="cityErrors"
             label="CITY"
             required
+            maxlength="50"
             @input="$v.sAddCity.$touch()"
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
@@ -36,6 +39,7 @@
             :error-messages="stateErrors"
             label="STATE"
             required
+            maxlength="50"
             @input="$v.sAddState.$touch()"
             @blur="$v.sAddState.$touch()"
           ></v-text-field>

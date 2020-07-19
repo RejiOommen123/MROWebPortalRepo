@@ -30,6 +30,7 @@
                 :error-messages="sSelectedLocationNameErrors"
                 label="OTHER LOCATION NAME"
                 required
+                maxlength="50"
                 @input="$v.sSelectedLocationName.$touch()"
                 @blur="$v.sSelectedLocationName.$touch()"
               ></v-text-field>

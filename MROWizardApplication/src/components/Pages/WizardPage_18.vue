@@ -27,6 +27,7 @@
             <v-date-picker
               ref="picker"
               :min="mindate"
+              :max="maxdate"
               v-model="dtDeadline"
               color="green lighten-1"
               header-color="primary"
@@ -60,6 +61,7 @@ export default {
         .substr(0, 10),
       menu1: false,
       mindate:'',
+      maxdate:'',
       disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_18_disclaimer01,
 
@@ -81,14 +83,18 @@ export default {
       },
     },
    activated(){
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    this.mindate=tomorrow.toISOString().substr(0, 10);
+    this.mindate=moment()
+          .add(1, "days")
+          .toISOString()
+          .substr(0, 10);
+    this.maxdate=moment()
+          .add(5, "years")
+          .toISOString()
+          .substr(0, 10);
   },
   methods: {
-    nextPage() {
-      this.$store.commit("requestermodule/dtDeadline ", this.dtDeadline);
+    nextPage() {          
+      this.$store.commit("requestermodule/dtDeadline", this.dtDeadline);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

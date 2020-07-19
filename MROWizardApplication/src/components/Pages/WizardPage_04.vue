@@ -12,12 +12,13 @@
             v-model="sPatientFirstName"
             :error-messages="sPatientFirstNameError"
             required
+            maxlength="30"
             @input="$v.sPatientFirstName.$touch()"
             @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
         <v-col v-if="MROPatientMiddleName" cols="12" sm="3" xs="3">
-          <v-text-field label="MIDDLE NAME" v-model="sPatientMiddleName"></v-text-field>
+          <v-text-field label="MIDDLE NAME" maxlength="30" v-model="sPatientMiddleName"></v-text-field>
         </v-col>
         <v-col cols="12" sm="3" xs="3">
           <v-text-field
@@ -25,6 +26,7 @@
             v-model="sPatientLastName"
             :error-messages="sPatientLastNameError"
             required
+            maxlength="30"
             @input="$v.sPatientLastName.$touch()"
             @blur="$v.sPatientLastName.$touch()"
           ></v-text-field>
@@ -46,12 +48,13 @@
               v-model="sPatientPreviousFirstName"
               :error-messages="sPatientPreviousFirstNameError"
               required
+              maxlength="30"
               @input="$v.sPatientPreviousFirstName.$touch()"
               @blur="$v.sPatientPreviousFirstName.$touch()"
             ></v-text-field>
           </v-col>
           <v-col v-if="MROPatientPreviousMiddleName" cols="12" sm="3" xs="3">
-            <v-text-field label="MIDDLE NAME" v-model="sPatientPreviousMiddleName"></v-text-field>
+            <v-text-field label="MIDDLE NAME" maxlength="30" v-model="sPatientPreviousMiddleName"></v-text-field>
           </v-col>
           <v-col cols="12" sm="3" xs="3">
             <v-text-field
@@ -59,6 +62,7 @@
               v-model="sPatientPreviousLastName"
               :error-messages="sPatientPreviousLastNameError"
               required
+              maxlength="30"
               @input="$v.sPatientPreviousLastName.$touch()"
               @blur="$v.sPatientPreviousLastName.$touch()"
             ></v-text-field>
@@ -102,10 +106,10 @@ export default {
   //Requester name validations
   mixins: [validationMixin],
   validations: {
-    sPatientFirstName: { required, maxLength: maxLength(15) },
-    sPatientLastName: { required, maxLength: maxLength(15) },
-    sPatientPreviousFirstName: { required, maxLength: maxLength(15) },
-    sPatientPreviousLastName: { required, maxLength: maxLength(15) }
+    sPatientFirstName: { required, maxLength: maxLength(30) },
+    sPatientLastName: { required, maxLength: maxLength(30) },
+    sPatientPreviousFirstName: { required, maxLength: maxLength(30) },
+    sPatientPreviousLastName: { required, maxLength: maxLength(30) }
     // sPatientMiddleName: { maxLength: maxLength(1) }
   },
   computed: {
@@ -121,7 +125,7 @@ export default {
       const errors = [];
       if (!this.$v.sPatientFirstName.$dirty) return errors;
       !this.$v.sPatientFirstName.maxLength &&
-        errors.push("First Name must be at most 15 characters long");
+        errors.push("First Name must be at most 30 characters long");
       !this.$v.sPatientFirstName.required &&
         errors.push("First Name is required.");
       return errors;
@@ -130,7 +134,7 @@ export default {
       const errors = [];
       if (!this.$v.sPatientLastName.$dirty) return errors;
       !this.$v.sPatientLastName.maxLength &&
-        errors.push("Last Name must be at most 15 characters long");
+        errors.push("Last Name must be at most 30 characters long");
       !this.$v.sPatientLastName.required &&
         errors.push("Last Name is required.");
       return errors;
@@ -139,7 +143,7 @@ export default {
       const errors = [];
       if (!this.$v.sPatientPreviousFirstName.$dirty) return errors;
       !this.$v.sPatientPreviousFirstName.maxLength &&
-        errors.push("First Name must be at most 15 characters long");
+        errors.push("First Name must be at most 30 characters long");
       !this.$v.sPatientPreviousFirstName.required &&
         errors.push("First Name is required.");
       return errors;
@@ -148,7 +152,7 @@ export default {
       const errors = [];
       if (!this.$v.sPatientPreviousLastName.$dirty) return errors;
       !this.$v.sPatientPreviousLastName.maxLength &&
-        errors.push("Last Name must be at most 15 characters long");
+        errors.push("Last Name must be at most 30 characters long");
       !this.$v.sPatientPreviousLastName.required &&
         errors.push("Last Name is required.");
       return errors;

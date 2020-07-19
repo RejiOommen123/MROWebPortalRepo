@@ -9,6 +9,7 @@
             v-model="sRecipientFirstName"
             :error-messages="sRecipientFirstNameError"
             required
+            maxlength="30"
             @input="$v.sRecipientFirstName.$touch()"
             @blur="$v.sRecipientFirstName.$touch()"
           ></v-text-field>
@@ -22,6 +23,7 @@
             v-model="sRecipientLastName"
             :error-messages="sRecipientLastNameError"
             required
+            maxlength="30"
             @input="$v.sRecipientLastName.$touch()"
             @blur="$v.sRecipientLastName.$touch()"
           ></v-text-field>
@@ -30,6 +32,7 @@
           <v-text-field
             label="ORGANIZATION NAME"
             v-model="sRecipientOrganizationName"
+            maxlength="50"
           ></v-text-field>
         </v-col>
         <!-- TODO: v-if="MROAddApartment" -->
@@ -40,6 +43,7 @@
             :error-messages="streetErrors"
             label="STREET"
             required
+            maxlength="50"
             @input="$v.sRecipientAddStreetAddress.$touch()"
             @blur="$v.sRecipientAddStreetAddress.$touch()"
           ></v-text-field>
@@ -48,6 +52,7 @@
           <v-text-field
             v-model="sRecipientAddApartment"
             label="APARTMENT/BUILDING"
+            maxlength="50"
           ></v-text-field>
         </v-col>
         <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
@@ -56,6 +61,7 @@
             :error-messages="cityErrors"
             label="CITY"
             required
+            maxlength="50"
             @input="$v.sRecipientAddCity.$touch()"
             @blur="$v.sRecipientAddCity.$touch()"
           ></v-text-field>
@@ -66,6 +72,7 @@
             :error-messages="stateErrors"
             label="STATE"
             required
+            maxlength="50"
             @input="$v.sRecipientAddState.$touch()"
             @blur="$v.sRecipientAddState.$touch()"
           ></v-text-field>
@@ -126,8 +133,8 @@ export default {
   //Requester address validations
   mixins: [validationMixin],
   validations: {
-    sRecipientFirstName: { required, maxLength: maxLength(15) },
-    sRecipientLastName: { required, maxLength: maxLength(15) },
+    sRecipientFirstName: { required, maxLength: maxLength(30) },
+    sRecipientLastName: { required, maxLength: maxLength(30) },
     sRecipientAddZipCode: {
       required,
       maxLength: maxLength(5),

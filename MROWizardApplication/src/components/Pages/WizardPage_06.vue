@@ -11,6 +11,7 @@
               v-model="emailValid.sRequesterEmailId"
               :error-messages="emailErrors"
               required
+              maxlength="70"
               :disabled="inputDisabled"
               @input="sRequesterEmailIdToLower"
               @blur="$v.emailValid.sRequesterEmailId.$touch()"
@@ -21,6 +22,7 @@
               v-model="emailValid.sConfirmEmailId"
               :error-messages="confirmEmailErrors"
               required
+              maxlength="70"
               :disabled="inputDisabled"
               @input="sConfirmEmailIdToLower"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"

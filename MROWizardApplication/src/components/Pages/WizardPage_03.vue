@@ -31,6 +31,7 @@
               :error-messages="sRelativeFirstNameErrors"
               label="First Name"
               required
+              maxlength="30"
               @input="$v.sRelativeFirstName.$touch()"
               @blur="$v.sRelativeFirstName.$touch()"
             ></v-text-field>
@@ -41,6 +42,7 @@
               :error-messages="sRelativeLastNameErrors"
               label="Last Name"
               required
+              maxlength="30"
               @input="$v.sRelativeLastName.$touch()"
               @blur="$v.sRelativeLastName.$touch()"
             ></v-text-field>
@@ -93,6 +95,7 @@
               :error-messages="sOtherRelationErrors"
               label="Other Relation"
               required
+              maxlength="50"
               @input="$v.sOtherRelation.$touch()"
               @blur="$v.sOtherRelation.$touch()"
             ></v-text-field>

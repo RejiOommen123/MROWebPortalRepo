@@ -36,7 +36,7 @@ const state = {
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
     sSelectedShipmentTypes: [],
-    sSTFaxNumber:0,
+    sSTFaxNumber:'',
     sSTFaxCompAdd:'',
     sSTEmailAddress:'',
     sSTAddZipCode: '',
@@ -199,8 +199,8 @@ const mutations = {
     sSTAddStreetAddress(state, payload) {
         state.sSTAddStreetAddress = payload;
     },
-    sStAddApartment(state, payload) {
-        state.sStAddApartment = payload;
+    sSTAddApartment(state, payload) {
+        state.sSTAddApartment = payload;
     },
     sRecipientFirstName(state, payload) {
         state.sRecipientFirstName = payload;

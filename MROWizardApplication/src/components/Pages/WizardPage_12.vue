@@ -38,7 +38,7 @@
       <!-- If requester selects other reason then free text box will appear to enter data -->
       <v-col cols="12" offset-sm="3" sm="6">
         <div v-if="this.bOther==true">
-          <v-textarea v-model="sOtherPrimaryReasons" rows="3" counter label="Other Reason"></v-textarea>
+          <v-textarea v-model="sOtherPrimaryReasons" maxlength="100" rows="3" counter label="Other Reason"></v-textarea>
         </div>
       </v-col>
     </template>
