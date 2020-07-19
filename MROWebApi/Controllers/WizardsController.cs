@@ -586,30 +586,37 @@ namespace MROWebApi.Controllers
                         }
                     }
                 }
-                else 
+                else
                 {
                     allFields.Add("MRORecordTypeAbstract=1", "On");
                 }
 
                 //Primary Reasons
-                for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
+                if (requester.sSelectedPrimaryReasons.Length == 0)
                 {
-                    if (requester.sSelectedPrimaryReasons[counter] != "")
-                    {
-                        allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
-                        if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
-                        {
-                            allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
-                        }
-                        else
-                        {
-                            //Clearing this label from PDf if request is "Patient Request"
-                            allFields.Add("MROOtherPrimaryReasonText", "");
-                        }
-                    }
-                    
+                    allFields.Add("MROOtherPrimaryReasonText", "");
                 }
-               
+                else
+                {
+                    for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
+                    {
+                        if (requester.sSelectedPrimaryReasons[counter] != "")
+                        {
+                            allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                            if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
+                            {
+                                allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
+                            }
+                            else
+                            {
+                                //Clearing this label from PDf if request is "Patient Request"
+                                allFields.Add("MROOtherPrimaryReasonText", "");
+                            }
+                        }
+
+                    }
+                }
+
 
 
 
