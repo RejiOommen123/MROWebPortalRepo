@@ -58,7 +58,7 @@
               label="Parent/Legal Guardian"
               color="#e84700"
               value="MRORelationshipParentLegalGuardian"
-              v-model="sSelectedRelation"
+              v-model="option"
               @change="check('MRORelationshipParentLegalGuardian')"
             ></v-checkbox>
             </v-col>
@@ -70,7 +70,7 @@
               label="Legal Representative (Executor, Patient Rep., HCPOA, etc.)"
               color="#e84700"
               value="MRORelationshipLegalRepresentative"
-              v-model="sSelectedRelation"
+              v-model="option"
               @change="check('MRORelationshipLegalRepresentative')"
             ></v-checkbox>
             </v-col>
@@ -82,7 +82,7 @@
               label="Other"
               color="#e84700"
               value="MRORelationshipOther"
-              v-model="sSelectedRelation"
+              v-model="option"
               @change="check('MRORelationshipOther')"
             ></v-checkbox>
             </v-col>
@@ -155,6 +155,7 @@ export default {
       files:[],
       sRelativeFileArray:[],
       sSelectedRelation: '',
+      option:[],
       bShowOtherRelation:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
@@ -252,6 +253,8 @@ export default {
       }    
     },
     check(id) {
+      this.option=[];
+      this.option.push(id);
       this.sSelectedRelation = id;
       // this.sSelectedRelation.push(id);
         if (this.sSelectedRelation == "MRORelationshipOther") {

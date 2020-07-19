@@ -12,7 +12,7 @@
               :error-messages="emailErrors"
               required
               :disabled="inputDisabled"
-              @input="$v.emailValid.sRequesterEmailId.$touch()"
+              @input="sRequesterEmailIdToLower"
               @blur="$v.emailValid.sRequesterEmailId.$touch()"
             ></v-text-field>
             <v-text-field
@@ -22,7 +22,7 @@
               :error-messages="confirmEmailErrors"
               required
               :disabled="inputDisabled"
-              @input="$v.emailValid.sConfirmEmailId.$touch()"
+              @input="sConfirmEmailIdToLower"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
             <div v-if="bRequestorEmailConfirm==false">
@@ -235,6 +235,12 @@ export default {
     },
     checked() {
       this.showVerifyBlock = !this.showVerifyBlock;
+    },
+    sRequesterEmailIdToLower(val) {
+      this.emailValid.sRequesterEmailId = val.toLowerCase()
+    },
+    sConfirmEmailIdToLower(val) {
+      this.emailValid.sConfirmEmailId = val.toLowerCase()
     },
     nextPage() {
       this.$store.commit(

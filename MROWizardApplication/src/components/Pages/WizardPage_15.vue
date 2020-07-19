@@ -33,13 +33,8 @@
           ></v-text-field>
         </v-col>
         <!-- TODO: v-if="MROAddApartment" -->
-         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" sm="6">
-          <v-text-field
-            v-model="sRecipientAddApartment"
-            label="APARTMENT/BUILDING"
-          ></v-text-field>
-        </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" sm="6">
+        
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="2" sm="8">
           <v-text-field
             v-model="sRecipientAddStreetAddress"
             :error-messages="streetErrors"
@@ -47,6 +42,12 @@
             required
             @input="$v.sRecipientAddStreetAddress.$touch()"
             @blur="$v.sRecipientAddStreetAddress.$touch()"
+          ></v-text-field>
+        </v-col>
+         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" offset-sm="2" sm="8">
+          <v-text-field
+            v-model="sRecipientAddApartment"
+            label="APARTMENT/BUILDING"
           ></v-text-field>
         </v-col>
         <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
