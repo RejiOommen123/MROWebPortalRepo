@@ -162,11 +162,11 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.WriteStartElement("detail");
                 //For Date, Reason,Comments
-                writer.WriteElementString("date", DateTime.Now.ToString());
-                writer.WriteElementString("date_required_by", requester.dtDeadline.ToString());
+                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'") );
+                writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
                 writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
                 writer.WriteElementString("comments", sComments);
-                writer.WriteElementString("expiration", requester.dtAuthExpire.ToString());
+                writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : ""); 
                 writer.WriteEndElement();
                 writer.WriteStartElement("patient");
                 writer.WriteElementString("firstname", requester.sPatientFirstName);
@@ -175,7 +175,7 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToShortDateString());
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requester.sAddStreetAddress);
+                writer.WriteElementString("street", requester.sAddStreetAddress != "" ? requester.sAddApartment + " " : string.Empty + requester.sAddStreetAddress);
                 writer.WriteElementString("city", requester.sAddCity);
                 writer.WriteElementString("state", requester.sAddState);
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
@@ -196,13 +196,13 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("email", requester.sRequesterEmailId);
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requester.sAddStreetAddress);
+                writer.WriteElementString("street", requester.sAddStreetAddress != "" ? requester.sAddApartment + " ": string.Empty + requester.sAddStreetAddress);
                 writer.WriteElementString("city", requester.sAddCity);
                 writer.WriteElementString("state", requester.sAddState);
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
                 writer.WriteEndElement();
                 writer.WriteElementString("phone_number", requester.sPhoneNo);
-                //writer.WriteElementString("fax_number", requesters.sPhoneNo);
+                writer.WriteElementString("fax_number", requester.sSTFaxNumber);
                 writer.WriteEndElement();
                 //Requester Part Ends Here
                 #endregion
@@ -221,11 +221,45 @@ namespace MROWebApi.Controllers
                 }
                 writer.WriteEndElement();
                 writer.WriteStartElement("types");
-                foreach (string singleRecordType in requester.sSelectedRecordTypes)
+                if (requester.bRTManualSelection)
                 {
                     writer.WriteStartElement("item");
-                    writer.WriteElementString("name", singleRecordType);
+                    writer.WriteElementString("name", "Abstract");
+                    writer.WriteElementString("include", "0");
                     writer.WriteEndElement();
+                }
+                else
+                {
+                    writer.WriteStartElement("item");
+                    writer.WriteElementString("name", "Abstract");
+                    writer.WriteElementString("include", "1");
+                    writer.WriteEndElement();
+                }
+
+                //to get the Record Type for this facility
+                RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+                IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
+
+                foreach (RecordTypes singleRecordType in facilityRecordTypes)
+                {
+                    foreach (string selectedRecordType in requester.sSelectedRecordTypes)
+                    {
+                        if (singleRecordType.sNormalizedRecordTypeName == selectedRecordType)
+                        {
+                            writer.WriteStartElement("item");
+                            writer.WriteElementString("name", selectedRecordType);
+                            writer.WriteElementString("include", "1");
+                            writer.WriteEndElement();
+                        }
+                        else
+                        {
+                            writer.WriteStartElement("item");
+                            writer.WriteElementString("name", selectedRecordType);
+                            writer.WriteElementString("include", "0");
+                            writer.WriteEndElement();
+                        }
+                        
+                    }
                 }
                 writer.WriteEndElement();
                 writer.WriteEndElement();

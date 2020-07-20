@@ -110,6 +110,21 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString, new {@nFacilityLocationID = nFacilityLocationID, @sLocationName = sLocationName });
             }
         }
+
+        public async Task<IEnumerable<T>> SelectRecordTypeBynFacilityID(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "[lstRecordTypes] " +
+                     "inner join [lnkFacilityRecordTypes] " +
+                     "on [lnkFacilityRecordTypes].nRecordTypeID = [lstRecordTypes].nRecordTypeID " +
+                     "WHERE " +
+                     "nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID});
+            }
+        }
         public async Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
