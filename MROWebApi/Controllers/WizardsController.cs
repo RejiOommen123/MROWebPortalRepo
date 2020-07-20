@@ -156,13 +156,13 @@ namespace MROWebApi.Controllers
                 writer.WriteStartElement("item");
                 //For Location Code,Name,ID
                 writer.WriteElementString("code", location.sLocationCode);
-                writer.WriteElementString("name", location.sLocationName);
+                writer.WriteElementString("name", requester.sSelectedLocationName);
                 writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.WriteStartElement("detail");
                 //For Date, Reason,Comments
-                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'") );
+                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss Z") );
                 writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
                 writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
                 writer.WriteElementString("comments", sComments);
@@ -172,10 +172,10 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("firstname", requester.sPatientFirstName);
                 writer.WriteElementString("lastname", requester.sPatientLastName);
                 writer.WriteElementString("middle_name", sMiddleName);
-                writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToShortDateString());
+                writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requester.sAddStreetAddress != "" ? requester.sAddApartment + " " : string.Empty + requester.sAddStreetAddress);
+                writer.WriteElementString("street", requester.sAddApartment != "" ? requester.sAddApartment + " " + requester.sAddStreetAddress : requester.sAddStreetAddress);
                 writer.WriteElementString("city", requester.sAddCity);
                 writer.WriteElementString("state", requester.sAddState);
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
@@ -185,18 +185,16 @@ namespace MROWebApi.Controllers
 
                 //Requester - Part
                 #region Requester Part
-                writer.WriteStartElement("requester");
-                writer.WriteElementString("name", sRelativeName);
-                //Requester Last Name
-                //writer.WriteElementString("lastname", requesters.sPatientLastName);
-                //Organization - Skipped
-                //writer.WriteElementString("organization", requesters.);
+                writer.WriteStartElement("requestor");
+                writer.WriteElementString("firstname", requester.sRelativeFirstName);
+                writer.WriteElementString("lastname", requester.sRelativeLastName);
+                writer.WriteElementString("organization", requester.sRecipientOrganizationName);
                 writer.WriteElementString("is_patient", requester.bAreYouPatient.ToString());
                 writer.WriteElementString("relation", sRelationToPatient);
                 writer.WriteElementString("email", requester.sRequesterEmailId);
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requester.sAddStreetAddress != "" ? requester.sAddApartment + " ": string.Empty + requester.sAddStreetAddress);
+                writer.WriteElementString("street", requester.sAddApartment != "" ? requester.sAddApartment + " " + requester.sAddStreetAddress : requester.sAddStreetAddress);
                 writer.WriteElementString("city", requester.sAddCity);
                 writer.WriteElementString("state", requester.sAddState);
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
@@ -211,8 +209,8 @@ namespace MROWebApi.Controllers
                 writer.WriteStartElement("dates_of_service");
                 if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
                 {
-                    writer.WriteElementString("start", requester.dtRecordRangeStart.Value.ToShortDateString());
-                    writer.WriteElementString("end", requester.dtRecordRangeEnd.Value.ToShortDateString());
+                    writer.WriteElementString("start", requester.dtRecordRangeStart.Value.ToString("yyyy-MM-dd"));
+                    writer.WriteElementString("end", requester.dtRecordRangeEnd.Value.ToString("yyyy-MM-dd"));
                 }
                 else
                 {
@@ -247,14 +245,14 @@ namespace MROWebApi.Controllers
                         if (singleRecordType.sNormalizedRecordTypeName == selectedRecordType)
                         {
                             writer.WriteStartElement("item");
-                            writer.WriteElementString("name", selectedRecordType);
+                            writer.WriteElementString("name", singleRecordType.sRecordTypeName);
                             writer.WriteElementString("include", "1");
                             writer.WriteEndElement();
                         }
                         else
                         {
                             writer.WriteStartElement("item");
-                            writer.WriteElementString("name", selectedRecordType);
+                            writer.WriteElementString("name", singleRecordType.sRecordTypeName);
                             writer.WriteElementString("include", "0");
                             writer.WriteEndElement();
                         }
