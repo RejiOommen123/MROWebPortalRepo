@@ -163,7 +163,7 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.WriteStartElement("detail");
                 //For Date, Reason,Comments
-                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss Z") );
+                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss") );
                 writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
                 writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
                 writer.WriteElementString("comments", sComments);
