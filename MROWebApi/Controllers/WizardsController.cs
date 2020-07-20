@@ -122,6 +122,7 @@ namespace MROWebApi.Controllers
                 var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
                 var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
 
+                string[] sSelectedRecordTypesForXML = requester.sSelectedRecordTypes;
                 //DB Storing
                 RequestersController requestersController = new RequestersController(_info);
                 await requestersController.AddRequester(requester);
@@ -237,26 +238,22 @@ namespace MROWebApi.Controllers
                 //to get the Record Type for this facility
                 RecordTypesRepository rtFac = new RecordTypesRepository(_info);
                 IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
-
+             
                 foreach (RecordTypes singleRecordType in facilityRecordTypes)
                 {
-                    foreach (string selectedRecordType in requester.sSelectedRecordTypes)
+                    if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
                     {
-                        if (singleRecordType.sNormalizedRecordTypeName == selectedRecordType)
-                        {
-                            writer.WriteStartElement("item");
-                            writer.WriteElementString("name", singleRecordType.sRecordTypeName);
-                            writer.WriteElementString("include", "1");
-                            writer.WriteEndElement();
-                        }
-                        else
-                        {
-                            writer.WriteStartElement("item");
-                            writer.WriteElementString("name", singleRecordType.sRecordTypeName);
-                            writer.WriteElementString("include", "0");
-                            writer.WriteEndElement();
-                        }
-                        
+                        writer.WriteStartElement("item");
+                        writer.WriteElementString("name", singleRecordType.sRecordTypeName);
+                        writer.WriteElementString("include", "1");
+                        writer.WriteEndElement();
+                    }
+                    else
+                    {
+                        writer.WriteStartElement("item");
+                        writer.WriteElementString("name", singleRecordType.sRecordTypeName);
+                        writer.WriteElementString("include", "0");
+                        writer.WriteEndElement();
                     }
                 }
                 writer.WriteEndElement();
