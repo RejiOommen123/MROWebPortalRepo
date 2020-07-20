@@ -89,8 +89,14 @@ namespace MROWebApi.Controllers
                 else
                 {
                     //Update in table 
-                    requestersFac.Update(requester);
-                    nRequesterId = requester.nRequesterID;
+                    if ((requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_24")|| (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25"))
+                    {
+                        nRequesterId = await requestersFac.UpdateRequesterFeedback(requester.nRequesterID,requester.bRequestAnotherRecord,requester.nFeedbackRating,requester.sFeedbackComment,requester.sWizardName);
+                    }
+                    else { 
+                        requestersFac.Update(requester);
+                        nRequesterId = requester.nRequesterID;
+                    }
                 }
 
                 #region Requestor Logger

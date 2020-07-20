@@ -285,6 +285,21 @@ namespace MRODBL.Repositories
                 return false;
             }
         }
+        public async Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment, string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET bRequestAnotherRecord = @bRequestAnotherRecord, " +
+                      "nFeedbackRating = @nFeedbackRating, " +
+                      "sFeedbackComment = @sFeedbackComment, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @bRequestAnotherRecord = bRequestAnotherRecord, @nFeedbackRating = nFeedbackRating, @sFeedbackComment = sFeedbackComment, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
         #endregion
 
         #region Stored Procedures

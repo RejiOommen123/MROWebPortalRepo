@@ -140,6 +140,16 @@ namespace MRODBL.Repositories
         /// <param name="ourModels">List of Records to be Updated</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
         bool UpdateMany(List<T> ourModels);
+        /// <summary>
+        /// To update requester object after request submitted
+        /// </summary>
+        /// <param name="nRequesterID">Requester Id</param>
+        /// <param name="bRequestAnotherRecord">True if requester selected Request Another Record</param>
+        /// <param name="nFeedbackRating">1 to 5 rating</param>
+        /// <param name="sFeedbackComment">Comments of requester</param>
+        /// <param name="sWizardName">Name of the wizard</param>
+        /// <returns></returns>
+        Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
         #endregion
 
         #region Stored Procedures

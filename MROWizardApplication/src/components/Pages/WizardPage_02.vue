@@ -98,7 +98,6 @@ export default {
           this.showOtherLoactionBox = true;
         } else {
           this.showOtherLoactionBox = false;
-          this.sSelectedLocationName = "";
           this.$store.commit(
             "requestermodule/sSelectedLocationName",
             location.sLocationName
@@ -107,10 +106,16 @@ export default {
         }
       },
       next(location) {
-        this.$store.commit(
-          "requestermodule/sSelectedLocationName",
-          this.sSelectedLocationName
-        );
+        if (location.sNormalizedLocationName == "MROLocationOther") {
+          this.$store.commit(
+            "requestermodule/sSelectedLocationName",location.sLocationName+'-'+this.sSelectedLocationName
+          );
+        }
+        else{
+          this.$store.commit(
+            "requestermodule/sSelectedLocationName",location.sLocationName
+          );
+        }
         this.apiRequestByLocationId(location);
       },
       apiRequestByLocationId(location) {

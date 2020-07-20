@@ -368,7 +368,7 @@ export default {
       this.$store.commit("requestermodule/sSTAddCity", '');
       this.$store.commit("requestermodule/sSTAddState",'');
       this.$store.commit("requestermodule/sSTAddStreetAddress", '');
-      this.$store.commit("requestermodule/sSTFaxNumber",0);
+      this.$store.commit("requestermodule/sSTFaxNumber",'');
 
       this.$store.commit("requestermodule/sRecipientFirstName",'');
       this.$store.commit("requestermodule/sRecipientLastName",'');

@@ -56,7 +56,7 @@
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
             <div v-if="showVerifyBlock && bRequestorEmailVerify">
-              <p>Click on "Send Email" for email verification.</p>
+              <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
                <v-alert
                     v-if="otpSentAlert"
                     dense
@@ -66,6 +66,7 @@
                    Sending Email
                   </v-alert>
               <v-btn
+                v-if="emailSent==false"
                 @click="sendEmail"
                 :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
@@ -73,6 +74,7 @@
               <div v-if="showVerifyInput==true">
                 <v-col cols="12" offset-sm="3" sm="6">
                 <v-text-field
+                  ref="otp"
                   :error-messages="sVerifyError"
                   @input="$v.sVerify.$touch()"
                   @blur="$v.sVerify.$touch()"
@@ -221,6 +223,7 @@ export default {
         });
         setTimeout(() => {
         this.otpSentAlert=false;
+        this.$refs.otp.focus();
       }, 5000)
     },
     //Check response opt and entered opt matched or not
