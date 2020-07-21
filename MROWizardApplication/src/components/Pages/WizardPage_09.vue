@@ -10,7 +10,7 @@
           dark
           class="checkboxBorder"
           label="I would like to request my medical records abstract."
-          color="#e84700"
+          color="white"
           value="abstract"
           v-model="option"
           @change="checked('abstract')"
@@ -31,7 +31,7 @@
           dark
           class="checkboxBorder"
           label="I would like to manually select which records I need."
-          color="#e84700"
+          color="white"
           value="manual"
           v-model="option"
           @change="checked('manual')"

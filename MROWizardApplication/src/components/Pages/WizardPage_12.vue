@@ -18,7 +18,7 @@
             dark
             class="checkboxBorder"
             :label="primaryReason.sPrimaryReasonName"
-            color="#e84700"
+            color="white"
             :value="primaryReason.sNormalizedPrimaryReasonName"
             v-model="sSelectedPrimaryReasons"
             @change="check(primaryReason)"

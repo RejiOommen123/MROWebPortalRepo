@@ -71,7 +71,7 @@
           hide-details
           class="checkboxBorder"
           v-model="bRecordMostRecentVisit"
-          color="#e84700"
+          color="white"
           label="Most Recent Visit."
       ></v-checkbox>
       </v-col>

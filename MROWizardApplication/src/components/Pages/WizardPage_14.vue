@@ -17,7 +17,7 @@
               dark
               class="checkboxBorder"
               :label="shipmentType.sShipmentTypeName"
-              color="#e84700"
+              color="white"
               :value="shipmentType.sNormalizedShipmentTypeName"
               v-model="sSelectedShipmentTypes"
               @change="check(shipmentType.sNormalizedShipmentTypeName)"

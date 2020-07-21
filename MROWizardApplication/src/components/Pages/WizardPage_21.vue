@@ -13,7 +13,7 @@
             dark
             class="checkboxBorder"
             label= "Drivers License"
-            color="#e84700"
+            color="white"
             value="MRODLIdentity"
             v-model="nSelectedCheckBox"
             @change="check('MRODLIdentity')"
@@ -26,7 +26,7 @@
             dark
             class="checkboxBorder"
             label="Other Government Photo Id"
-            color="#e84700"
+            color="white"
             value="MROOtherGovIdentity"
             v-model="nSelectedCheckBox"
             @change="check('MROOtherGovIdentity')"

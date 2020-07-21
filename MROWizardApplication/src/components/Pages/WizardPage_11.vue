@@ -11,7 +11,7 @@
             v-model="sSelectedSensitiveInfo"
             class="checkboxBorder"
             :label="sensitiveInfo.sSensitiveInfoName"
-            color="#e84700"
+            color="white"
             :value="sensitiveInfo.sNormalizedSensitiveInfoName"
           >
           <!-- This for 'i' button to give disclaimers/info about option -->

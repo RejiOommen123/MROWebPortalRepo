@@ -40,7 +40,7 @@
               v-model="bConfirmReport"
               :disabled="inputDisabled"
               @change="checked()"
-              color="#e84700"
+              color="white"
               :label="disclaimer02"
             ></v-checkbox>
             <div v-if="verified==false">
@@ -79,19 +79,23 @@
                   @input="$v.sVerify.$touch()"
                   @blur="$v.sVerify.$touch()"
                   v-model="sVerify"
-                  label="Enter OTP"
+                  label="Enter Code"
                   required
                 ></v-text-field>
                 </v-col>
-
-                <v-btn @click.prevent="sendEmail" class="next">Resend OTP</v-btn>
+                <v-col cols="12" sm="12">
+                <v-btn @click.prevent="sendEmail" :disabled="$v.emailValid.$invalid" class="next">Resend Code</v-btn>
 
                 <v-btn
                   @click.prevent="verifyCode"
-                  :disabled="$v.sVerify.$invalid"
+                  :disabled="$v.sVerify.$invalid || $v.emailValid.$invalid"
                   style="margin-left:10px"
                   class="next"
                 >Verify</v-btn>
+                </v-col>
+                <!-- <v-col cols="12" offset-sm="3" sm="6">
+                  <v-btn @click.prevent="nextPage" :disabled="$v.emailValid.$invalid" class="next">Skip</v-btn>
+                </v-col> -->
               </div>
             </div>
             <div v-if="showSuccessBlock">
@@ -190,9 +194,9 @@ export default {
     sVerifyError() {
       const errors = [];
       if (!this.$v.sVerify.$dirty) return errors;
-      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.minLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.required && errors.push("OTP required");
+      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.required && errors.push("Verification Code required");
       return errors;
     }
   },

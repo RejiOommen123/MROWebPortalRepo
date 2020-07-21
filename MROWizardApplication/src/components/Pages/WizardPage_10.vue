@@ -12,7 +12,7 @@
             v-model="sSelectedRecordTypes"
             class="checkboxBorder"
             :label="recordType.sRecordTypeName"
-            color="#e84700"
+            color="white"
             :value="recordType.sNormalizedRecordTypeName"
             wrap
           >

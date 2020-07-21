@@ -11,7 +11,7 @@
             dark
             class="checkboxBorder"
             :label="nAuthMonths+' months after signature date'"
-            color="#e84700"
+            color="white"
             :value="1"
             v-model="nSelectedCheckBox"
             @change="check(1)"
@@ -23,7 +23,7 @@
             dark
             class="checkboxBorder"
             label="On specific date"
-            color="#e84700"
+            color="white"
             :value="2"
             v-model="nSelectedCheckBox"
             @change="check(2)"
@@ -67,7 +67,7 @@
             dark
             class="checkboxBorder"
             label="When a specific event occur."
-            color="#e84700"
+            color="white"
             :value="3"
             v-model="nSelectedCheckBox"
             @change="check(3)"

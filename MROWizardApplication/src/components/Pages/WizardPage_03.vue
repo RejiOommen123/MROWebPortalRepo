@@ -58,7 +58,7 @@
               dark
               class="checkboxBorder"
               label="Parent/Legal Guardian"
-              color="#e84700"
+              color="white"
               value="MRORelationshipParentLegalGuardian"
               v-model="option"
               @change="check('MRORelationshipParentLegalGuardian')"
@@ -70,7 +70,7 @@
               dark
               class="checkboxBorder"
               label="Legal Representative (Executor, Patient Rep., HCPOA, etc.)"
-              color="#e84700"
+              color="white"
               value="MRORelationshipLegalRepresentative"
               v-model="option"
               @change="check('MRORelationshipLegalRepresentative')"
@@ -82,7 +82,7 @@
               dark
               class="checkboxBorder"
               label="Other"
-              color="#e84700"
+              color="white"
               value="MRORelationshipOther"
               v-model="option"
               @change="check('MRORelationshipOther')"

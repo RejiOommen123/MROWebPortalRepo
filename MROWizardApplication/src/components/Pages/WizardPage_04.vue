@@ -35,7 +35,7 @@
         <v-col v-if="MROPatientNameChanged" style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="2" sm="8">
           <v-checkbox
             v-model="bPatientNameChanged"
-            color="#e84700"
+            color="white"
             @change="checked()"
             label="If different from above, please provide full name given at time of visit (for records requested)"
           ></v-checkbox>
