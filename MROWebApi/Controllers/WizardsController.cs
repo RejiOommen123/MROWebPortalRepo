@@ -23,6 +23,23 @@ using WebSupergoo.ABCpdf11;
 
 namespace MROWebApi.Controllers
 {
+    public sealed class StringWriterWithEncoding : StringWriter
+    {
+        private readonly Encoding encoding;
+
+        public StringWriterWithEncoding() { }
+
+        public StringWriterWithEncoding(Encoding encoding)
+        {
+            this.encoding = encoding;
+        }
+
+        public override Encoding Encoding
+        {
+            get { return encoding; }
+        }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
@@ -140,28 +157,36 @@ namespace MROWebApi.Controllers
                     //return Content("Email Not Sent");
                 }
 
-                XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
-                {
-                    OmitXmlDeclaration = false,
-                    ConformanceLevel = ConformanceLevel.Document
-                };
-                StringBuilder xmlString = new StringBuilder();
+                XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+                //{
+                //    OmitXmlDeclaration = false,
+                //    Encoding = Encoding.UTF8,
+                //    ConformanceLevel = ConformanceLevel.Document
+                //};
+
+                //XmlWriterSettings settings = new XmlWriterSettings(); 
+                xmlWriterSetting.Indent = true;
+                xmlWriterSetting.Encoding = Encoding.UTF8;
+
+                var xmlString = new StringWriterWithEncoding(Encoding.UTF8);
+
+                //StringBuilder xmlString = new StringBuilder();
                 using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
                 writer.WriteStartElement("request");
+                writer.WriteStartElement("detail");
                 writer.WriteStartElement("facility");
                 writer.WriteElementString("code", facility.nROIFacilityID.ToString());
                 writer.WriteElementString("name", facility.sFacilityName);
-                writer.WriteElementString("ID", facility.nFacilityID.ToString());
+                writer.WriteElementString("value", facility.nFacilityID.ToString());
                 writer.WriteEndElement();
                 writer.WriteStartElement("locations");
                 writer.WriteStartElement("item");
                 //For Location Code,Name,ID
                 writer.WriteElementString("code", location.sLocationCode);
                 writer.WriteElementString("name", requester.sSelectedLocationName);
-                writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
+                writer.WriteElementString("value", location.nFacilityLocationID.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndElement();
-                writer.WriteStartElement("detail");
                 //For Date, Reason,Comments
                 writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss") );
                 writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
