@@ -1,11 +1,12 @@
 <template>
   <div class="center">
     <!-- <div class="disclaimer">{{disclaimer}}</div> -->
-    <h1>Please tell us how we can make this tool better.</h1>
+    <h1>How would you rate this tool?</h1>
     <div class="form-group ">
       <div>
       <v-rating v-if="MROFeedbackRating" v-model="nFeedbackRating" background-color="green lighten-3" color="green" large></v-rating>
       </div>
+      <div class="subHeadings" style="margin-top:20px">{{disclaimer}}</div>
       <div>
         <v-textarea
         v-if="MROFeedbackComment"
@@ -34,10 +35,12 @@ export default {
     return {
       nFeedbackRating: 4,
       sFeedbackComment: "",
-      // disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
+
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_25_disclaimer01,
+
       //Show and Hide Fields Values
       MROFeedbackRating : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackRating,
-      MROFeedbackComment : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackComment
+      MROFeedbackComment : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackComment,
     };
   },
   methods: {

@@ -6,7 +6,7 @@
     </div>
     <form>
       <v-row>
-        <v-col cols="12" offset-sm="1" sm="3" xs="3">
+        <v-col cols="12" sm="4" >
           <v-text-field
             label="FIRST NAME"
             v-model="sPatientFirstName"
@@ -17,10 +17,10 @@
             @blur="$v.sPatientFirstName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col v-if="MROPatientMiddleName" cols="12" sm="3" xs="3">
+        <v-col v-if="MROPatientMiddleName" cols="12" sm="4" >
           <v-text-field label="MIDDLE NAME" maxlength="30" v-model="sPatientMiddleName"></v-text-field>
         </v-col>
-        <v-col cols="12" sm="3" xs="3">
+        <v-col cols="12" sm="4" >
           <v-text-field
             label="LAST NAME"
             v-model="sPatientLastName"
@@ -34,6 +34,7 @@
         <!-- bPatientNameChanged -->
         <v-col v-if="MROPatientNameChanged" style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="2" sm="8">
           <v-checkbox
+            hide-details
             v-model="bPatientNameChanged"
             color="white"
             @change="checked()"
@@ -42,7 +43,7 @@
         </v-col>
         <!-- TODO:add show and hide for previous name after adding these fields in db -->
         <template v-if="bPatientNameChanged">
-          <v-col cols="12" offset-sm="1" sm="3" xs="3">
+          <v-col style="padding-top:0px;padding-bottom:0px;" cols="12" sm="4" >
             <v-text-field
               label="FIRST NAME"
               v-model="sPatientPreviousFirstName"
@@ -53,10 +54,10 @@
               @blur="$v.sPatientPreviousFirstName.$touch()"
             ></v-text-field>
           </v-col>
-          <v-col v-if="MROPatientPreviousMiddleName" cols="12" sm="3" xs="3">
+          <v-col style="padding-top:0px;padding-bottom:0px;" v-if="MROPatientPreviousMiddleName" cols="12" sm="4" >
             <v-text-field label="MIDDLE NAME" maxlength="30" v-model="sPatientPreviousMiddleName"></v-text-field>
           </v-col>
-          <v-col cols="12" sm="3" xs="3">
+          <v-col style="padding-top:0px;padding-bottom:0px;" cols="12" sm="4">
             <v-text-field
               label="LAST NAME"
               v-model="sPatientPreviousLastName"

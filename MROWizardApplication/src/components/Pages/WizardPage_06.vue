@@ -36,6 +36,7 @@
             </div>
             <div v-if="bRequestorEmailConfirm==true">
             <v-checkbox
+              hide-details
               id="checkbox"
               v-model="bConfirmReport"
               :disabled="inputDisabled"

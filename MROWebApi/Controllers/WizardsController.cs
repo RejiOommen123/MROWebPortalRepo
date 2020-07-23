@@ -806,7 +806,8 @@ namespace MROWebApi.Controllers
 
                         System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
                         Graphics gra = Graphics.FromImage(canvas);
-                        Bitmap smallImg = new Bitmap(image2);
+                        //Bitmap smallImg = new Bitmap(image2);
+                        Bitmap smallImg = new Bitmap(image2, 350, 120);
                         gra.DrawImage(smallImg, new Point(0, 0));
 
 
