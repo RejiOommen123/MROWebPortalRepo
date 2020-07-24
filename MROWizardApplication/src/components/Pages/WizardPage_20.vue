@@ -7,7 +7,7 @@
         <v-row>
           <!-- Phone no input box -->
           <v-col cols="3" offset-sm="3" sm="2">
-            <v-select v-model="selectedCountry" :items="countryCode"></v-select>
+            <v-select id="phoneExt" v-model="selectedCountry" :items="countryCode"></v-select>
           </v-col>
           <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
             <label class="input-group-addon">+91</label>

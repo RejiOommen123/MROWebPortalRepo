@@ -9,8 +9,9 @@
       <div class="subHeadings" style="margin-top:20px">{{disclaimer}}</div>
       <div>
         <v-textarea
+        class="TextAreaBg" 
         v-if="MROFeedbackComment"
-          filled
+          
           width:100
           rows="4"
           row-height="30"

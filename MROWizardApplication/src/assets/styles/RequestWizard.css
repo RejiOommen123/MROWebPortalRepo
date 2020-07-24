@@ -6,7 +6,17 @@
 .v-input {
   font-size: 18px;
 }
+.v-input input {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
+.TextAreaBg .v-input__slot{
+background-color: rgba(0,0,0,0.5);
+} 
+
+#phoneExt{
+  background-color: transparent;
+}
 .v-messages {
   font-size: 14px;
 }

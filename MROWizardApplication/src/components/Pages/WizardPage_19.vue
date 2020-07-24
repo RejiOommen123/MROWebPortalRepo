@@ -8,7 +8,8 @@
     <div v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</div>
     </v-col>
     <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
-        <v-textarea filled          
+        <v-textarea    
+          class="TextAreaBg"     
           rows="3"
           row-height="30"
           maxlength="250"

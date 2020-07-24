@@ -73,7 +73,7 @@
             @change="check(3)"
           ></v-checkbox>
           <div v-if="nSelectedCheckBox==3">
-            <v-textarea counter maxlength="100" v-model="sAuthSpecificEvent" rows="2" label="SPECIFY EVENT HERE"></v-textarea>
+            <v-textarea class="TextAreaBg"  counter maxlength="100" v-model="sAuthSpecificEvent" rows="2" label="SPECIFY EVENT HERE"></v-textarea>
           </div>
         </v-col>
         <v-col v-if="nSelectedCheckBox[0]==1 || nSelectedCheckBox[0]==3 || nSelectedCheckBox[0]==null" cols="6" offset-sm="4" sm="2">
