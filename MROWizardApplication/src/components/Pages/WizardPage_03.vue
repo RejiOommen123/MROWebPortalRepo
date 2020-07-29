@@ -16,7 +16,7 @@
           <button 
             :class="{active: sActiveBtn === 'No'}"
             @click.prevent="setNotPatient" class="wizardSelectionButton">
-            No, I am requesting medical records for someone else (Child, Dependent, Decedent).
+            No, I am requesting medical records for someone else (child, dependent, decedent, etc.).
           </button>
         </v-col>
       </div>
@@ -46,6 +46,9 @@
               @input="$v.sRelativeLastName.$touch()"
               @blur="$v.sRelativeLastName.$touch()"
             ></v-text-field>
+            </v-col>
+            <v-col cols="12" offset-sm="2" sm="8">
+            <div v-if="!bAreYouPatient && disclaimer02!='' " class="disclaimer">{{this.disclaimer02}}</div>
             </v-col>
             <v-col>
               <label cols="12" offset-sm="2" sm="8">
@@ -81,7 +84,7 @@
               hide-details
               dark
               class="checkboxBorder"
-              label="Other"
+              label="Other, Please Specify"
               color="white"
               value="MRORelationshipOther"
               v-model="option"
@@ -141,7 +144,6 @@
       </form>
     </div>
     <div v-if="bAreYouPatient && disclaimer01!=null " class="disclaimer">{{this.disclaimer01}}</div>
-    <div v-if="!bAreYouPatient && disclaimer02!='' " class="disclaimer">{{this.disclaimer02}}</div>
   </div>
 </template>
 

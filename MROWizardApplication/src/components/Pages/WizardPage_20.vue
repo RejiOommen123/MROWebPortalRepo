@@ -7,7 +7,7 @@
         <v-row>
           <!-- Phone no input box -->
           <v-col cols="3" offset-sm="3" sm="2">
-            <v-select id="phoneExt" v-model="selectedCountry" :items="countryCode"></v-select>
+            <v-select :disabled="disableInput" id="phoneExt" v-model="selectedCountry" :items="countryCode"></v-select>
           </v-col>
           <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
             <label class="input-group-addon">+91</label>
@@ -61,8 +61,7 @@
             </div>
             <v-btn v-if="showSuccessBlock==false" @click.prevent="skipPage" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
             <div v-if="showSuccessBlock">
-              <p v-if="pageskip" class="disclaimer">Mobile Not Verified.</p>
-              <p v-else class="disclaimer">Mobile Verification Successful.</p>
+              <p class="disclaimer">Mobile Verification Successful.</p>
               <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
             </div>
           </v-col>
@@ -84,7 +83,6 @@ export default {
       showSuccessBlock: false,
       disableInput: false,
       showSendVerify: true,
-      pageskip: false,
       countryCode: ["+1", "+91"],
       selectedCountry: "+1",
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
@@ -96,8 +94,8 @@ export default {
         .apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
 
       sPhoneNo: "",
-      sApp_Key: "tu9ete3u9ocidovebefu",
-      sApi_Key: "51bdcc70021d29097aedce2a39ecb2beaa379e1b",
+      sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
+      sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
       sVerify: "",
       service: "",
       subData: {}
@@ -213,7 +211,6 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     skipPage() {
-      this.pageskip = true;
       this.nextPage();
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1>When should this expire?</h1>
+    <h1>When should this request expire?</h1>
 
     <template>
        <!--Auth expiration selection box-->

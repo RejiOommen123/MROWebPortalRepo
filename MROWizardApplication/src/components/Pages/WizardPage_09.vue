@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <div>
-      <h1>Which types of records would like to request?</h1>
+      <h1>Which types of records would you like to request?</h1>
     </div>
     <v-row>
       <v-col cols="12" offset-sm="2" sm="8">

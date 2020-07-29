@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <h1>Is there any sensitive info you<br/>would also like to be included?</h1>
+    <h1>Is there any sensitive information<br/>you would also like included?</h1>
     <template>
       <!-- Get all Sensitive Information associated to facility and displayed as checkbox for selection-->
       <v-layout v-for="sensitiveInfo in oSensitiveInfoArray" :key="sensitiveInfo.sNormalizedSensitiveInfoName" row wrap>
