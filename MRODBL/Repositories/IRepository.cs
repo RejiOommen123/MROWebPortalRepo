@@ -186,9 +186,9 @@ namespace MRODBL.Repositories
         /// Insert Dependency Records for Facility (SP)
         /// </summary>
         /// <param name="nFacilityID">Unique Facility Id</param>
-        /// <param name="sConnectionString">Connection String Provided at (Add Facility Screen)</param>
+        /// <param name="nConnectionID">Connection ID </param>
         /// <param name="nAdminUserId">Logged In Admin User ID</param>
-        void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId);
+        void AddDependencyRecordsForFacility(int nFacilityID, int nConnectionID, int nAdminUserId);
         /// <summary>
         /// Add Dependency Records for Facility Location
         /// </summary>

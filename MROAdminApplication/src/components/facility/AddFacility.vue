@@ -123,7 +123,7 @@
               solo
             ></v-text-field>
             <label for="sFTPUrl">Connection String:</label>
-            <v-text-field
+            <!-- <v-text-field
               type="text"
               id="sConnectionString"
               placeholder="Connection String"
@@ -132,7 +132,11 @@
               @blur="$v.sConnectionString.$touch()"
               :error-messages="sConnectionStringErrors"
               solo
-            ></v-text-field>
+            ></v-text-field> -->
+            <v-select id="sConnectionString" v-model="sConnectionString" :items="connectionStrings" item-text="sConnectionDisplayName" @change="chang" item-value="nConnectionID">
+
+            </v-select>
+            
             <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
             <v-switch
               inset
@@ -347,6 +351,7 @@ export default {
   name: "AddFacility",
   data() {
     return {
+      connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
       sConnectionString: "",
@@ -369,8 +374,22 @@ export default {
       }
     };
   },
+  mounted() {
+    this.$http
+      .get("Facility/GetMROConnectionString/")
+      .then(resp => {
+        if (resp.ok == true) {
+          this.connectionStrings = resp.body;
+          console.log(resp.bodyText);
+        console.log("Response body " + this.connectionStrings);
+        }
+      });
+  },
   methods: {
     // API Call to add facility
+    chang(){
+      console.log(this.sConnectionString);
+    },
     goToLoc() {
       this.dialogLoader = true;
       this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);

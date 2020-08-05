@@ -61,9 +61,10 @@ namespace MROWebApi.Controllers
                 #endregion
                 DBConnectionInfo _infoRequester = new DBConnectionInfo();
                 FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
-                IEnumerable<FacilityConnections> facility = await connectionRepo.SelectWhere("nFacilityID", requester.nFacilityID);
+                // IEnumerable<FacilityConnections> facility = await connectionRepo.SelectWhere("nFacilityID", requester.nFacilityID);
 
-                _infoRequester.ConnectionString = facility.FirstOrDefault().sConnectionString;
+                //_infoRequester.ConnectionString = facility.FirstOrDefault().sConnectionString;
+                _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(requester.nFacilityID);
 
                 RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 

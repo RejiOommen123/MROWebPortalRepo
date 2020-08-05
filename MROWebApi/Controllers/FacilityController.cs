@@ -83,6 +83,18 @@ namespace MROWebAPI.Controllers
         }
         #endregion
 
+        #region Get MRO Connection String 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetMROConnectionString()
+        {
+            MROConnectionStringRepository mROConnectionStringRepository = new MROConnectionStringRepository(_info);
+            //bool reslt = Int32.TryParse(id, out int number);
+            IEnumerable<MROConnectionString> arrayconnectionString = await mROConnectionStringRepository.GetAllASC(1000,"nConnectionId");
+            return Ok(arrayconnectionString);
+        }
+        #endregion
+
         #region Add Facility
         [HttpPost]
         [AllowAnonymous]
@@ -129,7 +141,7 @@ namespace MROWebAPI.Controllers
                     #endregion
 
                     Facilities dbFacility = await rpFac.Select(GeneratedID);
-                    rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.sConnectionString, facility.nCreatedAdminUserID);
+                    rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.nConnectionID, facility.nCreatedAdminUserID);
                     return dbFacility;
                 }
                 catch (Exception ex)

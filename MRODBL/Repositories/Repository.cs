@@ -370,7 +370,7 @@ namespace MRODBL.Repositories
                 return newObject;
             }
         }
-        public void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId)
+        public void AddDependencyRecordsForFacility(int nFacilityID, int nConnectionID, int nAdminUserId)
         {
             string SqlString = "spAddDependencyRecordsForFacility";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -378,7 +378,7 @@ namespace MRODBL.Repositories
                 db.Open();
                 using (var trans = db.BeginTransaction())
                 {
-                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @sConnectionString = sConnectionString, @nAdminUserId = nAdminUserId }, trans, commandType: CommandType.StoredProcedure);
+                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @nConnectionID = nConnectionID, @nAdminUserId = nAdminUserId }, trans, commandType: CommandType.StoredProcedure);
                     trans.Commit();
                 }
             }
@@ -405,6 +405,19 @@ namespace MRODBL.Repositories
                 return nAdminID;
             }
         }
+
+        public async Task<string> GetConnectionStringByFacilityID(int nFacilityId)
+        {
+            string SqlString = "spGetConnectionStringByFacilityId";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                string sConnectionString = await db.QueryFirstAsync<string>(SqlString, new { @nFacilityID = nFacilityId }, commandType: CommandType.StoredProcedure);
+                return sConnectionString;
+            }
+        }
+
+
         #endregion
     }
 }

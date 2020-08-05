@@ -8,7 +8,8 @@ namespace MRODBL.BaseClasses
         public Facilities cFacility { get; set; }
         [Required]
         [StringLength(1000, ErrorMessage = "Maximum 1000 charcters Connection String Allowed")]
-        public string sConnectionString { get; set; }
+        //public string sConnectionString { get; set; }
+        public int nConnectionID { get; set; }
         #endregion
     }
 }
