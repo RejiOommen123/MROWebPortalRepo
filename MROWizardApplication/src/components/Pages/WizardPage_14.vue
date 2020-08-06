@@ -27,7 +27,7 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:200px">{{shipmentType.sFieldToolTip}}</p>
+                  <p style="width:200px; background-color:white;color:black">{{shipmentType.sFieldToolTip}}</p>
                 </v-col>
               </v-tooltip>
             </v-checkbox>

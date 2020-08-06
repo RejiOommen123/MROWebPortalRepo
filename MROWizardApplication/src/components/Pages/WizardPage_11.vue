@@ -21,16 +21,24 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:200px">{{sensitiveInfo.sFieldToolTip}}</p>
+                  <p style="width:200px; background-color:white;color:black">{{sensitiveInfo.sFieldToolTip}}</p>
                 </v-col>
             </v-tooltip>
           </v-checkbox>
         </v-col>
       </v-layout>
     </template>
-    <div>
+    <!-- <div>
       <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-    </div>
+    </div> -->
+    <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
+      <v-btn :disabled="sSelectedSensitiveInfo[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -44,6 +52,10 @@ export default {
     };
   },
   methods: {
+    skipPage(){
+      this.sSelectedSensitiveInfo=[];
+      this.nextPage();
+    },
     nextPage() {
       this.$store.commit("requestermodule/sSelectedSensitiveInfo", this.sSelectedSensitiveInfo);
 

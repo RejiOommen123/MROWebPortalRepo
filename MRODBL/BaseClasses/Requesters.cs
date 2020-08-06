@@ -64,7 +64,12 @@ namespace MRODBL.BaseClasses
         public DateTime? dtRecordRangeStart { get; set; }
         public DateTime? dtRecordRangeEnd { get; set; }
         public bool bRecordMostRecentVisit { get; set; }
+        public bool bSpecifyVisit { get; set; }
+        [StringLength(100, ErrorMessage = "Maximum 100 characters Specify Visit Text allowed")]
+        public string sSpecifyVisitText { get; set; }        
         public string[] sSelectedRecordTypes { get; set; }
+        [StringLength(100, ErrorMessage = "Maximum 100 characters Other RT Text allowed")]
+        public string sOtherRTText { get; set; }        
         public bool bRTManualSelection { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
         public string sSelectedPrimaryReasonsName { get; set; }

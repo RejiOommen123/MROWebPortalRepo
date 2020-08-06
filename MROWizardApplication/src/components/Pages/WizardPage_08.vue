@@ -75,15 +75,28 @@
           label="Most Recent Visit."
       ></v-checkbox>
       </v-col>
+      <!-- TODO - Add normalized if -->
+      <v-col  cols="12" offset-sm="2" sm="8" >
+        <v-checkbox
+          hide-details
+          class="checkboxBorder"
+          v-model="bSpecifyVisit"
+          color="white"
+          @change="visitChecked()"
+          label="Specify Visit/Injury/Event (ER, elbow surgery, car accident, etc.)"
+      ></v-checkbox>
+      <div v-if="bSpecifyVisit">
+          <v-textarea hide-details class="TextAreaBg"  v-model="sSpecifyVisitText" maxlength="100" rows="3" counter label="Specify Visit"></v-textarea>
+      </div>
+      </v-col>
       <br />
-      <v-col cols="12" offset-sm="3" sm="6">
+      <v-col cols="12" offset-sm="3" sm="6" style="padding-top:0">
         <div>
           <v-btn v-if="bRecordMostRecentVisit"  @click.prevent="nextPage"  class="next">Next</v-btn>
           <v-btn v-else :disabled="$v.$invalid" @click.prevent="nextPage"  class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
-     <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
     </form>
     </div>
     
@@ -99,9 +112,10 @@ export default {
       dtRecordRangeStart: '',
       dtRecordRangeEnd: '',
       bRecordMostRecentVisit:false,
+      bSpecifyVisit:false,
+      sSpecifyVisitText:'',
       menu1: false,
       menu2: false,
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_08_disclaimer01,
 
       MRORecordsDateRange: this.$store.state.ConfigModule.apiResponseDataByLocation
         .oFields.MRORecordsDateRange,
@@ -130,6 +144,11 @@ export default {
     },
   },
   methods: {
+    visitChecked() {
+      if (!this.bSpecifyVisit) {
+        this.sSpecifyVisitText = "";
+      }
+    },
     nextPage() {
       if(this.bRecordMostRecentVisit){
         this.$store.commit("requestermodule/bRecordMostRecentVisit", this.bRecordMostRecentVisit);
@@ -141,7 +160,8 @@ export default {
         this.$store.commit("requestermodule/dtRecordRangeStart", this.dtRecordRangeStart);
         this.$store.commit("requestermodule/dtRecordRangeEnd", this.dtRecordRangeEnd);
       }
-      
+      this.$store.commit("requestermodule/bSpecifyVisit", this.bSpecifyVisit);
+      this.$store.commit("requestermodule/sSpecifyVisitText", this.sSpecifyVisitText);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

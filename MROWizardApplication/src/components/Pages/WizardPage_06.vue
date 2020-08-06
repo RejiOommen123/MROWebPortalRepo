@@ -1,11 +1,8 @@
 <template>
   <div class="center">
-    <h1>What is your email address?</h1>
-    <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
-    <div>
+      <h1>Please provide your email address to receive a confirmation of your request.</h1>
       <v-row>
         <v-col  cols="12" offset-sm="2" sm="8">
-          <form>
             <v-text-field
               label="EMAIL"
               v-model="emailValid.sRequesterEmailId"
@@ -27,6 +24,12 @@
               @input="sConfirmEmailIdToLower"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
+        </v-col>
+        <v-col  cols="12" sm="12">
+            <!-- <v-col cols="12" offset-sm="2" sm="8"> -->
+              <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
+        
+            <!-- </v-col> -->
             <div v-if="bRequestorEmailConfirm==false">
                <v-btn
               :disabled="$v.emailValid.$invalid"
@@ -53,10 +56,11 @@
             >Next</v-btn>
             </div>
             </div>
-          </form>
+          </v-col>
+        <v-col  cols="12" offset-sm="2" sm="8">
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-if="showVerifyBlock && bRequestorEmailVerify">
+            <div v-show="showVerifyBlock && bRequestorEmailVerify">
               <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
                <v-alert
                     v-if="otpSentAlert"
@@ -106,7 +110,6 @@
           </form>
         </v-col>
       </v-row>
-    </div>
   </div>
 </template>
 <script>

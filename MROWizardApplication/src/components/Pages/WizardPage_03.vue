@@ -25,6 +25,11 @@
     <div v-show="!bAreYouPatient">
       <form>
         <v-row>
+          <v-col cols="12" offset-sm="2" sm="8">
+              <label>
+              {{disclaimer04}}
+              </label>
+          </v-col>
           <v-col cols="6" offset-sm="2" sm="4">
             <v-text-field 
               v-model="sRelativeFirstName"
@@ -169,6 +174,8 @@ export default {
         .wizardHelper.Wizard_03_disclaimer02,
       disclaimer03: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer03,
+      disclaimer04: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer04,
       sActiveBtn:'',
       //TODO: Fetch disclaimer03 for multiple dile upload
 

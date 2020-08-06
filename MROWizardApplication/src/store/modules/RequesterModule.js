@@ -30,8 +30,11 @@ const state = {
     dtRecordRangeStart: '',
     dtRecordRangeEnd: '',
     bRecordMostRecentVisit:false,
+    bSpecifyVisit:false,
+    sSpecifyVisitText:'',
     bRTManualSelection:false,
     sSelectedRecordTypes: [],
+    sOtherRTText:'',
     sSelectedPrimaryReasons: [],
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
@@ -160,11 +163,20 @@ const mutations = {
     bRecordMostRecentVisit(state, payload) {
         state.bRecordMostRecentVisit = payload;
     },
+    bSpecifyVisit(state, payload) {
+        state.bSpecifyVisit = payload;
+    },
+    sSpecifyVisitText(state, payload) {
+        state.sSpecifyVisitText = payload;
+    },
     bRTManualSelection(state, payload) {
         state.bRTManualSelection = payload;
     },
     sSelectedRecordTypes(state, payload) {
         state.sSelectedRecordTypes = payload;
+    },
+    sOtherRTText(state, payload) {
+        state.sOtherRTText = payload;
     },
     sSelectedPrimaryReasons(state, payload) {
         state.sSelectedPrimaryReasons = payload;

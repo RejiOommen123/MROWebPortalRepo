@@ -29,7 +29,7 @@
                 <v-icon v-on="on" color="white" top>mdi-information</v-icon>
               </template>
               <v-col cols="12" sm="12">
-                <p style="width:200px">{{primaryReason.sFieldToolTip}}</p>
+                <p style="width:200px; background-color:white;color:black">{{primaryReason.sFieldToolTip}}</p>
               </v-col>
             </v-tooltip>
           </v-checkbox>

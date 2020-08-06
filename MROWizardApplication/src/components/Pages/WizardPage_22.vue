@@ -2,7 +2,7 @@
   <div class="center">
     <v-row>
       <v-col cols="12" sm="12" v-if="sStatus=='CapturingImg'">
-        <h2>Camera</h2>
+        <h2 style="color:white">Camera</h2>
         <!-- <code v-if="device">{{ device.label }}</code> -->
         <div class="border">
           <vue-web-cam
@@ -19,12 +19,6 @@
         </div>
 
         <v-row>
-          <!-- <v-col cols="12" sm="12">
-            <select v-model="camera">
-              <option>-- Select Device --</option>
-              <option v-for="device in devices" :key="device.deviceId">{{ device.label }}</option>
-            </select>
-          </v-col>-->
           <v-col cols="4" offset-sm="2" sm="3">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -56,13 +50,21 @@
               <span>Upload Image</span>
             </v-tooltip>
           </v-col>
+          <v-col cols="12" sm="12">
+            <p>Hello</p>
+            <select v-model="camera">
+              <option>-- Select Device --</option>
+              <option v-for="device in devices" :key="device.deviceId">{{ device.label }}</option>
+            </select>
+            <v-select v-model="camera" :items="devices" item-text="label" item-value="deviceId"></v-select>
+          </v-col>
           <!-- :value="device.deviceId" -->
         </v-row>
       </v-col>
     </v-row>
     <v-row v-if="sStatus=='ImgCaptured'">
       <v-col cols="12" sm="12">
-        <h2>Captured Image</h2>
+        <h2 style="color:white">Captured Image</h2>
         <figure class="figure">
           <img :src="sIdentityImage" width="400px" height="250px" class="img-responsive" />
         </figure>
@@ -76,7 +78,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" sm="12" v-if="sStatus=='UploadImg'">
-        <h2>Upload Identity Document Image</h2>
+        <h2 style="color:white">Upload Identity Document Image</h2>
         <form>
           <div v-show="bShowImage!=''">
             <v-img
@@ -223,7 +225,7 @@ export default {
     onError(error) {
       if (error.name == "NotFoundError") {
         alert("Camera Not Found. Redirecting to upload file page.");
-        this.sStatus = "UploadImg";
+        //this.sStatus = "UploadImg";
       }
     },
     onCameras(cameras) {

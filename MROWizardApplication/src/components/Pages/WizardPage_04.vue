@@ -38,7 +38,7 @@
             v-model="bPatientNameChanged"
             color="white"
             @change="checked()"
-            label="If different from above, please provide full name given at time of visit (for records requested)"
+            label="Please check here if name was different at the time of visit (examples: maiden name, minor's name, alias)"
           ></v-checkbox>
         </v-col>
         <!-- TODO:add show and hide for previous name after adding these fields in db -->

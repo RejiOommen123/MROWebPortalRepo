@@ -14,6 +14,7 @@
             :label="recordType.sRecordTypeName"
             color="white"
             :value="recordType.sNormalizedRecordTypeName"
+            @change="checkOther()"
             wrap
           >
           <!-- This for 'i' button to give disclaimers/info about option -->
@@ -26,6 +27,18 @@
                 </v-col>
             </v-tooltip>
           </v-checkbox>
+
+           <!-- TODO - Add normalized if -->
+           <!-- Other Record Type-->
+            <div v-if="recordType.sNormalizedRecordTypeName=='MROOtherRT'">
+              <v-col
+                v-if="otherExist"
+                cols="12"
+                sm="12"
+              >
+              <v-textarea class="TextAreaBg"  v-model="sOtherRTText" maxlength="100" rows="3" counter label="Enter Other Record Type"></v-textarea>
+              </v-col>
+            </div>
         </v-col>
       </v-layout>
     </template>
@@ -41,12 +54,24 @@ export default {
   data() {
     return {
       RecordTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oRecordTypes,
-      sSelectedRecordTypes: []
+      sSelectedRecordTypes: [],
+      sOtherRTText:'',
+      otherExist:false
     };
   },
   methods: {
+    checkOther(){
+        if (this.sSelectedRecordTypes.includes("MROOtherRT")) {
+         this.otherExist=true;
+        }
+        else{
+          this.otherExist=false;
+          this.sOtherRTText=''
+        }
+    },
     nextPage() {
       this.$store.commit("requestermodule/sSelectedRecordTypes", this.sSelectedRecordTypes);
+      this.$store.commit("requestermodule/sOtherRTText", this.sOtherRTText);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
