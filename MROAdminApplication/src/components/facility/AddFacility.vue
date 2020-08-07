@@ -133,11 +133,11 @@
               :error-messages="sConnectionStringErrors"
               solo
             ></v-text-field> -->
-            <v-select id="sConnectionString" v-model="sConnectionString" :items="connectionStrings" item-text="sConnectionDisplayName" @change="chang" item-value="nConnectionID">
+            <v-select id="nConnectionId" v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" @change="chang" item-value="nConnectionID">
 
             </v-select>
             
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
+            <!-- <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
             <v-switch
               inset
               flat
@@ -145,7 +145,7 @@
               solo
               id="bRequestorEmailConfirm"
               v-model="facility.bRequestorEmailConfirm"
-            ></v-switch>
+            ></v-switch> -->
           </v-col>
         </v-row>
         <div class="submit">
@@ -195,9 +195,8 @@ import {
 export default {
   mixins: [validationMixin],
   validations: {
-    sConnectionString: {
-      required,
-      maxLength: maxLength(1000)
+    nConnectionId: {
+      required
     },
     facility: {
       sFacilityName: {
@@ -241,12 +240,10 @@ export default {
     }
   },
   computed: {
-    sConnectionStringErrors() {
+    nConnectionIdErrors() {
       const errors = [];
-      if (!this.$v.sConnectionString.$dirty) return errors;
-      !this.$v.sConnectionString.maxLength &&
-        errors.push("Connection String must be at most 1000 characters long");
-      !this.$v.sConnectionString.required &&
+      if (!this.$v.nConnectionId.$dirty) return errors;
+      !this.$v.nConnectionId.required &&
         errors.push("Connection String is required.");
       return errors;
     },
@@ -354,7 +351,7 @@ export default {
       connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
-      sConnectionString: "",
+      nConnectionId:0,
       facility: {
         nFacilityID: 0,
         nROIFacilityID: "",
@@ -368,7 +365,7 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm: true,
+        bRequestorEmailConfirm: false,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -387,15 +384,12 @@ export default {
   },
   methods: {
     // API Call to add facility
-    chang(){
-      console.log(this.sConnectionString);
-    },
     goToLoc() {
       this.dialogLoader = true;
       this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
-        sConnectionString: this.sConnectionString
+        nConnectionId: this.nConnectionId
       };
       this.$http.post("facility/AddFacility", combinedObj).then(
         response => {
@@ -424,7 +418,7 @@ export default {
       this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
-        sConnectionString: this.sConnectionString
+        nConnectionId: this.nConnectionId
       };
       this.$http.post("facility/AddFacility", combinedObj).then(
         response => {

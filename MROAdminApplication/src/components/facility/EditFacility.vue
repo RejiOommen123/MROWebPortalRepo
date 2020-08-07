@@ -182,7 +182,7 @@
             </label>
             <!-- Show confirm email to requestor -->
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
+            <!-- <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
             <v-switch
               inset
               flat
@@ -190,7 +190,7 @@
               solo
               id="bRequestorEmailConfirm"
               v-model="facility.bRequestorEmailConfirm"
-            ></v-switch>
+            ></v-switch> -->
             <div id="marginDiv7"></div>
             <label for="bRequestorEmailVerify">Send email verification for Requestor email address ?</label>
             <v-switch
@@ -378,7 +378,7 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm: true,
+        bRequestorEmailConfirm: false,
         bRequestorEmailVerify:true,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
