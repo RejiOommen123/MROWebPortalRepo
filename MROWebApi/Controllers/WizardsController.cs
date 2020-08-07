@@ -636,6 +636,10 @@ namespace MROWebApi.Controllers
                     allFields.Add("MROSpecifyVisit=1", "On");
                     allFields.Add("MROSpecifyVisitText", requester.sSpecifyVisitText);
                 }
+                else
+                {
+                    allFields.Add("MROSpecifyVisitText", "");
+                }
 
                 //Record Types
                 if (requester.bRTManualSelection)
@@ -655,6 +659,10 @@ namespace MROWebApi.Controllers
                 if (!string.IsNullOrEmpty(requester.sOtherRTText))
                 {
                     allFields.Add("MROOtherRTText", requester.sOtherRTText);
+                }
+                else
+                {
+                    allFields.Add("MROOtherRTText", "");
                 }
 
 

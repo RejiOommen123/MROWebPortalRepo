@@ -238,7 +238,7 @@ export default {
       },
       sDescription: {
         required,
-        maxLength: maxLength(80),
+        maxLength: maxLength(150),
         minLength: minLength(2)
       },
       sSMTPUsername: {
@@ -288,7 +288,7 @@ export default {
       !this.$v.facility.sDescription.minLength &&
         errors.push("Facility Description must be at least 2 characters long");
       !this.$v.facility.sDescription.maxLength &&
-        errors.push("Facility Description must be at most 80 characters long");
+        errors.push("Facility Description must be at most 150 characters long");
       !this.$v.facility.sDescription.required &&
         errors.push("Facility Description is required.");
       return errors;

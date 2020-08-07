@@ -133,8 +133,8 @@
               :error-messages="sConnectionStringErrors"
               solo
             ></v-text-field> -->
-            <v-select id="nConnectionId" v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" @change="chang" item-value="nConnectionID">
-
+            <v-select id="nConnectionId" :rules="[(v) => !!v || 'Connection string is required']" required solo v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" item-value="nConnectionID">
+                
             </v-select>
             
             <!-- <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
@@ -207,7 +207,7 @@ export default {
       nROIFacilityID: { required, numeric },
       sDescription: {
         required,
-        maxLength: maxLength(80),
+        maxLength: maxLength(150),
         minLength: minLength(2)
       },
       sSMTPUsername: {
@@ -273,7 +273,7 @@ export default {
       !this.$v.facility.sDescription.minLength &&
         errors.push("Facility Description must be at least 2 characters long");
       !this.$v.facility.sDescription.maxLength &&
-        errors.push("Facility Description must be at most 80 characters long");
+        errors.push("Facility Description must be at most 150 characters long");
       !this.$v.facility.sDescription.required &&
         errors.push("Facility Description is required.");
       return errors;
@@ -351,7 +351,7 @@ export default {
       connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
-      nConnectionId:0,
+      nConnectionId:null,
       facility: {
         nFacilityID: 0,
         nROIFacilityID: "",
