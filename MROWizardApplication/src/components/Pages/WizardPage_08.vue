@@ -92,8 +92,8 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6" style="padding-top:0">
         <div>
-          <v-btn v-if="bRecordMostRecentVisit"  @click.prevent="nextPage"  class="next">Next</v-btn>
-          <v-btn v-else :disabled="$v.$invalid" @click.prevent="nextPage"  class="next">Next</v-btn>
+          <v-btn v-if="bRecordMostRecentVisit"  :disabled="bSpecifyVisit==true && sSpecifyVisitText==''" @click.prevent="nextPage"  class="next">Next</v-btn>
+          <v-btn v-else :disabled="$v.$invalid || (bSpecifyVisit==true && sSpecifyVisitText=='')" @click.prevent="nextPage"  class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>

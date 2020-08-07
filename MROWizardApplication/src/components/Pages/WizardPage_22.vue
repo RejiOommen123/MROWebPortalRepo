@@ -3,6 +3,17 @@
     <v-row>
       <v-col cols="12" sm="12" v-if="sStatus=='CapturingImg'">
         <h2 style="color:white">Camera</h2>
+        <v-col v-if="this.devices.length>1" cols="12" sm="6" offset-sm="3">
+             <!-- <select v-model="camera">
+                            <option>-- Select Device --</option>
+                            <option
+                                v-for="device in devices"
+                                :key="device.deviceId"
+                                :value="device.deviceId"
+                            >{{ device.label }}</option>
+                        </select> -->
+            <v-select v-model="camera" label="Select Device" :items="devices" item-text="label" item-value="deviceId"></v-select>
+          </v-col>
         <!-- <code v-if="device">{{ device.label }}</code> -->
         <div class="border">
           <vue-web-cam
@@ -50,14 +61,17 @@
               <span>Upload Image</span>
             </v-tooltip>
           </v-col>
-          <v-col cols="12" sm="12">
-            <p>Hello</p>
-            <select v-model="camera">
-              <option>-- Select Device --</option>
-              <option v-for="device in devices" :key="device.deviceId">{{ device.label }}</option>
-            </select>
-            <v-select v-model="camera" :items="devices" item-text="label" item-value="deviceId"></v-select>
-          </v-col>
+          <!-- <v-col cols="12" sm="12"> -->
+             <!-- <select v-model="camera">
+                            <option>-- Select Device --</option>
+                            <option
+                                v-for="device in devices"
+                                :key="device.deviceId"
+                                :value="device.deviceId"
+                            >{{ device.label }}</option>
+                        </select> -->
+            <!-- <v-select v-model="camera" label="Select Device" :items="devices" item-text="label" item-value="deviceId"></v-select>
+          </v-col> -->
           <!-- :value="device.deviceId" -->
         </v-row>
       </v-col>
@@ -149,7 +163,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
-import { WebCam } from "vue-cam-vision";
+import { WebCam } from "vue-web-cam";
 export default {
   name: "App",
   components: {
@@ -174,6 +188,20 @@ export default {
       required
     }
   },
+  activated(){
+    // this.sStatus="";
+    // this.sStatus="CapturingImg";
+    console.log(this.devices);
+    if(this.devices.length!=0){
+      this.$refs.webcam.start();
+    }
+  },
+  deactivated(){
+    console.log(this.devices);
+    if(this.devices.length!=0){
+      this.$refs.webcam.stop();
+    }
+  },
   created() {
     this.$vuetify.theme.dark = true;
   },
@@ -191,24 +219,30 @@ export default {
   watch: {
     camera: function(id) {
       this.deviceId = id;
+      console.log("watch camera - deviceId - "+this.deviceId);
     },
     devices: function() {
       // Once we have a list select the first one
-      const [first] = this.devices;
+       const [first] = this.devices;
+      //let first = head(this.devices)
       if (first) {
         this.camera = first.deviceId;
         this.deviceId = first.deviceId;
       }
+      console.log("watch devices - deviceId - " + this.deviceId);
     }
   },
   methods: {
-    onCapture() {
-      var self = this;
-      this.$refs.webcam.capture().then(function(defs) {
-        self.sIdentityImage = defs;
-      });
+    // onCapture() {
+    //   var self = this;
+    //   this.$refs.webcam.capture().then(function(defs) {
+    //     self.sIdentityImage = defs;
+    //   });
+   
+    async onCapture () {
+      this.sIdentityImage = await this.$refs.webcam.capture();
       this.sStatus = "ImgCaptured";
-      this.$refs.webcam.stop();
+      this.camera=null;
     },
     onStarted(stream) {
       console.log("On Started Event", stream);
@@ -218,24 +252,29 @@ export default {
     },
     onStop() {
       this.$refs.webcam.stop();
+      console.log("On Cameras start ");
     },
     onStart() {
       this.$refs.webcam.start();
+      console.log("On Cameras stop ");
     },
     onError(error) {
       if (error.name == "NotFoundError") {
         alert("Camera Not Found. Redirecting to upload file page.");
-        //this.sStatus = "UploadImg";
+        this.sStatus = "UploadImg";
       }
     },
     onCameras(cameras) {
       this.devices = cameras;
+      console.log("On Cameras " +cameras);
     },
     onCameraChange(deviceId) {
       this.deviceId = deviceId;
       this.camera = deviceId;
+       console.log('On Camera Change Event', deviceId)
     },
     nextPage() {
+      
       this.$store.commit("requestermodule/sIdentityImage", this.sIdentityImage);
 
       //Partial Requester Data Save Start
@@ -254,7 +293,7 @@ export default {
           });
       }
       //Partial Requester Data Save End
-      console.log(JSON.stringify(this.$store.state.requestermodule));   
+      console.log(JSON.stringify(this.$store.state.requestermodule));
       this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
