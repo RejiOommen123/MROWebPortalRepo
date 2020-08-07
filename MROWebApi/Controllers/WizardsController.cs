@@ -148,7 +148,7 @@ namespace MROWebApi.Controllers
                 MROLogger passwordDecrypt = new MROLogger(_info);
                 if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
                 {
-                    await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+                    //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
 
                 }
                 else
@@ -387,9 +387,9 @@ namespace MROWebApi.Controllers
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
             Facilities dbFacility = await fRep.Select(requester.nFacilityID);
             FacilityLocations dbLocation = await lRep.Select(requester.nLocationID);
-            //Check if Facility is Allowed to Send Mail
-            if (dbFacility.bRequestorEmailConfirm)
-            {
+            //Check if Facility is Allowed to Send Mail - Not Required to Check CR005
+            //if (dbFacility.bRequestorEmailConfirm)
+            //{
 
                 #region Decrypt SMTP Password
                 dbFacility.sSMTPPassword = passwordDecrypt.DecryptString(dbFacility.sSMTPPassword);
@@ -437,7 +437,11 @@ namespace MROWebApi.Controllers
     </div>
 </div>", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
                 bodyBuilder.HtmlBody = htmlText;
-                bodyBuilder.Attachments.Add(requester.sPatientFirstName + " " + requester.sPatientLastName + " request.pdf", signedPDF);
+                //Check if the attachment is required or not
+                if (requester.bConfirmReport)
+                {
+                    bodyBuilder.Attachments.Add(requester.sPatientFirstName + " " + requester.sPatientLastName + " request.pdf", signedPDF);
+                }
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
                 //TODO:
@@ -457,8 +461,8 @@ namespace MROWebApi.Controllers
                 client.Disconnect(true);
                 client.Dispose();
                 return true;
-            }
-            return false;
+            //}
+            //return false;
         }
         #endregion
 
@@ -627,7 +631,11 @@ namespace MROWebApi.Controllers
                 {
                     allFields.Add("MRORecordsMostRecentVisit=1", "On");
                 }
-
+                if (requester.bSpecifyVisit)
+                {
+                    allFields.Add("MROSpecifyVisit=1", "On");
+                    allFields.Add("MROSpecifyVisitText", requester.sSpecifyVisitText);
+                }
 
                 //Record Types
                 if (requester.bRTManualSelection)
@@ -644,6 +652,11 @@ namespace MROWebApi.Controllers
                 {
                     allFields.Add("MRORecordTypeAbstract=1", "On");
                 }
+                if (!string.IsNullOrEmpty(requester.sOtherRTText))
+                {
+                    allFields.Add("MROOtherRTText", requester.sOtherRTText);
+                }
+
 
                 //Primary Reasons
                 if (requester.sSelectedPrimaryReasons.Length == 0)
