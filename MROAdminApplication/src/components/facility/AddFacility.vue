@@ -401,10 +401,7 @@ export default {
         },
         error => {
           // Error Callback
-          if (
-            error.status == 400 &&
-            error.bodyText == "Cannot Add Facility with Same Name"
-          ) {
+          if (error.status == 400) {
             this.dialogLoader = false;
             this.sameNameAlert = true;
           }
@@ -431,8 +428,7 @@ export default {
         error => {
           // Error Callback
           if (
-            error.status == 400 &&
-            error.bodyText == "Cannot Add Facility with Same Name"
+            error.status == 400 
           ) {
             this.dialogLoader =false;
             this.sameNameAlert = true;
