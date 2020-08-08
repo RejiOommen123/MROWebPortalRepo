@@ -162,12 +162,26 @@ namespace MROWebAPI.Controllers
         [HttpPost("EditFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public ActionResult<Facilities> EditFacility(int id, Facilities facility)
+        public async Task<ActionResult<Facilities>> EditFacility(int id, Facilities facility)
         {
             if (ModelState.IsValid) {
                 if (id != facility.nFacilityID)
                 {
                     return BadRequest("Bad Request: ID Not Equals Facility ID");
+                }
+                else
+                {
+                    //Check if there's a facility with same name 
+                    FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
+                    IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);
+                    if (dbFacilitites.Count() != 0)
+                    {
+                        if (dbFacilitites.First().nFacilityID != facility.nFacilityID)
+                        {
+                            //Exit
+                            return BadRequest("Cannot Add Facility \"" + facility.sFacilityName + "\", Facility with Same Name Exists");
+                        }
+                    }
                 }
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
 

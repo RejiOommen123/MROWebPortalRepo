@@ -209,6 +209,17 @@
         </div>
       </form>
     </div>
+    <!-- Dialog Alert for Same name facility -->
+    <v-dialog v-model="sameNameAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Facility with Same Name Exists</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="sameNameAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Loader to indicate Admin Module is getting ready -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="rgb(0, 91, 168)" flat dark max-height="500">
@@ -364,6 +375,7 @@ export default {
   data() {
     return {
       dialogLoader:false,
+      sameNameAlert: false,
       sBtnCode:'',
       sGUID: "",
       facility: {
@@ -459,8 +471,19 @@ export default {
           if (response.ok == true) {
             this.dialogLoader = false;
             this.$router.push("/Facility");
+}
+        },
+        error => {
+          // Error Callback
+          if (
+            error.status == 400 
+          ) {
+            this.dialogLoader =false;
+            this.sameNameAlert = true;
           }
-        });
+          console.log(error.body);
+        }
+        );
     }
   }
 };
