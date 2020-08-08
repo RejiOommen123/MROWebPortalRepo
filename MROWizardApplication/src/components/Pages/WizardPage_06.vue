@@ -30,14 +30,15 @@
               <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
         
             <!-- </v-col> -->
-            <div v-if="bRequestorEmailConfirm==false">
+            <!-- <div v-if="bRequestorEmailConfirm==false">
                <v-btn
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
               >Next</v-btn>
-            </div>
-            <div v-if="bRequestorEmailConfirm==true">
+            </div> -->
+            <!-- v-if="bRequestorEmailConfirm==true" -->
+            <div>
             <v-checkbox
               hide-details
               id="checkbox"
