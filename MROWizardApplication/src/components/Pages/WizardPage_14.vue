@@ -317,10 +317,16 @@ export default {
       //Switch based on selection and set state data
       switch (this.sSelectedShipmentTypes[0]) {
         case "MROSTEmail":
-          this.$store.commit("requestermodule/sSTEmailAddress", this.sSTEmailAddress);
-          this.$store.commit("ConfigModule/bShowRecipientPage",true);
+          if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
+            this.$store.commit("ConfigModule/bShowRecipientPage",true);
+          }
+          else{
+            this.$store.commit("ConfigModule/bShowRecipientPage",false);
+          }
+          this.$store.commit("requestermodule/sSTEmailAddress", this.sSTEmailAddress);          
           break;
         case "MROSTMail":
+          this.$store.commit("ConfigModule/bShowRecipientPage",false);
           this.$store.commit("requestermodule/sSTAddApartment", this.sSTAddApartment);
           this.$store.commit("requestermodule/sSTAddZipCode", this.sSTAddZipCode);
           this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
@@ -328,12 +334,16 @@ export default {
           this.$store.commit(
             "requestermodule/sSTAddStreetAddress",
             this.sSTAddStreetAddress
-          );
-          
+          );      
           break;
         case "MROSTFax":
-          this.$store.commit("requestermodule/sSTFaxNumber",this.sSTFaxNumber);
-          this.$store.commit("ConfigModule/bShowRecipientPage",true);
+          if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
+            this.$store.commit("ConfigModule/bShowRecipientPage",true);
+          }
+          else{
+            this.$store.commit("ConfigModule/bShowRecipientPage",false);
+          }
+          this.$store.commit("requestermodule/sSTFaxNumber",this.sSTFaxNumber);         
           break;
         default:
             this.$store.commit("ConfigModule/bShowRecipientPage",false);

@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12" sm="12" v-if="sStatus=='CapturingImg'">
         <h2 style="color:white">Camera</h2>
-        <v-col v-if="this.devices.length>1" cols="12" sm="6" offset-sm="3">
+        <!-- <v-col v-if="this.devices.length>1" cols="12" sm="6" offset-sm="3"> -->
              <!-- <select v-model="camera">
                             <option>-- Select Device --</option>
                             <option
@@ -12,15 +12,16 @@
                                 :value="device.deviceId"
                             >{{ device.label }}</option>
                         </select> -->
-            <v-select v-model="camera" label="Select Device" :items="devices" item-text="label" item-value="deviceId"></v-select>
-          </v-col>
+            <!-- <v-select v-model="camera" label="Select Device" :items="devices" item-text="label" item-value="deviceId"></v-select>
+          </v-col> -->
         <!-- <code v-if="device">{{ device.label }}</code> -->
-        <div class="border">
+        <v-col cols="12" sm="10" offset-sm="1">
+        <div  class="border">
           <vue-web-cam
             ref="webcam"
             :device-id="deviceId"
             width="90%"
-            height="70%"
+            height="100%"
             @started="onStarted"
             @stopped="onStopped"
             @error="onError"
@@ -28,9 +29,9 @@
             @camera-change="onCameraChange"
           />
         </div>
-
+        </v-col>
         <v-row>
-          <v-col cols="4" offset-sm="2" sm="3">
+          <v-col cols="4"  sm="4">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
@@ -40,18 +41,27 @@
               <span>Capture Image</span>
             </v-tooltip>
           </v-col>
-
-          <v-col style="margin-top:2%" cols="4" sm="2">
-            <h3>OR</h3>
+          <!-- v-if="devices.length>1" -->
+          <v-col v-if="devices.length<=1" cols="4" sm="4">
           </v-col>
-          <v-col cols="4" sm="3">
+          <v-col v-if="devices.length>1" cols="4" sm="4">
+             <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="switchCamera" fab dark color="teal" v-bind="attrs" v-on="on">
+                  <v-icon dark>mdi-cached</v-icon>
+                </v-btn>
+              </template>
+              <span>Switch Camera</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="4" sm="4">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   fab
                   dark
                   color="teal"
-                  @click="sStatus = 'UploadImg'"
+                  @click="sStatus = 'UploadImg'; camera=null;"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -77,10 +87,10 @@
       </v-col>
     </v-row>
     <v-row v-if="sStatus=='ImgCaptured'">
-      <v-col cols="12" sm="12">
+      <v-col cols="12" sm="10" offset-sm="1">
         <h2 style="color:white">Captured Image</h2>
-        <figure class="figure">
-          <img :src="sIdentityImage" width="400px" height="250px" class="img-responsive" />
+        <figure class="figure" >
+          <img :src="sIdentityImage" style="width:100%;height:50%" class="img-responsive" />
         </figure>
       </v-col>
       <v-col cols="6" offset-sm="2" sm="3">
@@ -129,9 +139,14 @@
               <span>Please upload identity image document.</span>
             </v-tooltip>
           </v-file-input>
-          <v-col cols="12" sm="12">
+          <v-row>
+          <v-col cols="6" sm="6">
             <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
           </v-col>
+           <v-col cols="6" sm="6">
+            <v-btn type="button" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
+          </v-col>
+          </v-row>
         </form>
       </v-col>
     </v-row>
@@ -238,7 +253,18 @@ export default {
     //   this.$refs.webcam.capture().then(function(defs) {
     //     self.sIdentityImage = defs;
     //   });
-   
+    switchCamera(){
+       if(this.devices.length!=0){
+        var index = this.devices.findIndex(x => x.deviceId === this.deviceId);
+        index = index + 1; // increase i by one
+        index = index % this.devices.length; // if we've gone too high, start from `0` again
+        this.onCameraChange(this.devices[index].deviceId);
+        }
+      // console.log("List of devices");
+      // console.log(this.devices[0]);
+      // console.log("Device Length");
+      // console.log(this.devices.length);
+    },
     async onCapture () {
       this.sIdentityImage = await this.$refs.webcam.capture();
       this.sStatus = "ImgCaptured";
@@ -274,7 +300,7 @@ export default {
        console.log('On Camera Change Event', deviceId)
     },
     nextPage() {
-      
+
       this.$store.commit("requestermodule/sIdentityImage", this.sIdentityImage);
 
       //Partial Requester Data Save Start

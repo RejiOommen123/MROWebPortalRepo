@@ -3,7 +3,6 @@
     <form>
       <h1>What is your mailing address?</h1>
       <v-row>
-        <!-- TODO: v-if="MROAddApartment" -->
         <v-col cols="12" style="padding-bottom:0px" offset-sm="2" sm="8">
           <v-text-field
             v-model="sAddStreetAddress"

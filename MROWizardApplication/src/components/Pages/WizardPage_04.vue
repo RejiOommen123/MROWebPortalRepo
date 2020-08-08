@@ -32,7 +32,7 @@
           ></v-text-field>
         </v-col>
         <!-- bPatientNameChanged -->
-        <v-col v-if="MROPatientNameChanged" style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="2" sm="8">
+        <v-col v-if="MROPatientNameChanged" style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="1" sm="10">
           <v-checkbox
             hide-details
             v-model="bPatientNameChanged"
@@ -75,7 +75,7 @@
         <v-col v-else cols="12" offset-sm="3" sm="6">
           <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.sPatientFirstName.$invalid  || $v.sPatientLastName.$invalid ">Next</v-btn>
         </v-col>
-        <div v-if="disclaimer!='' && bPatientNameChanged==true" class="disclaimer">{{disclaimer}}</div>
+        <div v-if="disclaimer!='' && bPatientNameChanged==true" class="disclaimer">{{bAreYouPatient ? disclaimer : disclaimer02}}</div>
       </v-row>
     </form>
   </div>
@@ -93,6 +93,7 @@ export default {
       sPatientPreviousFirstName: "",
       sPatientPreviousLastName: "",
       sPatientPreviousMiddleName: "",
+      disclaimer02:"",
       bPatientNameChanged: false,
 
       //Show and Hide Fields Values fetch from store
@@ -161,6 +162,9 @@ export default {
   },
   methods: {
     checked() {
+      if(this.disclaimer02==""){
+        this.disclaimer02 = this.disclaimer.replace("your", "patient's")
+      }
       if (!this.bPatientNameChanged) {
         this.sPatientPreviousFirstName = "";
         this.sPatientPreviousLastName = "";

@@ -90,8 +90,8 @@ export default {
     dtPatientDOBErrors() {
       const errors = [];
       if (!this.$v.dtPatientDOB.$dirty) return errors;
-      !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");
-      !this.$v.dtPatientDOB.required && errors.push("End Date is required");
+      !this.$v.dtPatientDOB.required && errors.push("Date of birth is required");
+      !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");      
       return errors;
     }
   }
