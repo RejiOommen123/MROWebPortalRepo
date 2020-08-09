@@ -514,7 +514,15 @@ namespace MROWebApi.Controllers
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                    }
+                    else
+                    {
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                    }
+                   // client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
