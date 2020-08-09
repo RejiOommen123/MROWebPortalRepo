@@ -16,7 +16,7 @@
           </v-col> -->
         <!-- <code v-if="device">{{ device.label }}</code> -->
         <v-col cols="12" sm="10" offset-sm="1">
-        <div  class="border">
+        <div  class="border camBorder">
           <vue-web-cam
             ref="webcam"
             :device-id="deviceId"
