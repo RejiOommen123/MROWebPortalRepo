@@ -508,22 +508,35 @@ namespace MROWebApi.Controllers
                 string bodyText = "<h1>Hello " + requester.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
-                SmtpClient client = new SmtpClient();
                 //GET Port number
                 //Make SSL true
-                client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
                     MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Email Verification", ex.Message, _info);
                     return Content(ex.Message);
                 }
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
                 return Ok(sOTP);
             }
             return "false";
@@ -948,23 +961,37 @@ namespace MROWebApi.Controllers
 
                 bodyBuilder.HtmlBody = htmlText;
                 message.Body = bodyBuilder.ToMessageBody();
-                SmtpClient client = new SmtpClient();
                 //TODO:
                 //Get Port number
                 //Make SSL true
-                client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
                     MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email", ex.Message, _info);
                     return false;
                 }
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
+                
                 return true;
             }
             return false;
