@@ -20,7 +20,7 @@
           <vue-web-cam
             ref="webcam"
             :device-id="deviceId"
-            width="90%"
+            width="100%"
             height="100%"
             @started="onStarted"
             @stopped="onStopped"
@@ -90,7 +90,7 @@
       <v-col cols="12" sm="10" offset-sm="1">
         <h2 style="color:white">Captured Image</h2>
         <figure class="figure" >
-          <img :src="sIdentityImage" style="width:100%;height:50%" class="img-responsive" />
+          <img :src="sIdentityImage" style="width:100%" class="camBorder" />
         </figure>
       </v-col>
       <v-col cols="6" offset-sm="2" sm="3">
