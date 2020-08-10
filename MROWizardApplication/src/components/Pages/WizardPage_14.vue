@@ -20,7 +20,7 @@
               color="white"
               :value="shipmentType.sNormalizedShipmentTypeName"
               v-model="sSelectedShipmentTypes"
-              @change="check(shipmentType.sNormalizedShipmentTypeName)"
+              @change="check(shipmentType)"
             >
               <v-tooltip v-if="shipmentType.sFieldToolTip" slot="append" top>
                 <template v-slot:activator="{ on }">
@@ -198,6 +198,7 @@ export default {
       oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
       // oShipmentTypeArray: this.$store.state.ConfigModule.oShipmentTypes,
       sSelectedShipmentTypes: [],
+      sSelectedShipmentTypesName:'',
       // combine previously entered data by requester
 
       sSTFaxNumber: '',
@@ -351,6 +352,8 @@ export default {
       }
 
       this.$store.commit("requestermodule/sSelectedShipmentTypes", this.sSelectedShipmentTypes);       
+      this.$store.commit("requestermodule/sSelectedShipmentTypesName", this.sSelectedShipmentTypesName);     
+      
 
       
       //Partial Requester Data Save Start
@@ -367,9 +370,10 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     //set variable based on selection
-    check(id) {
+    check(shipment) {
       this.sSelectedShipmentTypes = [];
-      this.sSelectedShipmentTypes.push(id);
+      this.sSelectedShipmentTypes.push(shipment.sNormalizedShipmentTypeName);
+      this.sSelectedShipmentTypesName=shipment.sShipmentTypeName;
     },
     resetSTState(){
       this.$store.commit("requestermodule/sSTEmailAddress", '');

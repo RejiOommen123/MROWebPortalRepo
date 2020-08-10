@@ -278,6 +278,10 @@ button.wizardSelectionButton:hover {
 .camBorder{
   height: 33vh;
 }
+.pdfViewer{
+  margin-left:10%;
+  width:80%;
+}
 
 /* signature page css end */
 
@@ -320,15 +324,19 @@ button.wizardSelectionButton:hover {
     margin-right: 15px;
   }
 
-  #pdfViewer {
+  /* #pdfViewer {
     width: 100%;
     height: 450px;
-  }
+  } */
   #phoneNo{
     margin-left:20px; 
   }
   .camBorder{
     height: 40vh;
+  }
+  .pdfViewer{
+    margin-left:0;
+    width:100%;
   }
   
 }

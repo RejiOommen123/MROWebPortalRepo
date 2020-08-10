@@ -36,7 +36,22 @@
       </v-card>
     </v-dialog>
 
-    <iframe id="pdfViewer" :src="this.pdf" width="100%" height="1200px"></iframe>
+    <!-- <iframe id="pdfViewer" :src="this.pdf" width="100%" height="1200px"></iframe> -->
+<!-- 
+    <pdf :src="this.pdfURL" :page="1">
+      <template slot="loading">
+        loading content here...
+      </template>
+    </pdf> -->
+    <div>
+		<pdf
+			v-for="i in numPages"
+			:key="i"
+			:src="src"
+			:page="i"
+			class="pdfViewer"
+		></pdf>
+	</div>
 
     <div id="modalOpener">
       <div v-if="bFormSigned==false">
@@ -83,10 +98,15 @@
 </template>
 
 <script>
-
+import pdf from "vue-pdf";
 export default {
+  components: {
+    pdf
+  },
   data() {
     return {
+      src: undefined,
+			numPages: undefined,
       dialog: false,
       onLoadDialog:true,
       options: {
@@ -94,7 +114,7 @@ export default {
       },
       currentPage: 0,
       pageCount: 0,
-      pdf: null,
+      pdfURL: null,
       bFormSigned:false,
       dialogLoader:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
@@ -112,7 +132,12 @@ export default {
       .then(response => {
         let blobFile = new Blob([response.data], { type: "application/pdf" });
         var fileURL = URL.createObjectURL(blobFile);
-        this.pdf = fileURL;
+        this.pdfURL = fileURL;
+        this.src = pdf.createLoadingTask(this.pdfURL);
+        this.src.promise.then(pdf => {
+
+            this.numPages = pdf.numPages;
+          });
         this.dialogLoader=false;
       });
   },
@@ -138,7 +163,12 @@ export default {
           //let link = document.createElement('a');
           this.bFormSigned=true;
           var fileURL = URL.createObjectURL(blobFile);
-          this.pdf = fileURL;
+          this.pdfURL = fileURL;
+          this.src = pdf.createLoadingTask(this.pdfURL);
+          this.src.promise.then(pdf => {
+
+              this.numPages = pdf.numPages;
+            });
           this.dialogLoader=false;
           console.log(JSON.stringify(this.$store.state.requestermodule));          
         });
@@ -154,7 +184,7 @@ export default {
       };
     },
     previous(){
-        this.pdf=null;
+        this.pdfURL=null;
         if( this.$refs.signaturePad!=null)
         {
           this.$refs.signaturePad.clearSignature();

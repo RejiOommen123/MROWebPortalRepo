@@ -10,7 +10,7 @@
           <v-col cols="12" offset-sm="2" sm="10" style="padding-bottom:0px">
             <button
             :class="{active: sActiveBtn === releaseTo.sNormalizedReleaseTo}" 
-            @click.prevent="releaseRequestTo($event)" class="wizardSelectionButton"  :value="releaseTo.sNormalizedReleaseTo"
+            @click.prevent="releaseRequestTo(releaseTo)" class="wizardSelectionButton"  :value="releaseTo"
             >{{releaseTo.sReleaseTo}}</button>
           </v-col>
         </div>
@@ -28,9 +28,11 @@ export default {
     };
   },
   methods: {
-    releaseRequestTo($event) {
-      this.sActiveBtn=$event.target.value;
-      this.$store.commit("requestermodule/sReleaseTo", $event.target.value);
+    releaseRequestTo(releaseTo) {
+      this.sActiveBtn=releaseTo.sNormalizedReleaseTo;
+      this.$store.commit("requestermodule/sReleaseTo", releaseTo.sNormalizedReleaseTo);
+      this.$store.commit("requestermodule/sReleaseToName", releaseTo.sReleaseTo);
+      
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
