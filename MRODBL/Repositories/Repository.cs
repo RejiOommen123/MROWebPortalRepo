@@ -116,13 +116,37 @@ namespace MRODBL.Repositories
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 string SqlString =
-                   "SELECT * FROM " +
-                     "[lstRecordTypes] " +
-                     "inner join [lnkFacilityRecordTypes] " +
-                     "on [lnkFacilityRecordTypes].nRecordTypeID = [lstRecordTypes].nRecordTypeID " +
-                     "WHERE " +
-                     "nFacilityID = @nFacilityID";
+                    "SELECT [lstRecordTypes].[nRecordTypeID]" +
+                        ",[lnkFacilityRecordTypes].[sRecordTypeName]" +
+                        ",[lstRecordTypes].[nWizardID]" +
+                        ",[lstRecordTypes].[sNormalizedRecordTypeName]" +
+                        ",[lstRecordTypes].[sFieldToolTip]" +
+                        ",[lstRecordTypes].[dtLastUpdate] FROM " +
+                        "[lstRecordTypes] " +
+                        "inner join [lnkFacilityRecordTypes] " +
+                        "on [lnkFacilityRecordTypes].nRecordTypeID = [lstRecordTypes].nRecordTypeID " +
+                        "WHERE " +
+                        "nFacilityID = @nFacilityID";
                 return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID});
+            }
+        }
+
+        public async Task<IEnumerable<T>> SelectSensitiveInfoBynFacilityID(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   " SELECT [lstSensitiveInfo].[nSensitiveInfoID]" +
+                        ",[lnkFacilitySensitiveInfo].[sSensitiveInfoName]" +
+                        ",[lstSensitiveInfo].[nWizardID]" +
+                        ",[lstSensitiveInfo].[sNormalizedSensitiveInfoName]" +
+                        ",[lstSensitiveInfo].[sFieldToolTip]" +
+                        ",[lstSensitiveInfo].[dtLastUpdate] FROM " +
+                        "[lstSensitiveInfo] " +
+                        "INNER JOIN[lnkFacilitySensitiveInfo] " +
+                        "ON [lnkFacilitySensitiveInfo].nSensitiveInfoID = [lstSensitiveInfo].nSensitiveInfoID " +
+                        " WHERE nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
             }
         }
         public async Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName)

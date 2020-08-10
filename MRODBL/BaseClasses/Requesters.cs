@@ -76,6 +76,7 @@ namespace MRODBL.BaseClasses
 
         [StringLength(30, ErrorMessage = "Maximum 30 characters Release To allowed")]
         public string sReleaseTo { get; set; }
+        public string sReleaseToName { get; set; }
         public string[] sSelectedSensitiveInfo { get; set; }
         public DateTime? dtAuthExpire { get; set; }
         public string sAuthSpecificEvent { get; set; }
@@ -100,6 +101,7 @@ namespace MRODBL.BaseClasses
 
 
         public string[] sSelectedShipmentTypes { get; set; }
+        public string sSelectedShipmentTypesName { get; set; }
 
         public string sSTEmailAddress { get; set; }
         public string sSTFaxNumber { get; set; }
