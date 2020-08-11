@@ -204,7 +204,6 @@ export default {
       this.$store.commit("requestermodule/sRecipientAddState", this.sRecipientAddState);
       this.$store.commit("requestermodule/sRecipientAddStreetAddress",this.sRecipientAddStreetAddress);
       this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
-      this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

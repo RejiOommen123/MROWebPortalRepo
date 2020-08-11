@@ -377,7 +377,7 @@ export default {
     },
     resetSTState(){
       this.$store.commit("requestermodule/sSTEmailAddress", '');
-      this.$store.commit("requestermodule/sAddApartment",'');
+      this.$store.commit("requestermodule/sSTAddApartment",'');
       this.$store.commit("requestermodule/sSTAddZipCode", '');
       this.$store.commit("requestermodule/sSTAddCity", '');
       this.$store.commit("requestermodule/sSTAddState",'');

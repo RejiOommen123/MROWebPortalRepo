@@ -66,7 +66,7 @@
             hide-details
             dark
             class="checkboxBorder"
-            label="When a specific event occur."
+            label="When a specific event occurs."
             color="white"
             :value="3"
             v-model="nSelectedCheckBox"
