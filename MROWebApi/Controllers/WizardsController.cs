@@ -314,18 +314,11 @@ namespace MROWebApi.Controllers
                 //Specific Event
                 writer.WriteEndElement();
                 writer.WriteStartElement("types");
-                if (requester.bRTManualSelection)
+                if (!requester.bRTManualSelection)
                 {
                     writer.WriteStartElement("item");
+                    writer.WriteElementString("code", "MRORecordTypeAbstract");
                     writer.WriteElementString("name", "Abstract");
-                    writer.WriteElementString("include", "0");
-                    writer.WriteEndElement();
-                }
-                else
-                {
-                    writer.WriteStartElement("item");
-                    writer.WriteElementString("name", "Abstract");
-                    writer.WriteElementString("include", "1");
                     writer.WriteEndElement();
                 }
 
@@ -354,10 +347,10 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("email", requester.sSTEmailAddress);
                 writer.WriteStartElement("address");
                 writer.WriteElementString("apartment", requester.sSTAddApartment);
-                writer.WriteElementString("street", requester.sSTAddApartment);
-                writer.WriteElementString("city", requester.sSTAddApartment);
-                writer.WriteElementString("state", requester.sSTAddApartment);
-                writer.WriteElementString("zipcode", requester.sSTAddApartment);
+                writer.WriteElementString("street", requester.sSTAddStreetAddress);
+                writer.WriteElementString("city", requester.sSTAddCity);
+                writer.WriteElementString("state", requester.sSTAddState);
+                writer.WriteElementString("zipcode", requester.sSTAddZipCode);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.WriteStartElement("recipient");
