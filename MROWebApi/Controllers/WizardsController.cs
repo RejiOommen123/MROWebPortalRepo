@@ -129,10 +129,10 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                 FacilityLocations location = await locaFac.Select(requester.nLocationID);
 
-                //////byte[] signedPDF = await GetSignedPDF(requester);
+                byte[] signedPDF = await GetSignedPDF(requester);
 
-                //////requester.sPDF = Convert.ToBase64String(signedPDF);
-                //////requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
+                requester.sPDF = Convert.ToBase64String(signedPDF);
+                requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
                 var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
                 var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
                 var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
@@ -145,25 +145,36 @@ namespace MROWebApi.Controllers
                 string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
                 //DB Storing
                 RequestersController requestersController = new RequestersController(_info);
-                //////await requestersController.AddRequester(requester);
+                await requestersController.AddRequester(requester);
 
-                ////////Send Email to Patient
-                //////MROLogger passwordDecrypt = new MROLogger(_info);
-                //////if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
-                //////{
-                //////    //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+                //Send Email to Patient
+                MROLogger passwordDecrypt = new MROLogger(_info);
+                if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                {
+                    //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
 
-                //////}
-                //////else
-                //////{
-                //////    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
-                //////    //return Content("Email Not Sent");
-                //////}
+                }
+                else
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                    //return Content("Email Not Sent");
+                }
 
                 //to get the Record Type for this facility
                 SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
                 IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
 
+                #region Get requester OS and Browser Details
+                var userAgent = HttpContext.Request.Headers["User-Agent"];
+                string uaString = Convert.ToString(userAgent[0]);
+                var uaParser = Parser.GetDefault();
+                ClientInfo c = uaParser.Parse(uaString);
+
+
+
+                string requesterOS = c.OS.ToString();
+                string requesterBrowser = c.UserAgent.ToString();
+                #endregion
 
                 XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
                 //{
@@ -186,7 +197,6 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("id", requester.nRequesterID.ToString());
                 writer.WriteEndElement();
                 writer.WriteStartElement("facility");
-                writer.WriteElementString("code", facility.nROIFacilityID.ToString());
                 writer.WriteElementString("value", facility.nROIFacilityID.ToString());
                 writer.WriteElementString("name", facility.sFacilityName);
                 writer.WriteElementString("id", facility.nFacilityID.ToString());
@@ -196,19 +206,22 @@ namespace MROWebApi.Controllers
                 writer.WriteStartElement("item");
                 //For Location Code,Name,ID
                 writer.WriteElementString("code", location.sLocationCode);
+                writer.WriteElementString("value", location.nROILocationID.ToString());
                 writer.WriteElementString("name", requester.sSelectedLocationName);
                 writer.WriteElementString("id", location.nFacilityLocationID.ToString());
-                writer.WriteStartElement("item");
-                writer.WriteElementString("value", location.nROILocationID.ToString());
-                writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.WriteElementString("submitted", requester.bRequestorFormSubmitted.ToString());
                 writer.WriteEndElement();
                 //For Date, Reason,Comments
                 writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss") );
                 writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
-                writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
-                writer.WriteElementString("reasoncode", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                //writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
+                //writer.WriteElementString("reasoncode", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                writer.WriteStartElement("reason");
+                writer.WriteElementString("code", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                writer.WriteElementString("name", sSelectedPrimaryReasonsName);
+                writer.WriteEndElement();
+
                 writer.WriteElementString("comments", sComments);
                 writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : "");
                 writer.WriteElementString("confirmwithdata", requester.bConfirmReport.ToString());
@@ -216,27 +229,24 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("date_required", requester.bDeadlineStatus.ToString());
                 writer.WriteStartElement("deliverymethod");
                 writer.WriteElementString("code", requester.sReleaseTo);
-                writer.WriteElementString("deliverymethod", requester.sReleaseToName);
+                writer.WriteElementString("name", requester.sReleaseToName);
                 writer.WriteEndElement();
+                writer.WriteStartElement("sensitive");
                 //Sensational Info
                 foreach (SensitiveInfo singleSensitiveInfo in facilitySensitiveInfo)
                 {
                     if (sSelectedSensitiveInfoForXML.Contains(singleSensitiveInfo.sNormalizedSensitiveInfoName))
                     {
                         writer.WriteStartElement("item");
+                        writer.WriteElementString("code", singleSensitiveInfo.sNormalizedSensitiveInfoName);
                         writer.WriteElementString("name", singleSensitiveInfo.sSensitiveInfoName);
-                        writer.WriteElementString("include", "1");
-                        writer.WriteEndElement();
-                    }
-                    else
-                    {
-                        writer.WriteStartElement("item");
-                        writer.WriteElementString("name", singleSensitiveInfo.sSensitiveInfoName);
-                        writer.WriteElementString("include", "0");
                         writer.WriteEndElement();
                     }
                 }
+                writer.WriteEndElement();
                 writer.WriteElementString("additionalcomments", requester.sAdditionalData);
+                writer.WriteElementString("os", requesterOS);
+                writer.WriteElementString("browser", requesterBrowser);
 
                 writer.WriteEndElement();
                 writer.WriteStartElement("patient");
@@ -263,7 +273,7 @@ namespace MROWebApi.Controllers
 
                 //Requester - Part
                 #region Requester Part
-                writer.WriteStartElement("requestor");
+                writer.WriteStartElement("requester");
                 writer.WriteElementString("firstname", requester.sRelativeFirstName);
                 writer.WriteElementString("lastname", requester.sRelativeLastName);
                 writer.WriteElementString("organization", requester.sRecipientOrganizationName);
@@ -273,7 +283,8 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("email", requester.sRequesterEmailId);
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requester.sAddApartment != "" ? requester.sAddApartment + " " + requester.sAddStreetAddress : requester.sAddStreetAddress);
+                writer.WriteElementString("apartment", requester.sAddApartment);
+                writer.WriteElementString("street", requester.sAddStreetAddress);
                 writer.WriteElementString("city", requester.sAddCity);
                 writer.WriteElementString("state", requester.sAddState);
                 writer.WriteElementString("zipcode", requester.sAddZipCode);
@@ -327,25 +338,20 @@ namespace MROWebApi.Controllers
                     if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
                     {
                         writer.WriteStartElement("item");
+                        writer.WriteElementString("code", singleRecordType.sNormalizedRecordTypeName);
                         writer.WriteElementString("name", singleRecordType.sRecordTypeName);
-                        writer.WriteElementString("include", "1");
-                        writer.WriteEndElement();
-                    }
-                    else
-                    {
-                        writer.WriteStartElement("item");
-                        writer.WriteElementString("name", singleRecordType.sRecordTypeName);
-                        writer.WriteElementString("include", "0");
                         writer.WriteEndElement();
                     }
                 }
                 writer.WriteEndElement();
+                writer.WriteElementString("otherrt", requester.sOtherRTText);
                 writer.WriteEndElement();
                 writer.WriteStartElement("shipment");
                 writer.WriteStartElement("types");
                 writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
-                writer.WriteElementString("types", requester.sSelectedShipmentTypesName);
+                writer.WriteElementString("name", requester.sSelectedShipmentTypesName);
                 writer.WriteEndElement();
+                writer.WriteElementString("email", requester.sSTEmailAddress);
                 writer.WriteStartElement("address");
                 writer.WriteElementString("apartment", requester.sSTAddApartment);
                 writer.WriteElementString("street", requester.sSTAddApartment);
@@ -355,9 +361,9 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.WriteStartElement("recipient");
-                writer.WriteElementString("firstname", requester.sRecipientAddApartment);
-                writer.WriteElementString("lastname", requester.sRecipientAddApartment);
-                writer.WriteElementString("organization", requester.sRecipientAddApartment);
+                writer.WriteElementString("firstname", requester.sRecipientFirstName);
+                writer.WriteElementString("lastname", requester.sRecipientLastName);
+                writer.WriteElementString("organization", requester.sRecipientOrganizationName);
                 writer.WriteStartElement("address");
                 writer.WriteElementString("apartment", requester.sRecipientAddApartment);
                 writer.WriteElementString("street", requester.sRecipientAddStreetAddress);
@@ -372,17 +378,7 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
                 writer.Flush();
 
-                #region Get requester OS and Browser Details
-                var userAgent = HttpContext.Request.Headers["User-Agent"];
-                string uaString = Convert.ToString(userAgent[0]);
-                var uaParser = Parser.GetDefault();
-                ClientInfo c = uaParser.Parse(uaString);
-
-
-
-                string requesterOS = c.OS.ToString();
-                string requesterBrowser = c.UserAgent.ToString();
-                #endregion
+                
 
 
                 #region Decrypt FTP Password
