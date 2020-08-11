@@ -505,7 +505,7 @@ namespace MROWebApi.Controllers
                 var image = bodyBuilder.LinkedResources.Add("locationlogo", locationLogo);
                 image.ContentId = MimeUtils.GenerateMessageId();
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
-    <p style='text-align: right;'>{1}&nbsp;</p><img src=""cid:{0}""><br/><br/>
+    <img src=""cid:{0}""><br/><br/>
     <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
         <p>Thank you!</p>
         <p>You have successfully submitted your request.</p>
@@ -527,7 +527,7 @@ namespace MROWebApi.Controllers
             contents of this message is strictly prohibited. If this message was received in error, please notify
             privacy@mrocorp.com immediately.</p>
     </div>
-</div>", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
+</div>", image.ContentId);
                 bodyBuilder.HtmlBody = htmlText;
                 //Check if the attachment is required or not
                 if (requester.bConfirmReport)
