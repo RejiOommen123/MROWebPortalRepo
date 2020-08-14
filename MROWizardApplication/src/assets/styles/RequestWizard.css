@@ -358,4 +358,5 @@ button.wizardSelectionButton:hover {
 
 .v-dialog{
   max-height: 100%  !important;
+  overflow: hidden !important;
 }

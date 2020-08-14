@@ -2,14 +2,14 @@
   <div>
     <div id="AddFacilityPageBox">
       <form @submit.prevent="onSubmit" class="addfacility-form">
-        <div id="addFormDiv">
+        <!-- <div id="addFormDiv">
           <span id="spanMandate">
             <i>All the fields are mandatory</i>
           </span>
-        </div>
+        </div> -->
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
-            <label for="sFacilityName">Facility Name:</label>
+            <label class="required" for="sFacilityName">Facility Name:</label>
             <v-text-field
               type="text"
               id="sFacilityName"
@@ -32,7 +32,7 @@
               solo
               min="1"
             ></v-text-field>
-            <label for="sDescription">Facility Description:</label>
+            <label class="required" for="sDescription">Facility Description:</label>
             <v-text-field
               type="text"
               id="sDescription"
@@ -65,7 +65,7 @@
               :error-messages="sSMTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUrl">SMTP URL:</label>
+            <label class="required" for="sSMTPUrl">SMTP URL:</label>
             <v-text-field
               type="text"
               id="sSMTPUrl"
@@ -76,7 +76,7 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sOutboundEmail">Outbound Email:</label>
+            <label class="required" for="sOutboundEmail">Outbound Email:</label>
             <v-text-field
               type="text"
               id="sOutboundEmail"
@@ -89,7 +89,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
-            <label for="sFTPUsername">FTP Username:</label>
+            <label class="required" for="sFTPUsername">FTP Username:</label>
             <v-text-field
               type="text"
               id="sFTPUsername"
@@ -100,7 +100,7 @@
               :error-messages="sFTPUsernameErrors"
               solo
             ></v-text-field>
-            <label for="sFTPPassword">FTP Password:</label>
+            <label class="required" for="sFTPPassword">FTP Password:</label>
             <v-text-field
               type="password"
               id="sFTPPassword"
@@ -111,7 +111,7 @@
               :error-messages="sFTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sFTPUrl">FTP URL:</label>
+            <label class="required" for="sFTPUrl">FTP URL:</label>
             <v-text-field
               type="text"
               id="sFTPUrl"
@@ -122,7 +122,7 @@
               :error-messages="sFTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sFTPUrl">Connection String:</label>
+            <label class="required" for="sFTPUrl">Connection String:</label>
             <!-- <v-text-field
               type="text"
               id="sConnectionString"
@@ -137,7 +137,7 @@
                 
             </v-select>
             
-            <!-- <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
+            <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
             <v-switch
               inset
               flat
@@ -145,7 +145,7 @@
               solo
               id="bRequestorEmailConfirm"
               v-model="facility.bRequestorEmailConfirm"
-            ></v-switch> -->
+            ></v-switch>
           </v-col>
         </v-row>
         <div class="submit">
@@ -211,13 +211,10 @@ export default {
         minLength: minLength(2)
       },
       sSMTPUsername: {
-        required,
         maxLength: maxLength(100)
       },
       sSMTPPassword: {
-        required,
-        maxLength: maxLength(20),
-        minLength: minLength(5)
+        maxLength: maxLength(20)
       },
       sSMTPUrl: {
         required,
@@ -283,19 +280,13 @@ export default {
       if (!this.$v.facility.sSMTPUsername.$dirty) return errors;
       !this.$v.facility.sSMTPUsername.maxLength &&
         errors.push("SMTP Username must be at most 100 characters long");
-      !this.$v.facility.sSMTPUsername.required &&
-        errors.push("SMTP Username is required.");
       return errors;
     },
     sSMTPPasswordErrors() {
       const errors = [];
       if (!this.$v.facility.sSMTPPassword.$dirty) return errors;
-      !this.$v.facility.sSMTPPassword.minLength &&
-        errors.push("SMTP Password must be at least 5 characters long");
       !this.$v.facility.sSMTPPassword.maxLength &&
         errors.push("SMTP Password must be at most 20 characters long");
-      !this.$v.facility.sSMTPPassword.required &&
-        errors.push("SMTP Password is required.");
       return errors;
     },
     sSMTPUrlErrors() {
@@ -493,5 +484,9 @@ label {
 }
 .row {
   margin: 0.0625em;
+}
+.required:after {
+  content: " *";
+  color: red;
 }
 </style>

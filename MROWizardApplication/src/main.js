@@ -11,6 +11,13 @@ Vue.use(VueResource);
 
 Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
+//Vuetify API Secret Key - Common Code for Adding Header
+Vue.http.interceptors.push((request, next) => {
+    var sAPIKey = "MRO@007"
+    request.headers.set('sAPIKey', sAPIKey)
+    next()
+})
+
 Vue.use(Vuelidate);
 new Vue({
     vuetify,

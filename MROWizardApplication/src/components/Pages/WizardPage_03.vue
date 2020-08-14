@@ -55,8 +55,8 @@
             <v-col cols="12" offset-sm="2" sm="8">
             <div v-if="!bAreYouPatient && disclaimer02!='' " class="disclaimer">{{this.disclaimer02}}</div>
             </v-col>
-            <v-col>
-              <label cols="12" offset-sm="2" sm="8">
+            <v-col cols="12" offset-sm="2" sm="8">
+              <label>
               {{disclaimer03}}
               </label>
             </v-col>

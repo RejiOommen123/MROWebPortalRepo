@@ -111,10 +111,13 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                                                             && frm.Name != "MROSignature03")
                     {
                         string sValue = null;
-                        string sName = frm.Name;
-                        string sNewValue;
-                        if (InList(sName, allFields, out sNewValue))
-                            sValue += sNewValue + " ";
+                        string[] sa = frm.Name.Split('_');  //underscores allows fields to be concatinated
+                        foreach (string sName in sa)
+                        {
+                            string sNewValue;
+                            if (InList(sName, allFields, out sNewValue))
+                                sValue += sNewValue + " ";
+                        }
                         Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
                     }
                 }
@@ -148,7 +151,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             string phoneStatus = requestor.bPhoneNoVerified ? "(Verified)" : "(Not Verified)";
 
             thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddApartment + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address "+emailStatus+"<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number "+phoneStatus+"<b> " + requestor.sPhoneNo + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasonsName) + "<br /");

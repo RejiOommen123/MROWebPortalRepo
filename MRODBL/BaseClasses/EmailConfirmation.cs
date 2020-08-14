@@ -20,5 +20,10 @@ namespace MRODBL.BaseClasses
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient Last Name allowed")]
         public string sPatientLastName { get; set; }
         #endregion
+        public bool bAreYouPatient { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Relative Name allowed")]
+        public string sRelativeFirstName { get; set; }
+        [StringLength(50, ErrorMessage = "Maximum 50 characters Relative Name allowed")]
+        public string sRelativeLastName { get; set; }
     }
 }

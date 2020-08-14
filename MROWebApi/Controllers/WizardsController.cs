@@ -45,7 +45,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    //[APIKeyAuth]
+    [APIKeyAuth]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
@@ -149,17 +149,24 @@ namespace MROWebApi.Controllers
 
                 //Send Email to Patient
                 MROLogger passwordDecrypt = new MROLogger(_info);
-                if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                if (facility.bRequestorEmailConfirm)
                 {
-                    //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+                    if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                    {
+                        //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
 
+                    }
+                    else
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                        //return Content("Email Not Sent");
+                    }
                 }
-                else
-                {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
-                    //return Content("Email Not Sent");
+                else {
+                    MROLogger reqLogger = new MROLogger(_info);
+                    reqLogger.LogRequesterRecords(requester.nRequesterID,requester.nFacilityID,"Confirmation email not send because Sending email is switched of for this facility",requester.sWizardName);
+                    //public void LogRequesterRecords(int nRequesterID, int nFacilityID, string sDescription, string sWizardName)
                 }
-
                 //to get the Record Type for this facility
                 SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
                 IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
@@ -584,13 +591,22 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
+                string firstLastName, firstName;
+                if (requester.bAreYouPatient) {
+                    firstLastName = requester.sPatientFirstName + " " + requester.sPatientLastName;
+                    firstName = requester.sPatientFirstName;
+                }
+                else {
+                    firstLastName = requester.sRelativeFirstName + " " + requester.sRelativeLastName;
+                    firstName = requester.sRelativeFirstName;
+                }
+                MailboxAddress to = new MailboxAddress(firstLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
                 message.Subject = "Here's Your 4 Digit Verification Code " + sOTP;
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                string bodyText = "<h1>Hello " + requester.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
+                string bodyText = "<h1>Hello " + firstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
                 //GET Port number
@@ -669,9 +685,16 @@ namespace MROWebApi.Controllers
                 {
                     allFields.Add("MROAreYouPatient=1", "On");
                 }
-                allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " + requester.sPatientLastName);
+                if (!string.IsNullOrEmpty(requester.sPatientFirstName))
+                {
+                    allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " +requester.sPatientLastName);
+                }
+                else
+                {
+                    allFields.Add("MROPatientFullName", string.Empty);
+                }                
                 allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
-                allFields.Add("MROPatientMiddleInitial", requester.sPatientMiddleName);
+                allFields.Add("MROPatientMiddleName", requester.sPatientMiddleName);
                 allFields.Add("MROPatientLastName", requester.sPatientLastName);
                 allFields.Add("MROPatientBirthDate", requester.dtPatientDOB.Value.ToShortDateString());
                 allFields.Add("MROPatientDOBDAY", requester.dtPatientDOB.Value.Day.ToString());
@@ -685,7 +708,14 @@ namespace MROWebApi.Controllers
                     allFields.Add("MROConfirmReport=1", "On");
                 }
                 //Previous Patient Name
-                allFields.Add("MROPatientPreviousFullName", requester.sPatientPreviousFirstName + " " + requester.sPatientPreviousMiddleName + " " + requester.sPatientPreviousLastName);
+                if (!string.IsNullOrEmpty(requester.sPatientPreviousFirstName))
+                {
+                    allFields.Add("MROPatientPreviousFullName", requester.sPatientPreviousFirstName + " " + requester.sPatientPreviousMiddleName + " " + requester.sPatientPreviousLastName);
+                }
+                else
+                {
+                    allFields.Add("MROPatientPreviousFullName", string.Empty);
+                }               
                 allFields.Add("MROPatientPreviousFirstName", requester.sPatientPreviousFirstName);
                 allFields.Add("MROPatientPreviousLastName", requester.sPatientPreviousLastName);
                 allFields.Add("MROPatientPreviousMiddleName", requester.sPatientPreviousMiddleName);
@@ -699,8 +729,8 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROAddState", requester.sAddState);
                 allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
                 allFields.Add("MROAddAppartment", requester.sAddApartment);
-                allFields.Add("MROAddCompleteAddress", requester.sAddApartment + ", "
-                                                    + requester.sAddStreetAddress + ", "
+                allFields.Add("MROAddCompleteAddress", requester.sAddStreetAddress + ", "
+                                                    + requester.sAddApartment + ", "
                                                     + requester.sAddCity + ", "
                                                     + requester.sAddState + ", "
                                                     + requester.sAddZipCode);
@@ -817,11 +847,19 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROSTAddCity", requester.sSTAddCity);
                 allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
                 allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
-                allFields.Add("MROSTCompleteAddress", requester.sSTAddApartment + ", "
-                                                    + requester.sSTAddStreetAddress + ", "
-                                                    + requester.sSTAddCity + ", "
-                                                    + requester.sSTAddState + ", "
-                                                    + requester.sSTAddZipCode);
+                if (!string.IsNullOrEmpty(requester.sSTAddCity))
+                {
+                    allFields.Add("MROSTCompleteAddress", requester.sSTAddStreetAddress + ", "
+                                                   + requester.sSTAddApartment + ", "
+                                                   + requester.sSTAddCity + ", "
+                                                   + requester.sSTAddState + ", "
+                                                   + requester.sSTAddZipCode);
+                }
+                else
+                {
+                    allFields.Add("MROSTCompleteAddress", string.Empty);
+                }
+               
                 allFields.Add("MROSTEmailAddress", requester.sSTEmailAddress);
                 allFields.Add("MROSTFaxNumber", requester.sSTFaxNumber);
 
@@ -839,15 +877,30 @@ namespace MROWebApi.Controllers
                 allFields.Add("MRORecipientAddState", requester.sRecipientAddState);
                 allFields.Add("MRORecipientAddCity", requester.sRecipientAddCity);
                 allFields.Add("MRORecipientAddStreetAddress", requester.sRecipientAddStreetAddress);
-                allFields.Add("MRORecipientAddApartment", requester.sRecipientAddApartment);
-                allFields.Add("MRORecipientCompleteAddress", requester.sRecipientAddApartment + ", "
-                                                    + requester.sRecipientAddStreetAddress + ", "
-                                                    + requester.sRecipientAddCity + ", "
-                                                    + requester.sRecipientAddState + ", "
-                                                    + requester.sRecipientAddZipCode);
+                allFields.Add("MRORecipientAddApartment", requester.sRecipientAddApartment);              
+                if (!string.IsNullOrEmpty(requester.sRecipientAddCity))
+                {
+                    allFields.Add("MRORecipientCompleteAddress", requester.sRecipientAddStreetAddress + ", "
+                                                  + requester.sRecipientAddApartment + ", "
+                                                  + requester.sRecipientAddCity + ", "
+                                                  + requester.sRecipientAddState + ", "
+                                                  + requester.sRecipientAddZipCode);
+                }
+                else
+                {
+                    allFields.Add("MRORecipientCompleteAddress", string.Empty);
+                }
+
                 allFields.Add("MRORecipientFirstName", requester.sRecipientFirstName);
                 allFields.Add("MRORecipientLastName", requester.sRecipientLastName);
-                allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientLastName);
+                if (!string.IsNullOrEmpty(requester.sRecipientFirstName))
+                {
+                    allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientLastName);
+                }
+                else
+                {
+                    allFields.Add("MRORecipientFullName", string.Empty);
+                }                
                 allFields.Add("MRORecipientOrganizationName", requester.sRecipientOrganizationName);
 
 
