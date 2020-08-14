@@ -68,6 +68,9 @@ export default {
     next() {
       if(this.option[0]=='abstract'){
         this.bRTManualSelection=false;
+        this.$store.commit(
+        "requestermodule/sSelectedRecordTypes",[]
+      );        
       }
       else{
         this.bRTManualSelection=true;
