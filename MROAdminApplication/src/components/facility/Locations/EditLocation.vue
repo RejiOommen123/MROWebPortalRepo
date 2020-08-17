@@ -147,6 +147,16 @@
         <br />
       </form>
     </div>
+    <v-dialog v-model="sameLocNameAlert" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>{{sameNameText}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="sameLocNameAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Dialog Alert for Auth Doc errors -->
     <v-dialog v-model="authDocErrors" width="425px" max-width="425px">
       <v-card>
@@ -217,7 +227,7 @@ export default {
     location: {
       sLocationName: {
         required,
-        maxLength: maxLength(40),
+        maxLength: maxLength(100),
         minLength: minLength(2)
       },
       nROILocationID: { required, numeric },
@@ -243,7 +253,7 @@ export default {
       !this.$v.location.sLocationName.minLength &&
         errors.push("Location Name must be at least 2 characters long");
       !this.$v.location.sLocationName.maxLength &&
-        errors.push("Location Name must be at most 40 characters long");
+        errors.push("Location Name must be at most 100 characters long");
       !this.$v.location.sLocationName.required &&
         errors.push("Location Name is required.");
       return errors;
@@ -306,6 +316,8 @@ export default {
   name: "EditLocation",
   data() {
     return {
+      sameNameText:'',
+      sameLocNameAlert: false,
       BGClearer:false,
       LogoClearer:false,
       PDFClearer: false,
@@ -449,7 +461,8 @@ export default {
             this.location.nFacilityLocationID,
           this.location
         )
-        .then(response => {
+        .then(
+          response => {
           if (response.ok == true) {
             this.dialogLoader =false;
             if (response.bodyText != "") {
@@ -463,8 +476,21 @@ export default {
                 );
               }
           }
-        });
+          
+        },error => {
+            // Error Callback
+            if (
+              error.status == 400
+            ) {
+              this.sameNameText =error.bodyText;
+              this.dialogLoader = false;
+               this.sameLocNameAlert = true;
+            }
+          }
+        );
+    
     }
+
   }
 };
 </script>

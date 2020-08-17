@@ -16,7 +16,7 @@ namespace MROWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    //[APIKeyAuth]
+    [APIKeyAuth]
     public class FacilityController : ControllerBase
     {
         #region Facility Constructor
@@ -83,6 +83,18 @@ namespace MROWebAPI.Controllers
         }
         #endregion
 
+        #region Get MRO Connection String 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetMROConnectionString()
+        {
+            MROConnectionStringRepository mROConnectionStringRepository = new MROConnectionStringRepository(_info);
+            //bool reslt = Int32.TryParse(id, out int number);
+            IEnumerable<MROConnectionString> arrayconnectionString = await mROConnectionStringRepository.GetAllASC(1000,"nConnectionId");
+            return Ok(arrayconnectionString);
+        }
+        #endregion
+
         #region Add Facility
         [HttpPost]
         [AllowAnonymous]
@@ -129,7 +141,7 @@ namespace MROWebAPI.Controllers
                     #endregion
 
                     Facilities dbFacility = await rpFac.Select(GeneratedID);
-                    rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.sConnectionString, facility.nCreatedAdminUserID);
+                    rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.nConnectionID, facility.nCreatedAdminUserID);
                     return dbFacility;
                 }
                 catch (Exception ex)
@@ -150,12 +162,26 @@ namespace MROWebAPI.Controllers
         [HttpPost("EditFacility/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public ActionResult<Facilities> EditFacility(int id, Facilities facility)
+        public async Task<ActionResult<Facilities>> EditFacility(int id, Facilities facility)
         {
             if (ModelState.IsValid) {
                 if (id != facility.nFacilityID)
                 {
                     return BadRequest("Bad Request: ID Not Equals Facility ID");
+                }
+                else
+                {
+                    //Check if there's a facility with same name 
+                    FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
+                    IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);
+                    if (dbFacilitites.Count() != 0)
+                    {
+                        if (dbFacilitites.First().nFacilityID != facility.nFacilityID)
+                        {
+                            //Exit
+                            return BadRequest("Cannot Add Facility \"" + facility.sFacilityName + "\", Facility with Same Name Exists");
+                        }
+                    }
                 }
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
 

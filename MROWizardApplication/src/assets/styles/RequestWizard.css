@@ -6,7 +6,17 @@
 .v-input {
   font-size: 18px;
 }
+.v-input input {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
+.TextAreaBg .v-input__slot{
+background-color: rgba(0,0,0,0.5);
+} 
+
+#phoneExt{
+  background-color: transparent;
+}
 .v-messages {
   font-size: 14px;
 }
@@ -21,6 +31,7 @@
 
 #logoImg {
   display: block;
+  margin-top: -20px;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
@@ -68,8 +79,8 @@ h1 {
 }
 
 .next {
-  margin-top: 5%;
-  margin-bottom: 5%;
+  margin-top: 2%;
+  margin-bottom: 2%;
   background-color: #e84700 !important;
 }
 
@@ -88,12 +99,14 @@ h1 {
 /* Pages contains Checkbox List */
 
 .checkboxBorder {
-  height: 40px;
+  height: auto;
   line-height: 40px;
   padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   font-size: 14px;
   background-color: rgba(0,0,0,0.18);
-  white-space: nowrap;
+  white-space: normal;
   text-overflow: ellipsis;
   overflow: visible;
   border: 1px solid #f6efef;
@@ -262,6 +275,13 @@ button.wizardSelectionButton:hover {
   color: black;
   text-align: center;
 }
+.camBorder{
+  height: 33vh;
+}
+.pdfViewer{
+  margin-left:10%;
+  width:80%;
+}
 
 /* signature page css end */
 
@@ -304,13 +324,21 @@ button.wizardSelectionButton:hover {
     margin-right: 15px;
   }
 
-  #pdfViewer {
+  /* #pdfViewer {
     width: 100%;
     height: 450px;
-  }
+  } */
   #phoneNo{
     margin-left:20px; 
   }
+  .camBorder{
+    height: 40vh;
+  }
+  .pdfViewer{
+    margin-left:0;
+    width:100%;
+  }
+  
 }
 .input-group-addon {
   margin-top: 20px;
@@ -328,3 +356,7 @@ button.wizardSelectionButton:hover {
   display: table-cell;
 }
 
+.v-dialog{
+  max-height: 100%  !important;
+  overflow: hidden !important;
+}

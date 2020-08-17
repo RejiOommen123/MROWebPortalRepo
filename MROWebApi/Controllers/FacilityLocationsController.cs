@@ -17,7 +17,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    //[APIKeyAuth]
+    [APIKeyAuth]
     public class FacilityLocationsController : ControllerBase
     {
         #region Facility Locations Constructor
@@ -108,13 +108,12 @@ namespace MROWebApi.Controllers
             {
                 try
                 {
-                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info); 
-                    IEnumerable<FacilityLocations> dbLocations = await facilityLocationsRepository.SelectWhere("sLocationName", facilityLocation.sLocationName);
-                    if (dbLocations.Count() != 0)
-                    {
-                        //Exit
-                        return BadRequest("Cannot Add Location with Same Name");
-                    }
+                    //IEnumerable<FacilityLocations> dbLocations = await facilityLocationsRepository.SelectWhere("sLocationName", facilityLocation.sLocationName);
+                    //if (dbLocations.Count() != 0)
+                    //{
+                    //    //Exit
+                    //    return BadRequest("Cannot Add Location with Same Name");
+                    //}
 
                     #region Data ! From UI
                     int? addedLocationID = null;
@@ -126,8 +125,29 @@ namespace MROWebApi.Controllers
                     string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
                     string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
                     finalString = "MRO" + finalString;
+                    ////Generate MROLocationOther Normalized Keyword for If the String Contain other
+                    //if (finalString.ToLower().Contains("other"))
+                    //{
+                    //    finalString = "MROLocationOther";
+                    //    IEnumerable<FacilityLocations> dbOtherLocation = await facilityLocationsRepository.SelectLike("sNormalizedLocationName", "MROLocationOther");
+                    //    if (dbLocations.Count() != 0)
+                    //    {
+                    //        //Exit
+                    //        return BadRequest("Cannot Add more than one 'Other' Location in current Facility!");
+                    //    }
+
+                    //}
                     facilityLocation.sNormalizedLocationName = finalString;
+                    //Default value for uAuthExpirationMonths is 6
                     facilityLocation.nAuthExpirationMonths = 6;
+                    #endregion
+
+                    #region Server Validation for Duplication check and 'Other' Location check
+                    string sStatusMessage = await ValidationForFacilityLocation(facilityLocation);
+                    if (sStatusMessage != string.Empty)
+                    {
+                        return BadRequest(sStatusMessage);
+                    }
                     #endregion
 
                     if (string.IsNullOrEmpty(facilityLocation.sConfigLogoData)) {
@@ -151,6 +171,8 @@ namespace MROWebApi.Controllers
                         LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
                         checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
                     }
+
+                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
 
                     if (checkPDF)
                     {
@@ -213,6 +235,18 @@ namespace MROWebApi.Controllers
             {
                 try
                 {
+
+                    #region Server Validation for Duplication check and 'Other' Location check
+                    string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
+                    string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
+                    facilityLocation.sNormalizedLocationName = "MRO" + finalString;
+                    string sStatusMessage = await ValidationForFacilityLocation(facilityLocation);
+                    if (sStatusMessage != string.Empty)
+                    {
+                        return BadRequest(sStatusMessage);
+                    }
+                    #endregion
+
                     if (id != facilityLocation.nFacilityLocationID)
                     {
                         return BadRequest("Bad Request: ID Not Equals Location ID");
@@ -402,15 +436,43 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Get ROI Location ID
-        [HttpGet]
-        [Route("[action]/{id}")]
-        public int GetROILocationID(string id)
+        //[HttpGet]
+        //[Route("[action]/{id}")]
+        //public int GetROILocationID(string id)
+        //{
+        //    FacilityLocationsRepository locationsRepository = new FacilityLocationsRepository(_info);
+        //    bool reslt = Int32.TryParse(id, out int number);
+        //    int nROILocationID = locationsRepository.GetROILocationID("nFacilityID", number);
+        //    return nROILocationID;
+        //}
+        #endregion
+
+        #region Server Validation for Duplicate Location names and check for only one 'Other' Location
+        private async Task<string> ValidationForFacilityLocation(FacilityLocations facilityLocation)
         {
-            FacilityLocationsRepository locationsRepository = new FacilityLocationsRepository(_info);
-            bool reslt = Int32.TryParse(id, out int number);
-            int nROILocationID = locationsRepository.GetROILocationID("nFacilityID", number);
-            return nROILocationID;
+            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+            IEnumerable<FacilityLocations> dbLocations = await facilityLocationsRepository.SelectLocationByLocationName(facilityLocation.nFacilityLocationID, facilityLocation.sLocationName);
+            if (dbLocations.Count() != 0)
+            {
+                return "Cannot Add Location with Same Name";
+            }
+
+
+            //Generate MROLocationOther Normalized Keyword for If the String Contain other
+            if (facilityLocation.sNormalizedLocationName.ToLower().Contains("other"))
+            {
+                facilityLocation.sNormalizedLocationName = "MROLocationOther";
+                IEnumerable<dynamic> dbOtherLocation = await facilityLocationsRepository.GetLocationByNormalizedName(facilityLocation.nFacilityID, facilityLocation.nFacilityLocationID, facilityLocation.sNormalizedLocationName);
+                if (dbOtherLocation.Count() != 0)
+                {
+                    return "Cannot Add more than one 'Other' Location in current Facility!";
+                }
+
+            }
+
+            return string.Empty;
         }
+
         #endregion
     }
 }

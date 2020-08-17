@@ -5,10 +5,13 @@
       <v-col cols="12" offset-sm="2" sm="6" md="8">
         <h1 v-if="bAreYouPatient">What is your date of birth?</h1>
         <h1 v-else>What is the patient’s date of birth?</h1>
+        <p v-if="disclaimer!=''">{{disclaimer}}</p>
         <!-- date picker menu and date picker -->
         <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
+              transition="scale-transition"
+              offset-y
               :value="dtPatientDOBFormatted"
               placeholder="MM-DD-YYYY"
               :error-messages="dtPatientDOBErrors"
@@ -22,7 +25,14 @@
               @blur="$v.dtPatientDOB.$touch()"
             ></v-text-field>
           </template>
-          <v-date-picker v-model="dtPatientDOB" color="green lighten-1" header-color="primary" light @change="menu1 = false"></v-date-picker>
+          <v-date-picker 
+            ref="picker"
+            :max="new Date().toISOString().substr(0, 10)"
+            v-model="dtPatientDOB" 
+            color="green lighten-1" 
+            header-color="primary" 
+            light @change="menu1 = false">
+          </v-date-picker>
         </v-menu>
       </v-col>
       <v-spacer></v-spacer>
@@ -46,6 +56,8 @@ export default {
     return {
       dtPatientDOB: this.$store.state.requestermodule.dtPatientDOB,
       menu1: false,
+      disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_05_disclaimer01,
     };
   },
   // Date Validation
@@ -55,6 +67,11 @@ export default {
       minValue: value => value < new Date().toISOString()
     }
   },
+  watch: {
+      menu1 (val) {
+        val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+    },
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;
@@ -73,8 +90,8 @@ export default {
     dtPatientDOBErrors() {
       const errors = [];
       if (!this.$v.dtPatientDOB.$dirty) return errors;
-      !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");
-      !this.$v.dtPatientDOB.required && errors.push("End Date is required");
+      !this.$v.dtPatientDOB.required && errors.push("Date of birth is required");
+      !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");      
       return errors;
     }
   }

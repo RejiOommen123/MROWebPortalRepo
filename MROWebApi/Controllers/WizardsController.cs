@@ -8,6 +8,7 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Services;
+using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,13 +20,32 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using WebSupergoo.ABCpdf11;
+using UAParser;
+using Microsoft.AspNetCore.Http;
 
 namespace MROWebApi.Controllers
 {
+    public sealed class StringWriterWithEncoding : StringWriter
+    {
+        private readonly Encoding encoding;
+
+        public StringWriterWithEncoding() { }
+
+        public StringWriterWithEncoding(Encoding encoding)
+        {
+            this.encoding = encoding;
+        }
+
+        public override Encoding Encoding
+        {
+            get { return encoding; }
+        }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    //[APIKeyAuth]
+    [APIKeyAuth]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
@@ -50,6 +70,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID and LocationID", ex.Message, _info);
                 return Content(ex.Message);
             }
         }
@@ -69,6 +90,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID", ex.Message, _info);
                 return Content(ex.Message);
             }
         }
@@ -88,164 +110,359 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location - By LocationId", ex.Message, _info);
                 return Content(ex.Message);
             }
         }
         #endregion
 
-        #region  Add Requestor to DB, Generate XML, Send Attachment Email and ROI Email
+        #region  Add Requester to DB, Generate XML, Send Attachment Email and ROI Email
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GenerateXML([FromBody] Requesters requestors)
+        public async Task<IActionResult> GenerateXML([FromBody] Requesters requester)
         {
             if (ModelState.IsValid)
             {
-                RequestersController requestersController = new RequestersController(_info);
-                await requestersController.AddRequester(requestors);
-
-                byte[] signedPDF = await GetSignedPDF(requestors);
-                requestors.sPDF = Convert.ToBase64String(signedPDF);
-                requestors.sPDF = "data:application/pdf;base64," + requestors.sPDF;
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                Facilities facility = await rpFac.Select(requestors.nFacilityID);
+                Facilities facility = await rpFac.Select(requester.nFacilityID);
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
-                FacilityLocations location = await locaFac.Select(requestors.nLocationID);
-                //var sPatientDeceased = requestors.bIsPatientDeceased ? "Yes" : "No";
-                var sMddleInitials = string.IsNullOrEmpty(requestors.sPatientMiddleInitial) ? "" : requestors.sPatientMiddleInitial;
-                var sAreYouPatient = requestors.bAreYouPatient ? "No" : "Yes";
-                var sRelativeName = string.IsNullOrEmpty(requestors.sRelativeName) ? "" : requestors.sRelativeName;
-                var sRelationToPatient = string.IsNullOrEmpty(requestors.sRelationToPatient) ? "" : requestors.sRelationToPatient;
-                var sConfirmReport = requestors.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
-                var sOtherReasons = string.IsNullOrEmpty(requestors.sOtherReasons) ? "" : requestors.sOtherReasons;
-                var sComments = string.IsNullOrEmpty(requestors.sFeedbackComment) ? "" : requestors.sFeedbackComment;
+                FacilityLocations location = await locaFac.Select(requester.nLocationID);
 
+                byte[] signedPDF = await GetSignedPDF(requester);
 
-                XmlWriterSettings xmlWriterSetting = new XmlWriterSettings
+                requester.sPDF = Convert.ToBase64String(signedPDF);
+                requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
+                var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
+                var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
+                var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
+                var sRelationToPatient = string.IsNullOrEmpty(requester.sSelectedRelationName) ? "" : requester.sSelectedRelationName;
+                var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
+                var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
+                var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
+
+                string[] sSelectedRecordTypesForXML = requester.sSelectedRecordTypes;
+                string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
+                //DB Storing
+                RequestersController requestersController = new RequestersController(_info);
+                await requestersController.AddRequester(requester);
+
+                //Send Email to Patient
+                MROLogger passwordDecrypt = new MROLogger(_info);
+                if (facility.bRequestorEmailConfirm)
                 {
-                    OmitXmlDeclaration = false,
-                    ConformanceLevel = ConformanceLevel.Document
-                };
-                StringBuilder xmlString = new StringBuilder();
+                    if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                    {
+                        //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+
+                    }
+                    else
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                        //return Content("Email Not Sent");
+                    }
+                }
+                else {
+                    MROLogger reqLogger = new MROLogger(_info);
+                    reqLogger.LogRequesterRecords(requester.nRequesterID,requester.nFacilityID,"Confirmation email not send because Sending email is switched of for this facility",requester.sWizardName);
+                    //public void LogRequesterRecords(int nRequesterID, int nFacilityID, string sDescription, string sWizardName)
+                }
+                //to get the Record Type for this facility
+                SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
+                IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
+
+                #region Get requester OS and Browser Details
+                var userAgent = HttpContext.Request.Headers["User-Agent"];
+                string uaString = Convert.ToString(userAgent[0]);
+                var uaParser = Parser.GetDefault();
+                ClientInfo c = uaParser.Parse(uaString);
+
+
+
+                string requesterOS = c.OS.ToString();
+                string requesterBrowser = c.UserAgent.ToString();
+                #endregion
+
+                XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+                //{
+                //    OmitXmlDeclaration = false,
+                //    Encoding = Encoding.UTF8,
+                //    ConformanceLevel = ConformanceLevel.Document
+                //};
+
+                //XmlWriterSettings settings = new XmlWriterSettings(); 
+                xmlWriterSetting.Indent = true;
+                xmlWriterSetting.Encoding = Encoding.UTF8;
+
+                var xmlString = new StringWriterWithEncoding(Encoding.UTF8);
+
+                //StringBuilder xmlString = new StringBuilder();
                 using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
                 writer.WriteStartElement("request");
-                writer.WriteStartElement("facility");
-                writer.WriteElementString("name", facility.sFacilityName);
-                writer.WriteElementString("ID", facility.nFacilityID.ToString());
+                writer.WriteStartElement("detail");
+                writer.WriteStartElement("facilityrequester");
+                writer.WriteElementString("id", requester.nRequesterID.ToString());
                 writer.WriteEndElement();
+                writer.WriteStartElement("facility");
+                writer.WriteElementString("value", facility.nROIFacilityID.ToString());
+                writer.WriteElementString("name", facility.sFacilityName);
+                writer.WriteElementString("id", facility.nFacilityID.ToString());
+                writer.WriteEndElement();
+
                 writer.WriteStartElement("locations");
                 writer.WriteStartElement("item");
                 //For Location Code,Name,ID
                 writer.WriteElementString("code", location.sLocationCode);
-                writer.WriteElementString("name", location.sLocationName);
-                writer.WriteElementString("ID", location.nFacilityLocationID.ToString());
+                writer.WriteElementString("value", location.nROILocationID.ToString());
+                writer.WriteElementString("name", requester.sSelectedLocationName);
+                writer.WriteElementString("id", location.nFacilityLocationID.ToString());
                 writer.WriteEndElement();
+                writer.WriteElementString("submitted", requester.bRequestorFormSubmitted.ToString());
                 writer.WriteEndElement();
-                writer.WriteStartElement("detail");
                 //For Date, Reason,Comments
-                writer.WriteElementString("date", DateTime.Now.ToString());
-                writer.WriteElementString("date_required_by", requestors.dtDeadline.ToString());
-                writer.WriteElementString("reason", sOtherReasons);
-                writer.WriteElementString("comments", sComments);
-                writer.WriteElementString("expiration", requestors.dtAuthExpire.ToString());
-                writer.WriteEndElement();
-                writer.WriteStartElement("patient");
-                writer.WriteElementString("firstname", requestors.sPatientFirstName);
-                writer.WriteElementString("lastname", requestors.sPatientLastName);
-                writer.WriteElementString("middle_name", sMddleInitials);
-                writer.WriteElementString("dob", requestors.dtPatientDOB.Value.ToShortDateString());
-                writer.WriteStartElement("address");
-                //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requestors.sAddStreetAddress);
-                writer.WriteElementString("city", requestors.sAddCity);
-                writer.WriteElementString("state", requestors.sAddState);
-                writer.WriteElementString("zipcode", requestors.sAddZipCode);
-                writer.WriteEndElement();
-                writer.WriteElementString("phone_number", requestors.sPhoneNo);
+                writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss") );
+                writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
+                //writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
+                //writer.WriteElementString("reasoncode", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                writer.WriteStartElement("reason");
+                writer.WriteElementString("code", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                writer.WriteElementString("name", sSelectedPrimaryReasonsName);
                 writer.WriteEndElement();
 
-                //Requestor - Part
-                #region Requestor Part
-                writer.WriteStartElement("requestor");
-                writer.WriteElementString("name", sRelativeName);
-                //Requestor Last Name
-                //writer.WriteElementString("lastname", requestors.sPatientLastName);
-                //Organization - Skipped
-                //writer.WriteElementString("organization", requestors.);
-                writer.WriteElementString("is_patient", requestors.bAreYouPatient.ToString());
+                writer.WriteElementString("comments", sComments);
+                writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : "");
+                writer.WriteElementString("confirmwithdata", requester.bConfirmReport.ToString());
+                writer.WriteElementString("authevent", requester.sAuthSpecificEvent);
+                writer.WriteElementString("date_required", requester.bDeadlineStatus.ToString());
+                writer.WriteStartElement("deliverymethod");
+                writer.WriteElementString("code", requester.sReleaseTo);
+                writer.WriteElementString("name", requester.sReleaseToName);
+                writer.WriteEndElement();
+                writer.WriteStartElement("sensitive");
+                //Sensational Info
+                foreach (SensitiveInfo singleSensitiveInfo in facilitySensitiveInfo)
+                {
+                    if (sSelectedSensitiveInfoForXML.Contains(singleSensitiveInfo.sNormalizedSensitiveInfoName))
+                    {
+                        writer.WriteStartElement("item");
+                        writer.WriteElementString("code", singleSensitiveInfo.sNormalizedSensitiveInfoName);
+                        writer.WriteElementString("name", singleSensitiveInfo.sSensitiveInfoName);
+                        writer.WriteEndElement();
+                    }
+                }
+                writer.WriteEndElement();
+                writer.WriteElementString("additionalcomments", requester.sAdditionalData);
+                writer.WriteElementString("os", requesterOS);
+                writer.WriteElementString("browser", requesterBrowser);
+
+                writer.WriteEndElement();
+                writer.WriteStartElement("patient");
+                writer.WriteElementString("firstname", requester.sPatientFirstName);
+                writer.WriteElementString("lastname", requester.sPatientLastName);
+                writer.WriteElementString("middle_name", sMiddleName);
+                writer.WriteElementString("previousfirstname", requester.sPatientPreviousFirstName);
+                writer.WriteElementString("previouslastname", requester.sPatientPreviousLastName);
+                writer.WriteElementString("previousmiddlename", requester.sPatientPreviousMiddleName);
+                writer.WriteElementString("haspreviousname", requester.bPatientNameChanged.ToString());
+
+                writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
+                writer.WriteStartElement("address");
+                //For Appartment,Street,City,State,ZipCode
+                writer.WriteElementString("apartment", requester.sAddApartment);
+                writer.WriteElementString("street", requester.sAddStreetAddress);
+                writer.WriteElementString("city", requester.sAddCity);
+                writer.WriteElementString("state", requester.sAddState);
+                writer.WriteElementString("zipcode", requester.sAddZipCode);
+                writer.WriteEndElement();
+                writer.WriteElementString("phone_number", requester.sPhoneNo);
+                writer.WriteElementString("phoneverified", requester.bPhoneNoVerified.ToString());
+                writer.WriteEndElement();
+
+                //Requester - Part
+                #region Requester Part
+                writer.WriteStartElement("requester");
+                writer.WriteElementString("firstname", requester.sRelativeFirstName);
+                writer.WriteElementString("lastname", requester.sRelativeLastName);
+                writer.WriteElementString("organization", requester.sRecipientOrganizationName);
+                writer.WriteElementString("is_patient", requester.bAreYouPatient.ToString());
                 writer.WriteElementString("relation", sRelationToPatient);
-                writer.WriteElementString("email", requestors.sRequesterEmailId);
+                writer.WriteElementString("relationcode", requester.sSelectedRelation);
+                writer.WriteElementString("email", requester.sRequesterEmailId);
                 writer.WriteStartElement("address");
                 //For Street,City,State,ZipCode
-                writer.WriteElementString("street", requestors.sAddStreetAddress);
-                writer.WriteElementString("city", requestors.sAddCity);
-                writer.WriteElementString("state", requestors.sAddState);
-                writer.WriteElementString("zipcode", requestors.sAddZipCode);
+                writer.WriteElementString("apartment", requester.sAddApartment);
+                writer.WriteElementString("street", requester.sAddStreetAddress);
+                writer.WriteElementString("city", requester.sAddCity);
+                writer.WriteElementString("state", requester.sAddState);
+                writer.WriteElementString("zipcode", requester.sAddZipCode);
                 writer.WriteEndElement();
-                writer.WriteElementString("phone_number", requestors.sPhoneNo);
-                //writer.WriteElementString("fax_number", requestors.sPhoneNo);
+                writer.WriteElementString("phone_number", requester.sPhoneNo);
+                writer.WriteElementString("fax_number", requester.sSTFaxNumber);
                 writer.WriteEndElement();
-                //Requestor Part Ends Here
+
+                //Requester Part Ends Here
                 #endregion
 
                 writer.WriteStartElement("requested_information");
                 writer.WriteStartElement("dates_of_service");
-                writer.WriteElementString("start", requestors.dtRecordRangeStart.Value.ToShortDateString());
-                writer.WriteElementString("end", requestors.dtRecordRangeEnd.Value.ToShortDateString());
+                if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
+                {
+                    writer.WriteElementString("start", requester.dtRecordRangeStart.Value.ToString("yyyy-MM-dd"));
+                    writer.WriteElementString("end", requester.dtRecordRangeEnd.Value.ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    writer.WriteElementString("start", string.Empty);
+                    writer.WriteElementString("end", string.Empty);
+                }
+                writer.WriteElementString("mostrecent", requester.bRecordMostRecentVisit.ToString());
+                writer.WriteElementString("IsSpecifyVisit", requester.bSpecifyVisit.ToString());
+                writer.WriteElementString("SpecifyVisitText", requester.sSpecifyVisitText);
+                //Specific Event
                 writer.WriteEndElement();
                 writer.WriteStartElement("types");
-                foreach (string singleRecordType in requestors.sSelectedRecordTypes)
+                if (!requester.bRTManualSelection)
                 {
                     writer.WriteStartElement("item");
-                    writer.WriteElementString("name", singleRecordType);
+                    writer.WriteElementString("code", "MRORecordTypeAbstract");
+                    writer.WriteElementString("name", "Abstract");
                     writer.WriteEndElement();
                 }
+
+                //to get the Record Type for this facility
+                RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+                IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
+             
+                foreach (RecordTypes singleRecordType in facilityRecordTypes)
+                {
+                    if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
+                    {
+                        writer.WriteStartElement("item");
+                        writer.WriteElementString("code", singleRecordType.sNormalizedRecordTypeName);
+                        writer.WriteElementString("name", singleRecordType.sRecordTypeName);
+                        writer.WriteEndElement();
+                    }
+                }
+                writer.WriteEndElement();
+                writer.WriteElementString("otherrt", requester.sOtherRTText);
+                writer.WriteEndElement();
+                writer.WriteStartElement("shipment");
+                writer.WriteStartElement("types");
+                writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
+                writer.WriteElementString("name", requester.sSelectedShipmentTypesName);
+                writer.WriteEndElement();
+                writer.WriteElementString("email", requester.sSTEmailAddress);
+                writer.WriteStartElement("address");
+                writer.WriteElementString("apartment", requester.sSTAddApartment);
+                writer.WriteElementString("street", requester.sSTAddStreetAddress);
+                writer.WriteElementString("city", requester.sSTAddCity);
+                writer.WriteElementString("state", requester.sSTAddState);
+                writer.WriteElementString("zipcode", requester.sSTAddZipCode);
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+                writer.WriteStartElement("recipient");
+                writer.WriteElementString("firstname", requester.sRecipientFirstName);
+                writer.WriteElementString("lastname", requester.sRecipientLastName);
+                writer.WriteElementString("organization", requester.sRecipientOrganizationName);
+                writer.WriteStartElement("address");
+                writer.WriteElementString("apartment", requester.sRecipientAddApartment);
+                writer.WriteElementString("street", requester.sRecipientAddStreetAddress);
+                writer.WriteElementString("city", requester.sRecipientAddCity);
+                writer.WriteElementString("state", requester.sRecipientAddState);
+                writer.WriteElementString("zipcode", requester.sRecipientAddZipCode);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
 
                 //PDF in Base 64 Encoding
-                writer.WriteElementString("pdf", requestors.sPDF);
+                writer.WriteElementString("pdf", requester.sPDF);
                 writer.WriteEndElement();
                 writer.Flush();
+
+                
+
 
                 #region Decrypt FTP Password
                 MROLogger password = new MROLogger(_info);
                 facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
                 #endregion
 
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + facility.sFacilityName+"_"+requestors.sPatientFirstName+requestors.sPatientLastName+"_"+ DateTime.Now.ToString("MM-dd-yyyy") + ".xml");
+                //XML File Genration 
+                //File Name
+                string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + "_" + Guid.NewGuid().ToString() + ".xml";
 
-                #region Request Params
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.Credentials = new NetworkCredential(facility.sFTPUsername,facility.sFTPPassword);
-                request.UsePassive = true;
-                request.UseBinary = true;
-                request.KeepAlive = false;
-                #endregion
-
-                byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
-
-                //Upload file
-                try {
-                    Stream reqStream = request.GetRequestStream();
-                    reqStream.Write(buffer, 0, buffer.Length);
-                    reqStream.Close();
-                }
-                catch (Exception ex) {
-                    //return Content(ex.Message);
-                }
-
-                //AddRequestor(requestors, _info);
-
-                //Send Email to Patient
-                MROLogger passwordDecrypt = new MROLogger(_info);
-                if (await SendEmail(requestors, signedPDF, _info, passwordDecrypt))
+                if ((facility.sFTPUrl.ToLower().Contains("ftp://")
+                    && !facility.sFTPUrl.ToLower().Contains("sftp://"))
+                    || facility.sFTPUrl.ToLower().Contains("ftps://"))
                 {
-                        await SendROIEmail(requestors, signedPDF, _info, passwordDecrypt);
-                        return Ok(xmlString.ToString());
+                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + sXMLFileName);
+
+                    #region Request Params
+                    request.Method = WebRequestMethods.Ftp.UploadFile;
+                    request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
+                    request.UsePassive = true;
+                    request.UseBinary = true;
+                    request.KeepAlive = false;
+                    request.EnableSsl = true;
+                    #endregion
+
+                    byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+
+                    //Upload file
+                    try
+                    {
+                        Stream reqStream = request.GetRequestStream();
+                        reqStream.Write(buffer, 0, buffer.Length);
+                        reqStream.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp", ex.Message, _info);
+                    }
                 }
                 else
-                    return Content("Email Not Sent");
+                {
+                    try
+                    {
+                        string sFTPURL = facility.sFTPUrl.ToLower();
+                        if (sFTPURL.Contains("sftp://"))
+                        {
+                            sFTPURL = sFTPURL.Replace("sftp://", "");
+                        }
+                        string sDomanName, sFolderPath = string.Empty;
+                        string[] sFtpFolderPath = sFTPURL.Split(".com");
+                        if (sFtpFolderPath.Length == 2)
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = sFtpFolderPath[1];
+                        }
+                        else
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = "/";
+                        }
+
+                        byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+                        Stream stream = new MemoryStream(buffer);
+
+                        ////Passing the sftp host without the "sftp://"
+                        var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
+                        client.Connect();
+                        if (client.IsConnected)
+                        {
+                            client.UploadFile(stream, sFolderPath + sXMLFileName, null);
+                            client.Disconnect();
+                            client.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP", ex.Message, _info);
+                    }
+                }
+
+                //return Ok(xmlString.ToString());
+                return Ok();
+
             }
             else
             {
@@ -255,46 +472,16 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        //private static int AddRequestor(Requesters requester,DBConnectionInfo _info) 
-        //{
 
-        //        try
-        //        {
-        //        #region Data Addition ! From UI
-        //        requester.dtLastUpdate = DateTime.Now;
-        //        #endregion
-
-        //        #region Array Processing
-        //        var PRArray = string.Join(",", requester.sSelectedPrimaryReasons);
-        //        var SRArray = string.Join(",", requester.sSelectedRecordTypes);
-        //        var STArray = string.Join(",", requester.sSelectedShipmentTypes);
-        //        var SIArray = string.Join(",", requester.selectedSensitiveInfo);
-        //        var relativeFileArray = string.Join(",", requester.sRelativeFileArray);
-        //        requester.sSelectedPrimaryReasons = new string[] { PRArray };
-        //        requester.sSelectedRecordTypes = new string[] { SRArray };
-        //        requester.sSelectedShipmentTypes = new string[] { STArray };
-        //        requester.selectedSensitiveInfo = new string[] { SIArray };
-        //        requester.sRelativeFileArray = new string[] { relativeFileArray };
-        //        #endregion
-
-        //        RequestersRepository requestorsFac = new RequestersRepository(_info);
-        //            int GeneratedID = (int)requestorsFac.Insert(requester);
-        //            return GeneratedID;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //                return 0;
-        //        }
-        //}
-        private static async Task<bool> SendEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info,MROLogger passwordDecrypt)
+        private static async Task<bool> SendEmail(Requesters requester, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
-            FacilityLocations dbLocation = await lRep.Select(requestor.nLocationID);
-            //Check if Facility is Allowed to Send Mail
-            if (dbFacility.bRequestorEmailConfirm) 
-            {
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            FacilityLocations dbLocation = await lRep.Select(requester.nLocationID);
+            //Check if Facility is Allowed to Send Mail - Not Required to Check CR005
+            //if (dbFacility.bRequestorEmailConfirm)
+            //{
 
                 #region Decrypt SMTP Password
                 dbFacility.sSMTPPassword = passwordDecrypt.DecryptString(dbFacility.sSMTPPassword);
@@ -306,7 +493,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -315,10 +502,10 @@ namespace MROWebApi.Controllers
 
                 dbLocation.sConfigLogoData = Regex.Replace(dbLocation.sConfigLogoData, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
                 byte[] locationLogo = Convert.FromBase64String(dbLocation.sConfigLogoData);
-                var image = bodyBuilder.LinkedResources.Add("locationlogo",locationLogo);
-                image.ContentId = MimeUtils.GenerateMessageId();           
+                var image = bodyBuilder.LinkedResources.Add("locationlogo", locationLogo);
+                image.ContentId = MimeUtils.GenerateMessageId();
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
-    <p style='text-align: right;'>{1}&nbsp;</p><img src=""cid:{0}""><br/><br/>
+    <img src=""cid:{0}""><br/><br/>
     <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
         <p>Thank you!</p>
         <p>You have successfully submitted your request.</p>
@@ -340,9 +527,13 @@ namespace MROWebApi.Controllers
             contents of this message is strictly prohibited. If this message was received in error, please notify
             privacy@mrocorp.com immediately.</p>
     </div>
-</div>", image.ContentId, DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"));
+</div>", image.ContentId);
                 bodyBuilder.HtmlBody = htmlText;
-                bodyBuilder.Attachments.Add(requestor.sPatientFirstName + " " + requestor.sPatientLastName + " request.pdf", signedPDF);
+                //Check if the attachment is required or not
+                if (requester.bConfirmReport)
+                {
+                    bodyBuilder.Attachments.Add(requester.sPatientFirstName + " " + requester.sPatientLastName + " request.pdf", signedPDF);
+                }
                 message.Body = bodyBuilder.ToMessageBody();
                 SmtpClient client = new SmtpClient();
                 //TODO:
@@ -351,18 +542,19 @@ namespace MROWebApi.Controllers
                 client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Sending Email", ex.Message, _info);
                     return false;
                 }
                 client.Send(message);
                 client.Disconnect(true);
                 client.Dispose();
                 return true;
-            }
-            return false;
+            //}
+            //return false;
         }
         #endregion
 
@@ -378,14 +570,14 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requestor)
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
             if (dbFacility.bRequestorEmailVerify)
             {
-                
+
                 var sOTP = GenerateRandomNo().ToString();
 
                 #region Decrypt SMTP Password
@@ -399,30 +591,53 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                string firstLastName, firstName;
+                if (requester.bAreYouPatient) {
+                    firstLastName = requester.sPatientFirstName + " " + requester.sPatientLastName;
+                    firstName = requester.sPatientFirstName;
+                }
+                else {
+                    firstLastName = requester.sRelativeFirstName + " " + requester.sRelativeLastName;
+                    firstName = requester.sRelativeFirstName;
+                }
+                MailboxAddress to = new MailboxAddress(firstLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
                 message.Subject = "Here's Your 4 Digit Verification Code " + sOTP;
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                string bodyText = "<h1>Hello " + requestor.sPatientFirstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
+                string bodyText = "<h1>Hello " + firstName + "!</h1><br/> Here's Your 4 Digit Email Verification Code " + sOTP;
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
-                SmtpClient client = new SmtpClient();
                 //GET Port number
                 //Make SSL true
-                client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    return Content(e.Message);
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Email Verification", ex.Message, _info);
+                    return Content(ex.Message);
                 }
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
                 return Ok(sOTP);
             }
             return "false";
@@ -441,20 +656,12 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GeneratePDF(Requesters requestor)
+        public async Task<IActionResult> GeneratePDF(Requesters requester)
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrEmpty(requestor.sSignatureData))
-                {
-                    byte[] pdfBytes = await GetFilledPDF(requestor, _info);
-                    return File(pdfBytes, "application/pdf");
-                }
-                else
-                { 
-                    byte[] pdfBytes = await GetSignedPDF(requestor);
-                    return File(pdfBytes, "application/pdf");
-                }
+                byte[] pdfBytes = await GetSignedPDF(requester);
+                return File(pdfBytes, "application/pdf");
             }
             else
             {
@@ -464,159 +671,374 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private async Task<byte[]> GetSignedPDF(Requesters requestor)
+        private async Task<byte[]> GetSignedPDF(Requesters requester)
         {
-            Dictionary<string, string> allFields = new Dictionary<string, string>();
-            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
-            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
-            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
-            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
-            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
-            allFields.Add("MROPEmailId", requestor.sRequesterEmailId);
-            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
-            allFields.Add("MROAddCity", requestor.sAddCity);
-            allFields.Add("MROAddState", requestor.sAddState);
-            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
-
-            //Record Types
-            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
+            try
             {
-                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
-            }
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
-            //Primary Reasons
-            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
+                Dictionary<string, string> allFields = new Dictionary<string, string>();
+                allFields.Add("MROFacilityName", dbFacility.sFacilityName);
+                allFields.Add("MROLocationName", requester.sSelectedLocationName);
+                if (requester.bAreYouPatient)
+                {
+                    allFields.Add("MROAreYouPatient=1", "On");
+                }
+                if (!string.IsNullOrEmpty(requester.sPatientFirstName))
+                {
+                    allFields.Add("MROPatientFullName", requester.sPatientFirstName + " " + requester.sPatientMiddleName + " " +requester.sPatientLastName);
+                }
+                else
+                {
+                    allFields.Add("MROPatientFullName", string.Empty);
+                }                
+                allFields.Add("MROPatientFirstName", requester.sPatientFirstName);
+                allFields.Add("MROPatientMiddleName", requester.sPatientMiddleName);
+                allFields.Add("MROPatientLastName", requester.sPatientLastName);
+                allFields.Add("MROPatientBirthDate", requester.dtPatientDOB.Value.ToShortDateString());
+                allFields.Add("MROPatientDOBDAY", requester.dtPatientDOB.Value.Day.ToString());
+                allFields.Add("MROPatientDOBMONTH", requester.dtPatientDOB.Value.Month.ToString());
+                allFields.Add("MROPatientDOBYEAR", requester.dtPatientDOB.Value.Year.ToString());
+
+                allFields.Add("MRORequesterEmailId", requester.sRequesterEmailId);
+                //Confirm email send report
+                if (requester.bConfirmReport)
+                {
+                    allFields.Add("MROConfirmReport=1", "On");
+                }
+                //Previous Patient Name
+                if (!string.IsNullOrEmpty(requester.sPatientPreviousFirstName))
+                {
+                    allFields.Add("MROPatientPreviousFullName", requester.sPatientPreviousFirstName + " " + requester.sPatientPreviousMiddleName + " " + requester.sPatientPreviousLastName);
+                }
+                else
+                {
+                    allFields.Add("MROPatientPreviousFullName", string.Empty);
+                }               
+                allFields.Add("MROPatientPreviousFirstName", requester.sPatientPreviousFirstName);
+                allFields.Add("MROPatientPreviousLastName", requester.sPatientPreviousLastName);
+                allFields.Add("MROPatientPreviousMiddleName", requester.sPatientPreviousMiddleName);
+                if (requester.bPatientNameChanged)
+                {
+                    allFields.Add("MROPatientNameChanged=1", "On");
+                }
+
+                allFields.Add("MROAddZipCode", requester.sAddZipCode);
+                allFields.Add("MROAddCity", requester.sAddCity);
+                allFields.Add("MROAddState", requester.sAddState);
+                allFields.Add("MROAddStreetAddress", requester.sAddStreetAddress);
+                allFields.Add("MROAddAppartment", requester.sAddApartment);
+                allFields.Add("MROAddCompleteAddress", requester.sAddStreetAddress + ", "
+                                                    + requester.sAddApartment + ", "
+                                                    + requester.sAddCity + ", "
+                                                    + requester.sAddState + ", "
+                                                    + requester.sAddZipCode);
+                //Relationship
+                if (requester.sSelectedRelation != "")
+                {
+                    allFields.Add(requester.sSelectedRelation + "=1", "On");
+                }
+                allFields.Add("MRORelativeFirstName", requester.sRelativeFirstName);
+                allFields.Add("MRORelativeLastName", requester.sRelativeLastName);
+                allFields.Add("MRORelationshipToPatientText", requester.sSelectedRelationName);
+
+
+                //Date Range
+                if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
+                {
+                    allFields.Add("MRODateRangeStart", requester.dtRecordRangeStart.Value.ToShortDateString());
+                    allFields.Add("MRODateRangeEnd", requester.dtRecordRangeEnd.Value.ToShortDateString());
+                }
+                else
+                {
+                    allFields.Add("MRODateRangeStart", string.Empty);
+                    allFields.Add("MRODateRangeEnd", string.Empty);
+                }
+                if (requester.bRecordMostRecentVisit)
+                {
+                    allFields.Add("MRORecordsMostRecentVisit=1", "On");
+                }
+                if (requester.bSpecifyVisit)
+                {
+                    allFields.Add("MROSpecifyVisit=1", "On");
+                    allFields.Add("MROSpecifyVisitText", requester.sSpecifyVisitText);
+                }
+                else
+                {
+                    allFields.Add("MROSpecifyVisitText", "");
+                }
+
+                //Record Types
+                if (requester.bRTManualSelection)
+                {
+                    for (int counter = 0; counter < requester.sSelectedRecordTypes.Length; counter++)
+                    {
+                        if (requester.sSelectedRecordTypes[counter] != "")
+                        {
+                            allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
+                        }
+                    }
+                }
+                else
+                {
+                    allFields.Add("MRORecordTypeAbstract=1", "On");
+                }
+                if (!string.IsNullOrEmpty(requester.sOtherRTText))
+                {
+                    allFields.Add("MROOtherRTText", requester.sOtherRTText);
+                }
+                else
+                {
+                    allFields.Add("MROOtherRTText", "");
+                }
+
+
+                //Primary Reasons
+                if (requester.sSelectedPrimaryReasons.Length == 0)
+                {
+                    allFields.Add("MROOtherPrimaryReasonText", "");
+                }
+                else
+                {
+                    for (int counter = 0; counter < requester.sSelectedPrimaryReasons.Length; counter++)
+                    {
+                        if (requester.sSelectedPrimaryReasons[counter] != "")
+                        {
+                            allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                            if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
+                            {
+                                allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
+                            }
+                            else
+                            {
+                                //Clearing this label from PDf if request is "Patient Request"
+                                allFields.Add("MROOtherPrimaryReasonText", "");
+                            }
+                        }
+
+                    }
+                }
+
+
+
+
+                //Sensitive Info
+                for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
+                {
+                    if (requester.sSelectedSensitiveInfo[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                    }
+                }
+
+                //Shipment Types 
+                for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
+                {
+                    if (requester.sSelectedShipmentTypes[counter] != "")
+                    {
+                        allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                    }
+                }
+
+                //Shipment Type Related Fields
+                allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
+                allFields.Add("MROSTAddState", requester.sSTAddState);
+                allFields.Add("MROSTAddCity", requester.sSTAddCity);
+                allFields.Add("MROSTAddStreetAddress", requester.sSTAddStreetAddress);
+                allFields.Add("MROSTAddApartment", requester.sSTAddApartment);
+                if (!string.IsNullOrEmpty(requester.sSTAddCity))
+                {
+                    allFields.Add("MROSTCompleteAddress", requester.sSTAddStreetAddress + ", "
+                                                   + requester.sSTAddApartment + ", "
+                                                   + requester.sSTAddCity + ", "
+                                                   + requester.sSTAddState + ", "
+                                                   + requester.sSTAddZipCode);
+                }
+                else
+                {
+                    allFields.Add("MROSTCompleteAddress", string.Empty);
+                }
+               
+                allFields.Add("MROSTEmailAddress", requester.sSTEmailAddress);
+                allFields.Add("MROSTFaxNumber", requester.sSTFaxNumber);
+
+
+
+
+                //Release To 'MROReleaseToMyself' 'MROReleaseToFamilyCaregiver' 'MROReleaseToDoctor' 'MROReleaseToThirdParty'
+                if (requester.sReleaseTo != "")
+                {
+                    allFields.Add(requester.sReleaseTo + "=1", "On");
+                }
+
+                //Recipient 
+                allFields.Add("MRORecipientAddZipCode", requester.sRecipientAddZipCode);
+                allFields.Add("MRORecipientAddState", requester.sRecipientAddState);
+                allFields.Add("MRORecipientAddCity", requester.sRecipientAddCity);
+                allFields.Add("MRORecipientAddStreetAddress", requester.sRecipientAddStreetAddress);
+                allFields.Add("MRORecipientAddApartment", requester.sRecipientAddApartment);              
+                if (!string.IsNullOrEmpty(requester.sRecipientAddCity))
+                {
+                    allFields.Add("MRORecipientCompleteAddress", requester.sRecipientAddStreetAddress + ", "
+                                                  + requester.sRecipientAddApartment + ", "
+                                                  + requester.sRecipientAddCity + ", "
+                                                  + requester.sRecipientAddState + ", "
+                                                  + requester.sRecipientAddZipCode);
+                }
+                else
+                {
+                    allFields.Add("MRORecipientCompleteAddress", string.Empty);
+                }
+
+                allFields.Add("MRORecipientFirstName", requester.sRecipientFirstName);
+                allFields.Add("MRORecipientLastName", requester.sRecipientLastName);
+                if (!string.IsNullOrEmpty(requester.sRecipientFirstName))
+                {
+                    allFields.Add("MRORecipientFullName", requester.sRecipientFirstName + " " + requester.sRecipientLastName);
+                }
+                else
+                {
+                    allFields.Add("MRORecipientFullName", string.Empty);
+                }                
+                allFields.Add("MRORecipientOrganizationName", requester.sRecipientOrganizationName);
+
+
+                //Auth exipry date
+                if ((requester.dtAuthExpire != null))
+                {
+                    allFields.Add("MROAuthExpireDateSpecificDate", requester.dtAuthExpire.Value.ToShortDateString());
+                }
+                else
+                {
+                    allFields.Add("MROAuthExpireDateSpecificDate", string.Empty);
+                }
+                allFields.Add("MROAuthExpireDateEventOccurs", requester.sAuthSpecificEvent);
+
+                //Is Deadline - bDeadlineStatus
+                allFields.Add("MRORequestDeadline=1", requester.bDeadlineStatus ? "On" : "");
+
+                //Deadline Date
+                if ((requester.dtDeadline != null))
+                {
+                    allFields.Add("MRORequestDeadlineDate", requester.dtDeadline.Value.ToShortDateString());
+                }
+                else
+                {
+                    allFields.Add("MRORequestDeadlineDate", string.Empty);
+                }
+
+                //Additional Data - sAdditionalData
+                allFields.Add("MROPatientAdditionalDetails", requester.sAdditionalData);
+
+                //Phone number - sPhoneNo
+                allFields.Add("MRORequesterPhoneNumber", requester.sPhoneNo);
+                //Is Phone Number Verified - 
+                allFields.Add("MRORequesterPhoneVerified=1", requester.bPhoneNoVerified ? "On" : "");
+
+                // Is identity is DL or Other
+                if (requester.sIdentityIdName == "MRODLIdentity")
+                {
+                    allFields.Add("MRODLIdentity=1", "On");
+                }
+                else
+                {
+                    allFields.Add("MROOtherGovIdentity=1", "On");
+                }
+
+                //MROToday's Date
+                allFields.Add("MROTodaysDate", DateTime.Now.ToString("MM-dd-yyyy"));
+
+
+                FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+                FacilityLocations location = await locRepo.Select(requester.nLocationID);
+                location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
+                byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
+
+                byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields, requester, out string sReplaceFieldsList);
+
+                allFields.Clear();
+
+                if (!string.IsNullOrEmpty(requester.sSignatureData))
+                {
+                    //Signing the Document
+                    Doc theDoc = new Doc();
+
+                    theDoc.Read(byteArrayToReturn);
+                    if (theDoc.Form["MROSignature01"] != null)
+                    {
+                        string removeDataTag = requester.sSignatureData.Replace("data:image/png;base64,", string.Empty);
+                        byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
+                        Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
+
+                        MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                        MROHelper helper = await helperRepo.Select(1);
+                        helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
+                        byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
+
+                        System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
+                        Graphics gra = Graphics.FromImage(canvas);
+                        //Bitmap smallImg = new Bitmap(image2);
+                        Bitmap smallImg = new Bitmap(image2, 350, 120);
+                        gra.DrawImage(smallImg, new Point(0, 0));
+
+
+                        var mssignaturewithbg = new MemoryStream();
+                        canvas.Save(mssignaturewithbg, canvas.RawFormat);
+                        mssignaturewithbg.ToArray();
+
+
+                        XImage theImg = new XImage();
+                        theImg.SetStream(mssignaturewithbg);
+                        theDoc.Rect.String = theDoc.Form["MROSignature01"].Rect.String;
+                        theDoc.Rect.Magnify(1, 1);
+                        theDoc.Rect.Position(theDoc.Form["MROSignature01"].Rect.Left, theDoc.Form["MROSignature01"].Rect.Bottom);
+                        theDoc.AddImageObject(theImg, false);
+
+                        if (theDoc.Form["MROSignature02"] != null)
+                        {
+                            theDoc.Rect.String = theDoc.Form["MROSignature02"].Rect.String;
+                            theDoc.Rect.Magnify(1, 1);
+                            theDoc.Rect.Position(theDoc.Form["MROSignature02"].Rect.Left, theDoc.Form["MROSignature02"].Rect.Bottom);
+                            theDoc.AddImageObject(theImg, false);
+                        }
+
+                        if (theDoc.Form["MROSignature03"] != null)
+                        {
+                            theDoc.Rect.String = theDoc.Form["MROSignature03"].Rect.String;
+                            theDoc.Rect.Magnify(1, 1);
+                            theDoc.Rect.Position(theDoc.Form["MROSignature03"].Rect.Left, theDoc.Form["MROSignature03"].Rect.Bottom);
+                            theDoc.AddImageObject(theImg, false);
+                        }
+
+                        theImg.Clear();
+
+                        theDoc.Form.Stamp();
+
+                        byte[] pdfBytes = theDoc.GetData();
+                        return pdfBytes;
+                    }
+                }
+
+                return byteArrayToReturn;
+
+            }
+            catch (Exception ex)
             {
-                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation Error", ex.Message, _info);
+                return null;
             }
-            //Sensitive Info
-            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
-            {
-                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
-            }
-            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
-
-            //Release To
-            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
-
-            if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
-                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
-            if (!string.IsNullOrEmpty(requestor.sSTEmailId))
-                allFields.Add("MROSTEmailId", requestor.sSTEmailId);
-            //if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
-            //    allFields.Add("MROSTConfirmEmailId", requestor.sSTConfirmEmailId);
-            if (!string.IsNullOrEmpty(requestor.sSTMailCompAdd))
-                allFields.Add("MROSTMailCompAdd", requestor.sSTMailCompAdd);
-            if (requestor.dtPickUp != null)
-                allFields.Add("MROSTPike", requestor.dtPickUp.Value.ToShortDateString());
-
-            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
-            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValueWOStamp(pdfByteArray, allFields,requestor ,out string sReplaceFieldsList);
-
-            allFields.Clear();
-
-            Doc theDoc = new Doc();
-
-            theDoc.Read(byteArrayToReturn);
-            string removeDataTag = requestor.sSignatureData.Replace("data:image/png;base64,", string.Empty);
-            byte[] signatureByteArray = Convert.FromBase64String(removeDataTag);
-            Image image2 = Image.FromStream(new MemoryStream(signatureByteArray));
-
-            MROHelperRepository helperRepo = new MROHelperRepository(_info);
-            MROHelper helper = await helperRepo.Select(1);
-            helper.sWhitebgimg = helper.sWhitebgimg.Replace("data:image/png;base64,", string.Empty);
-            byte[] data = Convert.FromBase64String(helper.sWhitebgimg);
-
-            System.Drawing.Image canvas = Bitmap.FromStream(new MemoryStream(data, 0, data.Length));
-            Graphics gra = Graphics.FromImage(canvas);
-            Bitmap smallImg = new Bitmap(image2);
-            gra.DrawImage(smallImg, new Point(0, 0));
-
-
-            var mssignaturewithbg = new MemoryStream();
-            canvas.Save(mssignaturewithbg, canvas.RawFormat);
-            mssignaturewithbg.ToArray();
-
-
-            XImage theImg = new XImage();
-            theImg.SetStream(mssignaturewithbg);
-            theDoc.Rect.String = theImg.Selection.String;
-            theDoc.Rect.Magnify(0.15, 0.2);
-            theDoc.Rect.Position(theDoc.Form["MROSignature"].Rect.Left, theDoc.Form["MROSignature"].Rect.Bottom);
-            theDoc.AddImageObject(theImg, false);
-            theImg.Clear();
-
-            theDoc.Form.Stamp();
-
-            byte[] pdfBytes = theDoc.GetData();
-            return pdfBytes;
         }
-        private async static Task<byte[]> GetFilledPDF(Requesters requestor, DBConnectionInfo _info)
-        {
-            Dictionary<string, string> allFields = new Dictionary<string, string>();
-            allFields.Add("MROPatientFullName", requestor.sPatientFirstName + " " + requestor.sPatientMiddleInitial + " " + requestor.sPatientLastName);
-            allFields.Add("MROPatientFirstName", requestor.sPatientFirstName);
-            allFields.Add("MROPatientMiddleInitial", requestor.sPatientMiddleInitial);
-            allFields.Add("MROPatientLastName", requestor.sPatientLastName);
-            allFields.Add("MROPatientDOB", requestor.dtPatientDOB.Value.ToShortDateString());
-            allFields.Add("MROPEmailId", requestor.sRequesterEmailId);
-            allFields.Add("MROAddZipCode", requestor.sAddZipCode);
-            allFields.Add("MROAddCity", requestor.sAddCity);
-            allFields.Add("MROAddState", requestor.sAddState);
-            allFields.Add("MROAddStreetAddress", requestor.sAddStreetAddress);
 
-            //Record Types
-            for (int counter = 0; counter < requestor.sSelectedRecordTypes.Length; counter++)
-            {
-                allFields.Add(requestor.sSelectedRecordTypes[counter] + "=1", requestor.sSelectedRecordTypes[counter] == requestor.sSelectedRecordTypes[counter] ? "On" : "");
-            }
-
-            //Primary Reasons
-            for (int counter = 0; counter < requestor.sSelectedPrimaryReasons.Length; counter++)
-            {
-                allFields.Add(requestor.sSelectedPrimaryReasons[counter] + "=1", requestor.sSelectedPrimaryReasons[counter] == requestor.sSelectedPrimaryReasons[counter] ? "On" : "");
-            }
-            //Sensitive Info
-            for (int counter = 0; counter < requestor.selectedSensitiveInfo.Length; counter++)
-            {
-                allFields.Add(requestor.selectedSensitiveInfo[counter] + "=1", requestor.selectedSensitiveInfo[counter] == requestor.selectedSensitiveInfo[counter] ? "On" : "");
-            }
-            allFields.Add("MROPatientTelephoneNo", requestor.sPhoneNo);
-
-            //Release To
-            allFields.Add(requestor.sReleaseTo + "=1", requestor.sReleaseTo == "MROReleaseToMe" ? "On" : "");
-            if (!string.IsNullOrEmpty(requestor.sSTFaxCompAdd))
-                allFields.Add("MROSTFaxCompAdd", requestor.sSTFaxCompAdd);
-            if (!string.IsNullOrEmpty(requestor.sSTEmailId))
-                allFields.Add("MROSTEmailId", requestor.sSTEmailId);
-            //if (!string.IsNullOrEmpty(requestor.sSTConfirmEmailId))
-            //    allFields.Add("MROSTConfirmEmailId", requestor.sSTConfirmEmailId);
-            if (!string.IsNullOrEmpty(requestor.sSTMailCompAdd))
-                allFields.Add("MROSTMailCompAdd", requestor.sSTMailCompAdd);
-            if (requestor.dtPickUp != null)
-                allFields.Add("MROSTPike", requestor.dtPickUp.Value.ToShortDateString());
-
-            FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-            FacilityLocations location = await locRepo.Select(requestor.nLocationID);
-            location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
-            byte[] byteArrayToReturn = new LocationAuthorizationDocumentController().ReplaceFieldKeywordsWithValue(pdfByteArray, allFields,requestor,out string sReplaceFieldsList);
-
-            allFields.Clear();
-            return byteArrayToReturn;
-        }
         #endregion
 
         #region ROI Email
-        private static async Task<bool> SendROIEmail(Requesters requestor, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
+        private static async Task<bool> SendROIEmail(Requesters requester, byte[] signedPDF, DBConnectionInfo _info, MROLogger passwordDecrypt)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
-            Facilities dbFacility = await fRep.Select(requestor.nFacilityID);
-            FacilityLocations dbLocation = await lRep.Select(requestor.nLocationID);
+            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            FacilityLocations dbLocation = await lRep.Select(requester.nLocationID);
             //Check if Facility is Allowed to Send Mail
             if (dbFacility.bRequestorEmailConfirm)
             {
@@ -636,7 +1058,7 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                MailboxAddress to = new MailboxAddress(requestor.sPatientFirstName + " " + requestor.sPatientLastName, requestor.sRequesterEmailId);
+                MailboxAddress to = new MailboxAddress(requester.sPatientFirstName + " " + requester.sPatientLastName, requester.sRequesterEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -647,49 +1069,67 @@ namespace MROWebApi.Controllers
                 byte[] footerLogo = Convert.FromBase64String(helper.sMROEmailFooterImage);
                 var image = bodyBuilder.LinkedResources.Add("footerlogo", footerLogo);
                 image.ContentId = MimeUtils.GenerateMessageId();
-                var sFullName = requestor.sPatientFirstName + " " + requestor.sPatientLastName;
+                var sFullName = requester.sPatientFirstName + " " + requester.sPatientLastName;
                 string htmlText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
-    <p style='text-align: right;'>{0}&nbsp;</p><br/>
-    <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
-        <p>Dear {1},</p>
-        <p>Thank you for completing your medical records request! It is currently being processed and will ship as soon as it is complete. Please note, this email serves as your request confirmation.</p>
-        <p><b>Request ID: </b>{2}</p>
-        <p><b>Tracking ID: </b>XXXXXXXXXXXXX</p>
-        <p>If you have any questions regarding your request, please use the Request ID provided above and contact us at:</p>
-        <ul>
-            <li>Online at <a href='https://mrocorp.com/record-requests/'><b>https://mrocorp.com/record-requests/</b></a> where you can check the status of your request or make a payment</li>
-            <li>Call us at <b><a href='(610) 994-7500'>(610) 994-7500</a></b> to use our automated status system or speak with a Customer Service Expert, Mon-Fri 8:30AM-8:00PM (EST)</li>
-        </ul>
-        <p>Kindly,</p>
-        <p><em>Team</em> {3}</p>
-    </div>
-    <div style='margin: 20px;'>
-        <p>
-        <h4  style='text-align:center;'>CONFIDENTIALITY NOTICE</p>
-        </h4>
-        <p style='text-align:justify;text-justify: inter-word;'>This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.</p>
-        <div style='text-align:center'><a href='https://mrocorp.com/' target='_blank'><img src=""cid:{4}""></a></div>
-    </ div >
-</ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"), sFullName,requestor.nRequesterID, dbFacility.sFacilityName, image.ContentId);
+                                    <p style='text-align: right;'>{0}&nbsp;</p><br/>
+                                    <div style='margin-left: 25px;margin-right: 25px;text-align:justify;text-justify: inter-word;'>
+                                        <p>Dear {1},</p>
+                                        <p>Thank you for completing your medical records request! It is currently being processed and will ship as soon as it is complete. Please note, this email serves as your request confirmation.</p>
+                                        <p><b>Request ID: </b>{2}</p>
+                                        <p><b>Tracking ID: </b>XXXXXXXXXXXXX</p>
+                                        <p>If you have any questions regarding your request, please use the Request ID provided above and contact us at:</p>
+                                        <ul>
+                                            <li>Online at <a href='https://mrocorp.com/record-requests/'><b>https://mrocorp.com/record-requests/</b></a> where you can check the status of your request or make a payment</li>
+                                            <li>Call us at <b><a href='(610) 994-7500'>(610) 994-7500</a></b> to use our automated status system or speak with a Customer Service Expert, Mon-Fri 8:30AM-8:00PM (EST)</li>
+                                        </ul>
+                                        <p>Kindly,</p>
+                                        <p><em>Team</em> {3}</p>
+                                    </div>
+                                    <div style='margin: 20px;'>
+                                        <p>
+                                        <h4  style='text-align:center;'>CONFIDENTIALITY NOTICE</p>
+                                        </h4>
+                                        <p style='text-align:justify;text-justify: inter-word;'>This communication is confidential property and privileged communication of the sender intended only for the person/entity to which it is addressed.  If you are not the intended recipient, you are notified that any use, review, disclosure, distribution, or taking of any other action relevant to the contents of this message is strictly prohibited. If this message was received in error, please notify privacy@mrocorp.com immediately.</p>
+                                        <div style='text-align:center'><a href='https://mrocorp.com/' target='_blank'><img src=""cid:{4}""></a></div>
+                                    </ div >
+                                   </ div > ", DateTime.Now.ToString("ddd, MMMM dd, h:mm tt"),
+                                            sFullName, requester.nRequesterID,
+                                            dbFacility.sFacilityName,
+                                            image.ContentId);
 
                 bodyBuilder.HtmlBody = htmlText;
                 message.Body = bodyBuilder.ToMessageBody();
-                SmtpClient client = new SmtpClient();
                 //TODO:
                 //Get Port number
                 //Make SSL true
-                client.Connect(dbFacility.sSMTPUrl, 25, false);
                 try
                 {
-                    client.Authenticate(dbFacility.sOutboundEmail, dbFacility.sSMTPPassword);
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
                 }
                 catch (Exception ex)
                 {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email", ex.Message, _info);
                     return false;
                 }
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
+                
                 return true;
             }
             return false;

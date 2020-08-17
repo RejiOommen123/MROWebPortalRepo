@@ -21,8 +21,9 @@ namespace MRODBL.BaseClasses
         [StringLength(4, ErrorMessage = "Maximum 4 characters Location Code Allowed")]
         public string? sLocationCode { get; set; }
         [Required]
-        [StringLength(40, ErrorMessage = "Maximum 40 characters location Name Allowed")]
+        [StringLength(100, ErrorMessage = "Maximum 100 characters location Name Allowed")]
         public string sLocationName { get; set; }
+        [StringLength(200, ErrorMessage = "Maximum 200 characters Normalized Location Name Allowed")]
         public string sNormalizedLocationName { get; set; }
         [Required]
         [StringLength(1000, ErrorMessage = "Maximum 1000 characters Location Address Allowed")]
@@ -31,17 +32,17 @@ namespace MRODBL.BaseClasses
         public string sPhoneNo { get; set; }
         [StringLength(10, ErrorMessage = "Maximum 10 characters Fax Number Allowed")]
         public string sFaxNo { get; set; }
-        [StringLength(50, ErrorMessage = "Maximum 50 characters Logo Name Allowed")]
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Logo Name Allowed")]
         public string sConfigLogoName { get; set; }
         [MaxLength]
         public string sConfigLogoData { get; set; }
-        [StringLength(50, ErrorMessage = "Maximum 50 characters Background Name Allowed")]
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Background Name Allowed")]
         public string sConfigBackgroundName { get; set; }
         [MaxLength]
         public string sConfigBackgroundData { get; set; }
         [MaxLength]
         public string sAuthTemplate { get; set; }
-        [StringLength(200, ErrorMessage = "Maximum 200 characters Authentication Template Name Allowed")]
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Authentication Template Name Allowed")]
         public string sAuthTemplateName { get; set; }
         public bool bLocationActiveStatus { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]

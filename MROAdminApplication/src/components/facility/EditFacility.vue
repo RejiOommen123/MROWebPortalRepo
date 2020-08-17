@@ -2,15 +2,15 @@
   <div>
     <div id="EditFacilityPageBox">
       <form @submit.prevent="onSubmit" class="editfacility-form">
-        <div id="editFormDiv">
+        <!-- <div id="editFormDiv">
           <span id="fieldsMandate">
             <i>All the fields are mandatory</i>
           </span>
-        </div>
+        </div> -->
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
             <div id="marginDiv1"></div>
-            <label for="sFacilityName">Facility Name:</label>
+            <label class="required" for="sFacilityName">Facility Name:</label>
             <div id ="marginDiv2"></div>
             <v-text-field
               type="text"
@@ -23,7 +23,7 @@
               solo
             ></v-text-field>
             <div id ="marginDiv3"></div>
-            <label for="sDescription">Facility Description:</label>
+            <label class="required" for="sDescription">Facility Description:</label>
             <v-text-field
               type="text"
               id="sDescription"
@@ -62,7 +62,7 @@
               :error-messages="sSMTPUsernameErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPPassword">SMTP Password:</label>
+            <label  for="sSMTPPassword">SMTP Password:</label>
             <div id ="marginDiv5"></div>
             <v-text-field
               type="password"
@@ -74,7 +74,7 @@
               :error-messages="sSMTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUrl">SMTP URL:</label>
+            <label class="required" for="sSMTPUrl">SMTP URL:</label>
             <v-text-field
               type="text"
               id="sSMTPUrl"
@@ -85,7 +85,7 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sOutboundEmail">Outbound Email:</label>
+            <label class="required" for="sOutboundEmail">Outbound Email:</label>
             <v-text-field
               type="text"
               id="sOutboundEmail"
@@ -98,7 +98,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
-            <label for="sFTPUsername">
+            <label class="required" for="sFTPUsername">
               FTP Username:
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -125,7 +125,7 @@
               :error-messages="sFTPUsernameErrors"
               solo
             ></v-text-field>
-            <label for="sFTPPassword">FTP Password:</label>
+            <label class="required" for="sFTPPassword">FTP Password:</label>
             <v-text-field
               type="password"
               id="sFTPPassword"
@@ -136,7 +136,7 @@
               :error-messages="sFTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sFTPUrl">FTP URL:</label>
+            <label class="required" for="sFTPUrl">FTP URL:</label>
             <div id ="marginDiv6"></div>
             <v-text-field
               type="text"
@@ -209,6 +209,17 @@
         </div>
       </form>
     </div>
+    <!-- Dialog Alert for Same name facility -->
+    <v-dialog v-model="sameNameAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Facility with Same Name Exists</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="sameNameAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Loader to indicate Admin Module is getting ready -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="rgb(0, 91, 168)" flat dark max-height="500">
@@ -238,15 +249,13 @@ export default {
       },
       sDescription: {
         required,
-        maxLength: maxLength(80),
+        maxLength: maxLength(150),
         minLength: minLength(2)
       },
       sSMTPUsername: {
-        required,
         maxLength: maxLength(100)
       },
       sSMTPPassword: {
-        required,
         //maxLength: maxLength(20),
         minLength: minLength(5)
       },
@@ -288,7 +297,7 @@ export default {
       !this.$v.facility.sDescription.minLength &&
         errors.push("Facility Description must be at least 2 characters long");
       !this.$v.facility.sDescription.maxLength &&
-        errors.push("Facility Description must be at most 80 characters long");
+        errors.push("Facility Description must be at most 150 characters long");
       !this.$v.facility.sDescription.required &&
         errors.push("Facility Description is required.");
       return errors;
@@ -298,8 +307,6 @@ export default {
       if (!this.$v.facility.sSMTPUsername.$dirty) return errors;
       !this.$v.facility.sSMTPUsername.maxLength &&
         errors.push("SMTP Username must be at most 100 characters long");
-      !this.$v.facility.sSMTPUsername.required &&
-        errors.push("SMTP Username is required.");
       return errors;
     },
     sSMTPPasswordErrors() {
@@ -309,8 +316,6 @@ export default {
         errors.push("SMTP Password must be at least 5 characters long");
       // !this.$v.facility.sSMTPPassword.maxLength &&
       //   errors.push("SMTP Password must be at most 20 characters long");
-      !this.$v.facility.sSMTPPassword.required &&
-        errors.push("SMTP Password is required.");
       return errors;
     },
     sSMTPUrlErrors() {
@@ -364,6 +369,7 @@ export default {
   data() {
     return {
       dialogLoader:false,
+      sameNameAlert: false,
       sBtnCode:'',
       sGUID: "",
       facility: {
@@ -378,7 +384,7 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm: true,
+        bRequestorEmailConfirm: false,
         bRequestorEmailVerify:true,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
@@ -459,8 +465,19 @@ export default {
           if (response.ok == true) {
             this.dialogLoader = false;
             this.$router.push("/Facility");
+}
+        },
+        error => {
+          // Error Callback
+          if (
+            error.status == 400 
+          ) {
+            this.dialogLoader =false;
+            this.sameNameAlert = true;
           }
-        });
+          console.log(error.body);
+        }
+        );
     }
   }
 };
@@ -524,5 +541,9 @@ i {
 }
 label {
   margin-left: -0.0625em;
+}
+.required:after {
+  content: " *";
+  color: red;
 }
 </style>

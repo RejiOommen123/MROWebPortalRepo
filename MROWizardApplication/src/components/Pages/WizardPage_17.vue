@@ -1,41 +1,57 @@
 <template>
   <div class="center">
-    <h1>You’re almost done!</h1>
-    <v-row>
-    
-    <v-col cols="12" offset-sm="1" sm="10">
-    <div class="disclaimer">{{disclaimer01}}</div>
-    <div class="disclaimer">{{disclaimer02}}</div>
-    </v-col>
-    <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
-        <v-textarea filled          
-          rows="4"
-          row-height="30"
-          shaped counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
-    </v-col>
-    </v-row>
     <div>
-      <v-btn @click.prevent="nextPage"  class="next">Next</v-btn>
+      <h1>Is there a deadline for this request?</h1>
     </div>
+    <p v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</p>
+    <v-row>
+       <div style="width:100%">
+        <v-col name="Yes" cols="12" offset-sm="2" sm="8">
+          <button
+            :class="{active: sActiveBtn === 'true'}"
+            @click.prevent="setDeadlineStatus($event)"
+            class="wizardSelectionButton"
+            value=true
+          >Yes, I have a deadline.</button>
+        </v-col>
+        <v-col name="No" cols="12" offset-sm="2" sm="8">
+          <button
+            :class="{active: sActiveBtn === 'false'}"
+            @click.prevent="setDeadlineStatus($event)"
+            class="wizardSelectionButton"
+            value=false
+          >No, just as soon as possible.</button>
+        </v-col>
+      </div>
+    </v-row>
   </div>
 </template>
-
 <script>
+import moment from "moment";
 export default {
-  name: "WizardPage_10",
+  name: "WizardPage_15",
   data() {
     return {
-      sAdditionalData:'',
-      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer01,
-      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer02,
-
-      //Show and Hide Fields Values
-      MROPatientAdditionalDetails : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
+      sActiveBtn:'',
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer01
     };
   },
   methods: {
-    nextPage() {
-      this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
+    setDeadlineStatus($event) {
+      this.sActiveBtn= $event.target.value;
+      this.$store.commit(
+        "requestermodule/bDeadlineStatus",
+        $event.target.value
+      );
+      // set deadline to tomorrow date
+      this.$store.commit(
+        "requestermodule/dtDeadline",
+        moment()
+          .add(30, "days")
+          .toISOString()
+          .substr(0, 10)
+      );
+      this.$store.commit("ConfigModule/bDeadlineStatus", $event.target.value);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);

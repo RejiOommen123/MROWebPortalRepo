@@ -1,60 +1,56 @@
 <template>
   <div class="center">
-    <h1>
-      How would you like to
-      <br />verify your identity?
-    </h1>
-
-    <template>
-      <v-layout row wrap>
-        <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox
-            dark
-            class="checkboxBorder"
-            label= "Drivers License"
-            color="#e84700"
-            value="MRODrivingLicID"
-            v-model="nSelectedCheckBox"
-            @change="check('MRODrivingLicID')"
-
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="12" offset-sm="3" sm="6">
-          <v-checkbox
-            dark
-            class="checkboxBorder"
-            label="Other Government Photo Id"
-            color="#e84700"
-            value="MROOtherGovID"
-            v-model="nSelectedCheckBox"
-            @change="check('MROOtherGovID')"
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="12" offset-sm="1" sm="10">
-          <div class="disclaimer">{{disclaimer}}</div>
-        </v-col>
-      </v-layout>
-    </template>
-    <div>
-      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-    </div>
+    <h1>You’re almost done!</h1>
+    <v-row>
+    
+    <v-col cols="12" offset-sm="1" sm="10">
+    <div v-if="disclaimer01!=''" ><h6 style="color:white; padding-top:0">{{disclaimer01}}</h6></div>
+    <div v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</div>
+    </v-col>
+    <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
+        <v-textarea    
+          class="TextAreaBg"     
+          rows="3"
+          row-height="30"
+          maxlength="250"
+          shaped counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
+    </v-col>
+    </v-row>
+    <!-- <div>
+      <v-btn @click.prevent="nextPage" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
+    </div> -->
+     <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
+      <v-btn :disabled="sAdditionalData==''" @click.prevent="nextPage" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn @click.prevent="skipPage" style="margin-top:0px; margin-bottom:0px;" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 export default {
-  name: "WizardPage_19",
+  name: "WizardPage_10",
   data() {
     return {
-      nSelectedCheckBox:[],
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
+      sAdditionalData:'',
+      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
+      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer02,
+
+      //Show and Hide Fields Values
+      MROPatientAdditionalDetails : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
     };
   },
   methods: {
+    skipPage(){
+      this.sAdditionalData='';
+      this.nextPage();
+    },
     nextPage() {
-      
-      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
-       
+      this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
+
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
       if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
@@ -66,11 +62,7 @@ export default {
       }
       //Partial Requester Data Save End
 
-        this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    check(id) {
-        this.nSelectedCheckBox = [];
-        this.nSelectedCheckBox.push(id);
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
 };

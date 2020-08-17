@@ -1,47 +1,51 @@
 <template>
   <div class="center">
-    <h1>What's your Email Address?</h1>
-    <p>{{disclaimer01}}</p>
-    <div>
+      <h1>Please provide your email address to receive a confirmation of your request.</h1>
       <v-row>
         <v-col  cols="12" offset-sm="2" sm="8">
-          <form>
-            <label for="sRequesterEmailId" class="control-label">EMAIL</label>
             <v-text-field
+              label="EMAIL"
               v-model="emailValid.sRequesterEmailId"
               :error-messages="emailErrors"
               required
+              maxlength="70"
               :disabled="inputDisabled"
-              @input="$v.emailValid.sRequesterEmailId.$touch()"
+              @input="sRequesterEmailIdToLower"
               @blur="$v.emailValid.sRequesterEmailId.$touch()"
             ></v-text-field>
-            <!-- <div :class="{emailVerified: !$v.emailValid.sRequesterEmailId.$invalid}">
-            </div> -->
-            <label for="sConfirmEmailId" class="control-label">CONFIRM EMAIL</label>
             <v-text-field
+            label="CONFIRM EMAIL"
               @paste.prevent
               v-model="emailValid.sConfirmEmailId"
               :error-messages="confirmEmailErrors"
               required
+              maxlength="70"
               :disabled="inputDisabled"
-              @input="$v.emailValid.sConfirmEmailId.$touch()"
+              @input="sConfirmEmailIdToLower"
               @blur="$v.emailValid.sConfirmEmailId.$touch()"
             ></v-text-field>
-             <!-- <div :class="{emailVerified: !$v.emailValid.sConfirmEmailId.$invalid}">
-            </div> -->
+        </v-col>
+        <v-col  cols="12" sm="12">
+            <!-- <v-col cols="12" offset-sm="2" sm="8"> -->
+            <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
+        
+            <!-- </v-col> -->
             <div v-if="bRequestorEmailConfirm==false">
                <v-btn
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
-            >Next</v-btn>
+              >Next</v-btn>
             </div>
-            <div v-if="bRequestorEmailConfirm==true">
-            <v-checkbox
+            <!-- v-if="bRequestorEmailConfirm==true" -->
+            <div v-if="bRequestorEmailConfirm==true"> 
+            <v-checkbox          
+              hide-details
+              id="checkbox"
               v-model="bConfirmReport"
               :disabled="inputDisabled"
               @change="checked()"
-              color="#e84700"
+              color="white"
               :label="disclaimer02"
             ></v-checkbox>
             <div v-if="verified==false">
@@ -53,12 +57,22 @@
             >Next</v-btn>
             </div>
             </div>
-          </form>
+          </v-col>
+        <v-col  cols="12" offset-sm="2" sm="8">
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-if="showVerifyBlock && bRequestorEmailVerify">
-              <p>Click on "Send Email" for email verification.</p>
+            <div v-show="showVerifyBlock && bRequestorEmailVerify">
+              <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
+               <v-alert
+                    v-if="otpSentAlert"
+                    dense
+                    text
+                    type="success"
+                  >
+                   Sending Email
+                  </v-alert>
               <v-btn
+                v-if="emailSent==false"
                 @click="sendEmail"
                 :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
@@ -66,23 +80,28 @@
               <div v-if="showVerifyInput==true">
                 <v-col cols="12" offset-sm="3" sm="6">
                 <v-text-field
+                  ref="otp"
                   :error-messages="sVerifyError"
                   @input="$v.sVerify.$touch()"
                   @blur="$v.sVerify.$touch()"
                   v-model="sVerify"
-                  label="Enter OTP"
+                  label="Enter Code"
                   required
                 ></v-text-field>
                 </v-col>
-
-                <v-btn @click.prevent="sendEmail" class="next">Resend OTP</v-btn>
+                <v-col cols="12" sm="12">
+                <v-btn @click.prevent="sendEmail" :disabled="$v.emailValid.$invalid" class="next">Resend Code</v-btn>
 
                 <v-btn
                   @click.prevent="verifyCode"
-                  :disabled="$v.sVerify.$invalid"
+                  :disabled="$v.sVerify.$invalid || $v.emailValid.$invalid"
                   style="margin-left:10px"
                   class="next"
                 >Verify</v-btn>
+                </v-col>
+                <!-- <v-col cols="12" offset-sm="3" sm="6">
+                  <v-btn @click.prevent="nextPage" :disabled="$v.emailValid.$invalid" class="next">Skip</v-btn>
+                </v-col> -->
               </div>
             </div>
             <div v-if="showSuccessBlock">
@@ -92,7 +111,6 @@
           </form>
         </v-col>
       </v-row>
-    </div>
   </div>
 </template>
 <script>
@@ -122,6 +140,7 @@ export default {
       showSuccessBlock: false,
       inputDisabled: false,
       emailSent:false,
+      otpSentAlert:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_06_disclaimer01,
@@ -180,9 +199,9 @@ export default {
     sVerifyError() {
       const errors = [];
       if (!this.$v.sVerify.$dirty) return errors;
-      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.minLength && errors.push("Enter 4 digit OTP");
-      !this.$v.sVerify.required && errors.push("OTP required");
+      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.required && errors.push("Verification Code required");
       return errors;
     }
   },
@@ -192,6 +211,7 @@ export default {
         "requestermodule/sRequesterEmailId",
         this.sRequesterEmailId
       );
+      this.otpSentAlert=true;
       this.emailSent=true;
       this.isDisable = true;
       this.showVerifyInput = true;
@@ -199,7 +219,10 @@ export default {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
         sRequesterEmailId: this.emailValid.sRequesterEmailId,
         sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-        sPatientLastName: this.$store.state.requestermodule.sPatientLastName
+        sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
+        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
+        sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
+        sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
       };
       // api to send mail and get opt in response
       this.$http
@@ -210,6 +233,10 @@ export default {
             this.sResponseKey = response.body;
           }
         });
+        setTimeout(() => {
+        this.otpSentAlert=false;
+        this.$refs.otp.focus();
+      }, 5000)
     },
     //Check response opt and entered opt matched or not
     verifyCode() {
@@ -225,6 +252,12 @@ export default {
     },
     checked() {
       this.showVerifyBlock = !this.showVerifyBlock;
+    },
+    sRequesterEmailIdToLower(val) {
+      this.emailValid.sRequesterEmailId = val.toLowerCase()
+    },
+    sConfirmEmailIdToLower(val) {
+      this.emailValid.sConfirmEmailId = val.toLowerCase()
     },
     nextPage() {
       this.$store.commit(
@@ -250,4 +283,7 @@ export default {
 };
 </script>
 <style scoped>
+#checkbox label{
+  font-size: 14px;
+}
 </style>

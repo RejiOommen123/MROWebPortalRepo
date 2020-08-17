@@ -1,216 +1,196 @@
 <template>
   <div class="center">
-    <v-row>
-      <v-col cols="12" sm="12" v-if="sStatus=='CapturingImg'">
-        <h2>Camera</h2>
-        <!-- <code v-if="device">{{ device.label }}</code> -->
-        <div class="border">
-          <vue-web-cam
-            ref="webcam"
-            :device-id="deviceId"
-            width="90%"
-            height="70%"
-            @started="onStarted"
-            @stopped="onStopped"
-            @error="onError"
-            @cameras="onCameras"
-            @camera-change="onCameraChange"
-          />
-        </div>
-
+    <div class="form-group">
+      <h1>Let us send you a text to verify your phone number.</h1>
+      <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
+      <form v-if="MRORequesterPhoneNumber">
         <v-row>
-          <!-- <v-col cols="12" sm="12">
-            <select v-model="camera">
-              <option>-- Select Device --</option>
-              <option v-for="device in devices" :key="device.deviceId">{{ device.label }}</option>
-            </select>
+          <!-- Phone no input box -->
+          <v-col cols="4" offset-sm="3" sm="2">
+            <v-select :disabled="disableInput" id="phoneExt" v-model="selectedCountry" :items="countryCode"></v-select>
+          </v-col>
+          <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
+            <label class="input-group-addon">+91</label>
           </v-col>-->
-          <v-col cols="4" offset-sm="2" sm="3">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
-                  <v-icon dark>mdi-camera</v-icon>
-                </v-btn>
-              </template>
-              <span>Capture Image</span>
-            </v-tooltip>
+          <v-col id="phoneNo" cols="7" sm="5">
+            <v-text-field
+              type="tel"
+              maxlength="10"
+              placeholder="(XXX) XXX-XXXX"
+              v-model="sPhoneNo"
+              label="ENTER MOBILE NO"
+              required
+              :disabled="disableInput"
+              :error-messages="sPhoneNoError"
+              @input="$v.sPhoneNo.$touch()"
+              @blur="$v.sPhoneNo.$touch()"
+            ></v-text-field>
           </v-col>
+          <v-col cols="12" offset-sm="1" sm="10">
+            <p v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</p>
+          </v-col>
+          <v-col cols="12" offset-sm="3" sm="6">
+            <div v-show="showSendVerify">
+              <v-btn
+                @click.prevent="submit"
+                :disabled="$v.sPhoneNo.$invalid"
+                class="ma-2 next"
+              >Send Verification Code</v-btn>
+            </div>            
+            <!-- Below fields will shown only after requester click on "Send Verification Code" button -->
+            <div v-show="bOtpSend">
+              <div>
+                <v-text-field
+                  :error-messages="sVerifyError"
+                  @input="$v.sVerify.$touch()"
+                  @blur="$v.sVerify.$touch()"
+                  v-model="sVerify"
+                  label="ENTER CODE"
+                  required
+                ></v-text-field>
 
-          <v-col style="margin-top:2%" cols="4" sm="2">
-            <h3>OR</h3>
-          </v-col>
-          <v-col cols="4" sm="3">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click.prevent="submit" :disabled="$v.sPhoneNo.$invalid" class="next">Resend Code</v-btn>
+
                 <v-btn
-                  fab
-                  dark
-                  color="teal"
-                  @click="sStatus = 'UploadImg'"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon dark>mdi-attachment</v-icon>
-                </v-btn>
-              </template>
-              <span>Upload Image</span>
-            </v-tooltip>
+                  @click.prevent="verifyCode"
+                  :disabled="$v.sVerify.$invalid || $v.sPhoneNo.$invalid"
+                  style="margin-left:10px"
+                  class="next"
+                >Verify</v-btn>
+              </div>
+            </div>
+            <v-btn v-if="showSuccessBlock==false" @click.prevent="skipPage" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
+            <div v-if="showSuccessBlock">
+              <p class="disclaimer">Mobile Verification Successful.</p>
+              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
+            </div>
           </v-col>
-          <!-- :value="device.deviceId" -->
         </v-row>
-      </v-col>
-    </v-row>
-    <v-row v-if="sStatus=='ImgCaptured'">
-      <v-col cols="12" sm="12">
-        <h2>Captured Image</h2>
-        <figure class="figure">
-          <img :src="sIdentityImage" width="400px" height="250px" class="img-responsive" />
-        </figure>
-      </v-col>
-      <v-col cols="6" offset-sm="2" sm="3">
-        <v-btn class="next" @click="sStatus='CapturingImg'">Capture Again</v-btn>
-      </v-col>
-      <v-col cols="6" offset-sm="2" sm="3">
-        <v-btn class="next" @click="nextPage">Next</v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" sm="12" v-if="sStatus=='UploadImg'">
-        <h2>Upload Identity Document Image</h2>
-        <form>
-          <div v-show="bShowImage!=''">
-            <v-img
-              class="identityUpload"
-              width="50%"
-              height="50%"
-              style="cursor:pointer;"
-              v-if="sIdentityImage"
-              :src="sIdentityImage"
-            ></v-img>
-            <br />
-          </div>
-          <v-file-input
-            v-model="fileInput"
-            chips
-            show-size
-            dense
-            hint="Upload Identity Document Image"
-            rounded
-            label="IDENTITY DOCUMENT"
-            filled
-            prepend-icon="mdi-camera"
-            @change="onFileChanged"
-            accept="image/png, image/jpeg, image/bmp"
-            :error-messages="fileInputErrors"
-            required
-            @input="$v.fileInput.$touch()"
-            @blur="$v.fileInput.$touch()"
-          >
-            <v-tooltip slot="append" top>
-              <template v-slot:activator="{ on }">
-                <v-icon style="cursor:pointer" v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
-              </template>
-              <span>Please upload identity image document.</span>
-            </v-tooltip>
-          </v-file-input>
-          <v-col cols="12" sm="12">
-            <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
-          </v-col>
-        </form>
-      </v-col>
-    </v-row>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
-import { WebCam } from "vue-cam-vision";
+import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
-  name: "App",
-  components: {
-    "vue-web-cam": WebCam
-  },
+  name: "WizardPage_18",
   data() {
     return {
-      sIdentityImage: null,
-      camera: null,
-      deviceId: null,
-      devices: [],
-      sStatus: "CapturingImg",
-      fileInput: "",
-      bShowImage: ""
+      isDisable: false,
+      bOtpSend: false,
+      showSuccessBlock: false,
+      disableInput: false,
+      showSendVerify: true,
+      countryCode: ["+1", "+91"],
+      selectedCountry: "+1",
+      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_20_disclaimer01,
+      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_20_disclaimer02,
+
+      MRORequesterPhoneNumber: this.$store.state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
+
+      sPhoneNo: "",
+      sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
+      sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
+      sVerify: "",
+      service: "",
+      subData: {}
     };
   },
+  // OTP and phono validations
   mixins: [validationMixin],
   validations: {
-    fileInput: {
-      required
-    }
+    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) },
+    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) }
   },
   created() {
     this.$vuetify.theme.dark = true;
   },
   computed: {
-    device: function() {
-      return this.devices.find(n => n.deviceId === this.deviceId);
-    },
-    fileInputErrors() {
+    //OTP and Phone no Validation message setter
+    sPhoneNoError() {
       const errors = [];
-      if (!this.$v.fileInput.$dirty) return errors;
-      !this.$v.fileInput.required && errors.push("File is required");
+      if (!this.$v.sPhoneNo.$dirty) return errors;
+      !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
+      return errors;
+    },
+    sVerifyError() {
+      const errors = [];
+      if (!this.$v.sVerify.$dirty) return errors;
+      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
+      !this.$v.sVerify.required && errors.push("Verification code required");
       return errors;
     }
   },
-  watch: {
-    camera: function(id) {
-      this.deviceId = id;
-    },
-    devices: function() {
-      // Once we have a list select the first one
-      const [first] = this.devices;
-      if (first) {
-        this.camera = first.deviceId;
-        this.deviceId = first.deviceId;
-      }
-    }
-  },
   methods: {
-    onCapture() {
+    //send otp on send verification no and resend button
+    submit() {
+      this.isDisable = true;
+      this.bOtpSend = true;
+      this.showSendVerify = false;
+      var obj = {};
+      obj["phone"] = this.selectedCountry + this.sPhoneNo;
+      obj["api_key"] = this.sApi_Key;
+      var formData = new FormData();
+      formData.append("phone", this.selectedCountry + this.sPhoneNo);
+      formData.append("api_key", this.sApi_Key);
+      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
+
       var self = this;
-      this.$refs.webcam.capture().then(function(defs) {
-        self.sIdentityImage = defs;
-      });
-      this.sStatus = "ImgCaptured";
-      this.$refs.webcam.stop();
+      this.$http
+        .post(url, formData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+          }
+        })
+        .then(response => {
+          self.subData = response;
+          console.log(response.body);
+        });
     },
-    onStarted(stream) {
-      console.log("On Started Event", stream);
-    },
-    onStopped(stream) {
-      console.log("On Stopped Event", stream);
-    },
-    onStop() {
-      this.$refs.webcam.stop();
-    },
-    onStart() {
-      this.$refs.webcam.start();
-    },
-    onError(error) {
-      if (error.name == "NotFoundError") {
-        alert("Camera Not Found. Redirecting to upload file page.");
-        this.sStatus = "UploadImg";
-      }
-    },
-    onCameras(cameras) {
-      this.devices = cameras;
-    },
-    onCameraChange(deviceId) {
-      this.deviceId = deviceId;
-      this.camera = deviceId;
+    //Verify OPT entered by requester
+    verifyCode() {
+      var obj = {};
+      obj["phone"] = this.selectedCountry + this.sPhoneNo;
+      obj["code"] = this.sVerify;
+      var formData = new FormData();
+      formData.append("phone", this.selectedCountry + this.sPhoneNo);
+      formData.append("code", this.sVerify);
+      formData.append("api_key", this.sApi_Key);
+      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
+
+      this.$http
+        .post(url, formData, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+          }
+        })
+        .then(response => {
+          if (response.data.status == "SUCCESS") {
+            this.bOtpSend = false;
+            this.showSuccessBlock = true;
+            this.disableInput = true;
+          }
+          if (response.data.status == "ERROR") {
+            alert("Invalid verification code");
+          }
+        });
     },
     nextPage() {
-      this.$store.commit("requestermodule/sIdentityImage", this.sIdentityImage);
+      this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
+      this.$store.commit(
+        "requestermodule/bPhoneNoVerified",
+        this.showSuccessBlock
+      );
 
       //Partial Requester Data Save Start
       this.$store.commit(
@@ -229,23 +209,10 @@ export default {
       }
       //Partial Requester Data Save End
 
-      this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
-      this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
-      this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
-      this.$vuetify.theme.dark = false;
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
-    onFileChanged(file) {
-      if (file) {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.sIdentityImage = reader.result; //base64encoded string
-        });
-        reader.readAsDataURL(file);
-        this.bShowImage = file.name;
-      } else {
-        this.bShowImage = "";
-      }
+    skipPage() {
+      this.nextPage();
     }
   }
 };

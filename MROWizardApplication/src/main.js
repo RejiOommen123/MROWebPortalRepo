@@ -8,20 +8,17 @@ import VueSignature from "vue-signature-pad";
 
 Vue.use(VueSignature);
 Vue.use(VueResource);
-//REplace Root - TODO: Reji
-//Razor-QA
-//Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
 
-//MRO DEV
-//Vue.http.options.root = "https://mroadmindevapi.azurewebsites.net/api";
-
-//MRO UAT
-Vue.http.options.root = "https://mroadminuatapi.azurewebsites.net/api";
-//Vue.http.options.root = "https://devmroportalapi-dev.azurewebsites.net/api";
-//Vue.http.options.root = "http://localhost:57364/api";
+Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
-Vue.use(Vuelidate);
+//Vuetify API Secret Key - Common Code for Adding Header
+Vue.http.interceptors.push((request, next) => {
+    var sAPIKey = "MRO@007"
+    request.headers.set('sAPIKey', sAPIKey)
+    next()
+})
 
+Vue.use(Vuelidate);
 new Vue({
     vuetify,
     store,

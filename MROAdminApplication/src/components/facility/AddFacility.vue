@@ -2,14 +2,14 @@
   <div>
     <div id="AddFacilityPageBox">
       <form @submit.prevent="onSubmit" class="addfacility-form">
-        <div id="addFormDiv">
+        <!-- <div id="addFormDiv">
           <span id="spanMandate">
             <i>All the fields are mandatory</i>
           </span>
-        </div>
+        </div> -->
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
-            <label for="sFacilityName">Facility Name:</label>
+            <label class="required" for="sFacilityName">Facility Name:</label>
             <v-text-field
               type="text"
               id="sFacilityName"
@@ -20,7 +20,19 @@
               :error-messages="sFacilityNameErrors"
               solo
             ></v-text-field>
-            <label for="sDescription">Facility Description:</label>
+            <label class="required" for="ROI Facility ID">ROI Facility Id:</label>
+            <v-text-field
+              type="number"
+              id="nROIFacilityID"
+              placeholder="Enter ROI Facility Id"
+              v-model="facility.nROIFacilityID"
+              @input="$v.facility.nROIFacilityID.$touch()"
+              @blur="$v.facility.nROIFacilityID.$touch()"
+              :error-messages="nROIFacilityIDErrors"
+              solo
+              min="1"
+            ></v-text-field>
+            <label class="required" for="sDescription">Facility Description:</label>
             <v-text-field
               type="text"
               id="sDescription"
@@ -53,7 +65,7 @@
               :error-messages="sSMTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUrl">SMTP URL:</label>
+            <label class="required" for="sSMTPUrl">SMTP URL:</label>
             <v-text-field
               type="text"
               id="sSMTPUrl"
@@ -64,7 +76,7 @@
               :error-messages="sSMTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sOutboundEmail">Outbound Email:</label>
+            <label class="required" for="sOutboundEmail">Outbound Email:</label>
             <v-text-field
               type="text"
               id="sOutboundEmail"
@@ -77,7 +89,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
-            <label for="sFTPUsername">FTP Username:</label>
+            <label class="required" for="sFTPUsername">FTP Username:</label>
             <v-text-field
               type="text"
               id="sFTPUsername"
@@ -88,7 +100,7 @@
               :error-messages="sFTPUsernameErrors"
               solo
             ></v-text-field>
-            <label for="sFTPPassword">FTP Password:</label>
+            <label class="required" for="sFTPPassword">FTP Password:</label>
             <v-text-field
               type="password"
               id="sFTPPassword"
@@ -99,7 +111,7 @@
               :error-messages="sFTPPasswordErrors"
               solo
             ></v-text-field>
-            <label for="sFTPUrl">FTP URL:</label>
+            <label class="required" for="sFTPUrl">FTP URL:</label>
             <v-text-field
               type="text"
               id="sFTPUrl"
@@ -110,8 +122,8 @@
               :error-messages="sFTPUrlErrors"
               solo
             ></v-text-field>
-            <label for="sFTPUrl">Connection String:</label>
-            <v-text-field
+            <label class="required" for="sFTPUrl">Connection String:</label>
+            <!-- <v-text-field
               type="text"
               id="sConnectionString"
               placeholder="Connection String"
@@ -120,7 +132,11 @@
               @blur="$v.sConnectionString.$touch()"
               :error-messages="sConnectionStringErrors"
               solo
-            ></v-text-field>
+            ></v-text-field> -->
+            <v-select id="nConnectionId" :rules="[(v) => !!v || 'Connection string is required']" required solo v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" item-value="nConnectionID">
+                
+            </v-select>
+            
             <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
             <v-switch
               inset
@@ -173,14 +189,14 @@ import {
   required,
   minLength,
   maxLength,
-  email
+  email,
+  numeric
 } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
   validations: {
-    sConnectionString: {
-      required,
-      maxLength: maxLength(1000)
+    nConnectionId: {
+      required
     },
     facility: {
       sFacilityName: {
@@ -188,19 +204,17 @@ export default {
         maxLength: maxLength(40),
         minLength: minLength(2)
       },
+      nROIFacilityID: { required, numeric },
       sDescription: {
         required,
-        maxLength: maxLength(80),
+        maxLength: maxLength(150),
         minLength: minLength(2)
       },
       sSMTPUsername: {
-        required,
         maxLength: maxLength(100)
       },
       sSMTPPassword: {
-        required,
-        maxLength: maxLength(20),
-        minLength: minLength(5)
+        maxLength: maxLength(20)
       },
       sSMTPUrl: {
         required,
@@ -223,12 +237,10 @@ export default {
     }
   },
   computed: {
-    sConnectionStringErrors() {
+    nConnectionIdErrors() {
       const errors = [];
-      if (!this.$v.sConnectionString.$dirty) return errors;
-      !this.$v.sConnectionString.maxLength &&
-        errors.push("Connection String must be at most 1000 characters long");
-      !this.$v.sConnectionString.required &&
+      if (!this.$v.nConnectionId.$dirty) return errors;
+      !this.$v.nConnectionId.required &&
         errors.push("Connection String is required.");
       return errors;
     },
@@ -243,13 +255,22 @@ export default {
         errors.push("Facility Name is required.");
       return errors;
     },
+    nROIFacilityIDErrors() {
+      const errors = [];
+      if (!this.$v.facility.nROIFacilityID.$dirty) return errors;
+      !this.$v.facility.nROIFacilityID.numeric &&
+        errors.push("Facility ROI Id Must be Numeric");
+      !this.$v.facility.nROIFacilityID.required &&
+        errors.push("Facility ROI Id is required.");
+      return errors;
+    },
     sDescriptionErrors() {
       const errors = [];
       if (!this.$v.facility.sDescription.$dirty) return errors;
       !this.$v.facility.sDescription.minLength &&
         errors.push("Facility Description must be at least 2 characters long");
       !this.$v.facility.sDescription.maxLength &&
-        errors.push("Facility Description must be at most 80 characters long");
+        errors.push("Facility Description must be at most 150 characters long");
       !this.$v.facility.sDescription.required &&
         errors.push("Facility Description is required.");
       return errors;
@@ -259,19 +280,13 @@ export default {
       if (!this.$v.facility.sSMTPUsername.$dirty) return errors;
       !this.$v.facility.sSMTPUsername.maxLength &&
         errors.push("SMTP Username must be at most 100 characters long");
-      !this.$v.facility.sSMTPUsername.required &&
-        errors.push("SMTP Username is required.");
       return errors;
     },
     sSMTPPasswordErrors() {
       const errors = [];
       if (!this.$v.facility.sSMTPPassword.$dirty) return errors;
-      !this.$v.facility.sSMTPPassword.minLength &&
-        errors.push("SMTP Password must be at least 5 characters long");
       !this.$v.facility.sSMTPPassword.maxLength &&
         errors.push("SMTP Password must be at most 20 characters long");
-      !this.$v.facility.sSMTPPassword.required &&
-        errors.push("SMTP Password is required.");
       return errors;
     },
     sSMTPUrlErrors() {
@@ -324,12 +339,13 @@ export default {
   name: "AddFacility",
   data() {
     return {
+      connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
-      sConnectionString: "",
+      nConnectionId:null,
       facility: {
         nFacilityID: 0,
-        nROIFacilityID: 0,
+        nROIFacilityID: "",
         sFacilityName: "",
         sDescription: "",
         sSMTPUsername: "",
@@ -340,19 +356,31 @@ export default {
         sFTPUrl: "",
         sOutboundEmail: "",
         bActiveStatus: true,
-        bRequestorEmailConfirm: true,
+        bRequestorEmailConfirm: false,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
     };
   },
+  mounted() {
+    this.$http
+      .get("Facility/GetMROConnectionString/")
+      .then(resp => {
+        if (resp.ok == true) {
+          this.connectionStrings = resp.body;
+          console.log(resp.bodyText);
+        console.log("Response body " + this.connectionStrings);
+        }
+      });
+  },
   methods: {
     // API Call to add facility
     goToLoc() {
       this.dialogLoader = true;
+      this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
-        sConnectionString: this.sConnectionString
+        nConnectionId: this.nConnectionId
       };
       this.$http.post("facility/AddFacility", combinedObj).then(
         response => {
@@ -364,10 +392,7 @@ export default {
         },
         error => {
           // Error Callback
-          if (
-            error.status == 400 &&
-            error.bodyText == "Cannot Add Facility with Same Name"
-          ) {
+          if (error.status == 400) {
             this.dialogLoader = false;
             this.sameNameAlert = true;
           }
@@ -378,9 +403,10 @@ export default {
     onSubmit() {
       // API Call to add facility
       this.dialogLoader =true;
+      this.facility.nROIFacilityID = parseInt(this.facility.nROIFacilityID);
       var combinedObj = {
         cFacility: this.facility,
-        sConnectionString: this.sConnectionString
+        nConnectionId: this.nConnectionId
       };
       this.$http.post("facility/AddFacility", combinedObj).then(
         response => {
@@ -393,8 +419,7 @@ export default {
         error => {
           // Error Callback
           if (
-            error.status == 400 &&
-            error.bodyText == "Cannot Add Facility with Same Name"
+            error.status == 400 
           ) {
             this.dialogLoader =false;
             this.sameNameAlert = true;
@@ -459,5 +484,9 @@ label {
 }
 .row {
   margin: 0.0625em;
+}
+.required:after {
+  content: " *";
+  color: red;
 }
 </style>

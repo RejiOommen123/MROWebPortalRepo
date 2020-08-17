@@ -1,57 +1,209 @@
 <template>
   <div class="center">
-    <div>
-      <h1>Is there a deadline for this request?</h1>
-    </div>
-    <p class="disclaimer">{{disclaimer}}</p>
-    <v-row>
-       <div style="width:100%">
-        <v-col name="Yes" cols="12" offset-sm="2" sm="8">
-          <button
-            :class="{active: sActiveBtn === 'true'}"
-            @click.prevent="setDeadlineStatus($event)"
-            class="wizardSelectionButton"
-            value=true
-          >Yes, I have a deadline.</button>
+    <form>
+      <h1>Please provide recipient information.</h1>
+      <v-row>
+         <v-col style="padding-bottom:0px;padding-top:0px" cols="6" offset-sm="2" sm="4">
+          <v-text-field
+            label="FIRST NAME"
+            v-model="sRecipientFirstName"
+            :error-messages="sRecipientFirstNameError"
+            required
+            maxlength="30"
+            @input="$v.sRecipientFirstName.$touch()"
+            @blur="$v.sRecipientFirstName.$touch()"
+          ></v-text-field>
         </v-col>
-        <v-col name="No" cols="12" offset-sm="2" sm="8">
-          <button
-            :class="{active: sActiveBtn === 'false'}"
-            @click.prevent="setDeadlineStatus($event)"
-            class="wizardSelectionButton"
-            value=false
-          >No, just as soon as possible.</button>
+        <!-- <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
+          <v-text-field label="MIDDLE NAME" v-model="sRecipientMiddleName"></v-text-field>
+        </v-col> -->
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="6" sm="4">
+          <v-text-field
+            label="LAST NAME"
+            v-model="sRecipientLastName"
+            :error-messages="sRecipientLastNameError"
+            required
+            maxlength="30"
+            @input="$v.sRecipientLastName.$touch()"
+            @blur="$v.sRecipientLastName.$touch()"
+          ></v-text-field>
         </v-col>
-      </div>
-    </v-row>
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-text-field
+            label="ORGANIZATION NAME"
+            v-model="sRecipientOrganizationName"
+            maxlength="50"
+          ></v-text-field>
+        </v-col>
+        <!-- TODO: v-if="MROAddApartment" -->
+        
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="2" sm="8">
+          <v-text-field
+            v-model="sRecipientAddStreetAddress"
+            :error-messages="streetErrors"
+            label="STREET"
+            required
+            maxlength="50"
+            @input="$v.sRecipientAddStreetAddress.$touch()"
+            @blur="$v.sRecipientAddStreetAddress.$touch()"
+          ></v-text-field>
+        </v-col>
+         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" offset-sm="2" sm="8">
+          <v-text-field
+            v-model="sRecipientAddApartment"
+            label="APARTMENT/BUILDING"
+            maxlength="50"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+          <v-text-field
+            v-model="sRecipientAddCity"
+            :error-messages="cityErrors"
+            label="CITY"
+            required
+            maxlength="50"
+            @input="$v.sRecipientAddCity.$touch()"
+            @blur="$v.sRecipientAddCity.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px"  offset-sm="1" cols="12"  sm="2">
+          <v-text-field
+            v-model="sRecipientAddState"
+            :error-messages="stateErrors"
+            label="STATE"
+            required
+            maxlength="50"
+            @input="$v.sRecipientAddState.$touch()"
+            @blur="$v.sRecipientAddState.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+          <v-text-field
+            type="tel"
+            v-model="sRecipientAddZipCode"
+            :error-messages="sRecipientAddZipCodeErrors"
+            label="ZIP CODE"
+            required
+            @input="$v.sRecipientAddZipCode.$touch()"
+            @blur="$v.sRecipientAddZipCode.$touch()"
+            minlength="5"
+            maxlength="5"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
+          <div class="disclaimer">{{disclaimer}}</div>
+        </v-col>
+        <v-col  style="padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-btn  @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+        </v-col>
+      </v-row>
+    </form>
   </div>
 </template>
 <script>
-import moment from "moment";
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  maxLength,
+  minLength,
+  numeric
+} from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_15",
+  name: "WizardPage_06",
   data() {
     return {
-      sActiveBtn:'',
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_disclaimer01
+      sRecipientFirstName: "",
+      sRecipientLastName: "",
+      sRecipientOrganizationName: "",
+      sRecipientAddZipCode: '',
+      sRecipientAddCity:'',
+      sRecipientAddState: '',
+      sRecipientAddStreetAddress: '',
+      sRecipientAddApartment:'',
+
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
+
+     // Show and Hide Fields Values
+      MRORecipientMiddleName: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientMiddleName,
+      MRORecipientAddApartment: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientAddApartment,
     };
   },
+  //Requester address validations
+  mixins: [validationMixin],
+  validations: {
+    sRecipientFirstName: { required, maxLength: maxLength(30) },
+    sRecipientLastName: { required, maxLength: maxLength(30) },
+    sRecipientAddZipCode: {
+      required,
+      maxLength: maxLength(5),
+      minLength: minLength(5),
+      numeric
+    },
+    sRecipientAddCity: { required },
+    sRecipientAddState: { required },
+    sRecipientAddStreetAddress: { required }
+  },
+  computed: {
+    sRecipientFirstNameError() {
+      const errors = [];
+      if (!this.$v.sRecipientFirstName.$dirty) return errors;
+      !this.$v.sRecipientFirstName.maxLength &&
+        errors.push("First Name must be at most 15 characters long");
+      !this.$v.sRecipientFirstName.required &&
+        errors.push("First Name is required.");
+      return errors;
+    },
+    sRecipientLastNameError() {
+      const errors = [];
+      if (!this.$v.sRecipientLastName.$dirty) return errors;
+      !this.$v.sRecipientLastName.maxLength &&
+        errors.push("Last Name must be at most 15 characters long");
+      !this.$v.sRecipientLastName.required &&
+        errors.push("Last Name is required.");
+      return errors;
+    },
+    //Requester address validation error message setter
+    sRecipientAddZipCodeErrors() {
+      const errors = [];
+      if (!this.$v.sRecipientAddZipCode.$dirty) return errors;
+      !this.$v.sRecipientAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sRecipientAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sRecipientAddZipCode.numeric && errors.push("ZipCode must me numeric.");
+      !this.$v.sRecipientAddZipCode.required && errors.push("ZipCode is required.");
+      return errors;
+    },
+    cityErrors() {
+      const errors = [];
+      if (!this.$v.sRecipientAddCity.$dirty) return errors;
+      !this.$v.sRecipientAddCity.required && errors.push("City is required.");
+      return errors;
+    },
+    stateErrors() {
+      const errors = [];
+      if (!this.$v.sRecipientAddState.$dirty) return errors;
+      !this.$v.sRecipientAddState.required && errors.push("State is required.");
+      return errors;
+    },
+    streetErrors() {
+      const errors = [];
+      if (!this.$v.sRecipientAddStreetAddress.$dirty) return errors;
+      !this.$v.sRecipientAddStreetAddress.required &&
+        errors.push("Street Address is required.");
+      return errors;
+    }
+  },
   methods: {
-    setDeadlineStatus($event) {
-      this.sActiveBtn= $event.target.value;
-      this.$store.commit(
-        "requestermodule/bDeadlineStatus",
-        $event.target.value
-      );
-      // set deadline to tomorrow date
-      this.$store.commit(
-        "requestermodule/dtDeadline",
-        moment()
-          .add(1, "days")
-          .toISOString()
-          .substr(0, 10)
-      );
-      this.$store.commit("ConfigModule/bDeadlineStatus", $event.target.value);
+    nextPage() {
+      this.$store.commit("requestermodule/sRecipientFirstName",this.sRecipientFirstName);
+      this.$store.commit("requestermodule/sRecipientLastName",this.sRecipientLastName);
+      this.$store.commit("requestermodule/sRecipientOrganizationName",this.sRecipientOrganizationName);
+      this.$store.commit("requestermodule/sRecipientAddZipCode", this.sRecipientAddZipCode);
+      this.$store.commit("requestermodule/sRecipientAddCity", this.sRecipientAddCity);
+      this.$store.commit("requestermodule/sRecipientAddState", this.sRecipientAddState);
+      this.$store.commit("requestermodule/sRecipientAddStreetAddress",this.sRecipientAddStreetAddress);
+      this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
 
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
@@ -63,7 +215,7 @@ export default {
         });
       }
       //Partial Requester Data Save End
-
+      
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

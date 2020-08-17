@@ -42,6 +42,21 @@ namespace MRODBL.Repositories
         /// <param name="paramValue">Condition Column Value</param>
         /// <returns>List of Matching Records/Single Record</returns>
         Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue);
+        /// <summary>
+        /// Select Location By LocationName for validation
+        /// </summary>
+        /// <param name="nFacilityLocationID"></param>
+        /// <param name="sFacilityLocationName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> SelectLocationByLocationName(int nFacilityLocationID, string sFacilityLocationName);
+
+        /// <summary>
+        /// Simple GetLocationByNormalizedName Based on Single Condition
+        /// </summary>
+        /// <param name="nFacilityID">Condition Facility Id</param>
+        /// <param name="sNormalizedLocationName">Condition sNormalizedLocationName</param>
+        /// <returns>List of Matching Records/Single Record</returns>
+        Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName);
 
         /// <summary>
         /// Count of Rows Matching given Condition
@@ -58,7 +73,7 @@ namespace MRODBL.Repositories
         /// <param name="paramKeyName">Column Name</param>
         /// <param name="paramValue">Column Name Value</param>
         /// <returns></returns>
-        int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
+        //int GetROILocationID(dynamic paramKeyName, dynamic paramValue);
 
         /// <summary>
         /// Get Locations for a Facility based on Facility ID
@@ -125,6 +140,16 @@ namespace MRODBL.Repositories
         /// <param name="ourModels">List of Records to be Updated</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
         bool UpdateMany(List<T> ourModels);
+        /// <summary>
+        /// To update requester object after request submitted
+        /// </summary>
+        /// <param name="nRequesterID">Requester Id</param>
+        /// <param name="bRequestAnotherRecord">True if requester selected Request Another Record</param>
+        /// <param name="nFeedbackRating">1 to 5 rating</param>
+        /// <param name="sFeedbackComment">Comments of requester</param>
+        /// <param name="sWizardName">Name of the wizard</param>
+        /// <returns></returns>
+        Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
         #endregion
 
         #region Stored Procedures
@@ -161,9 +186,9 @@ namespace MRODBL.Repositories
         /// Insert Dependency Records for Facility (SP)
         /// </summary>
         /// <param name="nFacilityID">Unique Facility Id</param>
-        /// <param name="sConnectionString">Connection String Provided at (Add Facility Screen)</param>
+        /// <param name="nConnectionID">Connection ID </param>
         /// <param name="nAdminUserId">Logged In Admin User ID</param>
-        void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId);
+        void AddDependencyRecordsForFacility(int nFacilityID, int nConnectionID, int nAdminUserId);
         /// <summary>
         /// Add Dependency Records for Facility Location
         /// </summary>

@@ -77,20 +77,94 @@ namespace MRODBL.Repositories
                                     new { ID = Id });
             }
         }
-        public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
-        {
-            using (SqlConnection db = new SqlConnection(sConnect))
-            {
-                string SqlString = "SELECT TOP(1) nROILocationID FROM " + sTableName + " WHERE " + paramKeyName + " =" + paramValue + " ORDER BY nROILocationID DESC";
-                return db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
-            }
-        }
+        //public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
+        //{
+        //    using (SqlConnection db = new SqlConnection(sConnect))
+        //    {
+        //        string SqlString = "SELECT TOP(1) nROILocationID FROM " + sTableName + " WHERE " + paramKeyName + " =" + paramValue + " ORDER BY nROILocationID DESC";
+        //        return db.QueryFirstOrDefault<int>(SqlString, new { ID = paramValue });
+        //    }
+        //}
         public async Task<IEnumerable<T>> SelectWhere(dynamic paramKeyName, dynamic paramValue)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 string SqlString = "SELECT * FROM " + sTableName + " WHERE " + paramKeyName + " = @ID";
                 return await db.QueryAsync<T>(SqlString, new { ID = paramValue });
+            }
+        }
+        public async Task<IEnumerable<T>> SelectLocationByLocationName( int nFacilityLocationID, string sLocationName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "tblFacilityLocations " +
+                     "INNER JOIN " +
+                     "tblFacilities " +
+                     "ON " +
+                     "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                       "WHERE " +
+                       "tblFacilityLocations.nFacilityLocationID <> @nFacilityLocationID AND " +
+                        "tblFacilityLocations.sLocationName = @sLocationName";
+                return await db.QueryAsync<T>(SqlString, new {@nFacilityLocationID = nFacilityLocationID, @sLocationName = sLocationName });
+            }
+        }
+
+        public async Task<IEnumerable<T>> SelectRecordTypeBynFacilityID(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "SELECT [lstRecordTypes].[nRecordTypeID]" +
+                        ",[lnkFacilityRecordTypes].[sRecordTypeName]" +
+                        ",[lstRecordTypes].[nWizardID]" +
+                        ",[lstRecordTypes].[sNormalizedRecordTypeName]" +
+                        ",[lstRecordTypes].[sFieldToolTip]" +
+                        ",[lstRecordTypes].[dtLastUpdate] FROM " +
+                        "[lstRecordTypes] " +
+                        "inner join [lnkFacilityRecordTypes] " +
+                        "on [lnkFacilityRecordTypes].nRecordTypeID = [lstRecordTypes].nRecordTypeID " +
+                        "WHERE " +
+                        "nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID});
+            }
+        }
+
+        public async Task<IEnumerable<T>> SelectSensitiveInfoBynFacilityID(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   " SELECT [lstSensitiveInfo].[nSensitiveInfoID]" +
+                        ",[lnkFacilitySensitiveInfo].[sSensitiveInfoName]" +
+                        ",[lstSensitiveInfo].[nWizardID]" +
+                        ",[lstSensitiveInfo].[sNormalizedSensitiveInfoName]" +
+                        ",[lstSensitiveInfo].[sFieldToolTip]" +
+                        ",[lstSensitiveInfo].[dtLastUpdate] FROM " +
+                        "[lstSensitiveInfo] " +
+                        "INNER JOIN[lnkFacilitySensitiveInfo] " +
+                        "ON [lnkFacilitySensitiveInfo].nSensitiveInfoID = [lstSensitiveInfo].nSensitiveInfoID " +
+                        " WHERE nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+        }
+        public async Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "tblFacilityLocations " +
+                     "INNER JOIN " +
+                     "tblFacilities " +
+                     "ON " +
+                     "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                       "WHERE " +
+                       "tblFacilityLocations.sNormalizedLocationName = @sNormalizedLocationName AND " +
+                       "tblFacilityLocations.nFacilityLocationID <> @nFacilityLocationID AND " +
+                        "tblFacilities.nFacilityID = @nFacilityID";
+                return await db.QueryAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sNormalizedLocationName  = sNormalizedLocationName });
             }
         }
         public async Task<int> CountWhere(dynamic paramKeyName, dynamic paramValue)
@@ -235,6 +309,21 @@ namespace MRODBL.Repositories
                 return false;
             }
         }
+        public async Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment, string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET bRequestAnotherRecord = @bRequestAnotherRecord, " +
+                      "nFeedbackRating = @nFeedbackRating, " +
+                      "sFeedbackComment = @sFeedbackComment, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @bRequestAnotherRecord = bRequestAnotherRecord, @nFeedbackRating = nFeedbackRating, @sFeedbackComment = sFeedbackComment, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
         #endregion
 
         #region Stored Procedures
@@ -256,7 +345,7 @@ namespace MRODBL.Repositories
         }
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
         {
-            string SqlString = "spGetWizardConfigBynFacilityId";
+            string SqlString = "spGetWizardConfigBynFacilityIdAndnFacilityLocationId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
@@ -300,12 +389,12 @@ namespace MRODBL.Repositories
                 String[] oWizards = soWizard.ToArray();
                 var wizardHelper = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var locationDetails = logoBackgroundFacility.Read().ToList();
-                var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequestor);
+                var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequester);
                 object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails, wizardsSave };
                 return newObject;
             }
         }
-        public void AddDependencyRecordsForFacility(int nFacilityID, string sConnectionString, int nAdminUserId)
+        public void AddDependencyRecordsForFacility(int nFacilityID, int nConnectionID, int nAdminUserId)
         {
             string SqlString = "spAddDependencyRecordsForFacility";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -313,7 +402,7 @@ namespace MRODBL.Repositories
                 db.Open();
                 using (var trans = db.BeginTransaction())
                 {
-                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @sConnectionString = sConnectionString, @nAdminUserId = nAdminUserId }, trans, commandType: CommandType.StoredProcedure);
+                    db.Query(SqlString, new { @nFacilityID = nFacilityID, @nConnectionID = nConnectionID, @nAdminUserId = nAdminUserId }, trans, commandType: CommandType.StoredProcedure);
                     trans.Commit();
                 }
             }
@@ -340,6 +429,19 @@ namespace MRODBL.Repositories
                 return nAdminID;
             }
         }
+
+        public async Task<string> GetConnectionStringByFacilityID(int nFacilityId)
+        {
+            string SqlString = "spGetConnectionStringByFacilityId";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                string sConnectionString = await db.QueryFirstAsync<string>(SqlString, new { @nFacilityID = nFacilityId }, commandType: CommandType.StoredProcedure);
+                return sConnectionString;
+            }
+        }
+
+
         #endregion
     }
 }

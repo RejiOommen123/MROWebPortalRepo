@@ -19,6 +19,7 @@ namespace MRODBL.BaseClasses
 		public int nCreatingAdminUserID { get; set; }
 		public DateTime dtCreated { get; set; }
 		[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+		public int nConnectionID { get; set; }
 		public int nUpdateAdminUserID { get; set; }
 		public DateTime dtLastUpdate { get; set; }
 		#endregion

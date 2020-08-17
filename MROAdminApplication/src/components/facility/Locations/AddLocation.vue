@@ -158,11 +158,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- Dialog Alert for Same name facility -->
+    <!-- Dialog Alert for Same name Location -->
     <v-dialog v-model="sameLocNameAlert" width="360px" max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Location with Same Name Exists</v-card-text>
+        <v-card-text >{{sameNameText}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="sameLocNameAlert = false">Ok</v-btn>
@@ -230,7 +230,7 @@ export default {
     location: {
       sLocationName: {
         required,
-        maxLength: maxLength(40),
+        maxLength: maxLength(100),
         minLength: minLength(2)
       },
       nROILocationID: { required, numeric },
@@ -256,7 +256,7 @@ export default {
       !this.$v.location.sLocationName.minLength &&
         errors.push("Location Name must be at least 2 characters long");
       !this.$v.location.sLocationName.maxLength &&
-        errors.push("Location Name must be at most 40 characters long");
+        errors.push("Location Name must be at most 100 characters long");
       !this.$v.location.sLocationName.required &&
         errors.push("Location Name is required.");
       return errors;
@@ -319,6 +319,7 @@ export default {
   name: "AddLocation",
   data() {
     return {
+      sameNameText:'',
       BGClearer:false,
       LogoClearer:false,
       PDFClearer: false,
@@ -346,16 +347,16 @@ export default {
       }
     };
   },
-  mounted() {
-    this.$http
-      .get("FacilityLocations/GetROILocationID/" + this.$route.params.id)
-      .then(resp => {
-        if (resp.ok == true) {
-          this.location.nROILocationID = resp.body;
-          this.location.nROILocationID++;
-        }
-      });
-  },
+  // mounted() {
+  //   this.$http
+  //     .get("FacilityLocations/GetROILocationID/" + this.$route.params.id)
+  //     .then(resp => {
+  //       if (resp.ok == true) {
+  //         this.location.nROILocationID = resp.body;
+  //         this.location.nROILocationID++;
+  //       }
+  //     });
+  // },
   methods: {
     clearBGField() {
       this.BGClearer = false;
@@ -442,6 +443,7 @@ export default {
     onSubmit() {
       this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
+      this.location.nnFacilityID = parseInt(this.location.nFacilityID);
       console.log(this.location);
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
@@ -464,10 +466,10 @@ export default {
           error => {
             // Error Callback
             if (
-              error.status == 400 &&
-              error.bodyText == "Cannot Add Location with Same Name"
+              error.status == 400
             ) {
               this.dialogLoader = false;
+              this.sameNameText =error.bodyText;
               this.sameLocNameAlert = true;
             }
           }

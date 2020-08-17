@@ -5,9 +5,9 @@ using MRODBL.Repositories;
 
 namespace MRODBL.BaseClassRepositories
 {
-    public class TempRequestorsRepository : Repository<TempRequestors>
+    public class MROConnectionStringRepository:Repository<MROConnectionString>
     {
-        public TempRequestorsRepository(DBConnectionInfo DBInfo)
+        public MROConnectionStringRepository(DBConnectionInfo DBInfo)
 
         {
             Init(DBInfo.ConnectionString);
@@ -15,7 +15,7 @@ namespace MRODBL.BaseClassRepositories
 
         public void Init(string sConnectIn)
         {
-            Init(sConnectIn, "tblTempRequesters", "nRequesterID");
+            Init(sConnectIn, "lstMROConnectionString", "nConnectionStringID");
         }
     }
 }

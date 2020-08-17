@@ -15,7 +15,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    //[APIKeyAuth]
+    [APIKeyAuth]
     public class FacilityFieldMapsController : ControllerBase
     {
         #region Facility Field Maps Constructor
@@ -98,6 +98,14 @@ namespace MROWebApi.Controllers
                     FacilitySensitiveInfoRepository sensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
                     FacilityRecordTypesRepository recordTypeRepo = new FacilityRecordTypesRepository(_info);
 
+
+                    foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
+                    {
+                        row.sFieldName.Replace("Primary Reason - ", string.Empty);
+                        row.sFieldName.Replace("Record Type - ", string.Empty);
+                        row.sFieldName.Replace("Sensitive Info - ", string.Empty);
+                        row.sFieldName.Replace("Shipment Type - ", string.Empty);
+                    }
 
                     //Separating Table Data
                     var PRList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPrimaryReasons");

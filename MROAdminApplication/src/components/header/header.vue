@@ -36,8 +36,9 @@
         <li>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="#fba437" fab small dark v-bind="attrs" v-on="on">
-                <v-icon>mdi-account-circle</v-icon>
+              <v-btn color="#fba437"  fab small dark v-bind="attrs" v-on="on">
+                <v-icon >mdi-account-circle</v-icon>
+                <!-- v-on:click="$adal.logout()" -->
               </v-btn>
             </template>
             <span>{{userName}}</span>
