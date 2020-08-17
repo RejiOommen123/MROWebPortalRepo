@@ -12,6 +12,7 @@
           scrollable
           :max-width="dialogMaxWidth"
           style="height:100%"
+          :content-class="selectedWizard=='Wizard_23'?  'withOverflow' :  'withoutOverflow'"
         >
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card

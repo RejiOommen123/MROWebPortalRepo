@@ -192,7 +192,7 @@
               v-model="facility.bRequestorEmailConfirm"
             ></v-switch>
             <div id="marginDiv7"></div>
-            <label for="bRequestorEmailVerify">Send email verification for Requestor email address ?</label>
+            <!-- <label for="bRequestorEmailVerify">Send email verification for Requestor email address ?</label>
             <v-switch
               inset
               flat
@@ -200,7 +200,7 @@
               solo
               id="bRequestorEmailVerify"
               v-model="facility.bRequestorEmailVerify"
-            ></v-switch>
+            ></v-switch> -->
           </v-col>
         </v-row>
         <div class="submit">
@@ -385,7 +385,7 @@ export default {
         sOutboundEmail: "",
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
-        bRequestorEmailVerify:true,
+        bRequestorEmailVerify:false,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }

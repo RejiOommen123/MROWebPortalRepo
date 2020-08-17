@@ -34,7 +34,7 @@
           <v-col cols="4"  sm="4">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
+                <v-btn :disabled="diableCamera" @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
                   <v-icon dark>mdi-camera</v-icon>
                 </v-btn>
               </template>
@@ -119,6 +119,7 @@
             v-model="fileInput"
             chips
             show-size
+            color="white"
             dense
             hint="Upload Identity Document Image"
             rounded
@@ -132,11 +133,20 @@
             @input="$v.fileInput.$touch()"
             @blur="$v.fileInput.$touch()"
           >
+            <template v-slot:selection="{ text }">
+                  <v-chip
+                    small
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
             <v-tooltip slot="append" top>
               <template v-slot:activator="{ on }">
-                <v-icon style="cursor:pointer" v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
+                <v-icon style="cursor:pointer" v-on="on" color="white" top>mdi-information</v-icon>
               </template>
-              <span>Please upload identity image document.</span>
+              <span >Please upload identity image document.</span>
             </v-tooltip>
           </v-file-input>
           <v-row>
@@ -144,7 +154,7 @@
             <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
           </v-col>
            <v-col cols="6" sm="6">
-            <v-btn type="button" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
+            <v-btn type="button" :disabled="diableCamera" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
           </v-col>
           </v-row>
         </form>
@@ -194,6 +204,7 @@ export default {
       fileInput: "",
       bShowImage: "",
       dialog:true,
+      diableCamera:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };
   },
@@ -206,6 +217,14 @@ export default {
   activated(){
     // this.sStatus="";
     // this.sStatus="CapturingImg";
+    var ua = window.navigator.userAgent;
+    var isIE = /MSIE|Trident/.test(ua);
+
+    if (isIE && this.sStatus != "UploadImg") {
+      alert("Camera doesn't work in this browser. No worries you can upload image.");
+      this.sStatus = "UploadImg";
+      this.diableCamera=true;
+    }
     console.log(this.devices);
     if(this.devices.length!=0){
       this.$refs.webcam.start();
@@ -342,3 +361,9 @@ export default {
   }
 };
 </script>
+<style>
+.v-tooltip__content{
+  color: black;
+  background: white;
+}
+</style>
