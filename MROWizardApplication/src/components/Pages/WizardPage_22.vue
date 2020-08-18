@@ -225,13 +225,13 @@ export default {
       this.sStatus = "UploadImg";
       this.diableCamera=true;
     }
-    console.log(this.devices);
+    // console.log(this.devices);
     if(this.devices.length!=0){
       this.$refs.webcam.start();
     }
   },
   deactivated(){
-    console.log(this.devices);
+    // console.log(this.devices);
     if(this.devices.length!=0){
       this.$refs.webcam.stop();
     }
@@ -253,7 +253,7 @@ export default {
   watch: {
     camera: function(id) {
       this.deviceId = id;
-      console.log("watch camera - deviceId - "+this.deviceId);
+      // console.log("watch camera - deviceId - "+this.deviceId);
     },
     devices: function() {
       // Once we have a list select the first one
@@ -263,7 +263,7 @@ export default {
         this.camera = first.deviceId;
         this.deviceId = first.deviceId;
       }
-      console.log("watch devices - deviceId - " + this.deviceId);
+      // console.log("watch devices - deviceId - " + this.deviceId);
     }
   },
   methods: {
@@ -297,11 +297,11 @@ export default {
     },
     onStop() {
       this.$refs.webcam.stop();
-      console.log("On Cameras start ");
+      // console.log("On Cameras start ");
     },
     onStart() {
       this.$refs.webcam.start();
-      console.log("On Cameras stop ");
+      // console.log("On Cameras stop ");
     },
     onError(error) {
       if (error.name == "NotFoundError") {
@@ -311,12 +311,12 @@ export default {
     },
     onCameras(cameras) {
       this.devices = cameras;
-      console.log("On Cameras " +cameras);
+      // console.log("On Cameras " +cameras);
     },
     onCameraChange(deviceId) {
       this.deviceId = deviceId;
       this.camera = deviceId;
-       console.log('On Camera Change Event', deviceId)
+      //  console.log('On Camera Change Event', deviceId)
     },
     nextPage() {
 
@@ -338,7 +338,7 @@ export default {
           });
       }
       //Partial Requester Data Save End
-      console.log(JSON.stringify(this.$store.state.requestermodule));
+      // console.log(JSON.stringify(this.$store.state.requestermodule));
       this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
       this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");

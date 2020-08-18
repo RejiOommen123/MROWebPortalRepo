@@ -16,15 +16,15 @@ Vue.use(Adal, {
     config: {
         //Razor-Locahost
         // 'common' (multi-tenant gateway) or Azure AD Tenant ID
-        // tenant: 'caremypet.in',
+        tenant: 'caremypet.in',
 
-        // // Application ID
-        // clientId: '8e1b4af1-468d-4ef8-accc-e38e134c1573',
+        // Application ID
+        clientId: '8e1b4af1-468d-4ef8-accc-e38e134c1573',
 
-        // // Host URI
-        // redirectUri: 'http://localhost:8080/',
+        // Host URI
+        redirectUri: 'http://localhost:8080/',
 
-        // cacheLocation: 'localStorage'
+        cacheLocation: 'localStorage'
 
 
         //Razor-Dev
@@ -43,18 +43,18 @@ Vue.use(Adal, {
         // This config gets passed along to Adal, so all settings available to adal can be used here.
         //Razor-QA
         //'common' (multi-tenant gateway) or Azure AD Tenant ID
-        tenant: '16f73e0f-bf1b-4216-b0ee-625248f9193d',
+        // tenant: '16f73e0f-bf1b-4216-b0ee-625248f9193d',
 
-        // Application ID		
-        clientId: 'a7a6e62f-eff8-43ca-b6e2-786aee56fd7a',
-        //clientId: '3237e160-c245-481e-86e4-659199e0898f',
+        // // Application ID		
+        // clientId: 'a7a6e62f-eff8-43ca-b6e2-786aee56fd7a',
+        // //clientId: '3237e160-c245-481e-86e4-659199e0898f',
 
-        // Host URI		
-        redirectUri: 'https://devmroportalcust2.azurewebsites.net',
-        //redirectUri: 'https://devmroportalcust3.azurewebsites.net',
+        // // Host URI		
+        // redirectUri: 'https://devmroportalcust2.azurewebsites.net',
+        // //redirectUri: 'https://devmroportalcust3.azurewebsites.net',
 
 
-        cacheLocation: 'localStorage'
+        // cacheLocation: 'localStorage'
 
 
         //MRO DEV
@@ -81,6 +81,17 @@ Vue.use(Adal, {
 
         //  cacheLocation: 'localStorage'
 
+         //MRO PROD
+        // 'common' (multi-tenant gateway) or Azure AD Tenant ID
+        // tenant: '808444af-4011-40d5-9b0a-a9a5c95f88e9',
+
+        // // Application ID
+        // clientId: 'b8f7eeae-0c5f-4471-919a-aa1a8ebe3d40',
+
+        // // Host URI
+        // redirectUri: 'https://mrorwprodadmin.azurewebsites.net',
+
+        // cacheLocation: 'localStorage'
 
 
     },
@@ -95,16 +106,17 @@ Vue.use(Adal, {
 //Change URL as per Environment
 //Ensure that there is No '/' at the end of the URL
 //Razor-QA
-Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
+//Vue.http.options.root = "https://devmroportalapi.azurewebsites.net/api";
 
 //Vue.http.options.root = "https://devmroportalapi-dev.azurewebsites.net/api";
-//Vue.http.options.root = "http://localhost:57364/api";
+Vue.http.options.root = "http://localhost:57364/api";
 
 //MRO DEV
 //Vue.http.options.root = "https://mroadmindevapi.azurewebsites.net/api";
 //MRO UAT
-// Vue.http.options.root = "https://mroadminuatapi.azurewebsites.net/api";
-
+//Vue.http.options.root = "https://mroadminuatapi.azurewebsites.net/api";
+//MRO Prod
+//Vue.http.options.root = "https://mrorwzprodapi.azurewebsites.net/api";
 Vue.config.productionTip = false;
 
 //Vuetify API Secret Key - Common Code for Adding Header

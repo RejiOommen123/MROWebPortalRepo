@@ -65,7 +65,7 @@
             <!-- Wizard Footer -->
             <v-footer padless id="footer" style="background-color:transparent">
               <v-col class="text-center" cols="12">
-                 <span style="font-size:12px">Powered by</span>
+                 <span style="font-size:12px;margin-right:5px;">Powered by </span>
                 <a href="https://mrocorp.com/" target="_blank">
                   <img alt="Qries" src="./assets/images/MRO-Web.png" height="30px">
                 </a>
