@@ -27,6 +27,7 @@ namespace MRODBL.BaseClasses
         public string sSelectedRelation { get; set; }
         public string sSelectedRelationName { get; set; }
         public string[] sRelativeFileArray { get; set; }
+        public string[] sRelativeFileNameArray { get; set; }
         [Required]
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient First Name allowed")]
         public string sPatientFirstName { get; set; }

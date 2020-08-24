@@ -12,6 +12,7 @@ const state = {
     sSelectedRelation:'',
     sSelectedRelationName: '',
     sRelativeFileArray:[],
+    sRelativeFileNameArray:[],
     sPatientFirstName: '',
     sPatientLastName: '',
     sPatientMiddleName: '',
@@ -110,6 +111,9 @@ const mutations = {
     },
     sRelativeFileArray(state, payload){
         state.sRelativeFileArray = payload;
+    },
+    sRelativeFileNameArray(state, payload){
+        state.sRelativeFileNameArray = payload;
     },
     sPatientFirstName(state, payload) {
         state.sPatientFirstName = payload;

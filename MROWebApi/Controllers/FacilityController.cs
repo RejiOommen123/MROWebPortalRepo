@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
@@ -114,7 +116,7 @@ namespace MROWebAPI.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    facility.bFacilityLogging = false;
+                    facility.bFacilityLogging = true;
                     facility.bActiveStatus = false;
                     facility.dtCreated = DateTime.Now;
                     facility.dtLastUpdate = DateTime.Now;
@@ -213,6 +215,69 @@ namespace MROWebAPI.Controllers
                 return BadRequest(errors);
             }
         }
+        #endregion
+
+        #region Test SMTP
+        //TestSMTP
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult> TestSMTPDetails(TestSMTP testSMTP)
+        {
+
+            #region Decrypt SMTP Password
+            MROLogger password = new MROLogger(_info);
+            #endregion
+
+            //From 
+            MimeMessage message = new MimeMessage();
+            MailboxAddress from = new MailboxAddress("From",testSMTP.sOutboundEmail);
+            message.From.Add(from);
+
+            //To
+
+            MailboxAddress to = new MailboxAddress("To", testSMTP.sToTestEmail);
+            message.To.Add(to);
+
+            //Subject
+            message.Subject = "Test SMTP Email";
+            BodyBuilder bodyBuilder = new BodyBuilder();
+            string bodyText = "This is just test email.";
+            bodyBuilder.HtmlBody = bodyText;
+            message.Body = bodyBuilder.ToMessageBody();
+            //GET Port number
+            //Make SSL true
+            try
+            {
+                if (testSMTP.sSMTPUrl.Contains("protection"))
+                {
+                    SmtpClient client = new SmtpClient();
+                    client.Connect(testSMTP.sSMTPUrl, 25, false);
+                    client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                    client.Send(message);
+                    client.Disconnect(true);
+                    client.Dispose();
+                }
+                else
+                {
+                    SmtpClient client = new SmtpClient();
+                    client.Connect(testSMTP.sSMTPUrl, 25, false);
+                    client.Authenticate(testSMTP.sSMTPUsername, testSMTP.sSMTPPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                    client.Dispose();
+                }
+                //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Test SMTP Failed", ex.Message, _info);
+                return BadRequest(ex.Message);
+            }
+            return Ok();
+        }
+        
+
         #endregion
 
         #region Toggle Facility Active Status

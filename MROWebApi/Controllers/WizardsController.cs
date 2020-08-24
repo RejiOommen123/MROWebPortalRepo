@@ -374,7 +374,25 @@ namespace MROWebApi.Controllers
                 writer.WriteEndElement();
 
                 //PDF in Base 64 Encoding
-                writer.WriteElementString("pdf", requester.sPDF);
+                requester.sPDF = new LocationAuthorizationDocumentController().GeneratePDFForXML(requester.sPDF, requester.sRelativeFileArray);
+                writer.WriteElementString("pdf", requester.sPDF);         
+             
+                //writer.WriteStartElement("supporting_document");
+                //if (requester.sRelativeFileArray.Length>0 && requester.sRelativeFileNameArray.Length > 0) {
+                //    //Split string into arrays
+                //    string[] files = requester.sRelativeFileArray[0].Split("_");
+                //    string[] filesName = requester.sRelativeFileNameArray[0].Split("/");
+
+                //    for (int i=0; i < files.Length;i++)
+                //    {
+                //            writer.WriteStartElement("item");
+                //            writer.WriteElementString("name", filesName[i]);
+                //            writer.WriteElementString("data", files[i]);
+                //            writer.WriteEndElement();
+                //    }
+                //}
+
+                //writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.Flush();
 
@@ -937,15 +955,16 @@ namespace MROWebApi.Controllers
                 allFields.Add("MRORequesterPhoneVerified=1", requester.bPhoneNoVerified ? "On" : "");
 
                 // Is identity is DL or Other
-                if (requester.sIdentityIdName == "MRODLIdentity")
-                {
-                    allFields.Add("MRODLIdentity=1", "On");
+                if (!string.IsNullOrEmpty(requester.sIdentityIdName)) { 
+                    if (requester.sIdentityIdName == "MRODLIdentity")
+                    {
+                        allFields.Add("MRODLIdentity=1", "On");
+                    }
+                    else
+                    {
+                        allFields.Add("MROOtherGovIdentity=1", "On");
+                    }
                 }
-                else
-                {
-                    allFields.Add("MROOtherGovIdentity=1", "On");
-                }
-
                 //MROToday's Date
                 allFields.Add("MROTodaysDate", DateTime.Now.ToString("MM-dd-yyyy"));
 

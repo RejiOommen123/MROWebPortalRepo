@@ -37,9 +37,17 @@
         </v-col>
       </v-layout>
     </template>
-    <div>
+    <!-- <div>
       <v-btn :disabled="nSelectedCheckBox==''" @click.prevent="nextPage" class="next">Next</v-btn>
-    </div>
+    </div> -->
+    <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
+      <v-btn :disabled="nSelectedCheckBox==''" @click.prevent="nextPage" class="next">Next</v-btn>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn  @click.prevent="skipPage" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -53,11 +61,19 @@ export default {
     };
   },
   methods: {
+    skipPage(){
+      this.nSelectedCheckBox = [];
+      this.$store.commit("requestermodule/sIdentityIdName", '');   
+      this.$store.commit("ConfigModule/bIdentitySkiped", true);
+      this.continue();
+    },
     nextPage() {
-      
-      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
-       
-      //Partial Requester Data Save Start
+      this.$store.commit("ConfigModule/bIdentitySkiped", false);
+      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);     
+      this.continue();
+    },
+    continue(){
+       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
       if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
       {

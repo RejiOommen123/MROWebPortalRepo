@@ -130,11 +130,12 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             }
 
             //Adding the Photo of Driving License
-            string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
             XImage theDrivingLicense = new XImage();
-            byte[] dlArray = Convert.FromBase64String(result);
-            theDrivingLicense.SetData(dlArray);
-
+            if (!string.IsNullOrEmpty(requestor.sIdentityImage)) { 
+                string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+                byte[] dlArray = Convert.FromBase64String(result);
+                theDrivingLicense.SetData(dlArray);
+            }
             //Adding new page in Authorization PDF
             thePDFAuthDoc.Page = thePDFAuthDoc.AddPage();
             int theID = 0;
@@ -149,22 +150,34 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
 
             string emailStatus = requestor.bConfirmReport ? "(User Confirmed)" : "(User Not Confirmed)";
             string phoneStatus = requestor.bPhoneNoVerified ? "(Verified)" : "(Not Verified)";
+            string primaryReason = string.IsNullOrEmpty(requestor.sSelectedPrimaryReasonsName) ? "Not Mentioned" : requestor.sSelectedPrimaryReasonsName;
+            string deadlineDate = requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline";
 
             thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address<b> " + requestor.sAddStreetAddress + " " + requestor.sAddApartment + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address "+emailStatus+"<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number "+phoneStatus+"<b> " + requestor.sPhoneNo + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> " + string.Join(",", requestor.sSelectedPrimaryReasonsName) + "<br /");
-            thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> " + requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline" + "<br /");
-
+            thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address -<b> " + requestor.sAddStreetAddress + " " + requestor.sAddApartment + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address - "+emailStatus+"<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number - "+phoneStatus+"<b> " + requestor.sPhoneNo + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> - " + primaryReason + "<br />");
+            thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> - " + deadlineDate + "<br />");
+            if (requestor.sRelativeFileNameArray.Length > 0)
+            {
+                thePDFAuthDoc.AddTextStyled("<br /><b>7.You have successfully uploaded all necessary documents to verify your identity.  Thank you!<b><br />");
+                foreach (string name in requestor.sRelativeFileNameArray)
+                {
+                    thePDFAuthDoc.AddTextStyled("<br /><b>&nbsp;&nbsp;&nbsp;&nbsp;<li>&nbsp;&nbsp;" + name + "</li><b><br />");
+                }
+            }
             // Image insertion on a specific location on new page
-            thePDFAuthDoc.Rect.Left = 50;
-            thePDFAuthDoc.Rect.Bottom = 400;
-            //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
-            thePDFAuthDoc.Rect.Width = 200;
-            thePDFAuthDoc.Rect.Height = 150;
-            //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
-            thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
+            if (!string.IsNullOrEmpty(requestor.sIdentityImage))
+            {
+                thePDFAuthDoc.Rect.Left = 50;
+                thePDFAuthDoc.Rect.Bottom = 300;
+                //thePDFAuthDoc.Rect.Width = theDrivingLicense.Width;
+                thePDFAuthDoc.Rect.Width = 200;
+                thePDFAuthDoc.Rect.Height = 150;
+                //thePDFAuthDoc.Rect.Height = theDrivingLicense.Height;
+                thePDFAuthDoc.AddImageObject(theDrivingLicense, false);
+            }           
 
             if (string.IsNullOrEmpty(requestor.sSignatureData))
             {
@@ -236,6 +249,87 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             return true;
             #endregion
         }
+        #region generate pdf for xml
+        public string GeneratePDFForXML(string stringPDFFile,string[] FileArray)
+        {
+            string stringPDFFileReplaced = stringPDFFile.Replace("data:application/pdf;base64,", string.Empty);
+            byte[] pdfByteArray = Convert.FromBase64String(stringPDFFileReplaced);
+            Doc pdfFromDB = new Doc();
+            pdfFromDB.Read(pdfByteArray);
+            string[] files;
+            if (FileArray.Length > 0)
+            {
+                //Split string into arrays         
+                files = FileArray[0].Split("_");
+                for (int i = 0; i < files.Length; i++)
+                {
+                    string[] splitBase64Str = files[i].Split(",");
+                    string extension;
+                    switch (splitBase64Str[0])
+                    {
+                        //check image's extension
+                        case "data:image/jpeg;base64":
+                            extension = "img";
+                            break;
+                        case "data:image/png;base64":
+                            extension = "img";
+                            break;
+                        case "data:image/jpg;base64":
+                            extension = "img";
+                            break;
+                        case "data:application/pdf;base64":
+                            extension = "pdf";
+                            break;
+                        default://neither image nor pdf
+                            extension = "none";
+                            break;
+                    }
+                    if (extension == "img")
+                    {
+                        byte[] fileByteArray = Convert.FromBase64String(splitBase64Str[1]);
+                        MemoryStream ms = new MemoryStream(fileByteArray);
+                        XImage theImg = new XImage();
+                        theImg.SetStream(ms);
+                        Doc theDoc = new Doc();
+                        theDoc.Rect.Left = 100;
+                        theDoc.Rect.Bottom = 100;
+                        theDoc.Rect.Width = 400;
+                        theDoc.Rect.Height = 300;
+                        theDoc.AddImageObject(theImg, false);
+                        pdfFromDB.Append(theDoc);
+                        theDoc.Clear();
+                    }
+                    else if (extension=="pdf")
+                    {
+                        string supportingDoc = files[i].Replace("data:application/pdf;base64,", string.Empty);
+                        byte[] supportingDocArray = Convert.FromBase64String(supportingDoc);
+                        Doc supportingPdf = new Doc();
+                        supportingPdf.Read(supportingDocArray);
+                        pdfFromDB.Append(supportingPdf);
+                        supportingPdf.Clear();
+                    }
+                }
+            }
+
+            
+            //Adding the Photo of Driving License
+            //XImage theDrivingLicense = new XImage();
+            //if (!string.IsNullOrEmpty(requestor.sIdentityImage))
+            //{
+            //    string result = Regex.Replace(requestor.sIdentityImage, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+            //    byte[] dlArray = Convert.FromBase64String(result);
+            //    theDrivingLicense.SetData(dlArray);
+            //}
+
+            //if (string.IsNullOrEmpty(requestor.sSignatureData))
+            //{
+            //    thePDFAuthDoc.Form.Stamp();
+            //}
+            byte[] ArrayToReturn = pdfFromDB.GetData();
+            string pdfBase64 = "data:application/pdf;base64," + Convert.ToBase64String(ArrayToReturn);
+            return pdfBase64;
+        }
+        #endregion
     }
 }
 
