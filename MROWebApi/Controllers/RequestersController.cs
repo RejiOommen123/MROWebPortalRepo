@@ -127,6 +127,8 @@ namespace MROWebApi.Controllers
                             writer.WriteEndElement();                            
                             writer.WriteStartElement("facility");
                             writer.WriteElementString("value", facility.nROIFacilityID.ToString());
+                            writer.WriteElementString("name", facility.sFacilityName.ToString());
+                            writer.WriteElementString("id", facility.nFacilityID.ToString());
                             writer.WriteEndElement();
                             writer.WriteStartElement("feedback");
                             writer.WriteElementString("rating",requester.nFeedbackRating.ToString());
