@@ -139,7 +139,7 @@ namespace MROWebApi.Controllers
                 var sRelationToPatient = string.IsNullOrEmpty(requester.sSelectedRelationName) ? "" : requester.sSelectedRelationName;
                 var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
                 var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
-                var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
+                //var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
 
                 string[] sSelectedRecordTypesForXML = requester.sSelectedRecordTypes;
                 string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
@@ -229,7 +229,7 @@ namespace MROWebApi.Controllers
                 writer.WriteElementString("name", sSelectedPrimaryReasonsName);
                 writer.WriteEndElement();
 
-                writer.WriteElementString("comments", sComments);
+                //writer.WriteElementString("comments", sComments);
                 writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : "");
                 writer.WriteElementString("confirmwithdata", requester.bConfirmReport.ToString());
                 writer.WriteElementString("authevent", requester.sAuthSpecificEvent);

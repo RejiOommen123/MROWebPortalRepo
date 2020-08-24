@@ -118,6 +118,10 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                             if (InList(sName, allFields, out sNewValue))
                                 sValue += sNewValue + " ";
                         }
+                        if (sValue == null)
+                        {
+                            sValue = "";
+                        }
                         Stamp(thePDFAuthDoc, frm.Name, sValue.Trim());
                     }
                 }

@@ -27,7 +27,6 @@ html {
     color: white !important;
     margin: 0 1em;
     text-decoration: none;
-    color: white;
 }
 
 .myUL {
@@ -39,13 +38,6 @@ html {
     flex-flow: row;
     align-items: center;
 }
-
-li a.pageheaderLinksWhite:hover,
-li a.pageheaderLinksWhite:active,
-li a.pageheaderLinksWhite:router-link-active {
-    color: #fba437;
-}
-
 
 /* Facility.vue */
 

@@ -153,7 +153,7 @@
             <v-btn
               v-else
               @click.prevent="continueAhead"
-              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedRelation==''"
+              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedRelation==''|| $v.files.$invalid "
               class="mr-4 next"
             >Continue</v-btn>
           </v-col>
@@ -317,7 +317,7 @@ export default {
         reader.readAsDataURL(files[i]);
         this.sRelativeFileNameArray.push(this.files[i].name);
       }    
-      if(files.length>0)
+      if(files.length>0 && !this.$v.files.$invalid)
       {
         this.dialog=true;
       }
