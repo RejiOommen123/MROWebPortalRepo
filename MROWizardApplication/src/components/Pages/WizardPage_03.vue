@@ -108,16 +108,22 @@
               @blur="$v.sOtherRelation.$touch()"
             ></v-text-field>
             </v-col>
-            <v-col v-if="MRORelationMultipleDocument"  cols="12" offset-sm="3" sm="6">
+            <v-col v-if="MRORelationMultipleDocument"  cols="12" offset-sm="2" sm="8">
               <template>
               <v-file-input
                 ref="file"
+                multiple
                 @change="filesChange"
                 v-model="files"
+                accept="image/*, application/pdf"
                 placeholder="Upload your documents"
                 label="File input"
-                multiple
+                counter="3"
+                show-size
                 prepend-icon="mdi-paperclip"
+                :error-messages="filesErrors"
+                @input="$v.files.$touch()"
+                @blur="$v.files.$touch()"
               >
                 <template v-slot:selection="{ text }">
                   <v-chip
@@ -128,6 +134,12 @@
                     {{ text }}
                   </v-chip>
                 </template>
+                <v-tooltip slot="append" top>
+                  <template v-slot:activator="{ on }">
+                    <v-icon style="cursor:pointer" v-on="on" color="white" top>mdi-information</v-icon>
+                  </template>
+                  <span >You can upload upto 3 image or pdf files.</span>
+                </v-tooltip>
               </v-file-input>
             </template>
             </v-col>
@@ -141,11 +153,33 @@
             <v-btn
               v-else
               @click.prevent="continueAhead"
-              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedRelation==''"
+              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedRelation==''|| $v.files.$invalid "
               class="mr-4 next"
             >Continue</v-btn>
           </v-col>
         </v-row>
+        <v-dialog
+            v-model="dialog"
+            max-width="290"
+            light
+          >
+        <v-card>
+          <v-card-text style="padding-top:20px">
+            You have successfully uploaded the necessary supporting documents to verify your legal relationship to the patient.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="dialog = false"
+            >
+              Ok
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       </form>
     </div>
     <div v-if="bAreYouPatient && disclaimer01!=null " class="disclaimer">{{this.disclaimer01}}</div>
@@ -155,6 +189,11 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+const maxThree = (value) => value.length <= 3;
+// const maxSize = (value) => (value.forEach(v => {
+//   if(v.size>2000)
+//     return false;
+// }));
 export default {
   name: "WizardPage_03",
   data() {
@@ -163,10 +202,12 @@ export default {
       sRelativeLastName: '',
       sOtherRelation: '',
       files:[],
+      sRelativeFileNameArray:[],
       sRelativeFileArray:[],
       sSelectedRelation: '',
       option:[],
       bShowOtherRelation:false,
+      dialog:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer01,
@@ -194,7 +235,9 @@ export default {
   validations: {
     sRelativeFirstName: { required },
     sRelativeLastName: { required },
-    sOtherRelation: { required }
+    sOtherRelation: { required },
+    files: { maxThree }
+    // ,maxSize
   },
   computed: {
     bAreYouPatient() {
@@ -219,6 +262,13 @@ export default {
       !this.$v.sOtherRelation.required &&
         errors.push("Required if you select Other option.");
       return errors;
+    },
+    filesErrors() {
+      const errors = [];
+      if (!this.$v.files.$dirty) return errors;
+      !this.$v.files.maxThree && errors.push("You can upload only 3 files");
+      // !this.$v.files.maxSize && errors.push("File size exceed 2mb");
+      return errors;
     }
   },
   methods: {
@@ -231,6 +281,7 @@ export default {
       this.$store.commit("requestermodule/sSelectedRelationName", "");
       this.$store.commit("requestermodule/sSelectedRelation", "");
       this.$store.commit("requestermodule/sRelativeFileArray", []);
+      this.$store.commit("requestermodule/sRelativeFileNameArray", []);
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     // This will set bAreYouPatient status to false and set realtives variables
@@ -249,6 +300,7 @@ export default {
         this.$store.commit("requestermodule/sSelectedRelationName",this.sOtherRelation);
       }
       this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
+      this.$store.commit("requestermodule/sRelativeFileNameArray", this.sRelativeFileNameArray);
       this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
       this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
       this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedRelation);
@@ -256,13 +308,19 @@ export default {
     },
     filesChange(files){
       this.sRelativeFileArray=[];
+      this.sRelativeFileNameArray=[];
       for( var i = 0; i < files.length; i++ ){        
         const reader = new FileReader();
         reader.addEventListener("load", () => {
-          this.sRelativeFileArray.push(reader.result);
+          this.sRelativeFileArray.push(reader.result);          
         });
         reader.readAsDataURL(files[i]);
+        this.sRelativeFileNameArray.push(this.files[i].name);
       }    
+      if(files.length>0 && !this.$v.files.$invalid)
+      {
+        this.dialog=true;
+      }
     },
     check(id) {
       this.option=[];

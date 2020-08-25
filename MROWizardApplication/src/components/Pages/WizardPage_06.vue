@@ -27,7 +27,7 @@
         </v-col>
         <v-col  cols="12" sm="12">
             <!-- <v-col cols="12" offset-sm="2" sm="8"> -->
-            <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
+            <div v-if="disclaimer01!='' && bRequestorEmailConfirm==true" class="disclaimer">{{disclaimer01}}</div>
         
             <!-- </v-col> -->
             <div v-if="bRequestorEmailConfirm==false">

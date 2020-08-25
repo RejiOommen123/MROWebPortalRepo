@@ -233,8 +233,8 @@ export default {
       nROILocationID: { required, numeric },
       sLocationCode: {
         required,
-        maxLength: maxLength(4),
-        minLength: minLength(4)
+        maxLength: maxLength(8),
+        minLength: minLength(2)
       },
       sLocationAddress: { required, maxLength: maxLength(1000) },
       sPhoneNo: {
@@ -271,9 +271,9 @@ export default {
       const errors = [];
       if (!this.$v.location.sLocationCode.$dirty) return errors;
       !this.$v.location.sLocationCode.minLength &&
-        errors.push("Location Code must be at least 4 characters long");
+        errors.push("Location Code must be at least 2 characters long");
       !this.$v.location.sLocationCode.maxLength &&
-        errors.push("Location Code must be at most 4 characters long");
+        errors.push("Location Code must be at most 8 characters long");
       !this.$v.location.sLocationCode.required &&
         errors.push("Location Code is required.");
       return errors;

@@ -101,10 +101,10 @@ namespace MROWebApi.Controllers
 
                     foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
                     {
-                        row.sFieldName.Replace("Primary Reason - ", string.Empty);
-                        row.sFieldName.Replace("Record Type - ", string.Empty);
-                        row.sFieldName.Replace("Sensitive Info - ", string.Empty);
-                        row.sFieldName.Replace("Shipment Type - ", string.Empty);
+                        row.sFieldName = row.sFieldName.Replace("Primary Reason - ", string.Empty);
+                        row.sFieldName = row.sFieldName.Replace("Record Type - ", string.Empty);
+                        row.sFieldName = row.sFieldName.Replace("Sensitive Info - ", string.Empty);
+                        row.sFieldName = row.sFieldName.Replace("Shipment Type - ", string.Empty);
                     }
 
                     //Separating Table Data

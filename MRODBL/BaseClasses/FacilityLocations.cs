@@ -18,7 +18,7 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nROILocationID { get; set; }
         [Required]
-        [StringLength(4, ErrorMessage = "Maximum 4 characters Location Code Allowed")]
+        [StringLength(8, ErrorMessage = "Maximum 8 characters Location Code Allowed")]
         public string? sLocationCode { get; set; }
         [Required]
         [StringLength(100, ErrorMessage = "Maximum 100 characters location Name Allowed")]

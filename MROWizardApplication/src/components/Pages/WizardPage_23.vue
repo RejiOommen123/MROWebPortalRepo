@@ -121,7 +121,13 @@ export default {
     };
   },
   activated(){
-    this.$vuetify.theme.dark = false;
+    this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
+    this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
+    this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
+    this.$vuetify.theme.dark = false;    
+
+
+    // this.$vuetify.theme.dark = false;
     this.dialogLoader=true;
     this.$http
       .post("wizards/GeneratePDF/", 
@@ -140,6 +146,12 @@ export default {
           });
         this.dialogLoader=false;
       });
+  },
+  deactivated(){
+    this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+    this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+    this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+    this.$vuetify.theme.dark = true;
   },
   methods: {
     undo() {
@@ -170,7 +182,7 @@ export default {
               this.numPages = pdf.numPages;
             });
           this.dialogLoader=false;
-          console.log(JSON.stringify(this.$store.state.requestermodule));          
+           //console.log(JSON.stringify(this.$store.state.requestermodule));          
         });
     },
     change() {
@@ -191,10 +203,10 @@ export default {
         }
         this.bFormSigned=false;
         this.$store.commit("requestermodule/sSignatureData", '');
-        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
-        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
-        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-        this.$vuetify.theme.dark = true;
+        // this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        // this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        // this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        // this.$vuetify.theme.dark = true;
         this.$store.commit("ConfigModule/mutatePreviousIndex");
        
     },
@@ -207,10 +219,10 @@ export default {
       .post("Wizards/GenerateXML/", 
       this.$store.state.requestermodule,
       )
-        this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
-        this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
-        this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-        this.$vuetify.theme.dark = true;
+        // this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
+        // this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
+        // this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
+        // this.$vuetify.theme.dark = true;
         
        this.$store.commit("ConfigModule/mutateNextIndex");
     }

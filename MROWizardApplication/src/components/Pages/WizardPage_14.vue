@@ -167,21 +167,18 @@
               </v-col>
             </div>
           </v-col>
-        </v-layout>
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTPatientPortal'">
-          <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
+        </v-layout>      
         <div v-if="sSelectedShipmentTypes[0]=='MROSTEmail'">
           <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.prevent="nextPage" class="next">Next</v-btn>
         </div>
         <div v-if="sSelectedShipmentTypes[0]=='MROSTMail'">
           <v-btn :disabled="$v.sSTAddStreetAddress.$invalid || $v.sSTAddCity.$invalid || $v.sSTAddState.$invalid || $v.sSTAddZipCode.$invalid " @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTPatientPickUp'">
-          <v-btn  @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
+        </div>        
         <div v-if="sSelectedShipmentTypes[0]=='MROSTFax'">
           <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.sSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
+        </div>
+        <div v-if="sSelectedShipmentTypes[0]!='MROSTEmail' && sSelectedShipmentTypes[0]!='MROSTMail' && sSelectedShipmentTypes[0]!='MROSTFax'">
+          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.prevent="nextPage" class="next">Next</v-btn>
         </div>
       </form>
     </template>

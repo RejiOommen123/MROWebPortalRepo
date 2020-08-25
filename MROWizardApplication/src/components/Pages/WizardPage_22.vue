@@ -34,7 +34,7 @@
           <v-col cols="4"  sm="4">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
+                <v-btn :disabled="diableCamera" @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
                   <v-icon dark>mdi-camera</v-icon>
                 </v-btn>
               </template>
@@ -71,6 +71,9 @@
               <span>Upload Image</span>
             </v-tooltip>
           </v-col>
+          <v-col cols="12" sm="12">
+            <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+          </v-col>
           <!-- <v-col cols="12" sm="12"> -->
              <!-- <select v-model="camera">
                             <option>-- Select Device --</option>
@@ -94,7 +97,7 @@
         </figure>
       </v-col>
       <v-col cols="6" offset-sm="2" sm="3">
-        <v-btn class="next" @click="sStatus='CapturingImg'">Capture Again</v-btn>
+        <v-btn class="next" @click="sStatus='CapturingImg'">Retake</v-btn>
       </v-col>
       <v-col cols="6" offset-sm="2" sm="3">
         <v-btn class="next" @click="nextPage">Next</v-btn>
@@ -119,6 +122,7 @@
             v-model="fileInput"
             chips
             show-size
+            color="white"
             dense
             hint="Upload Identity Document Image"
             rounded
@@ -132,19 +136,31 @@
             @input="$v.fileInput.$touch()"
             @blur="$v.fileInput.$touch()"
           >
+            <template v-slot:selection="{ text }">
+                  <v-chip
+                    small
+                    label
+                    color="primary"
+                  >
+                    {{ text }}
+                  </v-chip>
+                </template>
             <v-tooltip slot="append" top>
               <template v-slot:activator="{ on }">
-                <v-icon style="cursor:pointer" v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
+                <v-icon style="cursor:pointer" v-on="on" color="white" top>mdi-information</v-icon>
               </template>
-              <span>Please upload identity image document.</span>
+              <span >Please upload identity image document.</span>
             </v-tooltip>
           </v-file-input>
           <v-row>
-          <v-col cols="6" sm="6">
-            <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
+          <v-col cols="6" sm="4">
+            <v-btn type="button" :disabled="diableCamera" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
           </v-col>
-           <v-col cols="6" sm="6">
-            <v-btn type="button" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
+          <v-col cols="6" sm="4">
+            <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
+          </v-col>           
+          <v-col cols="12" sm="4">
+            <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
           </v-col>
           </v-row>
         </form>
@@ -194,6 +210,7 @@ export default {
       fileInput: "",
       bShowImage: "",
       dialog:true,
+      diableCamera:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };
   },
@@ -206,15 +223,27 @@ export default {
   activated(){
     // this.sStatus="";
     // this.sStatus="CapturingImg";
-    console.log(this.devices);
+    var ua = window.navigator.userAgent;
+    var isIE = /MSIE|Trident/.test(ua);
+
+    if (isIE && this.sStatus != "UploadImg") {
+      alert("Camera doesn't work in this browser. No worries you can upload image.");
+      this.sStatus = "UploadImg";
+      this.diableCamera=true;
+    }
+    // console.log(this.devices);
     if(this.devices.length!=0){
-      this.$refs.webcam.start();
+      if(this.$refs.webcam!=undefined){
+        this.$refs.webcam.start();
+      }
     }
   },
   deactivated(){
-    console.log(this.devices);
+    // console.log(this.devices);
     if(this.devices.length!=0){
-      this.$refs.webcam.stop();
+      if(this.$refs.webcam!=undefined){
+        this.$refs.webcam.stop();
+      }
     }
   },
   created() {
@@ -234,7 +263,7 @@ export default {
   watch: {
     camera: function(id) {
       this.deviceId = id;
-      console.log("watch camera - deviceId - "+this.deviceId);
+      // console.log("watch camera - deviceId - "+this.deviceId);
     },
     devices: function() {
       // Once we have a list select the first one
@@ -244,7 +273,7 @@ export default {
         this.camera = first.deviceId;
         this.deviceId = first.deviceId;
       }
-      console.log("watch devices - deviceId - " + this.deviceId);
+      // console.log("watch devices - deviceId - " + this.deviceId);
     }
   },
   methods: {
@@ -278,11 +307,11 @@ export default {
     },
     onStop() {
       this.$refs.webcam.stop();
-      console.log("On Cameras start ");
+      // console.log("On Cameras start ");
     },
     onStart() {
       this.$refs.webcam.start();
-      console.log("On Cameras stop ");
+      // console.log("On Cameras stop ");
     },
     onError(error) {
       if (error.name == "NotFoundError") {
@@ -292,17 +321,29 @@ export default {
     },
     onCameras(cameras) {
       this.devices = cameras;
-      console.log("On Cameras " +cameras);
+      // console.log("On Cameras " +cameras);
     },
     onCameraChange(deviceId) {
       this.deviceId = deviceId;
       this.camera = deviceId;
-       console.log('On Camera Change Event', deviceId)
+      //  console.log('On Camera Change Event', deviceId)
+    },
+    skipPage(){
+      this.$store.commit("ConfigModule/bIdentitySkiped", true);
+      this.$store.commit("requestermodule/sIdentityIdName", '');   
+      this.$store.commit("requestermodule/sIdentityImage", '');
+      this.sIdentityImage='';
+      this.fileInput='';
+      this.$v.fileInput.$reset();
+      this.sStatus="CapturingImg";
+      this.continue();
     },
     nextPage() {
-
+      this.$store.commit("ConfigModule/bIdentitySkiped", false);
       this.$store.commit("requestermodule/sIdentityImage", this.sIdentityImage);
-
+      this.continue();
+    },
+    continue(){
       //Partial Requester Data Save Start
       this.$store.commit(
         "requestermodule/sWizardName",
@@ -319,13 +360,12 @@ export default {
           });
       }
       //Partial Requester Data Save End
-      console.log(JSON.stringify(this.$store.state.requestermodule));
-      this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
-      this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
-      this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
-      this.$vuetify.theme.dark = false;
+      // console.log(JSON.stringify(this.$store.state.requestermodule));
+      // this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
+      // this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
+      // this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
+      // this.$vuetify.theme.dark = false;
       this.$store.commit("ConfigModule/mutateNextIndex");
-
     },
     onFileChanged(file) {
       if (file) {
@@ -342,3 +382,9 @@ export default {
   }
 };
 </script>
+<style>
+.v-tooltip__content{
+  color: black;
+  background: white;
+}
+</style>

@@ -5,11 +5,16 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Services;
+using Renci.SshNet;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace MROWebApi.Controllers
 {
@@ -73,12 +78,14 @@ namespace MROWebApi.Controllers
                 var SRArray = requester.sSelectedRecordTypes.Length != 0 ? string.Join(",", requester.sSelectedRecordTypes) : "";
                 var STArray = requester.sSelectedShipmentTypes.Length != 0 ? string.Join(",", requester.sSelectedShipmentTypes) : "";
                 var SIArray = requester.sSelectedSensitiveInfo.Length != 0 ? string.Join(",", requester.sSelectedSensitiveInfo) : "";
-                var relativeFileArray = requester.sRelativeFileArray.Length != 0 ? string.Join(",", requester.sRelativeFileArray) : "";
+                var relativeFileArray = requester.sRelativeFileArray.Length != 0 ? string.Join("_", requester.sRelativeFileArray) : "";
+                var relativeFileNameArray = requester.sRelativeFileNameArray.Length != 0 ? string.Join("/", requester.sRelativeFileNameArray) : "";
                 requester.sSelectedPrimaryReasons = new string[] { PRArray };
                 requester.sSelectedRecordTypes = new string[] { SRArray };
                 requester.sSelectedShipmentTypes = new string[] { STArray };
                 requester.sSelectedSensitiveInfo = new string[] { SIArray };
                 requester.sRelativeFileArray = new string[] { relativeFileArray };
+                requester.sRelativeFileNameArray = new string[] { relativeFileNameArray };
                 #endregion
 
                 int nRequesterId = 0;
@@ -93,6 +100,123 @@ namespace MROWebApi.Controllers
                     if ((requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_24")|| (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25"))
                     {
                         nRequesterId = await requestersFac.UpdateRequesterFeedback(requester.nRequesterID,requester.bRequestAnotherRecord,requester.nFeedbackRating,requester.sFeedbackComment,requester.sWizardName);
+                        if (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25")
+                        {
+                            FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                            Facilities facility = await rpFac.Select(requester.nFacilityID);
+                            XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+                            //{
+                            //    OmitXmlDeclaration = false,
+                            //    Encoding = Encoding.UTF8,
+                            //    ConformanceLevel = ConformanceLevel.Document
+                            //};
+
+                            //XmlWriterSettings settings = new XmlWriterSettings(); 
+                            xmlWriterSetting.Indent = true;
+                            xmlWriterSetting.Encoding = Encoding.UTF8;
+
+                            var xmlString = new StringWriterWithEncoding(Encoding.UTF8);
+
+                            //StringBuilder xmlString = new StringBuilder();
+                            using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
+                            writer.WriteStartElement("request");
+                            writer.WriteStartElement("detail");
+                            writer.WriteStartElement("facilityrequester");
+                            writer.WriteElementString("id", requester.nRequesterID.ToString());
+                            writer.WriteEndElement();
+                            writer.WriteEndElement();                            
+                            writer.WriteStartElement("facility");
+                            writer.WriteElementString("value", facility.nROIFacilityID.ToString());
+                            writer.WriteElementString("name", facility.sFacilityName.ToString());
+                            writer.WriteElementString("id", facility.nFacilityID.ToString());
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("feedback");
+                            writer.WriteElementString("rating",requester.nFeedbackRating.ToString());
+                            writer.WriteElementString("comment",requester.sFeedbackComment);
+                            writer.WriteEndElement();
+                            writer.WriteEndElement();
+                            writer.Flush();
+
+                            #region Decrypt FTP Password
+                            MROLogger password = new MROLogger(_info);
+                            facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
+                            #endregion
+
+                            //XML File Genration 
+                            //File Name
+                            string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + "_" + Guid.NewGuid().ToString() + ".xml";
+
+                            if ((facility.sFTPUrl.ToLower().Contains("ftp://")
+                                && !facility.sFTPUrl.ToLower().Contains("sftp://"))
+                                || facility.sFTPUrl.ToLower().Contains("ftps://"))
+                            {
+                                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + sXMLFileName);
+
+                                #region Request Params
+                                request.Method = WebRequestMethods.Ftp.UploadFile;
+                                request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
+                                request.UsePassive = true;
+                                request.UseBinary = true;
+                                request.KeepAlive = false;
+                                request.EnableSsl = true;
+                                #endregion
+
+                                byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+
+                                //Upload file
+                                try
+                                {
+                                    Stream reqStream = request.GetRequestStream();
+                                    reqStream.Write(buffer, 0, buffer.Length);
+                                    reqStream.Close();
+                                }
+                                catch (Exception ex)
+                                {
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp", ex.Message, _info);
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    string sFTPURL = facility.sFTPUrl.ToLower();
+                                    if (sFTPURL.Contains("sftp://"))
+                                    {
+                                        sFTPURL = sFTPURL.Replace("sftp://", "");
+                                    }
+                                    string sDomanName, sFolderPath = string.Empty;
+                                    string[] sFtpFolderPath = sFTPURL.Split(".com");
+                                    if (sFtpFolderPath.Length == 2)
+                                    {
+                                        sDomanName = sFtpFolderPath[0] + ".com";
+                                        sFolderPath = sFtpFolderPath[1];
+                                    }
+                                    else
+                                    {
+                                        sDomanName = sFtpFolderPath[0] + ".com";
+                                        sFolderPath = "/";
+                                    }
+
+                                    byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+                                    Stream stream = new MemoryStream(buffer);
+
+                                    ////Passing the sftp host without the "sftp://"
+                                    var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
+                                    client.Connect();
+                                    if (client.IsConnected)
+                                    {
+                                        client.UploadFile(stream, sFolderPath + sXMLFileName, null);
+                                        client.Disconnect();
+                                        client.Dispose();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP", ex.Message, _info);
+                                }
+                            }
+
+                        }
                     }
                     else { 
                         requestersFac.Update(requester);

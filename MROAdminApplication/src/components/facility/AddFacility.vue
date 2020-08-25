@@ -43,7 +43,48 @@
               :error-messages="sDescriptionErrors"
               solo
             ></v-text-field>
-            <label for="sSMTPUsername">SMTP Username:</label>
+            <label for="sSMTPUsername">SMTP Username:   
+              <v-dialog v-model="SMTPTestDialog" persistent max-width="400">
+                <template v-slot:activator="{ on, attrs }">
+                 <v-btn height="16px" icon v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="SMTPTestDialog=true"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"                      
+                    >mdi-email</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Test SMTP</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="12">
+                          <v-text-field 
+                          label="Enter Email" 
+                          v-model="sToTestEmail" 
+                          required
+                          @input="$v.sToTestEmail.$touch()"
+                          @blur="$v.sToTestEmail.$touch()"
+                          :error-messages="sToTestEmailErrors"
+                          >
+                          </v-text-field>
+                        </v-col>              
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="SMTPTestDialog = false">Close</v-btn>
+                    <v-btn color="blue darken-1" :disabled="$v.sToTestEmail.$invalid" text @click="testSMTP()">Send</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>  
+              </label>     
             <v-text-field
               type="text"
               id="sSMTPUsername"
@@ -180,6 +221,30 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+        <!-- SMTP Test Dialogs -->
+        <v-dialog
+          v-model="SMTPResponseDialog"
+          max-width="400"
+        >
+        
+        <v-card>
+          <v-card-title class="headline">{{SMTPStatus}}</v-card-title>
+          <v-card-text>
+            {{SMTPResponseMsg}}
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="SMTPResponseDialog = false"
+            >
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
   </div>
 </template>
 
@@ -197,6 +262,9 @@ export default {
   validations: {
     nConnectionId: {
       required
+    },
+    sToTestEmail:{
+      required, email
     },
     facility: {
       sFacilityName: {
@@ -242,6 +310,15 @@ export default {
       if (!this.$v.nConnectionId.$dirty) return errors;
       !this.$v.nConnectionId.required &&
         errors.push("Connection String is required.");
+      return errors;
+    },
+    sToTestEmailErrors() {
+      const errors = [];
+      if (!this.$v.sToTestEmail.$dirty) return errors;
+      !this.$v.sToTestEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      !this.$v.sToTestEmail.required &&
+        errors.push("Email is required.");
       return errors;
     },
     sFacilityNameErrors() {
@@ -342,6 +419,11 @@ export default {
       connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
+      SMTPTestDialog:false,
+      SMTPResponseDialog:false,
+      SMTPStatus:'',
+      SMTPResponseMsg:'',
+      sToTestEmail:'',
       nConnectionId:null,
       facility: {
         nFacilityID: 0,
@@ -395,6 +477,40 @@ export default {
           if (error.status == 400) {
             this.dialogLoader = false;
             this.sameNameAlert = true;
+          }
+          console.log(error.body);
+        }
+      );
+    },
+    testSMTP(){
+      // API Call to Test SMTP
+      this.SMTPTestDialog = false
+      this.dialogLoader =true;
+      var testSMTPData= {
+        sSMTPUsername: this.facility.sSMTPUsername,
+        sSMTPPassword: this.facility.sSMTPPassword,
+        sSMTPUrl: this.facility.sSMTPUrl,
+        sOutboundEmail: this.facility.sOutboundEmail,
+        sToTestEmail: this.sToTestEmail,
+      }
+      this.$http.post("facility/TestSMTPDetails", testSMTPData).then(
+        response => {
+          if (response.ok == true) {
+            this.dialogLoader =false;    
+            this.SMTPStatus='Info';
+            this.SMTPResponseMsg='Test email sent successfully';
+            this.SMTPResponseDialog=true;   
+          }
+        },
+        error => {
+          // Error Callback
+          if (
+            error.status == 400 
+          ) {
+            this.dialogLoader =false;
+            this.SMTPStatus='Error - Something went wrong';
+            this.SMTPResponseMsg=error.body;
+            this.SMTPResponseDialog=true;   
           }
           console.log(error.body);
         }
