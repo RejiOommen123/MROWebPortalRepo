@@ -76,7 +76,7 @@
             <label for="sAuthTemplate">Authorization Template:
                <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon :disabled="location.sAuthTemplate==''" v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                  <v-btn icon :disabled="location.sAuthTemplate=='' || location.sAuthTemplate==null" v-bind="attrs" v-on="on" class="ma-0 pa-0">
                     <v-icon
                       @click="previewPDF(0)"
                       small
@@ -253,6 +253,9 @@
           >
             Next
           </v-btn>          
+            <v-btn style="font-size:36px;color:black"  icon  @click="previewPDFDialog=false">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn> 
           </v-card-title>       
 
         <v-card-text class="scroll">
@@ -436,7 +439,7 @@ export default {
         },
         response => {
           // error callback
-          this.gridData = response.body;
+          this.gridData = response.body;          
         }
       );
   },
