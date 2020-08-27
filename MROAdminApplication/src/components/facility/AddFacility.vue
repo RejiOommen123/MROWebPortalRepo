@@ -191,11 +191,11 @@
         </v-row>
         <div class="submit">
           <v-btn to="/facility" type="button" color="primary">Cancel</v-btn>
-          <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
+          <v-btn type="submit" color="primary" :disabled="$v.facility.$invalid || $v.nConnectionId.$invalid">Save</v-btn>
           <v-btn
             @click="goToLoc"
             type="button"
-            :disabled="this.$v.$invalid"
+            :disabled="$v.facility.$invalid || $v.nConnectionId.$invalid"
             color="primary"
           >Save & Add Location</v-btn>
         </div>

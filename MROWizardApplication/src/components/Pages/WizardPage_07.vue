@@ -27,7 +27,7 @@
             :error-messages="cityErrors"
             label="CITY"
             required
-            maxlength="50"
+            maxlength="20"
             @input="$v.sAddCity.$touch()"
             @blur="$v.sAddCity.$touch()"
           ></v-text-field>
@@ -38,8 +38,8 @@
             :error-messages="stateErrors"
             label="STATE"
             required
-            maxlength="50"
-            @input="$v.sAddState.$touch()"
+            maxlength="2"
+            @input="sAddStateToUpper"
             @blur="$v.sAddState.$touch()"
           ></v-text-field>
         </v-col>
@@ -52,8 +52,7 @@
             required
             @input="$v.sAddZipCode.$touch()"
             @blur="$v.sAddZipCode.$touch()"
-            minlength="5"
-            maxlength="5"
+            maxlength="10"
           ></v-text-field>
         </v-col>
         <v-col cols="12" offset-sm="2" sm="8">
@@ -71,7 +70,6 @@ import { validationMixin } from "vuelidate";
 import {
   required,
   maxLength,
-  minLength,
   numeric
 } from "vuelidate/lib/validators";
 export default {
@@ -96,8 +94,7 @@ export default {
   validations: {
     sAddZipCode: {
       required,
-      maxLength: maxLength(5),
-      minLength: minLength(5),
+      maxLength: maxLength(10),
       numeric
     },
     sAddCity: { required },
@@ -109,8 +106,7 @@ export default {
     sAddZipCodeErrors() {
       const errors = [];
       if (!this.$v.sAddZipCode.$dirty) return errors;
-      !this.$v.sAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
-      !this.$v.sAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sAddZipCode.maxLength && errors.push("ZipCode must be 10 digit");
       !this.$v.sAddZipCode.numeric && errors.push("ZipCode must me numeric.");
       !this.$v.sAddZipCode.required && errors.push("ZipCode is required.");
       return errors;
@@ -136,6 +132,9 @@ export default {
     }
   },
   methods: {
+    sAddStateToUpper(val) {
+      this.sAddState = val.toUpperCase()
+    },
     nextPage() {
 
       this.$store.commit("requestermodule/sAddZipCode", this.sAddZipCode);

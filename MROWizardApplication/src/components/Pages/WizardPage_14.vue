@@ -90,7 +90,7 @@
                   :error-messages="cityErrors"
                   label="CITY"
                   required
-                  maxlength="50"
+                  maxlength="20"
                   @input="$v.sSTAddCity.$touch()"
                   @blur="$v.sSTAddCity.$touch()"
                 ></v-text-field>
@@ -101,8 +101,8 @@
                   :error-messages="stateErrors"
                   label="STATE"
                   required
-                  maxlength="50"
-                  @input="$v.sSTAddState.$touch()"
+                  maxlength="2"
+                  @input="sSTAddStateToUpper"
                   @blur="$v.sSTAddState.$touch()"
                 ></v-text-field>
               </v-col>
@@ -115,8 +115,7 @@
                   required
                   @input="$v.sSTAddZipCode.$touch()"
                   @blur="$v.sSTAddZipCode.$touch()"
-                  minlength="5"
-                  maxlength="5"
+                  maxlength="10"
                 ></v-text-field>
               </v-col>
               </v-row>
@@ -187,7 +186,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, email, sameAs, numeric ,maxLength,minLength} from "vuelidate/lib/validators";
+import { required, email, sameAs, numeric ,maxLength} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_14",
   data() {
@@ -237,8 +236,7 @@ export default {
     },
     sSTAddZipCode: {
       required,
-      maxLength: maxLength(5),
-      minLength: minLength(5),
+      maxLength: maxLength(10),
       numeric
     },
     sSTAddCity: { required },
@@ -282,8 +280,7 @@ export default {
     sSTAddZipCodeErrors() {
       const errors = [];
       if (!this.$v.sSTAddZipCode.$dirty) return errors;
-      !this.$v.sSTAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
-      !this.$v.sSTAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sSTAddZipCode.maxLength && errors.push("ZipCode must be 10 digit");
       !this.$v.sSTAddZipCode.numeric && errors.push("ZipCode must me numeric.");
       !this.$v.sSTAddZipCode.required && errors.push("ZipCode is required.");
       return errors;
@@ -309,6 +306,9 @@ export default {
     },
   },
   methods: {
+    sSTAddStateToUpper(val) {
+      this.sSTAddState = val.toUpperCase()
+    },
     nextPage() {
       // Before switching shipment type reset state data for shipment type
         this.resetSTState();

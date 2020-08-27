@@ -129,7 +129,7 @@ namespace MROWebApi.Controllers
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                 FacilityLocations location = await locaFac.Select(requester.nLocationID);
 
-                byte[] signedPDF = await GetSignedPDF(requester);
+                byte[] signedPDF = await GetSignedPDF(requester,facility,location);
 
                 requester.sPDF = Convert.ToBase64String(signedPDF);
                 requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
@@ -674,11 +674,35 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GeneratePDF(Requesters requester)
+        public async Task<IActionResult> GeneratePDF(TestPdf testPdf)
         {
             if (ModelState.IsValid)
             {
-                byte[] pdfBytes = await GetSignedPDF(requester);
+                byte[] pdfBytes;
+                if (testPdf.bIsTestRequest)
+                {
+                    Facilities facility = new Facilities()
+                    {
+                        sFacilityName = "Test Facility"
+                    };
+                    FacilityLocations location = new FacilityLocations()
+                    {
+                        sAuthTemplate = testPdf.sAuthTemplate
+                    };
+
+                    pdfBytes = await GetSignedPDF(testPdf.oRequester,facility,location);
+                }
+                else {
+
+                    FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                    Facilities dbFacility = await fRep.Select(testPdf.oRequester.nFacilityID);
+
+
+                    FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+                    FacilityLocations location = await locRepo.Select(testPdf.oRequester.nLocationID);
+
+                    pdfBytes = await GetSignedPDF(testPdf.oRequester, dbFacility, location);
+                }
                 return File(pdfBytes, "application/pdf");
             }
             else
@@ -689,12 +713,10 @@ namespace MROWebApi.Controllers
                 return BadRequest(errors);
             }
         }
-        private async Task<byte[]> GetSignedPDF(Requesters requester)
+        private async Task<byte[]> GetSignedPDF(Requesters requester, Facilities dbFacility, FacilityLocations location)
         {
             try
             {
-                FacilitiesRepository fRep = new FacilitiesRepository(_info);
-                Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
                 allFields.Add("MROFacilityName", dbFacility.sFacilityName);
@@ -969,8 +991,6 @@ namespace MROWebApi.Controllers
                 allFields.Add("MROTodaysDate", DateTime.Now.ToString("MM-dd-yyyy"));
 
 
-                FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-                FacilityLocations location = await locRepo.Select(requester.nLocationID);
                 location.sAuthTemplate = location.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
                 byte[] pdfByteArray = Convert.FromBase64String(location.sAuthTemplate);
 

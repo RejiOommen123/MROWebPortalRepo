@@ -73,7 +73,22 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
-            <label for="sAuthTemplate">Authorization Template:</label>
+            <label for="sAuthTemplate">Authorization Template:
+               <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon :disabled="location.sAuthTemplate==''" v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="previewPDF(0)"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-file</v-icon>
+                  </v-btn>
+                </template>
+                <span>Preview PDF</span>
+              </v-tooltip>
+            </label>
             <v-file-input
             ref="sPDFFile"
               chips
@@ -210,10 +225,61 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- PDF Preview Dialog -->
+    <v-dialog
+      v-model="previewPDFDialog"
+      max-width="80%"
+      content-class="pdfPreviewScroll"
+    >
+      <v-card>      
+          
+        <v-card-title class="headline justify-center">
+          <v-btn
+            color="green darken-1"
+            text
+            @click="previousPage()"
+            :disabled="previewPDFPage==0"
+          >
+            Previous
+          </v-btn>
+          <v-spacer></v-spacer>
+          <h3>Requester Sample Data</h3>
+           <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="nextPage()"
+            :disabled="previewPDFPage==4"
+          >
+            Next
+          </v-btn>          
+          </v-card-title>       
+
+        <v-card-text class="scroll">
+        <pdf          
+          v-for="i in numPages"
+          :key="i"
+          :src="src"
+          :page="i"
+          class="pdfViewer"
+        ></pdf>
+        </v-card-text>
+
+        <v-card-actions>        
+          <v-spacer></v-spacer>
+          Requester Sample Data - {{previewPDFPage+1}}/5
+        
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
   </div>
 </template>
 
 <script>
+import MY_JSON from '../../../assets/json/data.json'
+import pdf from "vue-pdf";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -222,6 +288,11 @@ import {
   numeric
 } from "vuelidate/lib/validators";
 export default {
+    //custom option named myJson
+  myJson: MY_JSON,
+  components:{
+    pdf
+  },
   mixins: [validationMixin],
   validations: {
     location: {
@@ -325,6 +396,10 @@ export default {
       authDocNotAdded:false,
       authDocErrorsText:'',
       authDocErrors:false,
+      previewPDFDialog:false,
+      previewPDFPage:0,
+      src: undefined,
+			numPages: undefined,
       location: {
         nROIFacilityID: null,
         nFacilityID: null,
@@ -447,6 +522,41 @@ export default {
         this.location.sConfigBackgroundData = "";
       }
     },
+     previousPage(){
+      this.previewPDFPage=this.previewPDFPage-1;
+      this.previewPDF(this.previewPDFPage);
+    },
+    nextPage(){
+      this.previewPDFPage=this.previewPDFPage+1;
+      this.previewPDF(this.previewPDFPage);
+    },
+    previewPDF(pageNo){
+      this.previewPDFPage=pageNo;
+      this.dialogLoader=true;
+      var combinedObj = {
+        oRequester: this.$options.myJson[pageNo],
+        bIsTestRequest: true,
+        sAuthTemplate: this.location.sAuthTemplate,
+      };           
+      this.$http
+        .post("wizards/GeneratePDF/", 
+        combinedObj,
+        {
+          responseType: "arraybuffer"
+        })
+        .then(response => {
+          let blobFile = new Blob([response.data], { type: "application/pdf" });
+          var fileURL = URL.createObjectURL(blobFile);
+          // this.pdfURL = fileURL;
+          this.src = pdf.createLoadingTask(fileURL);
+          this.src.promise.then(pdf => {
+
+              this.numPages = pdf.numPages;
+              this.dialogLoader=false;
+              this.previewPDFDialog=true;   
+            });          
+        });
+    },
     // API to Update location
     onSubmit() {
       this.dialogLoader =true;
@@ -543,5 +653,9 @@ label {
 }
 button{
   margin-right: 1em;
+}
+.scroll{
+  height: 80vh;
+  overflow-y:auto;
 }
 </style>

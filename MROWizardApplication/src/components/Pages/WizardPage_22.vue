@@ -119,8 +119,8 @@
             <br />
           </div>
           <v-file-input
+            ref="clearInput"
             v-model="fileInput"
-            chips
             show-size
             color="white"
             dense
@@ -130,12 +130,12 @@
             filled
             prepend-icon="mdi-camera"
             @change="onFileChanged"
-            accept="image/png, image/jpeg, image/bmp"
-            :error-messages="fileInputErrors"
+            accept="image/png, image/jpeg, image/jpg, image/bmp"     
+          >
+              <!-- :error-messages="fileInputErrors"
             required
             @input="$v.fileInput.$touch()"
-            @blur="$v.fileInput.$touch()"
-          >
+            @blur="$v.fileInput.$touch()" -->
             <template v-slot:selection="{ text }">
                   <v-chip
                     small
@@ -157,7 +157,7 @@
             <v-btn type="button" :disabled="diableCamera" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
           </v-col>
           <v-col cols="6" sm="4">
-            <v-btn type="button" :disabled="$v.$invalid" class="next" @click="nextPage">Save & Next</v-btn>
+            <v-btn type="button" :disabled="fileInput==''" class="next" @click="nextPage">Save & Next</v-btn>
           </v-col>           
           <v-col cols="12" sm="4">
             <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
@@ -188,12 +188,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+       <!-- Unsupported Format -->
+    <v-dialog v-model="unsupported" width="360px" light max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/PNG/BMP File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="unsupported=false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+// import { validationMixin } from "vuelidate";
+// import { required } from "vuelidate/lib/validators";
 import { WebCam } from "vue-web-cam";
 export default {
   name: "App",
@@ -211,15 +222,16 @@ export default {
       bShowImage: "",
       dialog:true,
       diableCamera:false,
+      unsupported:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };
   },
-  mixins: [validationMixin],
-  validations: {
-    fileInput: {
-      required
-    }
-  },
+  // mixins: [validationMixin],
+  // validations: {
+  //   fileInput: {
+  //     required
+  //   }
+  // },
   activated(){
     // this.sStatus="";
     // this.sStatus="CapturingImg";
@@ -253,12 +265,12 @@ export default {
     device: function() {
       return this.devices.find(n => n.deviceId === this.deviceId);
     },
-    fileInputErrors() {
-      const errors = [];
-      if (!this.$v.fileInput.$dirty) return errors;
-      !this.$v.fileInput.required && errors.push("File is required");
-      return errors;
-    }
+    // fileInputErrors() {
+    //   const errors = [];
+    //   if (!this.$v.fileInput.$dirty) return errors;
+    //   !this.$v.fileInput.required && errors.push("File is required");
+    //   return errors;
+    // }
   },
   watch: {
     camera: function(id) {
@@ -334,7 +346,6 @@ export default {
       this.$store.commit("requestermodule/sIdentityImage", '');
       this.sIdentityImage='';
       this.fileInput='';
-      this.$v.fileInput.$reset();
       this.sStatus="CapturingImg";
       this.continue();
     },
@@ -369,13 +380,24 @@ export default {
     },
     onFileChanged(file) {
       if (file) {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.sIdentityImage = reader.result; //base64encoded string
-        });
-        reader.readAsDataURL(file);
-        this.bShowImage = file.name;
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            this.sIdentityImage = reader.result; //base64encoded string
+          });
+          reader.readAsDataURL(file);
+          this.bShowImage = file.name;
+        }
+        else{
+          this.fileInput = "";
+          this.bShowImage = "";
+          this.$refs.clearInput.clearableCallback();
+          this.unsupported=true;
+        }
       } else {
+        this.fileInput = "";
         this.bShowImage = "";
       }
     }
