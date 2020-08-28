@@ -119,6 +119,10 @@ namespace MROWebApi.Controllers
                     List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
                     foreach (var shipmentType in STList)
                     {
+                        if (shipmentType.nFieldOrder == null)
+                        {
+                            shipmentType.nFieldOrder = 1;
+                        }
                         shipmentTypeList.Add(
                             new FacilityShipmentTypes()
                             {
@@ -138,6 +142,10 @@ namespace MROWebApi.Controllers
                     List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
                     foreach (var primaryReason in PRList)
                     {
+                        if (primaryReason.nFieldOrder == null)
+                        {
+                            primaryReason.nFieldOrder = 1;
+                        }
                         primaryReasonsList.Add(
                             new FacilityPrimaryReasons()
                             {
@@ -157,6 +165,10 @@ namespace MROWebApi.Controllers
                     List<FacilitySensitiveInfo> sensitiveInfoList = new List<FacilitySensitiveInfo>();
                     foreach (var sensitiveInfo in SIList)
                     {
+                        if (sensitiveInfo.nFieldOrder == null)
+                        {
+                            sensitiveInfo.nFieldOrder = 1;
+                        }
                         sensitiveInfoList.Add(
                             new FacilitySensitiveInfo()
                             {
@@ -178,6 +190,10 @@ namespace MROWebApi.Controllers
                     List<FacilityRecordTypes> recordTypeList = new List<FacilityRecordTypes>();
                     foreach (var recordType in RTList)
                     {
+                        if (recordType.nFieldOrder == null)
+                        {
+                            recordType.nFieldOrder = 1;
+                        }
                         recordTypeList.Add(
                             new FacilityRecordTypes()
                             {

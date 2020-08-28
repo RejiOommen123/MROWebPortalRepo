@@ -61,7 +61,7 @@
             :error-messages="cityErrors"
             label="CITY"
             required
-            maxlength="50"
+            maxlength="20"
             @input="$v.sRecipientAddCity.$touch()"
             @blur="$v.sRecipientAddCity.$touch()"
           ></v-text-field>
@@ -72,8 +72,8 @@
             :error-messages="stateErrors"
             label="STATE"
             required
-            maxlength="50"
-            @input="$v.sRecipientAddState.$touch()"
+            maxlength="2"
+            @input="sRecipientAddStateToUpper"
             @blur="$v.sRecipientAddState.$touch()"
           ></v-text-field>
         </v-col>
@@ -86,8 +86,7 @@
             required
             @input="$v.sRecipientAddZipCode.$touch()"
             @blur="$v.sRecipientAddZipCode.$touch()"
-            minlength="5"
-            maxlength="5"
+            maxlength="10"
           ></v-text-field>
         </v-col>
         <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
@@ -105,7 +104,6 @@ import { validationMixin } from "vuelidate";
 import {
   required,
   maxLength,
-  minLength,
   numeric
 } from "vuelidate/lib/validators";
 export default {
@@ -137,8 +135,7 @@ export default {
     sRecipientLastName: { required, maxLength: maxLength(30) },
     sRecipientAddZipCode: {
       required,
-      maxLength: maxLength(5),
-      minLength: minLength(5),
+      maxLength: maxLength(10),
       numeric
     },
     sRecipientAddCity: { required },
@@ -150,7 +147,7 @@ export default {
       const errors = [];
       if (!this.$v.sRecipientFirstName.$dirty) return errors;
       !this.$v.sRecipientFirstName.maxLength &&
-        errors.push("First Name must be at most 15 characters long");
+        errors.push("First Name must be at most 30 characters long");
       !this.$v.sRecipientFirstName.required &&
         errors.push("First Name is required.");
       return errors;
@@ -159,7 +156,7 @@ export default {
       const errors = [];
       if (!this.$v.sRecipientLastName.$dirty) return errors;
       !this.$v.sRecipientLastName.maxLength &&
-        errors.push("Last Name must be at most 15 characters long");
+        errors.push("Last Name must be at most 30 characters long");
       !this.$v.sRecipientLastName.required &&
         errors.push("Last Name is required.");
       return errors;
@@ -168,8 +165,7 @@ export default {
     sRecipientAddZipCodeErrors() {
       const errors = [];
       if (!this.$v.sRecipientAddZipCode.$dirty) return errors;
-      !this.$v.sRecipientAddZipCode.maxLength && errors.push("ZipCode must be 5 digit");
-      !this.$v.sRecipientAddZipCode.minLength && errors.push("ZipCode must be 5 digit");
+      !this.$v.sRecipientAddZipCode.maxLength && errors.push("ZipCode must be 10 digit");
       !this.$v.sRecipientAddZipCode.numeric && errors.push("ZipCode must me numeric.");
       !this.$v.sRecipientAddZipCode.required && errors.push("ZipCode is required.");
       return errors;
@@ -195,6 +191,9 @@ export default {
     }
   },
   methods: {
+    sRecipientAddStateToUpper(val) {
+      this.sRecipientAddState = val.toUpperCase()
+    },
     nextPage() {
       this.$store.commit("requestermodule/sRecipientFirstName",this.sRecipientFirstName);
       this.$store.commit("requestermodule/sRecipientLastName",this.sRecipientLastName);

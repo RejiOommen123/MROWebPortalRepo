@@ -183,6 +183,17 @@
       </form>
     </div>
     <div v-if="bAreYouPatient && disclaimer01!=null " class="disclaimer">{{this.disclaimer01}}</div>
+     <!-- Unsupported Format -->
+    <v-dialog v-model="unsupported" width="360px" light max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/PNG/PDF File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="unsupported=false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -208,6 +219,7 @@ export default {
       option:[],
       bShowOtherRelation:false,
       dialog:false,
+      unsupported:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer01,
@@ -310,14 +322,23 @@ export default {
       this.sRelativeFileArray=[];
       this.sRelativeFileNameArray=[];
       for( var i = 0; i < files.length; i++ ){        
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.sRelativeFileArray.push(reader.result);          
-        });
-        reader.readAsDataURL(files[i]);
-        this.sRelativeFileNameArray.push(this.files[i].name);
+        var file_name_array = files[i].name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "pdf"){
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            this.sRelativeFileArray.push(reader.result);          
+          });
+          reader.readAsDataURL(files[i]);
+          this.sRelativeFileNameArray.push(this.files[i].name);
+        }
+        else{
+          this.files=[];
+          this.unsupported=true;          
+          break;
+        }
       }    
-      if(files.length>0 && !this.$v.files.$invalid)
+      if(this.files.length>0 && !this.$v.files.$invalid)
       {
         this.dialog=true;
       }

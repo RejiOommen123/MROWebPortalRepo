@@ -244,7 +244,7 @@
           </v-col>
         </v-row>
         <div class="submit">
-          <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
+          <v-btn type="submit" color="primary" :disabled="$v.facility.$invalid">Save</v-btn>
           <v-btn to="/facility" type="button" color="primary">Cancel</v-btn>
         </div>
       </form>

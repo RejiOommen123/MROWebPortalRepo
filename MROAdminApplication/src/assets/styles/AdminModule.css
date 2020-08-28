@@ -148,3 +148,6 @@ html {
     margin-left: 7em;
     margin-top: 2em;
 }
+.pdfPreviewScroll{
+    overflow: hidden !important ;
+}

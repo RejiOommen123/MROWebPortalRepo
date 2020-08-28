@@ -125,13 +125,17 @@ export default {
     this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
     this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
     this.$vuetify.theme.dark = false;    
-
+     var combinedObj = {
+        oRequester: this.$store.state.requestermodule,
+        bIsTestRequest: false,
+        sAuthTemplate: '',
+      };  
 
     // this.$vuetify.theme.dark = false;
     this.dialogLoader=true;
     this.$http
       .post("wizards/GeneratePDF/", 
-      this.$store.state.requestermodule,
+      combinedObj,
       {
         responseType: "arraybuffer"
       })
@@ -162,12 +166,16 @@ export default {
       this.dialogLoader=true;
       const { data } = this.$refs.signaturePad.saveSignature();
       this.$store.commit("requestermodule/sSignatureData", data);
-
+      var combinedObj = {
+        oRequester: this.$store.state.requestermodule,
+        bIsTestRequest: false,
+        sAuthTemplate: '',
+      };   
       this.$http
       
         .post(
           "wizards/GeneratePDF/",
-          this.$store.state.requestermodule,
+          combinedObj,
           { responseType: "arraybuffer" }
         )
         .then(response => {
