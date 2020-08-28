@@ -34,6 +34,43 @@
           >Manage Facilities</router-link>
         </li>
         <li>
+          <v-menu open-on-hover bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"                
+                v-bind="attrs"
+                v-on="on"
+                text
+              >
+                Master
+              </span>
+            </template>
+
+            <v-list>
+              <v-list-item
+              to="/master/primaryreason"
+              >
+                <v-list-item-title>Primary Reason</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+              to="/master/recordtype"
+              >
+                <v-list-item-title>Record Type</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+              to="/master/sensitiveinfo"
+              >
+                <v-list-item-title>Sensitive Info</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+              to="/master/shipmenttype"
+              >
+                <v-list-item-title>Shipment Type</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </li>
+        <li>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="#fba437" v-on:click="$adal.logout()" fab small dark v-bind="attrs" v-on="on">

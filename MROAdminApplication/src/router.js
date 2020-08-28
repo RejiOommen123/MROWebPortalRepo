@@ -9,6 +9,10 @@ import EditFacility from './components/facility/EditFacility.vue';
 import Locations from './components/facility/Locations/Locations.vue';
 import AddLocation from './components/facility/Locations/AddLocation.vue';
 import EditLocation from './components/facility/Locations/EditLocation.vue';
+import PrimaryReason from './components/master/PrimaryReason/PrimaryReason.vue';
+import RecordType from './components/master/RecordType/RecordType.vue';
+import SensitiveInfo from './components/master/SensitiveInfo/SensitiveInfo.vue';
+import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import store from './store';
 
 Vue.use(VueRouter);
@@ -83,6 +87,38 @@ const routes = [{
         component: EditFacility,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Edit Facility");
+            next()
+        }
+    },
+    {
+        path: '/Master/PrimaryReason',
+        component: PrimaryReason,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Primary Reason");
+            next()
+        }
+    },    
+    {
+        path: '/Master/RecordType',
+        component: RecordType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Record Type");
+            next()
+        }
+    },
+    {
+        path: '/Master/SensitiveInfo',
+        component: SensitiveInfo,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Sensitive Info");
+            next()
+        }
+    },
+    {
+        path: '/Master/ShipmentType',
+        component: ShipmentType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Shipment Type");
             next()
         }
     }
