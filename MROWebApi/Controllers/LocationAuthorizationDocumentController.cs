@@ -111,11 +111,41 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                                                             && frm.Name != "MROSignature03")
                     {
                         string sValue = null;
-                        string[] sa = frm.Name.Split('_');  //underscores allows fields to be concatinated
-                        foreach (string sName in sa)
+                        if (frm.Name.Contains('_'))
                         {
+                            string[] sa = frm.Name.Split('_');  //underscores allows fields to be concatinated
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                    sValue += sNewValue + " ";
+                            }
+                        }
+                        else if (frm.Name.Contains('-'))
+                        {
+                            string[] sa = frm.Name.Split('-');  //underscores allows fields to be concatinated
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                {
+                                    if (sNewValue != "")
+                                    {
+                                        sValue += sNewValue + ", ";                                  
+                                    }
+                                }
+                            }
+                            //remove ',' from end
+                            if (sValue != null) { 
+                                if (sValue.EndsWith(", "))
+                                {
+                                    sValue = sValue.Remove(sValue.Length - 2, 2);
+                                }
+                            }
+                        }
+                        else {
                             string sNewValue;
-                            if (InList(sName, allFields, out sNewValue))
+                            if (InList(frm.Name, allFields, out sNewValue))
                                 sValue += sNewValue + " ";
                         }
                         if (sValue == null)
@@ -227,7 +257,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         static bool InList(string sField, Dictionary<string, string> allFields, out string sValue)
         {
                       
-            sValue = sField;
+            sValue = "";
             string sFromList;
             //Split
             string[] sSplitConditionalValue = sField.Split("?");
