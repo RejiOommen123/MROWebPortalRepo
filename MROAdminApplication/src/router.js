@@ -11,6 +11,7 @@ import AddLocation from './components/facility/Locations/AddLocation.vue';
 import EditLocation from './components/facility/Locations/EditLocation.vue';
 import PrimaryReason from './components/master/PrimaryReason/PrimaryReason.vue';
 import RecordType from './components/master/RecordType/RecordType.vue';
+import AddRecordType from './components/master/RecordType/AddRecordType.vue';
 import SensitiveInfo from './components/master/SensitiveInfo/SensitiveInfo.vue';
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import store from './store';
@@ -103,6 +104,14 @@ const routes = [{
         component: RecordType,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Record Type");
+            next()
+        }
+    },
+    {
+        path: '/AddRecordType',
+        component: AddRecordType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Record Type");
             next()
         }
     },
