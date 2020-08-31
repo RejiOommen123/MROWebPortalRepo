@@ -12,6 +12,7 @@ import EditLocation from './components/facility/Locations/EditLocation.vue';
 import PrimaryReason from './components/master/PrimaryReason/PrimaryReason.vue';
 import RecordType from './components/master/RecordType/RecordType.vue';
 import AddRecordType from './components/master/RecordType/AddRecordType.vue';
+import EditRecordType from './components/master/RecordType/EditRecordType.vue';
 import SensitiveInfo from './components/master/SensitiveInfo/SensitiveInfo.vue';
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import store from './store';
@@ -108,10 +109,18 @@ const routes = [{
         }
     },
     {
-        path: '/AddRecordType',
+        path: '/RecordType/AddRecordType',
         component: AddRecordType,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Add Record Type");
+            next()
+        }
+    },
+    {
+        path: '/RecordType/EditRecordType/:id',
+        component: EditRecordType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Record Type");
             next()
         }
     },

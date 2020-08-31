@@ -11,7 +11,7 @@
           dark
           color="rgb(0, 91, 168)"
           id="addRecordType"
-          to="/AddRecordType"
+          to="/RecordType/AddRecordType"
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -46,11 +46,19 @@
         <template v-slot:item.actions="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditRecordType/'+item.facilities.nFacilityID">
+              <router-link class="mrorouterlink" :to="'/RecordType/EditRecordType/'+item.nRecordTypeID">
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
               </router-link>
             </template>
             <span>Edit Record Type</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn icon @click="deleteItem(item.nRecordTypeID, item.sRecordTypeName)">
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete Record Type</span>
           </v-tooltip>
           <!-- <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -84,17 +92,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Dialog Alert for 0 Locations -->
-    <!-- <v-dialog v-model="recordTypeAlert" max-width="360" width="350">
-      <v-card>
-        <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>To Active Facility atleast 1 Location must be Present</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="facilityAlert = false">Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
      <!-- Common Loader -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="rgb(0, 91, 168)" dark>
@@ -120,24 +117,17 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "facilities.sFacilityName",
+          value: "sRecordTypeName",
           width: "20%" 
         },
-        { text: "Description", value: "facilities.sDescription", width: "40%" },
-        { text: "Locations", value: "nFacLocCount", align: "center", width: "10%"},
-        {
-          text: "Patient Form",
-          value: "Fields",
-          sortable: false,
-          align: "center"
-        },
-        { text: "Active", value: "bActiveStatus"},
-        { text: "Edit", value: "actions", sortable: false}
+        { text: "Tooltip", value: "sFieldToolTip", width: "40%" },
+        { text: "Normalized Name", value: "sNormalizedRecordTypeName", width: "30%"},
+        { text: "Edit", value: "actions", align:"center", sortable: false}
       ],
       gridData: this.getGridData(),
       editedItem: {
-        nFacilityID: 0,
-        sFacilityName: ""
+        nRecordTypeID: 0,
+        sRecordTypeName: ""
       }
     };
   },
