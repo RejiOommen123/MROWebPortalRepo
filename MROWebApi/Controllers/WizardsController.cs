@@ -377,21 +377,6 @@ namespace MROWebApi.Controllers
                 requester.sPDF = new LocationAuthorizationDocumentController().GeneratePDFForXML(requester.sPDF, requester.sRelativeFileArray);
                 writer.WriteElementString("pdf", requester.sPDF);         
              
-                //writer.WriteStartElement("supporting_document");
-                //if (requester.sRelativeFileArray.Length>0 && requester.sRelativeFileNameArray.Length > 0) {
-                //    //Split string into arrays
-                //    string[] files = requester.sRelativeFileArray[0].Split("_");
-                //    string[] filesName = requester.sRelativeFileNameArray[0].Split("/");
-
-                //    for (int i=0; i < files.Length;i++)
-                //    {
-                //            writer.WriteStartElement("item");
-                //            writer.WriteElementString("name", filesName[i]);
-                //            writer.WriteElementString("data", files[i]);
-                //            writer.WriteEndElement();
-                //    }
-                //}
-
                 //writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.Flush();

@@ -564,7 +564,7 @@ export default {
             this.SMTPResponseMsg=error.body;
             this.SMTPResponseDialog=true;   
           }
-          console.log(error.body);
+          //console.log(error.body);
         }
       );
     },
@@ -590,7 +590,7 @@ export default {
             this.dialogLoader =false;
             this.sameNameAlert = true;
           }
-          console.log(error.body);
+          //console.log(error.body);
         }
         );
     }
