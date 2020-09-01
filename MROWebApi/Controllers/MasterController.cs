@@ -10,6 +10,7 @@ using MROWebApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -94,7 +95,9 @@ namespace MROWebApi.Controllers
                     recordType.nWizardID = 10;
                     recordType.dtLastUpdate = DateTime.Now;
                     //spaces remove
-                    //recordType.sNormalizedRecordTypeName = "MRO"+
+                   // string sNormalizedName = GetNormalizedName(recordType.sRecordTypeName);
+                    //recordType.sNormalizedRecordTypeName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
+
                     #endregion
 
                    // RecordTypesRepository rpFac = new RecordTypesRepository(_info);
@@ -177,5 +180,13 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
+
+        private string GetNormalizedName(string normalizedString)
+        {
+            string removedSpecialChar = Regex.Replace(normalizedString, @"[^0-9a-zA-Z]+", "");
+            string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
+            finalString = "MRO" + finalString;
+            return finalString;
+        }
     }
 }

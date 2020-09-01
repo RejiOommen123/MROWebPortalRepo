@@ -441,6 +441,17 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<string> GetNormalizedNameByMasterName(string sMasterName)
+        {
+            string SqlString = "spGetNormalizedNameByMasterName";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                string sNormalizedName = await db.QueryFirstAsync<string>(SqlString, new { @sMasterName = sMasterName }, commandType: CommandType.StoredProcedure);
+                return sNormalizedName;
+            }
+        }
+
 
         #endregion
     }
