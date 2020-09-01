@@ -95,8 +95,8 @@ namespace MROWebApi.Controllers
                     recordType.nWizardID = 10;
                     recordType.dtLastUpdate = DateTime.Now;
                     //spaces remove
-                   // string sNormalizedName = GetNormalizedName(recordType.sRecordTypeName);
-                    //recordType.sNormalizedRecordTypeName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
+                    string sNormalizedName = GetNormalizedName(recordType.sRecordTypeName);
+                    recordType.sNormalizedRecordTypeName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
 
                     #endregion
 
@@ -114,7 +114,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return BadRequest(ex);
+                    return BadRequest(ex.Message);
                 }
             }
             else
@@ -156,20 +156,27 @@ namespace MROWebApi.Controllers
                     }
                 //}
                 //FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                recordType.dtLastUpdate = DateTime.Now;
-                if (rtFac.Update(recordType))
+                try
                 {
-                    #region Logging
+                    recordType.dtLastUpdate = DateTime.Now;
+                    if (rtFac.Update(recordType))
+                    {
+                        #region Logging
 
-                    MROLogger logger = new MROLogger(_info);
-                    //string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
-                    //logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
+                        MROLogger logger = new MROLogger(_info);
+                        //string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
+                        //logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
 
-                    #endregion
-                    return Ok();
+                        #endregion
+                        return Ok();
+                    }
+                    else
+                    { return NotFound(); }
                 }
-                else
-                { return NotFound(); }
+                catch(Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
             else
             {
