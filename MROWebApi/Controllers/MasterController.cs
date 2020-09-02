@@ -94,6 +94,7 @@ namespace MROWebApi.Controllers
                     #region Data Addition ! from UI
                     recordType.nWizardID = 10;
                     recordType.dtLastUpdate = DateTime.Now;
+                    recordType.dtCreated = DateTime.Now;
                     //spaces remove
                     string sNormalizedName = GetNormalizedName(recordType.sRecordTypeName);
                     recordType.sNormalizedRecordTypeName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
@@ -105,9 +106,9 @@ namespace MROWebApi.Controllers
                     int GeneratedID = (int)rtFac.Insert(recordType);
 
                     #region Logging
-                        MROLogger logger = new MROLogger(_info);
-                    //string sDescription = "Admin with ID: " + recordType. + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
-                       // logger.LogAdminRecords(facility.nCreatedAdminUserID, sDescription, "Add Facility", "Add Facility");
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + recordType.nCreatedAdminUserID + " called Add Record Type Method & Created Record Type with ID: " + GeneratedID;
+                     logger.LogAdminRecords(recordType.nCreatedAdminUserID, sDescription, "Add Record Type", "Record Type");
                     #endregion
 
                     return Ok();
@@ -164,8 +165,8 @@ namespace MROWebApi.Controllers
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
-                        //string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
-                        //logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
+                        string sDescription = "Admin with ID: " + recordType.nUpdatedAdminUserID + " called Edit Record Type Method for Record Type ID: " + recordType.nRecordTypeID;
+                        logger.LogAdminRecords(recordType.nUpdatedAdminUserID, sDescription, "Edit Record Type", "Record Type");
 
                         #endregion
                         return Ok();
@@ -185,6 +186,36 @@ namespace MROWebApi.Controllers
                            .ToList();
                 return BadRequest(errors);
             }
+        }
+        #endregion
+        #region Delete RecordType      
+        [HttpGet("DeleteRecordType/sRecordTypeID={sRecordTypeID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        //public async Task<ActionResult<RecordTypes>> EditRecordType(int id, RecordTypes recordType)
+        public async Task<IActionResult> DeleteRecordType(string sRecordTypeID,string sAdminUserID)
+        {
+            RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+            bool resultRecordTypeID = int.TryParse(sRecordTypeID, out int nRecordTypeID);
+            bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
+            try
+                {
+                    if (rtFac.DeleteOneToMany(nRecordTypeID, "lnkFacilityRecordTypes"))
+                    {
+                        #region Logging
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Record Type Method for Record Type ID: " + sRecordTypeID;
+                        logger.LogAdminRecords(nAdminUserID, sDescription, "Delete Record Type", "Record Type");
+                        #endregion
+                        return Ok();
+                    }
+                    else
+                    { return BadRequest("Error occur while delete record"); }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
         }
         #endregion
 

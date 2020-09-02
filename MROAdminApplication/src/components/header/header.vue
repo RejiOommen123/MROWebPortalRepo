@@ -48,22 +48,22 @@
 
             <v-list>
               <v-list-item
-              to="/master/primaryreason"
+              to="/Master/primaryreason"
               >
                 <v-list-item-title>Primary Reason</v-list-item-title>
               </v-list-item>
               <v-list-item
-              to="/master/recordtype"
+              to="/Master/recordtype"
               >
                 <v-list-item-title>Record Type</v-list-item-title>
               </v-list-item>
               <v-list-item
-              to="/master/sensitiveinfo"
+              to="/Master/sensitiveinfo"
               >
                 <v-list-item-title>Sensitive Info</v-list-item-title>
               </v-list-item>
               <v-list-item
-              to="/master/shipmenttype"
+              to="/Master/shipmenttype"
               >
                 <v-list-item-title>Shipment Type</v-list-item-title>
               </v-list-item>

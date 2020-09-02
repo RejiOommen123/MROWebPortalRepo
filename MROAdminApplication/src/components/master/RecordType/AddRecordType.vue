@@ -14,6 +14,7 @@
               @blur="$v.recordType.sRecordTypeName.$touch()"
               :error-messages="sRecordTypeNameErrors"
               solo
+              maxlength="100"
             ></v-text-field>            
           </v-col>
           <v-col cols="12" md="5">
@@ -29,18 +30,18 @@
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="$v.recordType.$invalid">Save</v-btn>
-          <v-btn to="/master/recordtype" type="button" color="primary">Cancel</v-btn>          
+          <v-btn to="/Master/recordtype" type="button" color="primary">Cancel</v-btn>          
         </div>
       </form>
     </div>
-    <!-- Dialog Alert for Same name record type -->
-    <v-dialog v-model="sameNameAlert" width="350px" max-width="360px">
+    <!-- Dialog Alert for errors record type -->
+    <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Record Type with Same Name Exists</v-card-text>
+        <v-card-text>{{errorMessage}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="sameNameAlert = false">Ok</v-btn>
+          <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -69,7 +70,7 @@ export default {
     recordType: {
       sRecordTypeName: {
         required,
-        maxLength: maxLength(40),
+        maxLength: maxLength(100),
         minLength: minLength(2)
       }
     }
@@ -81,7 +82,7 @@ export default {
       !this.$v.recordType.sRecordTypeName.minLength &&
         errors.push("Record Type Name must be at least 2 characters long");
       !this.$v.recordType.sRecordTypeName.maxLength &&
-        errors.push("Record Type Name must be at most 40 characters long");
+        errors.push("Record Type Name must be at most 100 characters long");
       !this.$v.recordType.sRecordTypeName.required &&
         errors.push("Record Type Name is required.");
       return errors;
@@ -91,22 +92,25 @@ export default {
   data() {
     return {
       dialogLoader:false,
-      sameNameAlert: false,
+      errorAlert: false,
+      errorMessage:'',
       recordType: {
         nRecordTypeID: 0,
         sRecordTypeName: "",
         sNormalizedRecordTypeName: "",
-        dtLastUpdate: "",
         sFieldToolTip: "",
-        nWizardID: "",
+        nWizardID: 0,
+        nCreatedAdminUserID: this.$store.state.adminUserId,
+        nUpdatedAdminUserID: this.$store.state.adminUserId
       }
     };
   },
   methods: {  
     onSubmit() {
-      // API Call to add facility
+      // API Call to add record type
+      console.log(this.recordType)
       this.dialogLoader =true;
-      this.$http.post("master/AddRecordType", this.recordType).then(
+      this.$http.post("Master/AddRecordType", this.recordType).then(
         response => {
           if (response.ok == true) {
             this.dialogLoader =false;
@@ -120,7 +124,8 @@ export default {
             error.status == 400 
           ) {
             this.dialogLoader =false;
-            this.sameNameAlert = true;
+            this.errorMessage=error.body;
+            this.errorAlert = true;           
           }
           console.log(error.body);
         }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
-    public partial class PrimaryReasons
+    public partial class PrimaryReasons : CommonModel
     {
         #region Props
         [Dapper.Contrib.Extensions.Key]
@@ -15,7 +15,6 @@ namespace MRODBL.BaseClasses
         public string sNormalizedPrimaryReasonName { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Primary Reason Tool Tip Allowed")]
         public string sFieldToolTip { get; set; }
-        public DateTime dtLastUpdate { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nWizardID { get; set; }
         #endregion

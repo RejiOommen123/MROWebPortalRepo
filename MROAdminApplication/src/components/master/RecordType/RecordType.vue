@@ -42,11 +42,14 @@
         :items-per-page="5"
         class="body-1"
       >
-        <!-- Record Type List Actions (Edit Record Type, Facility Locations)  -->
+        <!-- Record Type List Actions (Edit Record Type, Delete Record Type)  -->
         <template v-slot:item.actions="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/RecordType/EditRecordType/'+item.nRecordTypeID">
+              <router-link
+                class="mrorouterlink"
+                :to="'/RecordType/EditRecordType/'+item.nRecordTypeID"
+              >
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
               </router-link>
             </template>
@@ -60,24 +63,12 @@
             </template>
             <span>Delete Record Type</span>
           </v-tooltip>
-          <!-- <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <router-link
-                class="mrorouterlink"
-                id="facilityLocations"
-                :to="'/Locations/'+item.facilities.nFacilityID"
-              >
-                <v-icon v-on="on" medium>mdi-location_on</v-icon>
-              </router-link>
-            </template>
-            <span>Facility Locations</span>
-          </v-tooltip> -->
         </template>
       </v-data-table>
       <!-- End Record Type List DataTable  -->
     </v-card>
 
-    <!-- Dialog box for Toggle Active Status of Facility  -->
+    <!-- Dialog box for Toggle Delete Record Type Confirmation -->
     <v-dialog v-model="dialog" max-width="360">
       <v-card>
         <v-card-title class="headline">
@@ -92,15 +83,26 @@
       </v-card>
     </v-dialog>
 
-     <!-- Common Loader -->
-        <v-dialog v-model="dialogLoader" persistent width="300">
-          <v-card color="rgb(0, 91, 168)" dark>
-            <v-card-text>
-              Please stand by
-              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
+    <!-- Dialog Alert for errors record type -->
+    <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>{{errorMessage}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Common Loader -->
+    <v-dialog v-model="dialogLoader" persistent width="300">
+      <v-card color="rgb(0, 91, 168)" dark>
+        <v-card-text>
+          Please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -109,74 +111,83 @@
 export default {
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       dialog: false,
-      facilityAlert: false,
+      errorAlert: false,
+      errorMessage: "",
       search: "",
       headers: [
         {
           text: "Name",
           align: "start",
           value: "sRecordTypeName",
-          width: "20%" 
+          width: "20%",
         },
         { text: "Tooltip", value: "sFieldToolTip", width: "40%" },
-        { text: "Normalized Name", value: "sNormalizedRecordTypeName", width: "30%"},
-        { text: "Edit", value: "actions", align:"center", sortable: false}
+        {
+          text: "Normalized Name",
+          value: "sNormalizedRecordTypeName",
+          width: "30%",
+        },
+        { text: "Edit", value: "actions", align: "center", sortable: false },
       ],
       gridData: this.getGridData(),
       editedItem: {
         nRecordTypeID: 0,
-        sRecordTypeName: ""
-      }
+        sRecordTypeName: "",
+      },
     };
   },
   methods: {
     // API Call to Get all Record Types
     getGridData() {
       this.dialogLoader = true;
-      this.$http.get("master/GetRecordTypes").then(
-        response => {
+      this.$http.get("Master/GetRecordTypes").then(
+        (response) => {
           this.gridData = JSON.parse(response.bodyText);
           this.dialogLoader = false;
         },
-        response => {
-          // Error Callback
-          this.gridData = response.body;
+        (error) => {
+          this.dialogLoader = false;
+          this.errorMessage = error.body;
+          this.errorAlert = true;
         }
       );
     },
-    //Method to pass nFacilityID & sFacilityName to dialog box
+    //Method to pass nRecordTypeID & sRecordTypeName to dialog box
     deleteItem(nRecordTypeID, sRecordTypeName) {
       this.editedItem.nRecordTypeID = nRecordTypeID;
       this.editedItem.sRecordTypeName = sRecordTypeName;
       this.dialog = true;
     },
-    //On Agree in dialog box API Call to Toggle Active Status of Facility
+    //On Agree in dialog box API Call to Delete Record Type
     deleteRecordType(id) {
-      this.dialogLoader =true;
-      var combinedObj = {
-        nRecordTypeID: id,
-        nAdminUserID: this.$store.state.adminUserId 
-      };
+      console.log(id);
+      this.dialogLoader = true;
       this.dialog = false;
-      this.$http.post("master/DeleteRecordType/", combinedObj).then(response => {
-        if (response.ok == true) 
-        {
-          this.dialogLoader =false;
-          if (response.body == "Cannot Delete Record Type") 
-          {
-            this.dialogLoader =false;
-            this.facilityAlert = true;
-          } else 
-          {
-            this.dialogLoader =false;
-            this.$router.go();
+      this.$http
+        .get(
+          "Master/DeleteRecordType/sRecordTypeID=" +
+            id +
+            "&sAdminUserID=" +
+            this.$store.state.adminUserId
+        )
+        .then(
+          (response) => {
+            if (response.ok == true) {
+              this.dialogLoader = false;
+              this.dialogLoader = false;
+              this.$router.go();
+            }
+          },
+          (error) => {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
           }
-        }
-      });
-    }
-  }
+        );
+    },
+  },
 };
 </script>
 

@@ -117,7 +117,13 @@ namespace MRODBL.Repositories
         /// <param name="ID">ID of record which is to be Soft Deleted</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
         Task<bool> ToggleSoftDelete(string sdColName, int ID);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">ID of record which is to be Deleted</param>
+        /// <param name="lnkTable">Name of the link table</param>
+        /// <returns></returns>
+        bool DeleteOneToMany(int id, string lnkTable)
         /// <summary>
         /// Delete a Record in a Table
         /// </summary>

@@ -277,6 +277,32 @@ namespace MRODBL.Repositories
                 return nRowAffected == 1 ? true : false;
             }
         }
+        public bool DeleteOneToMany(int id, string lnkTable)
+        {
+            using (var connection = new SqlConnection(sConnect))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var rowsAffected = connection.Execute(
+                                         "DELETE " + lnkTable + @" 
+                                    WHERE " + sKeyName + @" =@ID " +
+                                         "DELETE " + sTableName + @" 
+                                    WHERE " + sKeyName + @" =@ID",
+                                         new { ID = id }, transaction);
+                    }
+                    catch (Exception ex) {
+                        transaction.Rollback();
+                        return false;
+                    }
+                    transaction.Commit();
+                }
+            }
+            return true;
+        }
         #endregion
 
         #region Update Queries 
