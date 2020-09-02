@@ -10,11 +10,17 @@ import Locations from './components/facility/Locations/Locations.vue';
 import AddLocation from './components/facility/Locations/AddLocation.vue';
 import EditLocation from './components/facility/Locations/EditLocation.vue';
 import PrimaryReason from './components/master/PrimaryReason/PrimaryReason.vue';
+import AddPrimaryReason from './components/master/PrimaryReason/AddPrimaryReason.vue';
+import EditPrimaryReason from './components/master/PrimaryReason/EditPrimaryReason.vue';
 import RecordType from './components/master/RecordType/RecordType.vue';
 import AddRecordType from './components/master/RecordType/AddRecordType.vue';
 import EditRecordType from './components/master/RecordType/EditRecordType.vue';
 import SensitiveInfo from './components/master/SensitiveInfo/SensitiveInfo.vue';
+import AddSensitiveInfo from './components/master/SensitiveInfo/AddSensitiveInfo.vue';
+import EditSensitiveInfo from './components/master/SensitiveInfo/EditSensitiveInfo.vue';
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
+import AddShipmentType from './components/master/ShipmentType/AddShipmentType.vue';
+import EditShipmentType from './components/master/ShipmentType/EditShipmentType.vue';
 import store from './store';
 
 Vue.use(VueRouter);
@@ -101,13 +107,29 @@ const routes = [{
         }
     },    
     {
+        path: '/PrimaryReason/AddPrimaryReason',
+        component: AddPrimaryReason,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Primary Reason");
+            next()
+        }
+    },
+    {
+        path: '/PrimaryReason/EditPrimaryReason/:id',
+        component: EditPrimaryReason,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Primary Reason");
+            next()
+        }
+    },
+    {
         path: '/Master/RecordType',
         component: RecordType,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Record Type");
             next()
         }
-    },
+    },  
     {
         path: '/RecordType/AddRecordType',
         component: AddRecordType,
@@ -133,13 +155,45 @@ const routes = [{
         }
     },
     {
+        path: '/SensitiveInfo/EditSensitiveInfo/:id',
+        component: EditSensitiveInfo,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Sensitive Info");
+            next()
+        }
+    },
+    {
+        path: '/SensitiveInfo/AddSensitiveInfo',
+        component: AddSensitiveInfo,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Sensitive Info");
+            next()
+        }
+    },
+    {
         path: '/Master/ShipmentType',
         component: ShipmentType,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Shipment Type");
             next()
         }
-    }
+    },
+    {
+        path: '/ShipmentType/EditShipmentType/:id',
+        component: EditShipmentType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Shipment Type");
+            next()
+        }
+    },
+    {
+        path: '/ShipmentType/AddShipmentType',
+        component: AddShipmentType,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Shipment Type");
+            next()
+        }
+    },
 ]
 
 export default new VueRouter({ mode: 'history', routes })

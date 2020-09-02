@@ -14,7 +14,8 @@
               @blur="$v.primaryReason.sPrimaryReasonName.$touch()"
               :error-messages="sPrimaryReasonNameErrors"
               solo
-            ></v-text-field>            
+              maxlength="100"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sFieldToolTip">Tooltip:</label>
@@ -24,16 +25,16 @@
               placeholder="Enter Tooltip"
               v-model="primaryReason.sFieldToolTip"
               solo
-            ></v-text-field>           
+            ></v-text-field>
           </v-col>
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="$v.primaryReason.$invalid">Save</v-btn>
-          <v-btn to="/Master/PrimaryReason" type="button" color="primary">Cancel</v-btn>          
+          <v-btn to="/Master/PrimaryReason" type="button" color="primary">Cancel</v-btn>
         </div>
       </form>
     </div>
-    <!-- Dialog Alert for Same name primary reason -->
+    <!-- Dialog Alert for errors Primary Reason -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -45,112 +46,116 @@
       </v-card>
     </v-dialog>
     <!-- Common Loader -->
-        <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
-          <v-card color="rgb(0, 91, 168)" dark>
-            <v-card-text>
-              Please stand by
-              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>       
+    <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
+      <v-card color="rgb(0, 91, 168)" dark>
+        <v-card-text>
+          Please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength
-} from "vuelidate/lib/validators";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
   validations: {
     primaryReason: {
       sPrimaryReasonName: {
         required,
-        maxLength: maxLength(40),
-        minLength: minLength(2)
-      }
-    }
+        maxLength: maxLength(100),
+        minLength: minLength(2),
+      },
+    },
   },
-  computed: {  
+  computed: {
     sPrimaryReasonNameErrors() {
       const errors = [];
       if (!this.$v.primaryReason.sPrimaryReasonName.$dirty) return errors;
       !this.$v.primaryReason.sPrimaryReasonName.minLength &&
         errors.push("Primary Reason Name must be at least 2 characters long");
       !this.$v.primaryReason.sPrimaryReasonName.maxLength &&
-        errors.push("Primary Reason Name must be at most 40 characters long");
+        errors.push("Primary Reason Name must be at most 100 characters long");
       !this.$v.primaryReason.sPrimaryReasonName.required &&
         errors.push("Primary Reason Name is required.");
       return errors;
-    }
+    },
   },
-  name: "EditPrimaryReason",
+  name: "AddPrimaryReason",
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       errorAlert: false,
-      errorMessage:'',
+      errorMessage: "",
       primaryReason: {
         nPrimaryReasonID: 0,
         sPrimaryReasonName: "",
         sNormalizedPrimaryReasonName: "",
         sFieldToolTip: "",
-        nWizardID: "",
-        nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+        nWizardID: 0,
+        nUpdatedAdminUserID: this.$store.state.adminUserId,
+      },
     };
   },
-      mounted(){
-         this.dialogLoader = true;
-        // API call to get Primary Reason
-        this.$http.get("Master/GetPrimaryReason/sPrimaryReasonID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId).then(
-          response => {
-            // get body data
-            this.dialogLoader =false;
-            this.primaryReason = JSON.parse(response.bodyText);
-          },
-          error => {
-            this.dialogLoader =false;
-            this.errorMessage=error.body;
-            this.errorAlert = true;            
+  mounted() {
+    this.dialogLoader = true;
+    // API call to get Primary Reason
+    this.$http
+      .get(
+        "Master/GetPrimaryReason/sPrimaryReasonID=" +
+          this.$route.params.id +
+          "&sAdminUserID=" +
+          this.$store.state.adminUserId
+      )
+      .then(
+        (response) => {
+          // get body data
+          this.dialogLoader = false;
+          this.primaryReason = JSON.parse(response.bodyText);
+        },
+        (error) => {
+          // Error Callback
+          if (error.status == 400) {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
           }
-        );
-    },
-  methods: {  
+        }
+      );
+  },
+  methods: {
     onSubmit() {
-      // API Call to edit primary reason
+      // API Call to edit Primary Reason
       this.primaryReason.nUpdatedAdminUserID = this.$store.state.adminUserId;
-      this.dialogLoader =true;
+      this.dialogLoader = true;
       this.$http.post("Master/EditPrimaryReason", this.primaryReason).then(
-        response => {
+        (response) => {
           if (response.ok == true) {
-            this.dialogLoader =false;
+            this.dialogLoader = false;
             //if reponse ok then redirect to Primary Reason List Page
             this.$router.push("/Master/PrimaryReason");
           }
         },
-        error => {
+        (error) => {
           // Error Callback
-          if (
-            error.status == 400 
-          ) {
-            this.dialogLoader =false;
-            this.errorMessage=error.body;
-            this.errorAlert = true;            
+          if (error.status == 400) {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
           }
-          console.log(error.body);
         }
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-button,a{
+button,
+a {
   margin-right: 1.25em;
 }
 @media screen and (max-width: 500px) {
@@ -165,7 +170,7 @@ button,a{
   text-align: center;
 }
 
-.editPrimaryReason-form{
+.editPrimaryReason-form {
   margin: 0.625em auto;
   border: 0.0625em solid #eee;
   padding: 1.25em;

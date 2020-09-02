@@ -14,7 +14,8 @@
               @blur="$v.primaryReason.sPrimaryReasonName.$touch()"
               :error-messages="sPrimaryReasonNameErrors"
               solo
-            ></v-text-field>            
+              maxlength="100"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sFieldToolTip">Tooltip:</label>
@@ -24,12 +25,12 @@
               placeholder="Enter Tooltip"
               v-model="primaryReason.sFieldToolTip"
               solo
-            ></v-text-field>           
+            ></v-text-field>
           </v-col>
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="$v.primaryReason.$invalid">Save</v-btn>
-          <v-btn to="/Master/PrimaryReason" type="button" color="primary">Cancel</v-btn>          
+          <v-btn to="/Master/PrimaryReason" type="button" color="primary">Cancel</v-btn>
         </div>
       </form>
     </div>
@@ -45,54 +46,50 @@
       </v-card>
     </v-dialog>
     <!-- Common Loader -->
-        <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
-          <v-card color="rgb(0, 91, 168)" dark>
-            <v-card-text>
-              Please stand by
-              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>       
+    <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
+      <v-card color="rgb(0, 91, 168)" dark>
+        <v-card-text>
+          Please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength
-} from "vuelidate/lib/validators";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
   validations: {
     primaryReason: {
       sPrimaryReasonName: {
         required,
-        maxLength: maxLength(40),
-        minLength: minLength(2)
-      }
-    }
+        maxLength: maxLength(100),
+        minLength: minLength(2),
+      },
+    },
   },
-  computed: {  
+  computed: {
     sPrimaryReasonNameErrors() {
       const errors = [];
       if (!this.$v.primaryReason.sPrimaryReasonName.$dirty) return errors;
       !this.$v.primaryReason.sPrimaryReasonName.minLength &&
         errors.push("Primary Reason Name must be at least 2 characters long");
       !this.$v.primaryReason.sPrimaryReasonName.maxLength &&
-        errors.push("Primary Reason Name must be at most 40 characters long");
+        errors.push("Primary Reason Name must be at most 100 characters long");
       !this.$v.primaryReason.sPrimaryReasonName.required &&
         errors.push("Primary Reason Name is required.");
       return errors;
-    }
+    },
   },
   name: "AddPrimaryReason",
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       errorAlert: false,
-      errorMessage:'',
+      errorMessage: "",
       primaryReason: {
         nPrimaryReasonID: 0,
         sPrimaryReasonName: "",
@@ -100,41 +97,39 @@ export default {
         sFieldToolTip: "",
         nWizardID: 0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
-        nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+        nUpdatedAdminUserID: this.$store.state.adminUserId,
+      },
     };
   },
-  methods: {  
+  methods: {
     onSubmit() {
       // API Call to add Primary Reason
-      this.dialogLoader =true;
+      this.dialogLoader = true;
       this.$http.post("Master/AddPrimaryReason", this.primaryReason).then(
-        response => {
+        (response) => {
           if (response.ok == true) {
-            this.dialogLoader =false;
+            this.dialogLoader = false;
             //if reponse ok then redirect to Primary Reason List Page
             this.$router.push("/Master/PrimaryReason");
           }
         },
-        error => {
+        (error) => {
           // Error Callback
-          if (
-            error.status == 400 
-          ) {
-            this.dialogLoader =false;
-            this.errorMessage=error.body;
-            this.errorAlert = true;           
+          if (error.status == 400) {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
           }
-          console.log(error.body);
         }
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-button,a{
+button,
+a {
   margin-right: 1.25em;
 }
 @media screen and (max-width: 500px) {
@@ -149,7 +144,7 @@ button,a{
   text-align: center;
 }
 
-.addPrimaryReason-form{
+.addPrimaryReason-form {
   margin: 0.625em auto;
   border: 0.0625em solid #eee;
   padding: 1.25em;

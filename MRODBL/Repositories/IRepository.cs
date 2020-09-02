@@ -123,7 +123,7 @@ namespace MRODBL.Repositories
         /// <param name="id">ID of record which is to be Deleted</param>
         /// <param name="lnkTable">Name of the link table</param>
         /// <returns></returns>
-        bool DeleteOneToMany(int id, string lnkTable)
+        bool DeleteOneToMany(int id, string lnkTable);
         /// <summary>
         /// Delete a Record in a Table
         /// </summary>

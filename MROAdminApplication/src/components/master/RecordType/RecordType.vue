@@ -83,7 +83,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- Dialog Alert for errors record type -->
+    <!-- Dialog Alert for errors Record Type -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -105,7 +105,6 @@
     </v-dialog>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -129,7 +128,12 @@ export default {
           value: "sNormalizedRecordTypeName",
           width: "30%",
         },
-        { text: "Edit", value: "actions", align: "center", sortable: false },
+        {
+          text: "Edit/Delete",
+          value: "actions",
+          align: "center",
+          sortable: false,
+        },
       ],
       gridData: this.getGridData(),
       editedItem: {
@@ -148,9 +152,12 @@ export default {
           this.dialogLoader = false;
         },
         (error) => {
-          this.dialogLoader = false;
-          this.errorMessage = error.body;
-          this.errorAlert = true;
+          // Error Callback
+          if (error.status == 400) {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
+          }
         }
       );
     },
@@ -181,9 +188,12 @@ export default {
             }
           },
           (error) => {
-            this.dialogLoader = false;
-            this.errorMessage = error.body;
-            this.errorAlert = true;
+            // Error Callback
+            if (error.status == 400) {
+              this.dialogLoader = false;
+              this.errorMessage = error.body;
+              this.errorAlert = true;
+            }
           }
         );
     },

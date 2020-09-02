@@ -15,7 +15,7 @@
               :error-messages="sRecordTypeNameErrors"
               solo
               maxlength="100"
-            ></v-text-field>            
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sFieldToolTip">Tooltip:</label>
@@ -25,16 +25,16 @@
               placeholder="Enter Tooltip"
               v-model="recordType.sFieldToolTip"
               solo
-            ></v-text-field>           
+            ></v-text-field>
           </v-col>
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="$v.recordType.$invalid">Save</v-btn>
-          <v-btn to="/Master/recordtype" type="button" color="primary">Cancel</v-btn>          
+          <v-btn to="/Master/RecordType" type="button" color="primary">Cancel</v-btn>
         </div>
       </form>
     </div>
-    <!-- Dialog Alert for errors record type -->
+    <!-- Dialog Alert for errors Record Type -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -46,24 +46,20 @@
       </v-card>
     </v-dialog>
     <!-- Common Loader -->
-        <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
-          <v-card color="rgb(0, 91, 168)" dark>
-            <v-card-text>
-              Please stand by
-              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-            </v-card-text>
-          </v-card>
-        </v-dialog>       
+    <v-dialog v-model="dialogLoader" persistent width="300" id="dialogLoader">
+      <v-card color="rgb(0, 91, 168)" dark>
+        <v-card-text>
+          Please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
-import {
-  required,
-  minLength,
-  maxLength
-} from "vuelidate/lib/validators";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
   validations: {
@@ -71,11 +67,11 @@ export default {
       sRecordTypeName: {
         required,
         maxLength: maxLength(100),
-        minLength: minLength(2)
-      }
-    }
+        minLength: minLength(2),
+      },
+    },
   },
-  computed: {  
+  computed: {
     sRecordTypeNameErrors() {
       const errors = [];
       if (!this.$v.recordType.sRecordTypeName.$dirty) return errors;
@@ -86,14 +82,14 @@ export default {
       !this.$v.recordType.sRecordTypeName.required &&
         errors.push("Record Type Name is required.");
       return errors;
-    }
+    },
   },
   name: "AddRecordType",
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       errorAlert: false,
-      errorMessage:'',
+      errorMessage: "",
       recordType: {
         nRecordTypeID: 0,
         sRecordTypeName: "",
@@ -101,42 +97,39 @@ export default {
         sFieldToolTip: "",
         nWizardID: 0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
-        nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+        nUpdatedAdminUserID: this.$store.state.adminUserId,
+      },
     };
   },
-  methods: {  
+  methods: {
     onSubmit() {
-      // API Call to add record type
-      console.log(this.recordType)
-      this.dialogLoader =true;
+      // API Call to add Record Type
+      this.dialogLoader = true;
       this.$http.post("Master/AddRecordType", this.recordType).then(
-        response => {
+        (response) => {
           if (response.ok == true) {
-            this.dialogLoader =false;
+            this.dialogLoader = false;
             //if reponse ok then redirect to Record Type List Page
             this.$router.push("/Master/RecordType");
           }
         },
-        error => {
+        (error) => {
           // Error Callback
-          if (
-            error.status == 400 
-          ) {
-            this.dialogLoader =false;
-            this.errorMessage=error.body;
-            this.errorAlert = true;           
+          if (error.status == 400) {
+            this.dialogLoader = false;
+            this.errorMessage = error.body;
+            this.errorAlert = true;
           }
-          console.log(error.body);
         }
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-button,a{
+button,
+a {
   margin-right: 1.25em;
 }
 @media screen and (max-width: 500px) {
@@ -151,7 +144,7 @@ button,a{
   text-align: center;
 }
 
-.addRecordType-form{
+.addRecordType-form {
   margin: 0.625em auto;
   border: 0.0625em solid #eee;
   padding: 1.25em;
