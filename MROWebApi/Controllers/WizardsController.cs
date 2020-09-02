@@ -377,21 +377,6 @@ namespace MROWebApi.Controllers
                 requester.sPDF = new LocationAuthorizationDocumentController().GeneratePDFForXML(requester.sPDF, requester.sRelativeFileArray);
                 writer.WriteElementString("pdf", requester.sPDF);         
              
-                //writer.WriteStartElement("supporting_document");
-                //if (requester.sRelativeFileArray.Length>0 && requester.sRelativeFileNameArray.Length > 0) {
-                //    //Split string into arrays
-                //    string[] files = requester.sRelativeFileArray[0].Split("_");
-                //    string[] filesName = requester.sRelativeFileNameArray[0].Split("/");
-
-                //    for (int i=0; i < files.Length;i++)
-                //    {
-                //            writer.WriteStartElement("item");
-                //            writer.WriteElementString("name", filesName[i]);
-                //            writer.WriteElementString("data", files[i]);
-                //            writer.WriteEndElement();
-                //    }
-                //}
-
                 //writer.WriteEndElement();
                 writer.WriteEndElement();
                 writer.Flush();
@@ -717,6 +702,11 @@ namespace MROWebApi.Controllers
         {
             try
             {
+                //to get the Record Type for this facility
+                RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+                IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
+                SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
+                IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
 
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
                 allFields.Add("MROFacilityName", dbFacility.sFacilityName);
@@ -817,7 +807,11 @@ namespace MROWebApi.Controllers
                         if (requester.sSelectedRecordTypes[counter] != "")
                         {
                             allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
-                        }
+                            RecordTypes recordType = facilityRecordTypes.FirstOrDefault(q => q.sNormalizedRecordTypeName == requester.sSelectedRecordTypes[counter]);
+                            if (recordType != null && requester.sSelectedRecordTypes[counter] != "MROOtherRT") { 
+                                allFields.Add(requester.sSelectedRecordTypes[counter] + "Text", recordType.sRecordTypeName);
+                            }
+                        }                       
                     }
                 }
                 else
@@ -846,6 +840,7 @@ namespace MROWebApi.Controllers
                         if (requester.sSelectedPrimaryReasons[counter] != "")
                         {
                             allFields.Add(requester.sSelectedPrimaryReasons[counter] + "=1", "On");
+                            allFields.Add("MROSelectedPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
                             if ("MROPatientRequest" != requester.sSelectedPrimaryReasons[counter])
                             {
                                 allFields.Add("MROOtherPrimaryReasonText", requester.sSelectedPrimaryReasonsName);
@@ -869,6 +864,11 @@ namespace MROWebApi.Controllers
                     if (requester.sSelectedSensitiveInfo[counter] != "")
                     {
                         allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
+                        SensitiveInfo sensitiveInfo = facilitySensitiveInfo.FirstOrDefault(q => q.sNormalizedSensitiveInfoName == requester.sSelectedSensitiveInfo[counter]);
+                        if (sensitiveInfo != null)
+                        {
+                            allFields.Add(requester.sSelectedSensitiveInfo[counter] + "Text", sensitiveInfo.sSensitiveInfoName);
+                        }
                     }
                 }
 
@@ -878,6 +878,7 @@ namespace MROWebApi.Controllers
                     if (requester.sSelectedShipmentTypes[counter] != "")
                     {
                         allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                        allFields.Add("MROSelectedShipmentTypeText", requester.sSelectedShipmentTypesName);
                     }
                 }
 
