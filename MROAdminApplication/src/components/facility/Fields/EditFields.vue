@@ -25,27 +25,50 @@
               }"
               :items-per-page="10"
             >
+              <template v-slot:item.sFieldName="props">
+                <v-edit-dialog
+                  v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
+                  persistent
+                  :return-value.sync="props.item.sFieldName"
+                  @save="pushToArray(props.item)"
+                >
+                  {{ props.item.sFieldName }}
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter></v-text-field>
+                  </template>
+                </v-edit-dialog>
+                <label v-else>{{props.item.sFieldName}}</label>
+              </template>
               <!-- Template for Field Order -->
-              <template v-slot:item.nFieldOrder="{ item }">
-                <v-text-field
-                  type="number"
-                  min="1"
-                  v-model.number="item.nFieldOrder"
-                  v-show="item.nFieldOrder!=null"
-                  style="width: 4em"
-                ></v-text-field>
-                <label id="nFieldOrderLabel" v-if="item.nFieldOrder==null">
+              <template v-slot:item.nFieldOrder="props">
+                <v-edit-dialog
+                  v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
+                  persistent
+                  :return-value.sync="props.item.nFieldOrder"
+                  @save="pushToArray(props.item)"
+                >
+                  {{ props.item.nFieldOrder }}
+                  <template v-slot:input>
+                    <v-text-field
+                      type="number"
+                      min="1"
+                      v-model.number="props.item.nFieldOrder"
+                      v-show="props.item.nFieldOrder!=null"
+                    ></v-text-field>
+                  </template>
+                </v-edit-dialog>
+                <label id="nFieldOrderLabel" v-if="props.item.nFieldOrder==null">
                   <strong>-</strong>
                 </label>
               </template>
-              <!-- Template for Field Map Checkboxes  -->
-              <template v-slot:item.actions="{ item }">
-                <input
-                  type="checkbox"
-                  @click="toggleCheck(item.nFacilityFieldMapID,item.sTableName)"
-                  v-model="item.bShow"
-                  :value="item.bShow"
-                />
+              <template v-slot:item.actions="props">
+                <v-checkbox
+                  hide-details
+                  style="margin-top:0px"
+                  :return-value.sync="props.item.bShow"
+                  @change="pushToArray(props.item)"
+                  v-model="props.item.bShow"
+                ></v-checkbox>
               </template>
             </v-data-table>
             <!-- End Facility List DataTable  -->
@@ -56,16 +79,16 @@
         <v-btn type="submit" color="primary">Save</v-btn>
         <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
       </div>
-      <br/>
+      <br />
       <!-- Common Loader -->
-              <v-dialog v-model="dialogLoader" persistent width="300">
-                <v-card color="rgb(0, 91, 168)" dark>
-                  <v-card-text>
-                    Please stand by
-                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
+      <v-dialog v-model="dialogLoader" persistent width="300">
+        <v-card color="rgb(0, 91, 168)" dark>
+          <v-card-text>
+            Please stand by
+            <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </form>
   </div>
 </template>
@@ -74,20 +97,21 @@
 export default {
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       search: "",
       headers: [
         {
           text: "Name",
           align: "start",
           value: "sFieldName",
-          width: "60%"
+          width: "60%",
         },
-        { text: "Order", value: "nFieldOrder", width: "20%"},
-        { text: "Action", value: "actions", width: "20%", sortable: false }
+        { text: "Order", value: "nFieldOrder", width: "20%" },
+        { text: "Action", value: "actions", width: "20%", sortable: false },
       ],
       gridData: this.getGridData(),
-      facilityName: ""
+      updatedArray: [],
+      facilityName: "",
     };
   },
   mounted() {},
@@ -96,54 +120,59 @@ export default {
     getGridData() {
       this.dialogLoader = true;
       this.$http
-        .get("facilityfieldmaps/GetFieldsByFacilityID/nFacilityID=" + this.$route.params.id+"&nAdminUserID="+this.$store.state.adminUserId)
+        .get(
+          "facilityfieldmaps/GetFieldsByFacilityID/nFacilityID=" +
+            this.$route.params.id +
+            "&nAdminUserID=" +
+            this.$store.state.adminUserId
+        )
         .then(
-          response => {
+          (response) => {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["fields"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
-            this.dialogLoader =false;
+            this.dialogLoader = false;
           },
-          error => {
+          (error) => {
             // error callback
             this.gridData = error.body;
-            this.dialogLoader =false;
+            this.dialogLoader = false;
           }
         );
     },
-    //toggle Check Function
-    toggleCheck: function(nFacilityFieldMapId,sTableName) {
-      for (var i = 0; i < this.gridData.length; i++) {
-        if (this.gridData[i].nFacilityFieldMapID == nFacilityFieldMapId
-        && this.gridData[i].sTableName==sTableName) 
-        {
-          this.gridData[i].bShow = !this.gridData[i].bShow;
-        }
+    pushToArray(obj) {
+      console.log(this.updatedArray);
+      const index = this.updatedArray.findIndex(
+        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID
+      );
+      if (index === -1) {
+        this.updatedArray.push(obj);
+      } else {
+        this.updatedArray[index] = obj;
       }
     },
     onSubmit() {
+      console.log(this.gridData);
       this.dialogLoader = true;
       var nAdminUserID = this.$store.state.adminUserId;
-      var FacilityFieldMapsList = this.gridData.map(function(item) {
-        item["nCreatedAdminUserID"]=nAdminUserID;
-        item["nUpdatedAdminUserID"]=nAdminUserID;
+      var FacilityFieldMapsList = this.updatedArray.map(function (item) {
+        item["nUpdatedAdminUserID"] = nAdminUserID;
         return item;
       });
       this.$http
         .post("facilityfieldmaps/EditFacilityFields/", FacilityFieldMapsList)
-        .then(response => {
+        .then((response) => {
           if (response.ok == true) {
             this.dialogLoader = false;
             this.$router.push("/facility");
           }
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-
 @media screen and (max-width: 500px) {
   #EditFieldsBox {
     margin: 0 0em;
