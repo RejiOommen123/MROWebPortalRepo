@@ -5,7 +5,7 @@ namespace MRODBL.BaseClasses
 {
     [Dapper.Contrib.Extensions.Table("lnkFacilitySensitiveInfo")]
 
-    public partial class FacilitySensitiveInfo
+    public partial class FacilitySensitiveInfo : CommonModel
     {
         #region Props
         [Dapper.Contrib.Extensions.Key]
@@ -19,7 +19,6 @@ namespace MRODBL.BaseClasses
         public int? nFieldOrder { get; set; }
         public int nWizardID { get; set; }
         public bool bShow { get; set; }
-        public DateTime dtLastUpdate { get; set; }
         #endregion
     }
 }

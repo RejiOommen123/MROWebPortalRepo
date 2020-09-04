@@ -208,6 +208,30 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync(SqlString);
             }
         }
+
+        public async Task<IEnumerable<T>> SelectDisclaimerBynFacilityID(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   " SELECT [lnkFacilityWizardHelper].[nFacilityWizardHelperID]" +
+                        ",[lnkFacilityWizardHelper].[nFacilityID]" +
+                        ",[lnkFacilityWizardHelper].[sWizardHelperType]" +
+                        ",[lnkFacilityWizardHelper].[sWizardHelperValue]" +
+                        ",[lnkFacilityWizardHelper].[nWizardID]" +
+                        ",[lnkFacilityWizardHelper].[dtLastUpdate]" +
+                        ",[lnkFacilityWizardHelper].[nUpdatedAdminUserID]" +
+                        ",[lnkFacilityWizardHelper].[nCreatedAdminUserID]" +
+                        ",[lnkFacilityWizardHelper].[dtCreated]" +
+                        ",[lstWizards].[sWizardDescription] FROM " +
+                        "[lnkFacilityWizardHelper] " +
+                        "INNER JOIN[lstWizards] " +
+                        "ON [lnkFacilityWizardHelper].nwizardid = [lstwizards].nwizardid " +
+                        " WHERE nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+        }
+
         #endregion
 
         #region INSERT Queries

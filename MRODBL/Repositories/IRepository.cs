@@ -91,6 +91,7 @@ namespace MRODBL.Repositories
         /// <param name="tB">Table B Name</param>
         /// <returns>Inner Joined Data of 2 tables</returns>
         Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB);
+        Task<IEnumerable<T>> SelectDisclaimerBynFacilityID(int nFacilityID)
         #endregion
 
         #region INSERT Queries

@@ -55,5 +55,9 @@
 	  <NativeLibs Remove="Controllers\MasterController.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="Controllers\FacilityDisclaimersController.cs" />
+	</ItemGroup>
+
 
 </Project>
