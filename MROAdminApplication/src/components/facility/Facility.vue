@@ -61,7 +61,7 @@
         <template v-slot:item.Fields="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">
+              <router-link class="mrorouterlink" :to="'/EditFacilityData/'+item.facilities.nFacilityID">
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
               </router-link>
             </template>

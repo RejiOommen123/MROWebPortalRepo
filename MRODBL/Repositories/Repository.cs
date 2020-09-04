@@ -209,26 +209,21 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> SelectDisclaimerBynFacilityID(int nFacilityID)
+        public async Task<IEnumerable<dynamic>> EditDisclaimers(int ID)
         {
+            string SqlString = "spGetDisclaimerInfoBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                string SqlString =
-                   " SELECT [lnkFacilityWizardHelper].[nFacilityWizardHelperID]" +
-                        ",[lnkFacilityWizardHelper].[nFacilityID]" +
-                        ",[lnkFacilityWizardHelper].[sWizardHelperType]" +
-                        ",[lnkFacilityWizardHelper].[sWizardHelperValue]" +
-                        ",[lnkFacilityWizardHelper].[nWizardID]" +
-                        ",[lnkFacilityWizardHelper].[dtLastUpdate]" +
-                        ",[lnkFacilityWizardHelper].[nUpdatedAdminUserID]" +
-                        ",[lnkFacilityWizardHelper].[nCreatedAdminUserID]" +
-                        ",[lnkFacilityWizardHelper].[dtCreated]" +
-                        ",[lstWizards].[sWizardDescription] FROM " +
-                        "[lnkFacilityWizardHelper] " +
-                        "INNER JOIN[lstWizards] " +
-                        "ON [lnkFacilityWizardHelper].nwizardid = [lstwizards].nwizardid " +
-                        " WHERE nFacilityID = @nFacilityID";
-                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
             }
         }
 

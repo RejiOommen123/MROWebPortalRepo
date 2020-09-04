@@ -25,29 +25,29 @@
               }"
               :items-per-page="10"
             >
-              <template v-slot:item.sFieldName="props">
+              <template v-slot:item.sWizardHelperValue="props">
                 <v-edit-dialog
                   persistent
-                  :return-value.sync="props.item.sFieldName"
+                  :return-value.sync="props.item.sWizardHelperValue"
                   @save="pushToArray(props.item)"
                 >
-                  {{ props.item.sFieldName }}
+                  {{ props.item.sWizardHelperValue }}
                   <template v-slot:input>
-                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter></v-text-field>
+                    <v-text-field v-model="props.item.sWizardHelperValue" label="Edit" counter></v-text-field>
                   </template>
                 </v-edit-dialog>
               </template>
               <!-- Template for Field Order -->
-              <template v-slot:item.nFieldOrder="props">
+              <!-- <template v-slot:item.nFieldOrder="props">
                   {{ props.item.nFieldOrder }}
-              </template>
+              </template> -->
             </v-data-table>
             <!-- End Disclaimers List DataTable  -->
           </v-card>
         </v-col>
       </v-row>
       <div class="submit">
-        <v-btn type="submit" color="primary">Save</v-btn>
+        <v-btn type="submit" :disabled="updatedArray.length==0" color="primary">Save</v-btn>
         <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
       </div>
       <br />
@@ -74,10 +74,10 @@ export default {
         {
           text: "Name",
           align: "start",
-          value: "sFieldName",
+          value: "sWizardHelperValue",
           width: "60%",
         },
-        { text: "Wizard Name", value: "nFieldOrder", width: "40%" }
+        { text: "Wizard Name", value: "sWizardDescription", width: "40%" }
       ],
       gridData: this.getGridData(),
       updatedArray: [],

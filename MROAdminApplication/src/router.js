@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import WelcomePage from './components/welcome/welcome.vue';
 import DashboardPage from './components/dashboard/dashboard.vue';
 import EditField from './components/facility/Fields/EditFields.vue';
+import EditFacilityData from './components/facility/Fields/EditFacilityData.vue';
 import AddFacility from './components/facility/AddFacility.vue';
 import EditFacility from './components/facility/EditFacility.vue';
 import Locations from './components/facility/Locations/Locations.vue';
@@ -79,6 +80,14 @@ const routes = [{
         component: EditField,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Edit Fields");
+            next()
+        }
+    },
+    {
+        path: '/EditFacilityData/:id',
+        component: EditFacilityData,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Facility Data");
             next()
         }
     },

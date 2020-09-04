@@ -233,7 +233,7 @@ namespace MROWebApi.Controllers
                     facilityFieldMapsRepository.UpdateMany(fieldMapsList);
 
                     #region Logging
-                    var mapTable = FMList.FirstOrDefault();
+                    var mapTable = fieldFacilityMapsTable.FirstOrDefault();
                     int nAdminUserID = mapTable.nUpdatedAdminUserID;
                     int nFacilityID = mapTable.nFacilityID;
                     FacilitiesRepository facRepo = new FacilitiesRepository(_info);

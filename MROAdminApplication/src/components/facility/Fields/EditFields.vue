@@ -1,5 +1,5 @@
 <template>
-  <div id="EditFieldsBox">
+  <div >
     <form @submit.prevent="onSubmit">
       <v-row>
         <v-col cols="12">
@@ -76,7 +76,7 @@
         </v-col>
       </v-row>
       <div class="submit">
-        <v-btn type="submit" color="primary">Save</v-btn>
+        <v-btn type="submit" :disabled="updatedArray.length==0" color="primary">Save</v-btn>
         <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
       </div>
       <br />
