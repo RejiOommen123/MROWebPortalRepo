@@ -165,7 +165,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="ID">Facility ID</param>
         /// <returns>Facility Field Map Values based on given Facility ID</returns>
-        Task<IEnumerable<dynamic>> EditFields(int ID);
+        Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID);
 
         /// <summary>
         /// Get Wizard Config Details (SP)

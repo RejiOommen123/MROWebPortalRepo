@@ -372,7 +372,7 @@ namespace MRODBL.Repositories
         #endregion
 
         #region Stored Procedures
-        public async Task<IEnumerable<dynamic>> EditFields(int ID)
+        public async Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID)
         {
             string SqlString = "spGetPatientFormBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -380,7 +380,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID , @nAdminUserID = nAdminUserID }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex) {
