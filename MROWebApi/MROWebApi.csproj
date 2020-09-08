@@ -51,5 +51,9 @@
 	  <NativeLibs Remove="Services\APIKeyAuthAttribute.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="appsettings.json" />
+	</ItemGroup>
+
 
 </Project>
