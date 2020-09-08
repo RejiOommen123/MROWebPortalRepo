@@ -182,14 +182,14 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             theID = thePDFAuthDoc.AddTextStyled(theText);
             thePDFAuthDoc.FontSize = 12;
 
-            string emailStatus = requestor.bConfirmReport ? "(User Confirmed)" : "(User Not Confirmed)";
+            string emailStatus = requestor.bConfirmReport ? "(User consented to receive an unencrypted copy of their request documents emailed to this address)" : "(User declined to receive an unencrypted copy of their request documents emailed to this address)";
             string phoneStatus = requestor.bPhoneNoVerified ? "(Verified)" : "(Not Verified)";
             string primaryReason = string.IsNullOrEmpty(requestor.sSelectedPrimaryReasonsName) ? "Not Mentioned" : requestor.sSelectedPrimaryReasonsName;
             string deadlineDate = requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline";
 
             thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address -<b> " + requestor.sAddStreetAddress + " " + requestor.sAddApartment + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address - "+emailStatus+"<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address - <b> " + requestor.sRequesterEmailId + " " + emailStatus + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number - "+phoneStatus+"<b> " + requestor.sPhoneNo + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> - " + primaryReason + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> - " + deadlineDate + "<br />");
