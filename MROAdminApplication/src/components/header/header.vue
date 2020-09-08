@@ -57,7 +57,7 @@
               >
                 <v-list-item-title>Record Type</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item
+              <v-list-item
               to="/Master/sensitiveinfo"
               >
                 <v-list-item-title>Sensitive Info</v-list-item-title>
@@ -66,7 +66,7 @@
               to="/Master/shipmenttype"
               >
                 <v-list-item-title>Shipment Type</v-list-item-title>
-              </v-list-item> -->
+              </v-list-item>
             </v-list>
           </v-menu>
         </li>

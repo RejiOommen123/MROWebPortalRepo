@@ -10,7 +10,7 @@ namespace MRODBL.BaseClasses
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nSensitiveInfoID { get; set; }
-        [StringLength(50, ErrorMessage = "Maximum 50 characters Sensitive Info allowed")]
+        [StringLength(100, ErrorMessage = "Maximum 100 characters Sensitive Info allowed")]
         public string sSensitiveInfoName { get; set; }
         public string sNormalizedSensitiveInfoName { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Sensitive Info Tool Tip allowed")]

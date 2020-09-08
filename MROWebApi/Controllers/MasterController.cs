@@ -285,7 +285,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    primaryReason.nWizardID = 10;
+                    primaryReason.nWizardID = 12;
                     primaryReason.dtLastUpdate = DateTime.Now;
                     primaryReason.dtCreated = DateTime.Now;
                     //spaces remove
@@ -478,7 +478,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    sensitiveInfo.nWizardID = 10;
+                    sensitiveInfo.nWizardID = 11;
                     sensitiveInfo.dtLastUpdate = DateTime.Now;
                     sensitiveInfo.dtCreated = DateTime.Now;
                     //spaces remove
@@ -671,7 +671,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    shipmentType.nWizardID = 10;
+                    shipmentType.nWizardID = 14;
                     shipmentType.dtLastUpdate = DateTime.Now;
                     shipmentType.dtCreated = DateTime.Now;
                     //spaces remove

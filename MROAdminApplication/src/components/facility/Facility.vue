@@ -160,7 +160,7 @@ export default {
         { text: "Description", value: "facilities.sDescription", width: "40%" },
         { text: "Locations", value: "nFacLocCount", align: "center", width: "10%"},
         {
-          text: "Patient Form",
+          text: "Edit Fields/Disclaimers",
           value: "Fields",
           sortable: false,
           align: "center"

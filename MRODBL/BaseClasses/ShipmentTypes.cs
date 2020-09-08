@@ -10,7 +10,7 @@ namespace MRODBL.BaseClasses
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nShipmentTypeID { get; set; }
-        [StringLength(50, ErrorMessage = "Maximum 50 characters Shipment Type allowed")]
+        [StringLength(100, ErrorMessage = "Maximum 100 characters Shipment Type allowed")]
         public string sShipmentTypeName { get; set; }
         public string sNormalizedShipmentTypeName { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Shipment Type Tool Tip allowed")]
