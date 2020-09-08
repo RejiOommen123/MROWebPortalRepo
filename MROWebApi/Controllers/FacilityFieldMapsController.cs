@@ -132,7 +132,10 @@ namespace MROWebApi.Controllers
                                 nFieldOrder = shipmentType.nFieldOrder,
                                 nWizardID = shipmentType.nWizardID,
                                 bShow = shipmentType.bShow,
-                                dtLastUpdate = DateTime.Now
+                                dtLastUpdate = DateTime.Now,
+                                nUpdatedAdminUserID=shipmentType.nUpdatedAdminUserID,
+                                dtCreated = shipmentType.dtCreated,
+                                nCreatedAdminUserID = shipmentType.nCreatedAdminUserID
                             }
                             );
                     }
@@ -155,7 +158,10 @@ namespace MROWebApi.Controllers
                                 nFieldOrder = primaryReason.nFieldOrder,
                                 nWizardID = primaryReason.nWizardID,
                                 bShow = primaryReason.bShow,
-                                dtLastUpdate = DateTime.Now
+                                dtLastUpdate = DateTime.Now,
+                                nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
+                                dtCreated = primaryReason.dtCreated,
+                                nCreatedAdminUserID = primaryReason.nCreatedAdminUserID
                             }
                             ); 
                     }
@@ -178,7 +184,10 @@ namespace MROWebApi.Controllers
                                 nFieldOrder = sensitiveInfo.nFieldOrder,
                                 nWizardID = sensitiveInfo.nWizardID,
                                 bShow = sensitiveInfo.bShow,
-                                dtLastUpdate = DateTime.Now
+                                dtLastUpdate = DateTime.Now,
+                                nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
+                                dtCreated = sensitiveInfo.dtCreated,
+                                nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID
                             }
                             );
 
@@ -203,7 +212,10 @@ namespace MROWebApi.Controllers
                                 nFieldOrder = recordType.nFieldOrder,
                                 nWizardID = recordType.nWizardID,
                                 bShow = recordType.bShow,
-                                dtLastUpdate = DateTime.Now
+                                dtLastUpdate = DateTime.Now,
+                                nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
+                                dtCreated = recordType.dtCreated,
+                                nCreatedAdminUserID = recordType.nCreatedAdminUserID
                             }
                             );
 
@@ -222,10 +234,10 @@ namespace MROWebApi.Controllers
                                 nWizardID = fieldMaps.nWizardID,
                                 bShow = fieldMaps.bShow,
                                 nFieldOrder = fieldMaps.nFieldOrder,
-                                nCreatedAdminUserID  = fieldMaps.nCreatedAdminUserID,
-                                dtCreated = DateTime.Now,
                                 nUpdatedAdminUserID = fieldMaps.nUpdatedAdminUserID,
-                                dtLastUpdate = DateTime.Now
+                                dtLastUpdate = DateTime.Now,
+                                dtCreated = fieldMaps.dtCreated,
+                                nCreatedAdminUserID = fieldMaps.nCreatedAdminUserID
                             }
                             );
 

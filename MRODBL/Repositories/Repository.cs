@@ -380,7 +380,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID , @nAdminUserID = nAdminUserID }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID , @adminUserId = nAdminUserID }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex) {

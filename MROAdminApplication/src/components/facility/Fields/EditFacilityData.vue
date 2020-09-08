@@ -2,7 +2,7 @@
   <div id="EditFacilityDataBox">
     <v-tabs v-model="tab" background-color="rgb(0, 91, 168)" dark>
       <v-tab>Edit Fields</v-tab>
-      <v-tab>Edit Disclaimer</v-tab>
+      <v-tab>Edit Disclaimers</v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">

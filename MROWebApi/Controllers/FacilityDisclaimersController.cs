@@ -84,8 +84,10 @@ namespace MROWebApi.Controllers
                                 sWizardHelperType = disclaimer.sWizardHelperType,
                                 sWizardHelperValue = disclaimer.sWizardHelperValue,
                                 nWizardID = disclaimer.nWizardID,
-                                dtLastUpdate=DateTime.Now,
+                                dtLastUpdate = DateTime.Now,
                                 nUpdatedAdminUserID = disclaimer.nUpdatedAdminUserID,
+                                dtCreated = disclaimer.dtCreated,
+                                nCreatedAdminUserID = disclaimer.nCreatedAdminUserID
                             });
 
                     }
