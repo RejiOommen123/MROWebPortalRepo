@@ -1,8 +1,6 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
@@ -10,7 +8,6 @@ using MROWebApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -101,8 +98,6 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                   // RecordTypesRepository rpFac = new RecordTypesRepository(_info);
-
                     int GeneratedID = (int)rtFac.Insert(recordType);
 
                     #region Logging
@@ -129,34 +124,24 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit RecordType
-        //[HttpPost("EditRecordType/{id}")]
         [HttpPost("EditRecordType")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<RecordTypes>> EditRecordType(int id, RecordTypes recordType)
         public async Task<IActionResult> EditRecordType(RecordTypes recordType)
         {
             if (ModelState.IsValid)
             {
-                //if (id != recordType.nRecordTypeID)
-                //{
-                //    return BadRequest("Bad Request: ID Not Equals Facility ID");
-                //}
-                //else
-                //{
                     //Check if there's a facility with same name 
-                    RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                    IEnumerable<RecordTypes> dbRecordTypes = await rtFac.SelectWhere("sRecordTypeName", recordType.sRecordTypeName);
-                    if (dbRecordTypes.Count() != 0)
+                RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+                IEnumerable<RecordTypes> dbRecordTypes = await rtFac.SelectWhere("sRecordTypeName", recordType.sRecordTypeName);
+                if (dbRecordTypes.Count() != 0)
+                {
+                    if (dbRecordTypes.First().nRecordTypeID != recordType.nRecordTypeID)
                     {
-                        if (dbRecordTypes.First().nRecordTypeID != recordType.nRecordTypeID)
-                        {
-                            //Exit
-                            return BadRequest("Cannot Edit Record Type \"" + recordType.sRecordTypeName + "\", Record Type with Same Name Exists");
-                        }
+                        //Exit
+                        return BadRequest("Cannot Edit Record Type \"" + recordType.sRecordTypeName + "\", Record Type with Same Name Exists");
                     }
-                //}
-                //FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                }
                 try
                 {
                     recordType.dtLastUpdate = DateTime.Now;
@@ -193,7 +178,6 @@ namespace MROWebApi.Controllers
         [HttpGet("DeleteRecordType/sRecordTypeID={sRecordTypeID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<RecordTypes>> EditRecordType(int id, RecordTypes recordType)
         public async Task<IActionResult> DeleteRecordType(string sRecordTypeID,string sAdminUserID)
         {
             RecordTypesRepository rtFac = new RecordTypesRepository(_info);
@@ -294,8 +278,6 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    // PrimaryReasonsRepository rpFac = new PrimaryReasonsRepository(_info);
-
                     int GeneratedID = (int)rtFac.Insert(primaryReason);
 
                     #region Logging
@@ -322,21 +304,14 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit PrimaryReason
-        //[HttpPost("EditPrimaryReason/{id}")]
         [HttpPost("EditPrimaryReason")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<PrimaryReasons>> EditPrimaryReason(int id, PrimaryReasons primaryReason)
         public async Task<IActionResult> EditPrimaryReason(PrimaryReasons primaryReason)
         {
             if (ModelState.IsValid)
             {
-                //if (id != primaryReason.nPrimaryReasonID)
-                //{
-                //    return BadRequest("Bad Request: ID Not Equals Facility ID");
-                //}
-                //else
-                //{
+                
                 //Check if there's a facility with same name 
                 PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
                 IEnumerable<PrimaryReasons> dbPrimaryReasons = await rtFac.SelectWhere("sPrimaryReasonName", primaryReason.sPrimaryReasonName);
@@ -348,8 +323,7 @@ namespace MROWebApi.Controllers
                         return BadRequest("Cannot Edit Primary Reason \"" + primaryReason.sPrimaryReasonName + "\", Primary Reason with Same Name Exists");
                     }
                 }
-                //}
-                //FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                
                 try
                 {
                     primaryReason.dtLastUpdate = DateTime.Now;
@@ -386,7 +360,6 @@ namespace MROWebApi.Controllers
         [HttpGet("DeletePrimaryReason/sPrimaryReasonID={sPrimaryReasonID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<PrimaryReasons>> EditPrimaryReason(int id, PrimaryReasons primaryReason)
         public async Task<IActionResult> DeletePrimaryReason(string sPrimaryReasonID, string sAdminUserID)
         {
             PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
@@ -417,7 +390,7 @@ namespace MROWebApi.Controllers
 
         #region Master - Sensitive Info - Methods
 
-        #region Get SensitiveInfo / SensitiveInfo
+        #region Get SensitiveInfo / SensitiveInfos
         [HttpGet]
         [AllowAnonymous]
         [Route("[action]")]
@@ -487,8 +460,6 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    // SensitiveInfoRepository rpFac = new SensitiveInfoRepository(_info);
-
                     int GeneratedID = (int)rtFac.Insert(sensitiveInfo);
 
                     #region Logging
@@ -515,21 +486,13 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit SensitiveInfo
-        //[HttpPost("EditSensitiveInfo/{id}")]
         [HttpPost("EditSensitiveInfo")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<SensitiveInfo>> EditSensitiveInfo(int id, SensitiveInfo sensitiveInfo)
         public async Task<IActionResult> EditSensitiveInfo(SensitiveInfo sensitiveInfo)
         {
             if (ModelState.IsValid)
             {
-                //if (id != sensitiveInfo.nSensitiveInfoID)
-                //{
-                //    return BadRequest("Bad Request: ID Not Equals Facility ID");
-                //}
-                //else
-                //{
                 //Check if there's a facility with same name 
                 SensitiveInfoRepository rtFac = new SensitiveInfoRepository(_info);
                 IEnumerable<SensitiveInfo> dbSensitiveInfo = await rtFac.SelectWhere("sSensitiveInfoName", sensitiveInfo.sSensitiveInfoName);
@@ -541,8 +504,6 @@ namespace MROWebApi.Controllers
                         return BadRequest("Cannot Edit Sensitive Info \"" + sensitiveInfo.sSensitiveInfoName + "\", Sensitive Info with Same Name Exists");
                     }
                 }
-                //}
-                //FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 try
                 {
                     sensitiveInfo.dtLastUpdate = DateTime.Now;
@@ -579,7 +540,6 @@ namespace MROWebApi.Controllers
         [HttpGet("DeleteSensitiveInfo/sSensitiveInfoID={sSensitiveInfoID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<SensitiveInfo>> EditSensitiveInfo(int id, SensitiveInfo sensitiveInfo)
         public async Task<IActionResult> DeleteSensitiveInfo(string sSensitiveInfoID, string sAdminUserID)
         {
             SensitiveInfoRepository rtFac = new SensitiveInfoRepository(_info);
@@ -680,8 +640,6 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    // ShipmentTypesRepository rpFac = new ShipmentTypesRepository(_info);
-
                     int GeneratedID = (int)rtFac.Insert(shipmentType);
 
                     #region Logging
@@ -708,21 +666,13 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit ShipmentType
-        //[HttpPost("EditShipmentType/{id}")]
         [HttpPost("EditShipmentType")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<ShipmentTypes>> EditShipmentType(int id, ShipmentTypes shipmentType)
         public async Task<IActionResult> EditShipmentType(ShipmentTypes shipmentType)
         {
             if (ModelState.IsValid)
             {
-                //if (id != shipmentType.nShipmentTypeID)
-                //{
-                //    return BadRequest("Bad Request: ID Not Equals Facility ID");
-                //}
-                //else
-                //{
                 //Check if there's a facility with same name 
                 ShipmentTypesRepository rtFac = new ShipmentTypesRepository(_info);
                 IEnumerable<ShipmentTypes> dbShipmentTypes = await rtFac.SelectWhere("sShipmentTypeName", shipmentType.sShipmentTypeName);
@@ -734,8 +684,6 @@ namespace MROWebApi.Controllers
                         return BadRequest("Cannot Edit Shipment Type \"" + shipmentType.sShipmentTypeName + "\", Shipment Type with Same Name Exists");
                     }
                 }
-                //}
-                //FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 try
                 {
                     shipmentType.dtLastUpdate = DateTime.Now;
@@ -772,7 +720,6 @@ namespace MROWebApi.Controllers
         [HttpGet("DeleteShipmentType/sShipmentTypeID={sShipmentTypeID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        //public async Task<ActionResult<ShipmentTypes>> EditShipmentType(int id, ShipmentTypes shipmentType)
         public async Task<IActionResult> DeleteShipmentType(string sShipmentTypeID, string sAdminUserID)
         {
             ShipmentTypesRepository rtFac = new ShipmentTypesRepository(_info);
@@ -801,7 +748,7 @@ namespace MROWebApi.Controllers
 
         #endregion
 
-        #region generic GetNormalizedName method
+        #region Generic GetNormalizedName method
         private string GetNormalizedName(string normalizedString)
         {
             string removedSpecialChar = Regex.Replace(normalizedString, @"[^0-9a-zA-Z]+", "");
