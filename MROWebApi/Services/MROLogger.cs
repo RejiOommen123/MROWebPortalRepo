@@ -40,7 +40,8 @@ namespace MROWebApi.Services
                 };
                 adminModuleLoggerRepository.Insert(logAdminDetails);
             }
-            catch (Exception ex) {
+            catch
+            {
 
             }
 
@@ -79,7 +80,7 @@ namespace MROWebApi.Services
                 };
                 exceptionLoggerRepository.Insert(exceptionLoggerDetails);
             }
-            catch (Exception ex)
+            catch
             {
 
             }
