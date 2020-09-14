@@ -52,6 +52,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <NativeLibs Remove="appsettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <NativeLibs Remove="Controllers\MasterController.cs" />
 	</ItemGroup>
 
