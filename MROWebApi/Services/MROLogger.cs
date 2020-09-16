@@ -2,7 +2,10 @@
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -148,6 +151,85 @@ namespace MROWebApi.Services
                 }
             }
             return encryptString;
+        }
+        #endregion
+
+        #region Get new/old value
+        public void Compare<T>(T oldObject, T newObject,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineNewData="";
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object oldValue = pi.GetValue(oldObject), newValue = pi.GetValue(newObject);
+
+                if (!object.Equals(oldValue, newValue))
+                {
+                    combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                    combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                }
+            }
+
+            result.nAdminUserID = adminModuleLogger.nAdminUserID;
+            result.sEventName = adminModuleLogger.sEventName;
+            result.sModuleName = adminModuleLogger.sModuleName;
+            result.sDescription = adminModuleLogger.sDescription;
+            result.sNewValue = combineNewData;
+            result.sOldValue = combineOldData;
+            result.dtLogTime = DateTime.Now;
+
+            adminModuleLoggerRepository.Insert(result);
+        }
+
+        public void CompareLists<T>(List<T> oldObjectList, List<T> newObjectList, AdminModuleLogger adminModuleLogger, string id)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineNewData = "";
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T newObject in newObjectList)
+            {
+                T oldObject = oldObjectList.FirstOrDefault(q => q.GetType().GetProperty(id).GetValue(q, null).Equals(newObject.GetType().GetProperty(id).GetValue(newObject, null)));
+                //T oldObject = oldObjectList.Where(newObject);
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }                    
+                    object oldValue = pi.GetValue(oldObject), newValue = pi.GetValue(newObject);
+
+                    if (!object.Equals(oldValue, newValue))
+                    {
+                        combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                        combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                    }
+                }
+                result.Add(new AdminModuleLogger
+                {
+                    nAdminUserID = adminModuleLogger.nAdminUserID,
+                    sEventName = adminModuleLogger.sEventName,
+                    sModuleName = adminModuleLogger.sModuleName,
+                    sDescription = adminModuleLogger.sDescription,
+                    sNewValue = combineNewData,
+                    sOldValue = combineOldData,
+                    dtLogTime = DateTime.Now
+                });
+                combineNewData = "";
+                combineOldData = "";
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
         }
         #endregion
     }

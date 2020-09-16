@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
+    public class IgnorePropertyCompareAttribute : Attribute { }
+    [Dapper.Contrib.Extensions.Table("tblAdminModuleLogger")]
     public class AdminModuleLogger
     {
         #region Props
@@ -17,6 +19,8 @@ namespace MRODBL.BaseClasses
         public string sEventName { get; set; }
         [StringLength(200, ErrorMessage = "Maximum 200 characters Description Allowed")]
         public string sDescription { get; set; }
+        public string sNewValue { get; set; }
+        public string sOldValue { get; set; }
         public DateTime dtLogTime { get; set; }
         #endregion
     }

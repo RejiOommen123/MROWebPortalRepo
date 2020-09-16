@@ -166,6 +166,7 @@ namespace MROWebAPI.Controllers
         [Route("[action]")]
         public async Task<ActionResult<Facilities>> EditFacility(int id, Facilities facility)
         {
+            Facilities oldFacility;
             if (ModelState.IsValid) {
                 if (id != facility.nFacilityID)
                 {
@@ -176,6 +177,7 @@ namespace MROWebAPI.Controllers
                     //Check if there's a facility with same name 
                     FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
                     IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);
+                    oldFacility = dbFacilitites.FirstOrDefault();
                     if (dbFacilitites.Count() != 0)
                     {
                         if (dbFacilitites.First().nFacilityID != facility.nFacilityID)
@@ -191,7 +193,7 @@ namespace MROWebAPI.Controllers
                 MROLogger password = new MROLogger(_info);
                 facility.sSMTPPassword = password.EncryptString(facility.sSMTPPassword);
                 facility.sFTPPassword = password.EncryptString(facility.sFTPPassword);
-                #endregion
+                #endregion               
 
                 if (rpFac.Update(facility))
                 {
@@ -200,7 +202,16 @@ namespace MROWebAPI.Controllers
                     {
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
-                        logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");
+                        //logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");       
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = facility.nUpdatedAdminUserID,
+                            sDescription = "Test Description for edit facility",
+                            sModuleName = "Edit Facility",
+                            sEventName = "Edit Facility"
+                        };
+                      logger.Compare(oldFacility, facility, adminModuleLogger);                      
+
                     }
                     #endregion
                     return Ok();

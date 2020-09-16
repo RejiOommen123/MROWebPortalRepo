@@ -114,8 +114,9 @@ namespace MROWebApi.Controllers
                     var STList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
                     var FMList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
 
-
+                    var singleRecord = fieldFacilityMapsTable.FirstOrDefault();
                     //Facility Shipment Types 
+                    List<int> idList = new List<int>();
                     List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
                     foreach (var shipmentType in STList)
                     {
@@ -133,14 +134,32 @@ namespace MROWebApi.Controllers
                                 nWizardID = shipmentType.nWizardID,
                                 bShow = shipmentType.bShow,
                                 dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID=shipmentType.nUpdatedAdminUserID,
+                                nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
                                 dtCreated = shipmentType.dtCreated,
                                 nCreatedAdminUserID = shipmentType.nCreatedAdminUserID
                             }
                             );
+                        idList.Add(shipmentType.nFacilityFieldMapID);
                     }
-                    shipmentTypeRepo.UpdateMany(shipmentTypeList);
+                    int[] idArray = idList.ToArray();
+                    List<FacilityShipmentTypes> oldShipmentTypes= new List<FacilityShipmentTypes>();
+                    var elist = await shipmentTypeRepo.SelectListByInClause(idArray, "lnkFacilityShipmentTypes", "nShipmentTypeID",singleRecord.nFacilityID);
 
+                    foreach (var item in elist)
+                    {
+                        oldShipmentTypes.Add(item);
+                    }
+                    
+                    shipmentTypeRepo.UpdateMany(shipmentTypeList);
+                    MROLogger logger2 = new MROLogger(_info);
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                        sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
+                        sModuleName = "Edit Facility Fields",
+                        sEventName = "Edit Facility Shipment Type"
+                    };
+                    logger2.CompareLists(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
                     //Facility PrimaryReasons
                     List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
                     foreach (var primaryReason in PRList)

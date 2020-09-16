@@ -226,6 +226,14 @@ namespace MRODBL.Repositories
                 }
             }
         }
+        public async Task<IEnumerable<T>> SelectListByInClause(int[] ids,string tblName, string colName,int nFacilityId)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT * FROM "+tblName +" WHERE nFacilityId="+ nFacilityId +"AND "+colName+" IN @ids";
+                return await db.QueryAsync<T>(SqlString, new { @ids = ids });
+            }
+        }
 
         #endregion
 
@@ -252,15 +260,21 @@ namespace MRODBL.Repositories
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                db.Open();
-                int count = 0;
-                using (var trans = db.BeginTransaction())
+                try
                 {
-                    count = await db.InsertAsync(ourModels, trans);
-                    trans.Commit();
+                    db.Open();
+                    long count = 0;
+                    using (var trans = db.BeginTransaction())
+                    {
+                        count = db.Insert(ourModels, trans);
+                        trans.Commit();
+                    }
+                    if (count > 0) { return true; }
+                    else { return false; }
                 }
-                if (count > 0) { return true; }
-                else { return false; }
+                catch (Exception ex) {
+                    return false;
+                }
             }
         }
         #endregion
