@@ -154,7 +154,7 @@ namespace MROWebApi.Services
         }
         #endregion
 
-        #region Get new/old value
+        #region Update audit single/many
         public void UpdateAuditSingle<T>(T oldObject, T newObject,AdminModuleLogger adminModuleLogger)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
@@ -177,20 +177,8 @@ namespace MROWebApi.Services
                     combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                 }
             }
-            if (string.IsNullOrEmpty(combineOldData))
-            {
-                if (combineOldData.EndsWith(", "))
-                {
-                    combineOldData = combineOldData.Remove(combineOldData.Length - 2, 2);
-                }
-            }
-            if (string.IsNullOrEmpty(combineNewData))
-            {
-                if (combineNewData.EndsWith(", "))
-                {
-                    combineNewData = combineNewData.Remove(combineNewData.Length - 2, 2);
-                }
-            }
+            combineNewData = removeComma(combineNewData);
+            combineOldData = removeComma(combineOldData);
 
             result.nAdminUserID = adminModuleLogger.nAdminUserID;
             result.sEventName = adminModuleLogger.sEventName;
@@ -229,20 +217,8 @@ namespace MROWebApi.Services
                         combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                     }
                 }
-                if (string.IsNullOrEmpty(combineOldData))
-                {
-                    if (combineOldData.EndsWith(", "))
-                    {
-                        combineOldData = combineOldData.Remove(combineOldData.Length - 2, 2);
-                    }
-                }
-                if (string.IsNullOrEmpty(combineNewData))
-                {
-                    if (combineNewData.EndsWith(", "))
-                    {
-                        combineNewData = combineNewData.Remove(combineNewData.Length - 2, 2);
-                    }
-                }
+                combineNewData = removeComma(combineNewData);
+                combineOldData = removeComma(combineOldData);
 
                 result.Add(new AdminModuleLogger
                 {
@@ -259,6 +235,169 @@ namespace MROWebApi.Services
             }
 
             adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Insert audit single/many
+        public void InsertAuditSingle<T>(T newObject, AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineNewData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object newValue = pi.GetValue(newObject);
+
+                if (newValue != null)
+                {
+                    combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                }
+            }
+            combineNewData = removeComma(combineNewData);
+
+            result.nAdminUserID = adminModuleLogger.nAdminUserID;
+            result.sEventName = adminModuleLogger.sEventName;
+            result.sModuleName = adminModuleLogger.sModuleName;
+            result.sDescription = adminModuleLogger.sDescription;
+            result.sNewValue = combineNewData;
+            result.sOldValue = null;
+            result.dtLogTime = DateTime.Now;
+
+            adminModuleLoggerRepository.Insert(result);
+        }
+
+        public void InsertAuditMany<T>(List<T> newObjectList, AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineNewData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T newObject in newObjectList)
+            {
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }
+                    object newValue = pi.GetValue(newObject);
+
+                    if (newValue != null)
+                    {
+                        combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                    }
+                }
+                combineNewData = removeComma(combineNewData);
+
+                result.Add(new AdminModuleLogger
+                {
+                    nAdminUserID = adminModuleLogger.nAdminUserID,
+                    sEventName = adminModuleLogger.sEventName,
+                    sModuleName = adminModuleLogger.sModuleName,
+                    sDescription = adminModuleLogger.sDescription,
+                    sNewValue = combineNewData,
+                    sOldValue = null,
+                    dtLogTime = DateTime.Now
+                });
+                combineNewData = "";
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Delete audit single/many
+        public void DeleteAuditSingle<T>(T oldObject,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object oldValue = pi.GetValue(oldObject);
+
+                if (oldValue!=null)
+                {
+                    combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                }
+            }
+            combineOldData = removeComma(combineOldData);
+
+            result.nAdminUserID = adminModuleLogger.nAdminUserID;
+            result.sEventName = adminModuleLogger.sEventName;
+            result.sModuleName = adminModuleLogger.sModuleName;
+            result.sDescription = adminModuleLogger.sDescription;
+            result.sNewValue = null;
+            result.sOldValue = combineOldData;
+            result.dtLogTime = DateTime.Now;
+
+            adminModuleLoggerRepository.Insert(result);
+        }
+
+        public void DeleteAuditMany<T>(List<T> oldObjectList,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T oldObject in oldObjectList)
+            {
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }
+                    object oldValue = pi.GetValue(oldObject);
+
+                    if (oldValue!=null)
+                    {
+                        combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                    }
+                }
+                combineOldData = removeComma(combineOldData);
+                result.Add(new AdminModuleLogger
+                {
+                    nAdminUserID = adminModuleLogger.nAdminUserID,
+                    sEventName = adminModuleLogger.sEventName,
+                    sModuleName = adminModuleLogger.sModuleName,
+                    sDescription = adminModuleLogger.sDescription,
+                    sNewValue = null,
+                    sOldValue = combineOldData,
+                    dtLogTime = DateTime.Now
+                });
+                combineOldData = "";
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Remove succeeding ", " from string
+        public string removeComma(string inputString)
+        {
+            if (string.IsNullOrEmpty(inputString))
+            {
+                if (inputString.EndsWith(", "))
+                {
+                    inputString = inputString.Remove(inputString.Length - 2, 2);
+                }
+            }
+            return inputString;
         }
         #endregion
     }

@@ -131,18 +131,26 @@ namespace MROWebAPI.Controllers
                     facility.sFTPPassword = password.EncryptString(facility.sFTPPassword);
                     #endregion
 
-                    int GeneratedID = (int)rpFac.Insert(facility);
+                    int GeneratedID = (int)rpFac.Insert(facility);             
+
+                    Facilities dbFacility = await rpFac.Select(GeneratedID);
 
                     #region Logging
-                    if (facility.bFacilityLogging)
+                    if (dbFacility.bFacilityLogging)
                     {
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + facility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
-                        logger.LogAdminRecords(facility.nCreatedAdminUserID, sDescription, "Add Facility", "Add Facility");
+                        string sDescription = "Admin with ID: " + dbFacility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = dbFacility.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Manage Facilities",
+                            sEventName = "Add Facility"
+                        };
+                        logger.InsertAuditSingle(dbFacility, adminModuleLogger);
                     }
                     #endregion
 
-                    Facilities dbFacility = await rpFac.Select(GeneratedID);
                     rpFac.AddDependencyRecordsForFacility(GeneratedID, addFacility.nConnectionID, facility.nCreatedAdminUserID);
                     return dbFacility;
                 }
@@ -312,9 +320,20 @@ namespace MROWebAPI.Controllers
                     #region Logging
                     if (facilityDB.bFacilityLogging)
                     {
-                        MROLogger logger = new MROLogger(_info);
+                        AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
                         string sDescription = "Admin with ID: " + toggleFacility.nAdminuserID + " called Toggle Facility Method for Facility ID: " + nFacilityID;
-                        logger.LogAdminRecords(toggleFacility.nAdminuserID, sDescription, "Toggle Facility By ID", "Manage Facilities");
+                        //logger.LogAdminRecords(toggleFacility.nAdminuserID, sDescription, "Toggle Facility By ID", "Manage Facilities");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = facilityDB.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Manage Facilities",
+                            sEventName = "Add Facility",
+                            sNewValue = "{bActiveStatus : " + facilityDB.bActiveStatus + "}",
+                            sOldValue= "{bActiveStatus : " + !facilityDB.bActiveStatus + "}",
+                            dtLogTime=DateTime.Now
+                        };
+                        adminModuleLoggerRepository.Insert(adminModuleLogger);
                     }
                     #endregion
                     return Ok();
