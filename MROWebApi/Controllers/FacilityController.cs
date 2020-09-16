@@ -165,19 +165,17 @@ namespace MROWebAPI.Controllers
         [AllowAnonymous]
         [Route("[action]")]
         public async Task<ActionResult<Facilities>> EditFacility(int id, Facilities facility)
-        {
-            Facilities oldFacility;
+        {            
             if (ModelState.IsValid) {
+                FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
                 if (id != facility.nFacilityID)
                 {
                     return BadRequest("Bad Request: ID Not Equals Facility ID");
                 }
                 else
                 {
-                    //Check if there's a facility with same name 
-                    FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
-                    IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);
-                    oldFacility = dbFacilitites.FirstOrDefault();
+                    //Check if there's a facility with same name                     
+                    IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);                   
                     if (dbFacilitites.Count() != 0)
                     {
                         if (dbFacilitites.First().nFacilityID != facility.nFacilityID)
@@ -193,8 +191,10 @@ namespace MROWebAPI.Controllers
                 MROLogger password = new MROLogger(_info);
                 facility.sSMTPPassword = password.EncryptString(facility.sSMTPPassword);
                 facility.sFTPPassword = password.EncryptString(facility.sFTPPassword);
-                #endregion               
+                #endregion
 
+                IEnumerable<Facilities> dbOldFacilitites = await fpRepo.SelectWhere("nFacilityID", facility.nFacilityID);
+                Facilities oldFacility = dbOldFacilitites.FirstOrDefault();
                 if (rpFac.Update(facility))
                 {
                     #region Logging
@@ -202,16 +202,14 @@ namespace MROWebAPI.Controllers
                     {
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
-                        //logger.LogAdminRecords(facility.nUpdatedAdminUserID, sDescription, "Edit Facility", "Edit Facility");       
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = facility.nUpdatedAdminUserID,
-                            sDescription = "Test Description for edit facility",
-                            sModuleName = "Edit Facility",
+                            sDescription = sDescription,
+                            sModuleName = "Manage Facilities",
                             sEventName = "Edit Facility"
                         };
-                      logger.Compare(oldFacility, facility, adminModuleLogger);                      
-
+                      logger.UpdateAuditSingle(oldFacility, facility, adminModuleLogger);             
                     }
                     #endregion
                     return Ok();

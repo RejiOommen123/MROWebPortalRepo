@@ -155,7 +155,7 @@ namespace MROWebApi.Services
         #endregion
 
         #region Get new/old value
-        public void Compare<T>(T oldObject, T newObject,AdminModuleLogger adminModuleLogger)
+        public void UpdateAuditSingle<T>(T oldObject, T newObject,AdminModuleLogger adminModuleLogger)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
             AdminModuleLogger result = new AdminModuleLogger();
@@ -177,6 +177,20 @@ namespace MROWebApi.Services
                     combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                 }
             }
+            if (string.IsNullOrEmpty(combineOldData))
+            {
+                if (combineOldData.EndsWith(", "))
+                {
+                    combineOldData = combineOldData.Remove(combineOldData.Length - 2, 2);
+                }
+            }
+            if (string.IsNullOrEmpty(combineNewData))
+            {
+                if (combineNewData.EndsWith(", "))
+                {
+                    combineNewData = combineNewData.Remove(combineNewData.Length - 2, 2);
+                }
+            }
 
             result.nAdminUserID = adminModuleLogger.nAdminUserID;
             result.sEventName = adminModuleLogger.sEventName;
@@ -189,7 +203,7 @@ namespace MROWebApi.Services
             adminModuleLoggerRepository.Insert(result);
         }
 
-        public void CompareLists<T>(List<T> oldObjectList, List<T> newObjectList, AdminModuleLogger adminModuleLogger, string id)
+        public void UpdateAuditMany<T>(List<T> oldObjectList, List<T> newObjectList, AdminModuleLogger adminModuleLogger, string id)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();
             List<AdminModuleLogger> result = new List<AdminModuleLogger>();
@@ -215,6 +229,21 @@ namespace MROWebApi.Services
                         combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                     }
                 }
+                if (string.IsNullOrEmpty(combineOldData))
+                {
+                    if (combineOldData.EndsWith(", "))
+                    {
+                        combineOldData = combineOldData.Remove(combineOldData.Length - 2, 2);
+                    }
+                }
+                if (string.IsNullOrEmpty(combineNewData))
+                {
+                    if (combineNewData.EndsWith(", "))
+                    {
+                        combineNewData = combineNewData.Remove(combineNewData.Length - 2, 2);
+                    }
+                }
+
                 result.Add(new AdminModuleLogger
                 {
                     nAdminUserID = adminModuleLogger.nAdminUserID,

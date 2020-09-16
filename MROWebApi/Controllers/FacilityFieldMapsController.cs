@@ -159,7 +159,7 @@ namespace MROWebApi.Controllers
                         sModuleName = "Edit Facility Fields",
                         sEventName = "Edit Facility Shipment Type"
                     };
-                    logger2.CompareLists(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
+                    logger2.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
                     //Facility PrimaryReasons
                     List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
                     foreach (var primaryReason in PRList)
