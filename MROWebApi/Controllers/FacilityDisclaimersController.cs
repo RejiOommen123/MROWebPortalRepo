@@ -70,6 +70,9 @@ namespace MROWebApi.Controllers
                 {
                     FacilityDisclaimersRepository fdFac = new FacilityDisclaimersRepository(_info);
                     List<FacilityDisclaimers> facilityDisclaimersList = new List<FacilityDisclaimers>();
+                    List<int> idList = new List<int>();
+                    var singleRecord = facilityDisclaimers.FirstOrDefault();
+
                     foreach (var disclaimer in facilityDisclaimers)
                     {
                         facilityDisclaimersList.Add(
@@ -85,21 +88,37 @@ namespace MROWebApi.Controllers
                                 dtCreated = disclaimer.dtCreated,
                                 nCreatedAdminUserID = disclaimer.nCreatedAdminUserID
                             });
-
+                        idList.Add(disclaimer.nFacilityWizardHelperID);
                     }
+                    int[] idArray = idList.ToArray();
+                    List<FacilityDisclaimers> oldFacilityDisclaimers = new List<FacilityDisclaimers>();
+                    var elist = await fdFac.SelectListByInClause(idArray, "lnkFacilityWizardHelper", "nFacilityWizardHelperID", singleRecord.nFacilityID);
+
+                    foreach (var item in elist)
+                    {
+                        oldFacilityDisclaimers.Add(item);
+                    }
+
                     fdFac.UpdateMany(facilityDisclaimersList);
                     
                     #region Logging
-                    var mapTable = facilityDisclaimers.FirstOrDefault();
-                    int nAdminUserID = mapTable.nUpdatedAdminUserID;
-                    int nFacilityID = mapTable.nFacilityID;
+                    int nAdminUserID = singleRecord.nUpdatedAdminUserID;
+                    int nFacilityID = singleRecord.nFacilityID;
                     FacilitiesRepository facRepo = new FacilitiesRepository(_info);
                     Facilities facility = await facRepo.Select(nFacilityID);
                     if (facility.bFacilityLogging)
                     {
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Disclaimers Method for Facility ID: " + nFacilityID + " and Updated Disclaimer";
-                        logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Disclaimers", "Edit Disclaimers");
+                        //logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Disclaimers", "Edit Disclaimers");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Edit Facility Fields",
+                            sEventName = "Edit Facility Disclaimers"
+                        };
+                        logger.UpdateAuditMany(oldFacilityDisclaimers, facilityDisclaimersList, adminModuleLogger, "nFacilityWizardHelperID");
                     }
                     #endregion
 

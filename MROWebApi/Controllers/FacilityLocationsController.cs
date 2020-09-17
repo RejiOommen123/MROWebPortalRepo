@@ -191,6 +191,8 @@ namespace MROWebApi.Controllers
 
                     if (addedLocationID != null)
                     {
+                        IEnumerable<FacilityLocations> addedFacilityLocationRepo = await facilityLocationsRepository.SelectWhere("nFacilityLocationID", addedLocationID);
+                        FacilityLocations addedFacilityLocation = addedFacilityLocationRepo.FirstOrDefault();
                         //Call spAddDepedencyRecordsforFacilityLocation & Log
                         facilityLocationsRepository.AddDependencyRecordsForFacilityLocation((int)addedLocationID, facilityLocation.nFacilityID);
 
@@ -201,7 +203,14 @@ namespace MROWebApi.Controllers
                         {
                             MROLogger logger = new MROLogger(_info);
                             string sDescription = "Admin with ID: " + facilityLocation.nCreatedAdminUserID + " called Add Location Method & Created Location with ID: " + addedLocationID;
-                            logger.LogAdminRecords(facilityLocation.nCreatedAdminUserID, sDescription, "Add Location", "Add Location");
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = facilityLocation.nCreatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Facility Location",
+                                sEventName = "Add Location"
+                            };
+                            logger.InsertAuditSingle(addedFacilityLocation, adminModuleLogger);
                         }
                         #endregion
                     }
@@ -277,6 +286,9 @@ namespace MROWebApi.Controllers
                         checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
                     }
                     facilityLocation.dtLastUpdate = DateTime.Now;
+
+                    IEnumerable<FacilityLocations> dbOldFacilityLocation = await facilityLocationsRepository.SelectWhere("nFacilityLocationID", facilityLocation.nFacilityLocationID);
+                    FacilityLocations oldFacilityLocation = dbOldFacilityLocation.FirstOrDefault();
                     if (checkPDF)
                     {
                         facilityLocation.bLocationActiveStatus = true;
@@ -289,7 +301,14 @@ namespace MROWebApi.Controllers
                         {
                             MROLogger logger = new MROLogger(_info);
                             string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
-                            logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = facilityLocation.nUpdatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Facility Location",
+                                sEventName = "Edit Facility Location"
+                            };
+                            logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
                         }
                         #endregion
                         return Ok(sValidationTextGlobal);
@@ -302,7 +321,14 @@ namespace MROWebApi.Controllers
                         #region Logging
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
-                        logger.LogAdminRecords(facilityLocation.nUpdatedAdminUserID, sDescription, "Edit Location", "Edit Location");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = facilityLocation.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Facility Location",
+                            sEventName = "Edit Facility Location"
+                        };
+                        logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
                         #endregion
                         return Ok(sValidationTextGlobal);
                     }
@@ -359,9 +385,19 @@ namespace MROWebApi.Controllers
                         Facilities facility = await rpFac.Select(location.nFacilityID);
                         if (facility.bFacilityLogging)
                         {
-                            MROLogger logger = new MROLogger(_info);
+                            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
                             string sDescription = "Admin with ID: " + toggleLocation.nAdminUserID + " called Toggle Location Method for Location ID: " + toggleLocation.nFacilityLocationID;
-                            logger.LogAdminRecords(toggleLocation.nAdminUserID, sDescription, "Toggle Location", "Manage Locations");
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = location.nUpdatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Facility Location",
+                                sEventName = "Toggle Facility Location",
+                                sNewValue = "{bLocationActiveStatus : " + location.bLocationActiveStatus + "}",
+                                sOldValue = "{bLocationActiveStatus : " + !location.bLocationActiveStatus + "}",
+                                dtLogTime = DateTime.Now
+                            };
+                            adminModuleLoggerRepository.Insert(adminModuleLogger);
                         }
                         #endregion
                         return Ok("Success");

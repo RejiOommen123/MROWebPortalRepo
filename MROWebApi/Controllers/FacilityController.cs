@@ -328,7 +328,7 @@ namespace MROWebAPI.Controllers
                             nAdminUserID = facilityDB.nUpdatedAdminUserID,
                             sDescription = sDescription,
                             sModuleName = "Manage Facilities",
-                            sEventName = "Add Facility",
+                            sEventName = "Toggle Facility",
                             sNewValue = "{bActiveStatus : " + facilityDB.bActiveStatus + "}",
                             sOldValue= "{bActiveStatus : " + !facilityDB.bActiveStatus + "}",
                             dtLogTime=DateTime.Now
