@@ -34,7 +34,7 @@
                 >
                   {{ props.item.sFieldName }}
                   <template v-slot:input>
-                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter></v-text-field>
+                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter maxlength="100"></v-text-field>
                   </template>
                 </v-edit-dialog>
                 <label v-else>{{props.item.sFieldName}}</label>
@@ -143,7 +143,7 @@ export default {
     pushToArray(obj) {
       console.log(this.updatedArray);
       const index = this.updatedArray.findIndex(
-        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID
+        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID && e.sTableName === obj.sTableName
       );
       if (index === -1) {
         this.updatedArray.push(obj);

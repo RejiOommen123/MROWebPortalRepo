@@ -33,7 +33,7 @@
                 >
                   {{ props.item.sWizardHelperValue }}
                   <template v-slot:input>
-                    <v-text-field v-model="props.item.sWizardHelperValue" label="Edit" counter></v-text-field>
+                    <v-text-field v-model="props.item.sWizardHelperValue" label="Edit" counter maxlength="1000"></v-text-field>
                   </template>
                 </v-edit-dialog>
               </template>

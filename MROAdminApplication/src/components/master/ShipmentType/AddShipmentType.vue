@@ -25,6 +25,7 @@
               placeholder="Enter Tooltip"
               v-model="shipmentType.sFieldToolTip"
               solo
+              maxlength="500"
             ></v-text-field>
           </v-col>
         </v-row>
