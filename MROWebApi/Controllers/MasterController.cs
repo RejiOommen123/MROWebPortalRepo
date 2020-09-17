@@ -26,6 +26,7 @@ namespace MROWebApi.Controllers
             _info = info;
         }
         #endregion
+
         #region Master - Record Type - Methods
 
         #region Get RecordType / RecordTypes
@@ -103,7 +104,15 @@ namespace MROWebApi.Controllers
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + recordType.nCreatedAdminUserID + " called Add Record Type Method & Created Record Type with ID: " + GeneratedID;
-                     logger.LogAdminRecords(recordType.nCreatedAdminUserID, sDescription, "Add Record Type", "Master Entry - Record Type");
+                    recordType.nRecordTypeID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = recordType.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Record Type",
+                        sEventName = "Add Record Type"
+                    };
+                    logger.InsertAuditSingle(recordType, adminModuleLogger);
                     #endregion
 
                     return Ok();
@@ -145,13 +154,21 @@ namespace MROWebApi.Controllers
                 try
                 {
                     recordType.dtLastUpdate = DateTime.Now;
+                    RecordTypes oldRecordType = await rtFac.Select(recordType.nRecordTypeID);
                     if (rtFac.Update(recordType))
                     {
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + recordType.nUpdatedAdminUserID + " called Edit Record Type Method for Record Type ID: " + recordType.nRecordTypeID;
-                        logger.LogAdminRecords(recordType.nUpdatedAdminUserID, sDescription, "Edit Record Type", "Master Entry - Record Type");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = recordType.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Record Type",
+                            sEventName = "Edit Record Type"
+                        };
+                        logger.UpdateAuditSingle(oldRecordType, recordType, adminModuleLogger);
 
                         #endregion
                         return Ok();
@@ -181,18 +198,30 @@ namespace MROWebApi.Controllers
         public async Task<IActionResult> DeleteRecordType(string sRecordTypeID,string sAdminUserID)
         {
             RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+            FacilityRecordTypesRepository rtFacilityFac = new FacilityRecordTypesRepository(_info);
             bool resultRecordTypeID = int.TryParse(sRecordTypeID, out int nRecordTypeID);
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
                 {
-                    if (rtFac.DeleteOneToMany(nRecordTypeID, "lnkFacilityRecordTypes"))
+                RecordTypes masterRecordType = await rtFac.Select(nRecordTypeID);
+                IEnumerable<FacilityRecordTypes> facilityRecordTypeIEnum = await rtFacilityFac.SelectWhere("nRecordTypeID", nRecordTypeID);
+                List<FacilityRecordTypes> facilityRecordTypeList = facilityRecordTypeIEnum.ToList();
+                if (rtFac.DeleteOneToMany(nRecordTypeID, "lnkFacilityRecordTypes"))
                     {
                         #region Logging
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Record Type Method for Record Type ID: " + sRecordTypeID;
-                        logger.LogAdminRecords(nAdminUserID, sDescription, "Delete Record Type", "Master Entry - Record Type");
-                        #endregion
-                        return Ok();
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = nAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Record Type",
+                            sEventName = "Delete Record Type"
+                        };
+                        logger.DeleteAuditMany(facilityRecordTypeList, adminModuleLogger);
+                        logger.DeleteAuditSingle(masterRecordType, adminModuleLogger);
+                    #endregion
+                    return Ok();
                     }
                     else
                     { return BadRequest("Error occur while delete record"); }
@@ -283,7 +312,15 @@ namespace MROWebApi.Controllers
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + primaryReason.nCreatedAdminUserID + " called Add Primary Reason Method & Created Primary Reason with ID: " + GeneratedID;
-                    logger.LogAdminRecords(primaryReason.nCreatedAdminUserID, sDescription, "Add Primary Reason", "Master Entry - Primary Reason");
+                    primaryReason.nPrimaryReasonID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = primaryReason.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Primary Reason",
+                        sEventName = "Add Primary Reason"
+                    };
+                    logger.InsertAuditSingle(primaryReason, adminModuleLogger);
                     #endregion
 
                     return Ok();
@@ -327,13 +364,21 @@ namespace MROWebApi.Controllers
                 try
                 {
                     primaryReason.dtLastUpdate = DateTime.Now;
+                    PrimaryReasons oldPrimaryReason = await rtFac.Select(primaryReason.nPrimaryReasonID);
                     if (rtFac.Update(primaryReason))
                     {
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + primaryReason.nUpdatedAdminUserID + " called Edit Primary Reason Method for Primary Reason ID: " + primaryReason.nPrimaryReasonID;
-                        logger.LogAdminRecords(primaryReason.nUpdatedAdminUserID, sDescription, "Edit Primary Reason", "Master Entry - Primary Reason");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = primaryReason.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Primary Reason",
+                            sEventName = "Edit Primary Reason"
+                        };
+                        logger.UpdateAuditSingle(oldPrimaryReason, primaryReason, adminModuleLogger);
 
                         #endregion
                         return Ok();
@@ -363,16 +408,28 @@ namespace MROWebApi.Controllers
         public async Task<IActionResult> DeletePrimaryReason(string sPrimaryReasonID, string sAdminUserID)
         {
             PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
+            FacilityPrimaryReasonsRepository rtFacilityFac = new FacilityPrimaryReasonsRepository(_info);
             bool resultPrimaryReasonID = int.TryParse(sPrimaryReasonID, out int nPrimaryReasonID);
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
+                PrimaryReasons masterPrimaryReason = await rtFac.Select(nPrimaryReasonID);
+                IEnumerable<FacilityPrimaryReasons> facilityPrimaryReasonIEnum = await rtFacilityFac.SelectWhere("nPrimaryReasonID", nPrimaryReasonID);
+                List<FacilityPrimaryReasons> facilityPrimaryReasonList = facilityPrimaryReasonIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nPrimaryReasonID, "lnkFacilityPrimaryReasons"))
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Primary Reason Method for Primary Reason ID: " + sPrimaryReasonID;
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Delete Primary Reason", "Master Entry - Primary Reason");
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Primary Reason",
+                        sEventName = "Delete Primary Reason"
+                    };
+                    logger.DeleteAuditMany(facilityPrimaryReasonList, adminModuleLogger);
+                    logger.DeleteAuditSingle(masterPrimaryReason, adminModuleLogger);
                     #endregion
                     return Ok();
                 }
@@ -465,7 +522,15 @@ namespace MROWebApi.Controllers
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + sensitiveInfo.nCreatedAdminUserID + " called Add Sensitive Info Method & Created Sensitive Info with ID: " + GeneratedID;
-                    logger.LogAdminRecords(sensitiveInfo.nCreatedAdminUserID, sDescription, "Add Sensitive Info", "Master Entry - Sensitive Info");
+                    sensitiveInfo.nSensitiveInfoID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = sensitiveInfo.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Sensitive Info",
+                        sEventName = "Add Sensitive Info"
+                    };
+                    logger.InsertAuditSingle(sensitiveInfo, adminModuleLogger);
                     #endregion
 
                     return Ok();
@@ -507,13 +572,21 @@ namespace MROWebApi.Controllers
                 try
                 {
                     sensitiveInfo.dtLastUpdate = DateTime.Now;
+                    SensitiveInfo oldSensitiveInfo = await rtFac.Select(sensitiveInfo.nSensitiveInfoID);
                     if (rtFac.Update(sensitiveInfo))
                     {
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + sensitiveInfo.nUpdatedAdminUserID + " called Edit Sensitive Info Method for Sensitive Info ID: " + sensitiveInfo.nSensitiveInfoID;
-                        logger.LogAdminRecords(sensitiveInfo.nUpdatedAdminUserID, sDescription, "Edit Sensitive Info", "Master Entry - Sensitive Info");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Sensitive Info",
+                            sEventName = "Edit Sensitive Info"
+                        };
+                        logger.UpdateAuditSingle(oldSensitiveInfo, sensitiveInfo, adminModuleLogger);
 
                         #endregion
                         return Ok();
@@ -543,16 +616,28 @@ namespace MROWebApi.Controllers
         public async Task<IActionResult> DeleteSensitiveInfo(string sSensitiveInfoID, string sAdminUserID)
         {
             SensitiveInfoRepository rtFac = new SensitiveInfoRepository(_info);
+            FacilitySensitiveInfoRepository rtFacilityFac = new FacilitySensitiveInfoRepository(_info);
             bool resultSensitiveInfoID = int.TryParse(sSensitiveInfoID, out int nSensitiveInfoID);
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
+                SensitiveInfo masterSensitiveInfo = await rtFac.Select(nSensitiveInfoID);
+                IEnumerable<FacilitySensitiveInfo> facilitySensitiveInfoIEnum = await rtFacilityFac.SelectWhere("nSensitiveInfoID", nSensitiveInfoID);
+                List<FacilitySensitiveInfo> facilitySensitiveInfoList = facilitySensitiveInfoIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nSensitiveInfoID, "lnkFacilitySensitiveInfo"))
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Sensitive Info Method for Sensitive Info ID: " + sSensitiveInfoID;
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Delete Sensitive Info", "Master Entry - Sensitive Info");
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Sensitive Info",
+                        sEventName = "Delete Sensitive Info"
+                    };
+                    logger.DeleteAuditMany(facilitySensitiveInfoList, adminModuleLogger);
+                    logger.DeleteAuditSingle(masterSensitiveInfo, adminModuleLogger);
                     #endregion
                     return Ok();
                 }
@@ -645,7 +730,15 @@ namespace MROWebApi.Controllers
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + shipmentType.nCreatedAdminUserID + " called Add Shipment Type Method & Created Shipment Type with ID: " + GeneratedID;
-                    logger.LogAdminRecords(shipmentType.nCreatedAdminUserID, sDescription, "Add Shipment Type", "Master Entry - Shipment Type");
+                    shipmentType.nShipmentTypeID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = shipmentType.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Shipment Type",
+                        sEventName = "Add Shipment Type"
+                    };
+                    logger.InsertAuditSingle(shipmentType, adminModuleLogger);
                     #endregion
 
                     return Ok();
@@ -687,13 +780,21 @@ namespace MROWebApi.Controllers
                 try
                 {
                     shipmentType.dtLastUpdate = DateTime.Now;
+                    ShipmentTypes oldShipmentType = await rtFac.Select(shipmentType.nShipmentTypeID);
                     if (rtFac.Update(shipmentType))
                     {
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + shipmentType.nUpdatedAdminUserID + " called Edit Shipment Type Method for Shipment Type ID: " + shipmentType.nShipmentTypeID;
-                        logger.LogAdminRecords(shipmentType.nUpdatedAdminUserID, sDescription, "Edit Shipment Type", "Master Entry - Shipment Type");
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = shipmentType.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Shipment Type",
+                            sEventName = "Edit Shipment Type"
+                        };
+                        logger.UpdateAuditSingle(oldShipmentType, shipmentType, adminModuleLogger);
 
                         #endregion
                         return Ok();
@@ -723,16 +824,28 @@ namespace MROWebApi.Controllers
         public async Task<IActionResult> DeleteShipmentType(string sShipmentTypeID, string sAdminUserID)
         {
             ShipmentTypesRepository rtFac = new ShipmentTypesRepository(_info);
+            FacilityShipmentTypesRepository rtFacilityFac = new FacilityShipmentTypesRepository(_info);
             bool resultShipmentTypeID = int.TryParse(sShipmentTypeID, out int nShipmentTypeID);
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
+                ShipmentTypes masterShipmentType = await rtFac.Select(nShipmentTypeID);
+                IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
+                List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nShipmentTypeID, "lnkFacilityShipmentTypes"))
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Shipment Type Method for Shipment Type ID: " + sShipmentTypeID;
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Delete Shipment Type", "Master Entry - Shipment Type");
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Shipment Type",
+                        sEventName = "Delete Shipment Type"
+                    };
+                    logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
+                    logger.DeleteAuditSingle(masterShipmentType, adminModuleLogger);
                     #endregion
                     return Ok();
                 }

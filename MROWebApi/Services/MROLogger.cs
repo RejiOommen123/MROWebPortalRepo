@@ -390,7 +390,7 @@ namespace MROWebApi.Services
         #region Remove succeeding ", " from string
         public string removeComma(string inputString)
         {
-            if (string.IsNullOrEmpty(inputString))
+            if (!string.IsNullOrEmpty(inputString))
             {
                 if (inputString.EndsWith(", "))
                 {
