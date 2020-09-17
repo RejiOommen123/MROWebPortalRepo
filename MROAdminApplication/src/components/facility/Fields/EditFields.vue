@@ -143,7 +143,7 @@ export default {
     pushToArray(obj) {
       console.log(this.updatedArray);
       const index = this.updatedArray.findIndex(
-        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID
+        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID && e.sTableName === obj.sTableName
       );
       if (index === -1) {
         this.updatedArray.push(obj);
