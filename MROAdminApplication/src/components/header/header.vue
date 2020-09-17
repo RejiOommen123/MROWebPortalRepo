@@ -23,12 +23,6 @@
       <ul class="myUL">
         <li>
           <router-link
-            to="/index"
-            class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
-          >Dashboard</router-link>
-        </li>
-        <li>
-          <router-link
             to="/facility"
             class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
           >Manage Facilities</router-link>
@@ -66,6 +60,38 @@
               to="/Master/shipmenttype"
               >
                 <v-list-item-title>Shipment Type</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </li>
+        <li>
+          <v-menu open-on-hover bottom offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"                
+                v-bind="attrs"
+                v-on="on"
+                text
+              >
+                Reports
+              </span>
+            </template>
+
+            <v-list>
+              <v-list-item
+              to="/Report/audit"
+              >
+                <v-list-item-title>Audit</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+              to="/Report/facilitylocation"
+              >
+                <v-list-item-title>Facililty/Location</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+              to="/Report/facilityconfiguration"
+              >
+                <v-list-item-title>Facililty Configuration</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>

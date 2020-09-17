@@ -22,6 +22,9 @@ import EditSensitiveInfo from './components/master/SensitiveInfo/EditSensitiveIn
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import AddShipmentType from './components/master/ShipmentType/AddShipmentType.vue';
 import EditShipmentType from './components/master/ShipmentType/EditShipmentType.vue';
+import AuditReport from './components/report/AuditReport.vue';
+import FacilityLocationReport from './components/report/FacilityLocationReport.vue';
+import FacilityConfigurationReport from './components/report/FacilityConfigurationReport.vue';
 import store from './store';
 
 Vue.use(VueRouter);
@@ -202,7 +205,33 @@ const routes = [{
             store.commit("mutatepageHeader", "Add Shipment Type");
             next()
         }
+    }
+    ,
+    {
+        path: '/Report/Audit',
+        component: AuditReport,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Audit Report");
+            next()
+        }
+    }
+    ,
+    {
+        path: '/Report/FacilityLocation',
+        component: FacilityLocationReport,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Facility/Location Report");
+            next()
+        }
     },
+    {
+        path: '/Report/FacilityConfiguration',
+        component: FacilityConfigurationReport,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Facility Configuration Report");
+            next()
+        }
+    }
 ]
 
 export default new VueRouter({ mode: 'history', routes })
