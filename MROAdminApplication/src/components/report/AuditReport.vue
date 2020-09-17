@@ -1,23 +1,84 @@
 <template>
   <div id="PrimaryReasonPageBox">
     <!-- Add Primary Reason Button which will redirect to Add Primary Reason Page -->
+    <v-card class="mb-5 pa-3">
     <v-row no-gutters>
-      <v-col cols="12" sm="12" md="6">
-        <v-btn
-          depressed
-          small
-          class="mx-2"
-          fab
-          dark
-          color="rgb(0, 91, 168)"
-          id="addPrimaryReason"
-          to="/PrimaryReason/AddPrimaryReason"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-        <span id="addRecBtn">Add Primary Reason</span>
+      <v-col cols="12" sm="12" md="1" class="ml-4">
+        <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              transition="scale-transition"
+              offset-y
+              :value="dtRecordRangeStartFormatted"
+              :error-messages="dtRecordRangeStartErrors"
+              clearable
+              label="START DATE"
+              placeholder="MM-DD-YYYY"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              @click:clear="dtRecordRangeStart = null"
+              @input="$v.dtRecordRangeStart.$touch()"
+              @blur="$v.dtRecordRangeStart.$touch()"
+              :disabled="bRecordMostRecentVisit || bSpecifyVisit"
+            ></v-text-field>
+          </template>
+          <v-date-picker 
+          ref="startpicker" 
+          v-model="dtRecordRangeStart" 
+          color="green lighten-1" 
+          header-color="primary" 
+          light @change="menu1 = false"
+          :max="new Date().toISOString().substr(0, 10)"
+          ></v-date-picker>
+        </v-menu>
+      </v-col>
+      <!-- End Date input -->
+      <v-col cols="12" sm="12" md="1" class="ml-4">
+        <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              transition="scale-transition"
+              offset-y
+              :value="dtRecordRangeEndFormatted"
+              :error-messages="dtRecordRangeEndErrors"
+              clearable
+              label="END DATE"
+               placeholder="MM-DD-YYYY"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+              @click:clear="dtRecordRangeEnd = null"
+               @input="$v.dtRecordRangeEnd.$touch()"
+              @blur="$v.dtRecordRangeEnd.$touch()"
+              :disabled="bRecordMostRecentVisit || bSpecifyVisit"
+            ></v-text-field>
+          </template>
+          <v-date-picker 
+          ref="endpicker" 
+          v-model="dtRecordRangeEnd" 
+          color="green lighten-1" 
+          header-color="primary" 
+          light 
+          @change="menu2 = false"
+          :max="new Date().toISOString().substr(0, 10)"
+          ></v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-text-field label="Facility Name"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-text-field label="Location Name"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-text-field label="Admin Name"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-btn color="primary" style="margin-top: 5%;">Apply Filter</v-btn>
       </v-col>
     </v-row>
+    </v-card>
     <!-- Vuetify Card with Primary Reason List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
