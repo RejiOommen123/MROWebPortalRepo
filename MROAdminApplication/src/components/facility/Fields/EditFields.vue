@@ -34,7 +34,7 @@
                 >
                   {{ props.item.sFieldName }}
                   <template v-slot:input>
-                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter></v-text-field>
+                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter maxlength="100"></v-text-field>
                   </template>
                 </v-edit-dialog>
                 <label v-else>{{props.item.sFieldName}}</label>
