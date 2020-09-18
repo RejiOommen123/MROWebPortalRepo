@@ -60,7 +60,7 @@
             <!-- MROSTMail Block -->
             <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTMail'">
               <v-col
-                v-if="sSelectedShipmentTypes[0]=='MROSTMail'"
+                v-if="sSelectedShipmentTypes[0]=='MROSTMail' && $store.state.requestermodule.sReleaseTo=='MROReleaseToMyself'"
                 slot="MROSTMail"
                 cols="12"
                 sm="12"
@@ -170,8 +170,11 @@
         <div v-if="sSelectedShipmentTypes[0]=='MROSTEmail'">
           <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.prevent="nextPage" class="next">Next</v-btn>
         </div>
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTMail'">
+        <div v-if="sSelectedShipmentTypes[0]=='MROSTMail' && $store.state.requestermodule.sReleaseTo=='MROReleaseToMyself' ">
           <v-btn :disabled="$v.sSTAddStreetAddress.$invalid || $v.sSTAddCity.$invalid || $v.sSTAddState.$invalid || $v.sSTAddZipCode.$invalid " @click.prevent="nextPage" class="next">Next</v-btn>
+        </div>   
+        <div v-if="sSelectedShipmentTypes[0]=='MROSTMail' && $store.state.requestermodule.sReleaseTo!='MROReleaseToMyself'">
+          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.prevent="nextPage" class="next">Next</v-btn>
         </div>        
         <div v-if="sSelectedShipmentTypes[0]=='MROSTFax'">
           <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.sSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
@@ -324,15 +327,17 @@ export default {
           this.$store.commit("requestermodule/sSTEmailAddress", this.sSTEmailAddress);          
           break;
         case "MROSTMail":
-          this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          this.$store.commit("requestermodule/sSTAddApartment", this.sSTAddApartment);
-          this.$store.commit("requestermodule/sSTAddZipCode", this.sSTAddZipCode);
-          this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
-          this.$store.commit("requestermodule/sSTAddState", this.sSTAddState);
-          this.$store.commit(
-            "requestermodule/sSTAddStreetAddress",
-            this.sSTAddStreetAddress
-          );      
+          if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
+            this.$store.commit("ConfigModule/bShowRecipientPage",true);
+          }
+          else{
+            this.$store.commit("ConfigModule/bShowRecipientPage",false);
+            this.$store.commit("requestermodule/sSTAddApartment", this.sSTAddApartment);
+            this.$store.commit("requestermodule/sSTAddZipCode", this.sSTAddZipCode);
+            this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
+            this.$store.commit("requestermodule/sSTAddState", this.sSTAddState);
+            this.$store.commit("requestermodule/sSTAddStreetAddress",this.sSTAddStreetAddress);   
+          }   
           break;
         case "MROSTFax":
           if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){

@@ -113,7 +113,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                         string sValue = null;
                         if (frm.Name.Contains('_'))
                         {
-                            string[] sa = frm.Name.Split('_');  //underscores allows fields to be concatinated
+                            string[] sa = frm.Name.Split('_');  //underscores allows concatination with spaces
                             foreach (string sName in sa)
                             {
                                 string sNewValue;
@@ -121,9 +121,9 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                                     sValue += sNewValue + " ";
                             }
                         }
-                        else if (frm.Name.Contains('-'))
+                        else if (frm.Name.Contains(','))
                         {
-                            string[] sa = frm.Name.Split('-');  //underscores allows fields to be concatinated
+                            string[] sa = frm.Name.Split(',');  //comma allows concatination with comma and space
                             foreach (string sName in sa)
                             {
                                 string sNewValue;
@@ -140,6 +140,29 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                                 if (sValue.EndsWith(", "))
                                 {
                                     sValue = sValue.Remove(sValue.Length - 2, 2);
+                                }
+                            }
+                        }
+                        else if (frm.Name.Contains('-'))
+                        {
+                            string[] sa = frm.Name.Split('-');  //hyphen allows concatination with hyphen and space
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                {
+                                    if (sNewValue != "")
+                                    {
+                                        sValue += sNewValue + " - ";
+                                    }
+                                }
+                            }
+                            //remove ',' from end
+                            if (sValue != null)
+                            {
+                                if (sValue.EndsWith(" - "))
+                                {
+                                    sValue = sValue.Remove(sValue.Length - 3, 3);
                                 }
                             }
                         }
