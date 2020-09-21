@@ -209,23 +209,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> EditDisclaimers(int ID)
-        {
-            string SqlString = "spGetDisclaimerInfoBynFacilityID";
-            using (SqlConnection db = new SqlConnection(sConnect))
-            {
-                try
-                {
-                    db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
-                    return a;
-                }
-                catch (Exception ex)
-                {
-                    return (IEnumerable<dynamic>)ex;
-                }
-            }
-        }
+       
         public async Task<IEnumerable<T>> SelectListByInClause(int[] ids,string tblName, string colName,int nFacilityId)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -511,6 +495,41 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<IEnumerable<dynamic>> EditDisclaimers(int ID)
+        {
+            string SqlString = "spGetDisclaimerInfoBynFacilityID";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetAuditData(AuditFilterParameter auditFilterParameter)
+        {
+            string SqlString = "spGetAuditReportData";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = (auditFilterParameter.sFacilityName == "Ash" ? auditFilterParameter.sFacilityName : null) }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
 
         #endregion
     }

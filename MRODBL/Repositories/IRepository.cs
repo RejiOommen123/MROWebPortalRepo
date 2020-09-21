@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MRODBL.BaseClasses;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MRODBL.Repositories
@@ -91,7 +92,7 @@ namespace MRODBL.Repositories
         /// <param name="tB">Table B Name</param>
         /// <returns>Inner Joined Data of 2 tables</returns>
         Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB);
-        Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
+       
         #endregion
 
         #region INSERT Queries
@@ -210,6 +211,9 @@ namespace MRODBL.Repositories
         /// <param name="sEmail">Admin Email</param>
         /// <returns>Admin User ID (int)</returns>
         Task<int> GetAdminUserID(string sName, string sUPN, string sEmail);
+
+        Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
+        Task<IEnumerable<dynamic>> GetAuditData(AuditFilterParameter auditFilterParameter);
         #endregion
     }
 }
