@@ -62,5 +62,42 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
+
+        #region Get Facility/Location Report
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetFacilityLocationReport(AuditFilterParameter auditFilterParameter)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    #region Data Addition ! from UI
+                    AdminModuleLoggerRepository amFac = new AdminModuleLoggerRepository(_info);
+                    if (!String.IsNullOrWhiteSpace(auditFilterParameter.sEnd))
+                    {
+                        DateTime endDate = Convert.ToDateTime(auditFilterParameter.sEnd).AddHours(23).AddMinutes(59).AddSeconds(59);
+                        auditFilterParameter.sEnd = endDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    }
+                    IEnumerable<dynamic> records = await amFac.GetFacilityLocationData(auditFilterParameter.sStart, auditFilterParameter.sEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName));
+                    #endregion
+
+                    return Ok(records);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
     }
 }
