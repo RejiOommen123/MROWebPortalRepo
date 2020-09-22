@@ -172,7 +172,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Shipment Type"
+                            sEventName = "Edit Facility Shipment Type",
+                            nFacilityID = singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
                         idList.Clear();
@@ -222,7 +223,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Primary Reason"
+                            sEventName = "Edit Facility Primary Reason",
+                            nFacilityID = singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldPrimaryReasons, primaryReasonsList, adminModuleLogger, "nPrimaryReasonID");
                         idList.Clear();
@@ -272,7 +274,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Sensitive Info"
+                            sEventName = "Edit Facility Sensitive Info",
+                            nFacilityID = singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldSensitiveInfos, sensitiveInfoList, adminModuleLogger, "nSensitiveInfoID");
                         idList.Clear();
@@ -323,7 +326,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Record Type"
+                            sEventName = "Edit Facility Record Type",
+                            nFacilityID = singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldRecordsTypes, recordTypeList, adminModuleLogger, "nRecordTypeID");
                         idList.Clear();
@@ -368,7 +372,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Field for Facility ID: " + singleRecord.nFacilityID,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Field"
+                            sEventName = "Edit Facility Field",
+                            nFacilityID = singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFieldID");
                         idList.Clear();

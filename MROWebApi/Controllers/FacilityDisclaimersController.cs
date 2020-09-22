@@ -116,7 +116,8 @@ namespace MROWebApi.Controllers
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = sDescription,
                             sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Disclaimers"
+                            sEventName = "Edit Facility Disclaimers",
+                            nFacilityID= singleRecord.nFacilityID
                         };
                         logger.UpdateAuditMany(oldFacilityDisclaimers, facilityDisclaimersList, adminModuleLogger, "nFacilityWizardHelperID");
                     }

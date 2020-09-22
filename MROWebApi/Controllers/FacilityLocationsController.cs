@@ -208,7 +208,9 @@ namespace MROWebApi.Controllers
                                 nAdminUserID = facilityLocation.nCreatedAdminUserID,
                                 sDescription = sDescription,
                                 sModuleName = "Facility Location",
-                                sEventName = "Add Location"
+                                sEventName = "Add Location",
+                                nFacilityID = addedFacilityLocation.nFacilityID,
+                                nFacilityLocationID = addedFacilityLocation.nFacilityLocationID
                             };
                             logger.InsertAuditSingle(addedFacilityLocation, adminModuleLogger);
                         }
@@ -326,7 +328,9 @@ namespace MROWebApi.Controllers
                             nAdminUserID = facilityLocation.nUpdatedAdminUserID,
                             sDescription = sDescription,
                             sModuleName = "Facility Location",
-                            sEventName = "Edit Facility Location"
+                            sEventName = "Edit Facility Location",
+                            nFacilityID = facilityLocation.nFacilityID,
+                            nFacilityLocationID = facilityLocation.nFacilityLocationID
                         };
                         logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
                         #endregion
@@ -395,7 +399,10 @@ namespace MROWebApi.Controllers
                                 sEventName = "Toggle Facility Location",
                                 sNewValue = "{bLocationActiveStatus : " + location.bLocationActiveStatus + "}",
                                 sOldValue = "{bLocationActiveStatus : " + !location.bLocationActiveStatus + "}",
-                                dtLogTime = DateTime.Now
+                                dtLogTime = DateTime.Now,
+                                nFacilityID = location.nFacilityID,
+                                nFacilityLocationID = location.nFacilityLocationID
+
                             };
                             adminModuleLoggerRepository.Insert(adminModuleLogger);
                         }
