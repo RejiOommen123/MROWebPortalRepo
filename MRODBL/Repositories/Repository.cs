@@ -513,7 +513,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetAuditData(string dtStart= null,string dtEnd=null, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
+        public async Task<IEnumerable<dynamic>> GetAuditData(string sStart= null,string sEnd=null, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
         {
             string SqlString = "spGetAuditReport";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -521,7 +521,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @dtStart = dtStart, @dtEnd = dtEnd, @sFacilityName = sFacilityName, @sLocationName = sLocationName , @sAdminName = sAdminName }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @sStart = sStart, @sEnd = sEnd, @sFacilityName = sFacilityName, @sLocationName = sLocationName , @sAdminName = sAdminName }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex)

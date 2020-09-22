@@ -39,11 +39,11 @@ namespace MROWebApi.Controllers
                 {
                     #region Data Addition ! from UI
                     AdminModuleLoggerRepository amFac = new AdminModuleLoggerRepository(_info);
-                    if (!String.IsNullOrWhiteSpace(auditFilterParameter.dtEnd)) { 
-                        DateTime endDate = Convert.ToDateTime(auditFilterParameter.dtEnd).AddHours(23).AddMinutes(59).AddSeconds(59);
-                        auditFilterParameter.dtEnd = endDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    if (!String.IsNullOrWhiteSpace(auditFilterParameter.sEnd)) { 
+                        DateTime endDate = Convert.ToDateTime(auditFilterParameter.sEnd).AddHours(23).AddMinutes(59).AddSeconds(59);
+                        auditFilterParameter.sEnd = endDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
                     }
-                    IEnumerable<dynamic> records = await amFac.GetAuditData(auditFilterParameter.dtStart, auditFilterParameter.dtEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName), (String.IsNullOrWhiteSpace(auditFilterParameter.sAdminName) ? null : auditFilterParameter.sAdminName));
+                    IEnumerable<dynamic> records = await amFac.GetAuditData(auditFilterParameter.sStart, auditFilterParameter.sEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName), (String.IsNullOrWhiteSpace(auditFilterParameter.sAdminName) ? null : auditFilterParameter.sAdminName));
                     #endregion
 
                     return Ok(records );
