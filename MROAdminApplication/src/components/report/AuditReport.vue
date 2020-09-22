@@ -2,7 +2,7 @@
   <div id="AuditReportPageBox">
     <v-card class="mb-5 pa-3">
       <v-row no-gutters>
-        <v-col cols="12" sm="12" md="1" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -33,7 +33,7 @@
           </v-menu>
         </v-col>
         <!-- End Date input -->
-        <v-col cols="12" sm="12" md="1" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -63,7 +63,7 @@
             ></v-date-picker>
           </v-menu>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-text-field
             label="Facility Name"
             v-model="sFacilityName"
@@ -73,7 +73,7 @@
             maxlength="40"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-text-field 
           label="Location Name"
           v-model="sLocationName"
@@ -83,7 +83,7 @@
           maxlength="100"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-text-field 
           label="Admin Name"
           v-model="sAdminName"
@@ -93,7 +93,7 @@
           maxlength="100"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="ml-4">
+        <v-col cols="12" sm="12" md="2" class="pl-4">
           <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
           <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
         </v-col>
@@ -175,23 +175,17 @@ export default {
       search: "",
       headers: [
         {
-          text: "Name",
+          text: "Admin Name",
           align: "start",
-          value: "sPrimaryReasonName",
-          width: "20%",
+          value: "sName",
+          width: "10%",
         },
-        { text: "Tooltip", value: "sFieldToolTip", width: "40%" },
-        {
-          text: "Normalized Name",
-          value: "sNormalizedPrimaryReasonName",
-          width: "30%",
-        },
-        {
-          text: "Edit/Delete",
-          value: "actions",
-          align: "center",
-          sortable: false,
-        },
+        { text: "Module Name", value: "sModuleName", width: "10%" },
+        { text: "Event Name", value: "sEventName", width: "10%" },       
+        { text: "Description", value: "sDescription", width: "30%" },    
+        { text: "New Value", value: "sNewValue", width: "15%" },
+        { text: "Old Value", value: "sOldValue", width: "15%" },       
+        { text: "Log Time", value: "dtLogTime", width: "10%" },    
       ],
       gridData: undefined,
     };
@@ -305,6 +299,7 @@ export default {
       this.$http.post("Report/GetAuditReport",adminFilterParameter).then(
         (response) => {
           this.gridData = JSON.parse(response.bodyText);
+           console.log(this.gridData);
           this.dialogLoader = false;
         },
         (error) => {

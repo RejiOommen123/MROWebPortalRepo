@@ -214,7 +214,7 @@ namespace MRODBL.Repositories
         Task<int> GetAdminUserID(string sName, string sUPN, string sEmail);
 
         Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
-        Task<IEnumerable<dynamic>> GetAuditData(DateTime dtStart, DateTime dtEnd, string sFacilityName, string sLocationName, string sAdminName);
+        Task<IEnumerable<dynamic>> GetAuditData(string dtStart, string dtEnd, string sFacilityName, string sLocationName, string sAdminName);
         #endregion
     }
 }

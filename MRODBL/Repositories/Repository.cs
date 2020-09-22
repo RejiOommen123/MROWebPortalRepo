@@ -513,7 +513,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetAuditData(DateTime dtStart,DateTime dtEnd, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
+        public async Task<IEnumerable<dynamic>> GetAuditData(string dtStart= null,string dtEnd=null, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
         {
             string SqlString = "spGetAuditReport";
             using (SqlConnection db = new SqlConnection(sConnect))
