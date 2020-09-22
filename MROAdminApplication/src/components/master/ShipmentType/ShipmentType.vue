@@ -169,7 +169,6 @@ export default {
     },
     //On Agree in dialog box API Call to Delete Shipment Type
     deleteShipmentType(id) {
-      console.log(id);
       this.dialogLoader = true;
       this.dialog = false;
       this.$http

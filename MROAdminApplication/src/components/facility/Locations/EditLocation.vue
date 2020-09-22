@@ -567,7 +567,6 @@ export default {
       this.location.nFacilityLocationID = parseInt(
         this.location.nFacilityLocationID
       );
-      //console.log(this.location);
       this.$http
         .post(
           "FacilityLocations/EditFacilityLocation/" +

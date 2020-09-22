@@ -111,7 +111,6 @@ export default {
         );
     },
     pushToArray(obj) {
-      console.log(this.updatedArray);
       const index = this.updatedArray.findIndex(
         (e) => e.nFacilityWizardHelperID === obj.nFacilityWizardHelperID
       );
@@ -122,7 +121,6 @@ export default {
       }
     },
     onSubmit() {
-      console.log(this.gridData);
       this.dialogLoader = true;
       var nAdminUserID = this.$store.state.adminUserId;
       var FacilityDisclaimersList = this.updatedArray.map(function (item) {

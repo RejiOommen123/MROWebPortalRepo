@@ -556,7 +556,6 @@ export default {
       this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
-      //console.log(this.location);
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
         .then(

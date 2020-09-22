@@ -478,7 +478,6 @@ export default {
     this.$http.get("facility/GetHTMLButtonCode/sFacilityID="+this.$route.params.id).then(
       response=>{if(response.ok==true){
         this.sBtnCode = response.bodyText;
-        //console.log(response.bodyText);
       }},
       error=>{console.log(error);}
     );
@@ -564,7 +563,6 @@ export default {
             this.SMTPResponseMsg=error.body;
             this.SMTPResponseDialog=true;   
           }
-          //console.log(error.body);
         }
       );
     },
@@ -590,7 +588,6 @@ export default {
             this.dialogLoader =false;
             this.sameNameAlert = true;
           }
-          //console.log(error.body);
         }
         );
     }

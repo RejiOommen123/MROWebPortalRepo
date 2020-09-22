@@ -450,8 +450,6 @@ export default {
       .then(resp => {
         if (resp.ok == true) {
           this.connectionStrings = resp.body;
-          //console.log(resp.bodyText);
-        //console.log("Response body " + this.connectionStrings);
         }
       });
   },
@@ -478,7 +476,6 @@ export default {
             this.dialogLoader = false;
             this.sameNameAlert = true;
           }
-         // console.log(error.body);
         }
       );
     },
@@ -512,7 +509,6 @@ export default {
             this.SMTPResponseMsg=error.body;
             this.SMTPResponseDialog=true;   
           }
-          //console.log(error.body);
         }
       );
     },
@@ -540,7 +536,6 @@ export default {
             this.dialogLoader =false;
             this.sameNameAlert = true;
           }
-          //console.log(error.body);
         }
       );
     }

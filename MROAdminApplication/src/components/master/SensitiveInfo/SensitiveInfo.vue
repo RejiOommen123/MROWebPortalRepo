@@ -169,7 +169,6 @@ export default {
     },
     //On Agree in dialog box API Call to Delete Sensitive Info
     deleteSensitiveInfo(id) {
-      console.log(id);
       this.dialogLoader = true;
       this.dialog = false;
       this.$http

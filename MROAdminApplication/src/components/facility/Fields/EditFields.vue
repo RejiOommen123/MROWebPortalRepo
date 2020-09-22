@@ -141,7 +141,6 @@ export default {
         );
     },
     pushToArray(obj) {
-      console.log(this.updatedArray);
       const index = this.updatedArray.findIndex(
         (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID && e.sTableName === obj.sTableName
       );
@@ -152,7 +151,6 @@ export default {
       }
     },
     onSubmit() {
-      console.log(this.gridData);
       this.dialogLoader = true;
       var nAdminUserID = this.$store.state.adminUserId;
       var FacilityFieldMapsList = this.updatedArray.map(function (item) {
