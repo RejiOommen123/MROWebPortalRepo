@@ -39,10 +39,10 @@ namespace MROWebApi.Controllers
                 {
                     #region Data Addition ! from UI
                     AdminModuleLoggerRepository amFac = new AdminModuleLoggerRepository(_info);
-                    IEnumerable<RecordTypes> dbRecordTypes = await amFac.SelectWhere("sRecordTypeName", recordType.sRecordTypeName);
+                    IEnumerable<dynamic> records = await amFac.GetAuditData(auditFilterParameter.dtStart, auditFilterParameter.dtEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName), (String.IsNullOrWhiteSpace(auditFilterParameter.sAdminName) ? null : auditFilterParameter.sAdminName));
                     #endregion
 
-                    return Ok();
+                    return Ok(records );
                 }
                 catch (Exception ex)
                 {

@@ -1,4 +1,5 @@
 ﻿using MRODBL.BaseClasses;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -213,7 +214,7 @@ namespace MRODBL.Repositories
         Task<int> GetAdminUserID(string sName, string sUPN, string sEmail);
 
         Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
-        Task<IEnumerable<dynamic>> GetAuditData(AuditFilterParameter auditFilterParameter);
+        Task<IEnumerable<dynamic>> GetAuditData(DateTime dtStart, DateTime dtEnd, string sFacilityName, string sLocationName, string sAdminName);
         #endregion
     }
 }

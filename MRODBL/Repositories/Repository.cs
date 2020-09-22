@@ -513,15 +513,15 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetAuditData(AuditFilterParameter auditFilterParameter)
+        public async Task<IEnumerable<dynamic>> GetAuditData(DateTime dtStart,DateTime dtEnd, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
         {
-            string SqlString = "spGetAuditReportData";
+            string SqlString = "spGetAuditReport";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = (auditFilterParameter.sFacilityName == "Ash" ? auditFilterParameter.sFacilityName : null) }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @dtStart = dtStart, @dtEnd = dtEnd, @sFacilityName = sFacilityName, @sLocationName = sLocationName , @sAdminName = sAdminName }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex)
