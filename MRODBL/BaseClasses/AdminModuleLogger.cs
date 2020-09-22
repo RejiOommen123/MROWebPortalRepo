@@ -22,6 +22,8 @@ namespace MRODBL.BaseClasses
         public string sNewValue { get; set; }
         public string sOldValue { get; set; }
         public DateTime dtLogTime { get; set; }
+        public int nFacilityID { get; set; }
+        public int nFacilityLocationID { get; set; }
         #endregion
     }
 }

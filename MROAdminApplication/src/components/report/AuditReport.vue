@@ -288,8 +288,8 @@ export default {
     // API Call to Get all Audit Report
     getGridData() {
       var adminFilterParameter ={
-        dtStart:this.dtStart,
-        dtEnd:this.dtEnd,
+        sStart:this.dtStart,
+        sEnd:this.dtEnd,
         sFacilityName:this.sFacilityName,
         sLocationName:this.sLocationName,
         sAdminName:this.sAdminName

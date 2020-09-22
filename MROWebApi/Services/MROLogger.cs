@@ -187,6 +187,8 @@ namespace MROWebApi.Services
             result.sNewValue = combineNewData;
             result.sOldValue = combineOldData;
             result.dtLogTime = DateTime.Now;
+            result.nFacilityID = adminModuleLogger.nFacilityID;
+            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
 
             adminModuleLoggerRepository.Insert(result);
         }
@@ -228,7 +230,9 @@ namespace MROWebApi.Services
                     sDescription = adminModuleLogger.sDescription,
                     sNewValue = combineNewData,
                     sOldValue = combineOldData,
-                    dtLogTime = DateTime.Now
+                    dtLogTime = DateTime.Now,
+                    nFacilityID = adminModuleLogger.nFacilityID,
+                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
                 });
                 combineNewData = "";
                 combineOldData = "";
@@ -268,6 +272,8 @@ namespace MROWebApi.Services
             result.sNewValue = combineNewData;
             result.sOldValue = null;
             result.dtLogTime = DateTime.Now;
+            result.nFacilityID = adminModuleLogger.nFacilityID;
+            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
 
             adminModuleLoggerRepository.Insert(result);
         }
@@ -304,7 +310,9 @@ namespace MROWebApi.Services
                     sDescription = adminModuleLogger.sDescription,
                     sNewValue = combineNewData,
                     sOldValue = null,
-                    dtLogTime = DateTime.Now
+                    dtLogTime = DateTime.Now,
+                    nFacilityID = adminModuleLogger.nFacilityID,
+                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
                 });
                 combineNewData = "";
             }
@@ -343,6 +351,8 @@ namespace MROWebApi.Services
             result.sNewValue = null;
             result.sOldValue = combineOldData;
             result.dtLogTime = DateTime.Now;
+            result.nFacilityID = adminModuleLogger.nFacilityID;
+            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
 
             adminModuleLoggerRepository.Insert(result);
         }
@@ -378,7 +388,9 @@ namespace MROWebApi.Services
                     sDescription = adminModuleLogger.sDescription,
                     sNewValue = null,
                     sOldValue = combineOldData,
-                    dtLogTime = DateTime.Now
+                    dtLogTime = DateTime.Now,
+                    nFacilityID = adminModuleLogger.nFacilityID,
+                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
                 });
                 combineOldData = "";
             }

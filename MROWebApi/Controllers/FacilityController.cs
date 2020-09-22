@@ -145,7 +145,8 @@ namespace MROWebAPI.Controllers
                             nAdminUserID = dbFacility.nUpdatedAdminUserID,
                             sDescription = sDescription,
                             sModuleName = "Manage Facilities",
-                            sEventName = "Add Facility"
+                            sEventName = "Add Facility",
+                            nFacilityID= dbFacility.nFacilityID
                         };
                         logger.InsertAuditSingle(dbFacility, adminModuleLogger);
                     }
@@ -215,7 +216,8 @@ namespace MROWebAPI.Controllers
                             nAdminUserID = facility.nUpdatedAdminUserID,
                             sDescription = sDescription,
                             sModuleName = "Manage Facilities",
-                            sEventName = "Edit Facility"
+                            sEventName = "Edit Facility",
+                            nFacilityID=facility.nFacilityID
                         };
                       logger.UpdateAuditSingle(oldFacility, facility, adminModuleLogger);             
                     }
@@ -331,7 +333,8 @@ namespace MROWebAPI.Controllers
                             sEventName = "Toggle Facility",
                             sNewValue = "{bActiveStatus : " + facilityDB.bActiveStatus + "}",
                             sOldValue= "{bActiveStatus : " + !facilityDB.bActiveStatus + "}",
-                            dtLogTime=DateTime.Now
+                            dtLogTime=DateTime.Now,
+                            nFacilityID= facilityDB.nFacilityID
                         };
                         adminModuleLoggerRepository.Insert(adminModuleLogger);
                     }
