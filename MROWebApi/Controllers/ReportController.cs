@@ -39,7 +39,8 @@ namespace MROWebApi.Controllers
                 {
                     #region Data Addition ! from UI
                     AdminModuleLoggerRepository amFac = new AdminModuleLoggerRepository(_info);
-                    IEnumerable<dynamic> records = await amFac.GetAuditData(auditFilterParameter.dtStart, auditFilterParameter.dtEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName), (String.IsNullOrWhiteSpace(auditFilterParameter.sAdminName) ? null : auditFilterParameter.sAdminName));
+                    DateTime endDate = auditFilterParameter.dtEnd.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    IEnumerable<dynamic> records = await amFac.GetAuditData(auditFilterParameter.dtStart, endDate, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName), (String.IsNullOrWhiteSpace(auditFilterParameter.sAdminName) ? null : auditFilterParameter.sAdminName));
                     #endregion
 
                     return Ok(records );
