@@ -70,6 +70,7 @@
             @input="$v.sFacilityName.$touch()"
             @blur="$v.sFacilityName.$touch()"
             :error-messages="sFacilityNameErrors"
+            maxlength="40"
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="12" md="2" class="ml-4">
@@ -79,6 +80,7 @@
           @input="$v.sLocationName.$touch()"
           @blur="$v.sLocationName.$touch()"
           :error-messages="sLocationNameErrors"
+          maxlength="100"
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="12" md="2" class="ml-4">
@@ -88,17 +90,19 @@
           @input="$v.sAdminName.$touch()"
           @blur="$v.sAdminName.$touch()"
           :error-messages="sAdminNameErrors"
+          maxlength="100"
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="12" md="2" class="ml-4">
-          <v-btn color="primary" style="margin-top: 5%;">Filter</v-btn>
+          <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
+          <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
         </v-col>
       </v-row>
     </v-card>
-    <!-- Vuetify Card with Primary Reason List Title and Search Text Box  -->
+    <!-- Vuetify Card with Audit Report List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
-        Primary Reason List
+        Audit Report
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -108,7 +112,7 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-      <!-- Primary Reason List DataTable  -->
+      <!-- Audit Report DataTable  -->
       <v-data-table
         :headers="headers"
         :items="gridData"
@@ -119,52 +123,11 @@
         :items-per-page="5"
         class="body-1"
       >
-        <!-- Primary Reason List Actions (Edit Primary Reason, Delete Primary Reason)  -->
-        <template v-slot:item.actions="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <router-link
-                class="mrorouterlink"
-                :to="'/PrimaryReason/EditPrimaryReason/'+item.nPrimaryReasonID"
-              >
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
-              </router-link>
-            </template>
-            <span>Edit Primary Reason</span>
-          </v-tooltip>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn icon @click="deleteItem(item.nPrimaryReasonID, item.sPrimaryReasonName)">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete Primary Reason</span>
-          </v-tooltip>
-        </template>
       </v-data-table>
-      <!-- End Primary Reason List DataTable  -->
+      <!-- End Audit Report DataTable  -->
     </v-card>
 
-    <!-- Dialog box for Toggle Delete Primary Reason Confirmation -->
-    <v-dialog v-model="dialog" max-width="360">
-      <v-card>
-        <v-card-title class="headline">
-          Are you sure you want to
-          <br />delete?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="deletePrimaryReason(editedItem.nPrimaryReasonID)"
-          >Yes</v-btn>
-          <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Dialog Alert for errors Primary Reason -->
+    <!-- Dialog Alert for errors Audit Report -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -189,7 +152,7 @@
 
 <script>
 import moment from "moment";
-import { required, maxLength } from "vuelidate/lib/validators";
+import { maxLength } from "vuelidate/lib/validators";
 export default {
   data() {
     return {
@@ -230,11 +193,7 @@ export default {
           sortable: false,
         },
       ],
-      gridData: this.getGridData(),
-      editedItem: {
-        nPrimaryReasonID: 0,
-        sPrimaryReasonName: "",
-      },
+      gridData: undefined,
     };
   },
   watch: {
@@ -248,14 +207,28 @@ export default {
   // Start and end date validations
   validations: {
     dtStart: {
-      required,
       minValue: (value) => value < new Date().toISOString(),
+      endButNotStartDate :(value, vm) =>{
+        if(vm.dtEnd!=null && vm.dtStart==null){
+          return false;
+        }
+        else{
+          return true;
+        }
+      }
     },
     dtEnd: {
-      required,
       minValue: (value) => value < new Date().toISOString(),
       afterStartDate: (value, vm) =>
         new Date(vm.dtEnd).getTime() >= new Date(vm.dtStart).getTime(),
+      startButNotEndDate :(value, vm) =>{
+        if(vm.dtStart!=null && vm.dtEnd==null){
+          return false;
+        }
+        else{
+          return true;
+        }
+      }
     },
     sFacilityName: {
         maxLength: maxLength(40)
@@ -264,7 +237,7 @@ export default {
         maxLength: maxLength(100)
     },
     sAdminName: {
-        maxLength: maxLength(50)
+        maxLength: maxLength(100)
     },
   },
   computed: {
@@ -279,18 +252,17 @@ export default {
     dtStartErrors() {
       const errors = [];
       if (!this.$v.dtStart.$dirty) return errors;
-      !this.$v.dtStart.required && errors.push("Start Date is required");
-      !this.$v.dtStart.minValue &&
-        errors.push("This date cannot be future date");
+      !this.$v.dtStart.endButNotStartDate &&
+        errors.push("Start Date cannot be empty when End Date is provided.");
       return errors;
     },
     dtEndErrors() {
       const errors = [];
       if (!this.$v.dtEnd.$dirty) return errors;
-      !this.$v.dtEnd.required && errors.push("End Date is required");
-      !this.$v.dtEnd.minValue && errors.push("This date cannot be future date");
+      !this.$v.dtEnd.startButNotEndDate &&
+        errors.push("End Date cannot be empty when Start Date is provided.");
       !this.$v.dtEnd.afterStartDate &&
-        errors.push("End Date cannot be before Start Date.");
+        errors.push("End Date cannot be before Start Date.");      
       return errors;
     },
     sFacilityNameErrors() {
@@ -311,12 +283,15 @@ export default {
       const errors = [];
       if (!this.$v.sAdminName.$dirty) return errors;
       !this.$v.sAdminName.maxLength &&
-        errors.push("Admin Name must be at most 50 characters long");
+        errors.push("Admin Name must be at most 100 characters long");
       return errors;
     },
   },
+  mounted(){
+    this.getGridData();
+  },
   methods: {
-    // API Call to Get all Primary Reasons
+    // API Call to Get all Audit Report
     getGridData() {
       var adminFilterParameter ={
         dtStart:this.dtStart,
@@ -325,6 +300,7 @@ export default {
         sLocationName:this.sLocationName,
         sAdminName:this.sAdminName
       };
+      console.log(adminFilterParameter);
       this.dialogLoader = true;
       this.$http.post("Report/GetAuditReport",adminFilterParameter).then(
         (response) => {

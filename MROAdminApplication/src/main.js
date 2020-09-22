@@ -6,11 +6,14 @@ import VueResource from 'vue-resource';
 import vuetify from './plugins/vuetify';
 import Vuelidate from 'vuelidate';
 import Adal from 'vue-adal'
+import excel from 'vue-excel-export'
+ 
 
 //Using Imported Items
 Vue.use(Vuelidate);
 Vue.use(VueResource);
 Vue.use(store);
+Vue.use(excel);
 Vue.use(Adal, {
     // This config gets passed along to Adal, so all settings available to adal can be used here.
     config: {
