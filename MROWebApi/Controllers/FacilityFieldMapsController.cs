@@ -131,255 +131,268 @@ namespace MROWebApi.Controllers
                     Facilities facility = await facRepo.Select(nFacilityID);
 
                     //Facility Shipment Types 
-                    List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
-                    foreach (var shipmentType in STList)
-                    {
-                        if (shipmentType.nFieldOrder == null)
+                    if (STList.Count() != 0) 
+                    { 
+                        List<FacilityShipmentTypes> shipmentTypeList = new List<FacilityShipmentTypes>();
+                        foreach (var shipmentType in STList)
                         {
-                            shipmentType.nFieldOrder = 1;
-                        }
-                        shipmentTypeList.Add(
-                            new FacilityShipmentTypes()
+                            if (shipmentType.nFieldOrder == null)
                             {
-                                nShipmentTypeID = shipmentType.nFacilityFieldMapID,
-                                nFacilityID = shipmentType.nFacilityID,
-                                sShipmentTypeName = shipmentType.sFieldName,
-                                nFieldOrder = shipmentType.nFieldOrder,
-                                nWizardID = shipmentType.nWizardID,
-                                bShow = shipmentType.bShow,
-                                dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
-                                dtCreated = shipmentType.dtCreated,
-                                nCreatedAdminUserID = shipmentType.nCreatedAdminUserID
+                                shipmentType.nFieldOrder = 1;
                             }
-                            );
-                        idList.Add(shipmentType.nFacilityFieldMapID);
-                    }
-                    idArray = idList.ToArray();
-                    var eShipmentlist = await shipmentTypeRepo.SelectListByInClause(idArray, "lnkFacilityShipmentTypes","nShipmentTypeID",singleRecord.nFacilityID);
+                            shipmentTypeList.Add(
+                                new FacilityShipmentTypes()
+                                {
+                                    nShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                    nFacilityID = shipmentType.nFacilityID,
+                                    sShipmentTypeName = shipmentType.sFieldName,
+                                    nFieldOrder = shipmentType.nFieldOrder,
+                                    nWizardID = shipmentType.nWizardID,
+                                    bShow = shipmentType.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
+                                    dtCreated = shipmentType.dtCreated,
+                                    nCreatedAdminUserID = shipmentType.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(shipmentType.nFacilityFieldMapID);
+                        }
+                        idArray = idList.ToArray();
+                        var eShipmentlist = await shipmentTypeRepo.SelectListByInClause(idArray, "lnkFacilityShipmentTypes","nShipmentTypeID",singleRecord.nFacilityID);
 
-                    foreach (var item in eShipmentlist)
-                    {
-                        oldShipmentTypes.Add(item);                    
-                    }
+                        foreach (var item in eShipmentlist)
+                        {
+                            oldShipmentTypes.Add(item);                    
+                        }
                     
-                    shipmentTypeRepo.UpdateMany(shipmentTypeList);
+                        shipmentTypeRepo.UpdateMany(shipmentTypeList);
 
-                    if (facility.bFacilityLogging)
-                    {
-                        adminModuleLogger = new AdminModuleLogger()
+                        if (facility.bFacilityLogging)
                         {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
-                            sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Shipment Type",
-                            nFacilityID = singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
-                        idList.Clear();
-                        idArray = Array.Empty<int>();
-                        adminModuleLogger = null;
-                    }
-
-                    //Facility PrimaryReasons
-                    List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
-                    foreach (var primaryReason in PRList)
-                    {
-                        if (primaryReason.nFieldOrder == null)
-                        {
-                            primaryReason.nFieldOrder = 1;
-                        }
-                        primaryReasonsList.Add(
-                            new FacilityPrimaryReasons()
+                            adminModuleLogger = new AdminModuleLogger()
                             {
-                                nFacilityID = primaryReason.nFacilityID,
-                                nPrimaryReasonID = primaryReason.nFacilityFieldMapID,
-                                sPrimaryReasonName = primaryReason.sFieldName,
-                                nFieldOrder = primaryReason.nFieldOrder,
-                                nWizardID = primaryReason.nWizardID,
-                                bShow = primaryReason.bShow,
-                                dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
-                                dtCreated = primaryReason.dtCreated,
-                                nCreatedAdminUserID = primaryReason.nCreatedAdminUserID
-                            }
-                            );
-                        idList.Add(primaryReason.nFacilityFieldMapID);
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Shipment Type",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
                     }
-                    idArray = idList.ToArray();
-                    var ePrimarylist = await primaryReasonRepo.SelectListByInClause(idArray, "lnkFacilityPrimaryReasons", "nPrimaryReasonID", singleRecord.nFacilityID);
-
-                    foreach (var item in ePrimarylist)
+                    //Facility PrimaryReasons
+                    if (PRList.Count() != 0)
                     {
-                        oldPrimaryReasons.Add(item);
-                    }
-
-                    primaryReasonRepo.UpdateMany(primaryReasonsList);
-
-                    if (facility.bFacilityLogging)
-                    {
-                        adminModuleLogger = new AdminModuleLogger()
+                        List<FacilityPrimaryReasons> primaryReasonsList = new List<FacilityPrimaryReasons>();
+                        foreach (var primaryReason in PRList)
                         {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
-                            sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Primary Reason",
-                            nFacilityID = singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldPrimaryReasons, primaryReasonsList, adminModuleLogger, "nPrimaryReasonID");
-                        idList.Clear();
-                        idArray = Array.Empty<int>();
-                        adminModuleLogger = null;
+                            if (primaryReason.nFieldOrder == null)
+                            {
+                                primaryReason.nFieldOrder = 1;
+                            }
+                            primaryReasonsList.Add(
+                                new FacilityPrimaryReasons()
+                                {
+                                    nFacilityID = primaryReason.nFacilityID,
+                                    nPrimaryReasonID = primaryReason.nFacilityFieldMapID,
+                                    sPrimaryReasonName = primaryReason.sFieldName,
+                                    nFieldOrder = primaryReason.nFieldOrder,
+                                    nWizardID = primaryReason.nWizardID,
+                                    bShow = primaryReason.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
+                                    dtCreated = primaryReason.dtCreated,
+                                    nCreatedAdminUserID = primaryReason.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(primaryReason.nFacilityFieldMapID);
+                        }
+                        idArray = idList.ToArray();
+                        var ePrimarylist = await primaryReasonRepo.SelectListByInClause(idArray, "lnkFacilityPrimaryReasons", "nPrimaryReasonID", singleRecord.nFacilityID);
+
+                        foreach (var item in ePrimarylist)
+                        {
+                            oldPrimaryReasons.Add(item);
+                        }
+
+                        primaryReasonRepo.UpdateMany(primaryReasonsList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Primary Reason",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldPrimaryReasons, primaryReasonsList, adminModuleLogger, "nPrimaryReasonID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
                     }
 
                     //Facility Sensitive Info
-                    List<FacilitySensitiveInfo> sensitiveInfoList = new List<FacilitySensitiveInfo>();
-                    foreach (var sensitiveInfo in SIList)
+                    if (SIList.Count() != 0)
                     {
-                        if (sensitiveInfo.nFieldOrder == null)
+                        List<FacilitySensitiveInfo> sensitiveInfoList = new List<FacilitySensitiveInfo>();
+                        foreach (var sensitiveInfo in SIList)
                         {
-                            sensitiveInfo.nFieldOrder = 1;
-                        }
-                        sensitiveInfoList.Add(
-                            new FacilitySensitiveInfo()
+                            if (sensitiveInfo.nFieldOrder == null)
                             {
-                                nSensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
-                                nFacilityID = sensitiveInfo.nFacilityID,
-                                sSensitiveInfoName = sensitiveInfo.sFieldName,
-                                nFieldOrder = sensitiveInfo.nFieldOrder,
-                                nWizardID = sensitiveInfo.nWizardID,
-                                bShow = sensitiveInfo.bShow,
-                                dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
-                                dtCreated = sensitiveInfo.dtCreated,
-                                nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID
+                                sensitiveInfo.nFieldOrder = 1;
                             }
-                            );
-                        idList.Add(sensitiveInfo.nFacilityFieldMapID);
-                    }
-                    idArray = idList.ToArray();
-                    var eSensitivelist = await sensitiveInfoRepo.SelectListByInClause(idArray, "lnkFacilitySensitiveInfo", "nSensitiveInfoID", singleRecord.nFacilityID);
+                            sensitiveInfoList.Add(
+                                new FacilitySensitiveInfo()
+                                {
+                                    nSensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                    nFacilityID = sensitiveInfo.nFacilityID,
+                                    sSensitiveInfoName = sensitiveInfo.sFieldName,
+                                    nFieldOrder = sensitiveInfo.nFieldOrder,
+                                    nWizardID = sensitiveInfo.nWizardID,
+                                    bShow = sensitiveInfo.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
+                                    dtCreated = sensitiveInfo.dtCreated,
+                                    nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(sensitiveInfo.nFacilityFieldMapID);
+                        }
+                        idArray = idList.ToArray();
+                        var eSensitivelist = await sensitiveInfoRepo.SelectListByInClause(idArray, "lnkFacilitySensitiveInfo", "nSensitiveInfoID", singleRecord.nFacilityID);
 
-                    foreach (var item in eSensitivelist)
-                    {
-                        oldSensitiveInfos.Add(item);
-                    }
-
-                    sensitiveInfoRepo.UpdateMany(sensitiveInfoList);
-
-                    if (facility.bFacilityLogging)
-                    {
-                        adminModuleLogger = new AdminModuleLogger()
+                        foreach (var item in eSensitivelist)
                         {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
-                            sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Sensitive Info",
-                            nFacilityID = singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldSensitiveInfos, sensitiveInfoList, adminModuleLogger, "nSensitiveInfoID");
-                        idList.Clear();
-                        idArray = Array.Empty<int>();
-                        adminModuleLogger = null;
-                    }
+                            oldSensitiveInfos.Add(item);
+                        }
 
+                        sensitiveInfoRepo.UpdateMany(sensitiveInfoList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Sensitive Info",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldSensitiveInfos, sensitiveInfoList, adminModuleLogger, "nSensitiveInfoID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
+                    }
 
                     //Facility Record Types 
-                    List<FacilityRecordTypes> recordTypeList = new List<FacilityRecordTypes>();
-                    foreach (var recordType in RTList)
+                    if (RTList.Count() != 0)
                     {
-                        if (recordType.nFieldOrder == null)
+                        List<FacilityRecordTypes> recordTypeList = new List<FacilityRecordTypes>();
+                        foreach (var recordType in RTList)
                         {
-                            recordType.nFieldOrder = 1;
-                        }
-                        recordTypeList.Add(
-                            new FacilityRecordTypes()
+                            if (recordType.nFieldOrder == null)
                             {
-                                nFacilityID = recordType.nFacilityID,
-                                nRecordTypeID = recordType.nFacilityFieldMapID,
-                                sRecordTypeName = recordType.sFieldName,
-                                nFieldOrder = recordType.nFieldOrder,
-                                nWizardID = recordType.nWizardID,
-                                bShow = recordType.bShow,
-                                dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
-                                dtCreated = recordType.dtCreated,
-                                nCreatedAdminUserID = recordType.nCreatedAdminUserID
+                                recordType.nFieldOrder = 1;
                             }
-                            );
-                        idList.Add(recordType.nFacilityFieldMapID);
-                    }
-                    idArray = idList.ToArray();
-                    var eRecordlist = await recordTypeRepo.SelectListByInClause(idArray, "lnkFacilityRecordTypes", "nRecordTypeID", singleRecord.nFacilityID);
+                            recordTypeList.Add(
+                                new FacilityRecordTypes()
+                                {
+                                    nFacilityID = recordType.nFacilityID,
+                                    nRecordTypeID = recordType.nFacilityFieldMapID,
+                                    sRecordTypeName = recordType.sFieldName,
+                                    nFieldOrder = recordType.nFieldOrder,
+                                    nWizardID = recordType.nWizardID,
+                                    bShow = recordType.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
+                                    dtCreated = recordType.dtCreated,
+                                    nCreatedAdminUserID = recordType.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(recordType.nFacilityFieldMapID);
+                        }
+                        idArray = idList.ToArray();
+                        var eRecordlist = await recordTypeRepo.SelectListByInClause(idArray, "lnkFacilityRecordTypes", "nRecordTypeID", singleRecord.nFacilityID);
 
-                    foreach (var item in eRecordlist)
-                    {
-                        oldRecordsTypes.Add(item);
-                    }
-
-                    recordTypeRepo.UpdateMany(recordTypeList);
-
-                    if (facility.bFacilityLogging)
-                    {
-                        adminModuleLogger = new AdminModuleLogger()
+                        foreach (var item in eRecordlist)
                         {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
-                            sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Record Type",
-                            nFacilityID = singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldRecordsTypes, recordTypeList, adminModuleLogger, "nRecordTypeID");
-                        idList.Clear();
-                        idArray = Array.Empty<int>();
-                        adminModuleLogger = null;
+                            oldRecordsTypes.Add(item);
+                        }
+
+                        recordTypeRepo.UpdateMany(recordTypeList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Record Type",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldRecordsTypes, recordTypeList, adminModuleLogger, "nRecordTypeID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
                     }
 
                     //Facility Field Maps 
-                    List<FacilityFieldMaps> fieldMapsList = new List<FacilityFieldMaps>();
-                    foreach (var fieldMaps in FMList)
+                    if (FMList.Count() != 0)
                     {
-                        fieldMapsList.Add(
-                            new FacilityFieldMaps()
-                            {
-                                nFacilityID = fieldMaps.nFacilityID,
-                                nFieldID = fieldMaps.nFieldID,
-                                nWizardID = fieldMaps.nWizardID,
-                                bShow = fieldMaps.bShow,
-                                nFieldOrder = fieldMaps.nFieldOrder,
-                                nUpdatedAdminUserID = fieldMaps.nUpdatedAdminUserID,
-                                dtLastUpdate = DateTime.Now,
-                                dtCreated = fieldMaps.dtCreated,
-                                nCreatedAdminUserID = fieldMaps.nCreatedAdminUserID
-                            }
-                            );
-                        idList.Add(fieldMaps.nFieldID);
-                    }
-                    idArray = idList.ToArray();
-                    var eFieldlist = await facilityFieldMapsRepository.SelectListByInClause(idArray, "lnkFacilityFieldMaps", "nFieldID", singleRecord.nFacilityID);
-
-                    foreach (var item in eFieldlist)
-                    {
-                        oldFieldMaps.Add(item);
-                    }
-
-                    facilityFieldMapsRepository.UpdateMany(fieldMapsList);
-
-                    if (facility.bFacilityLogging)
-                    {
-                        adminModuleLogger = new AdminModuleLogger()
+                        List<FacilityFieldMaps> fieldMapsList = new List<FacilityFieldMaps>();
+                        foreach (var fieldMaps in FMList)
                         {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Field for Facility ID: " + singleRecord.nFacilityID,
-                            sModuleName = "Edit Facility Fields",
-                            sEventName = "Edit Facility Field",
-                            nFacilityID = singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFieldID");
-                        idList.Clear();
-                        idArray = Array.Empty<int>();
-                        adminModuleLogger = null;
-                    }                
+                            fieldMapsList.Add(
+                                new FacilityFieldMaps()
+                                {
+                                    nFacilityID = fieldMaps.nFacilityID,
+                                    nFieldID = fieldMaps.nFieldID,
+                                    nWizardID = fieldMaps.nWizardID,
+                                    bShow = fieldMaps.bShow,
+                                    nFieldOrder = fieldMaps.nFieldOrder,
+                                    nUpdatedAdminUserID = fieldMaps.nUpdatedAdminUserID,
+                                    dtLastUpdate = DateTime.Now,
+                                    dtCreated = fieldMaps.dtCreated,
+                                    nCreatedAdminUserID = fieldMaps.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(fieldMaps.nFieldID);
+                        }
+                        idArray = idList.ToArray();
+                        var eFieldlist = await facilityFieldMapsRepository.SelectListByInClause(idArray, "lnkFacilityFieldMaps", "nFieldID", singleRecord.nFacilityID);
+
+                        foreach (var item in eFieldlist)
+                        {
+                            oldFieldMaps.Add(item);
+                        }
+
+                        facilityFieldMapsRepository.UpdateMany(fieldMapsList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Field for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Field",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFieldID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
+                    }
 
                     return Ok("Success");
                 }

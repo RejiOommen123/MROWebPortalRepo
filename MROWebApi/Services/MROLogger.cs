@@ -177,20 +177,23 @@ namespace MROWebApi.Services
                     combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                 }
             }
-            combineNewData = removeComma(combineNewData);
-            combineOldData = removeComma(combineOldData);
+            if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData)))
+            {
+                combineNewData = removeComma(combineNewData);
+                combineOldData = removeComma(combineOldData);
 
-            result.nAdminUserID = adminModuleLogger.nAdminUserID;
-            result.sEventName = adminModuleLogger.sEventName;
-            result.sModuleName = adminModuleLogger.sModuleName;
-            result.sDescription = adminModuleLogger.sDescription;
-            result.sNewValue = combineNewData;
-            result.sOldValue = combineOldData;
-            result.dtLogTime = DateTime.Now;
-            result.nFacilityID = adminModuleLogger.nFacilityID;
-            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
+                result.nAdminUserID = adminModuleLogger.nAdminUserID;
+                result.sEventName = adminModuleLogger.sEventName;
+                result.sModuleName = adminModuleLogger.sModuleName;
+                result.sDescription = adminModuleLogger.sDescription;
+                result.sNewValue = combineNewData;
+                result.sOldValue = combineOldData;
+                result.dtLogTime = DateTime.Now;
+                result.nFacilityID = adminModuleLogger.nFacilityID;
+                result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
 
-            adminModuleLoggerRepository.Insert(result);
+                adminModuleLoggerRepository.Insert(result);
+            }
         }
 
         public void UpdateAuditMany<T>(List<T> oldObjectList, List<T> newObjectList, AdminModuleLogger adminModuleLogger, string id)
@@ -210,7 +213,7 @@ namespace MROWebApi.Services
                     if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
                     {
                         continue;
-                    }                    
+                    }
                     object oldValue = pi.GetValue(oldObject), newValue = pi.GetValue(newObject);
 
                     if (!object.Equals(oldValue, newValue))
@@ -219,23 +222,26 @@ namespace MROWebApi.Services
                         combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
                     }
                 }
-                combineNewData = removeComma(combineNewData);
-                combineOldData = removeComma(combineOldData);
+                if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData))) 
+                { 
+                    combineNewData = removeComma(combineNewData);
+                    combineOldData = removeComma(combineOldData);
 
-                result.Add(new AdminModuleLogger
-                {
-                    nAdminUserID = adminModuleLogger.nAdminUserID,
-                    sEventName = adminModuleLogger.sEventName,
-                    sModuleName = adminModuleLogger.sModuleName,
-                    sDescription = adminModuleLogger.sDescription,
-                    sNewValue = combineNewData,
-                    sOldValue = combineOldData,
-                    dtLogTime = DateTime.Now,
-                    nFacilityID = adminModuleLogger.nFacilityID,
-                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
-                });
-                combineNewData = "";
-                combineOldData = "";
+                    result.Add(new AdminModuleLogger
+                    {
+                        nAdminUserID = adminModuleLogger.nAdminUserID,
+                        sEventName = adminModuleLogger.sEventName,
+                        sModuleName = adminModuleLogger.sModuleName,
+                        sDescription = adminModuleLogger.sDescription,
+                        sNewValue = combineNewData,
+                        sOldValue = combineOldData,
+                        dtLogTime = DateTime.Now,
+                        nFacilityID = adminModuleLogger.nFacilityID,
+                        nFacilityLocationID = adminModuleLogger.nFacilityLocationID
+                    });
+                    combineNewData = "";
+                    combineOldData = "";
+                }
             }
 
             adminModuleLoggerRepository.InsertMany(result);

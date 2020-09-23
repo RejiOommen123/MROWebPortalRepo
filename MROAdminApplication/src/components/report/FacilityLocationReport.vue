@@ -121,10 +121,11 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
-        class="body-1"
+        class="body-1"        
+        height="50vh"
       >
       </v-data-table>
       <!-- End Facility/Location Report DataTable  -->
@@ -199,8 +200,7 @@ export default {
         { text: "Outbound Email", value: "sOutboundEmail", width: "10%" },  
         { text: "sFTP Username", value: "sFTPUsername", width: "10%" },  
         { text: "sFTP URL", value: "sFTPUrl", width: "10%" },  
-        { text: "GUID for URL", value: "sGuid", width: "10%" },  
-        { text: "Email Verification Enabled", value: "bEmailVerificationEnabled", width: "10%" }
+        { text: "GUID for URL", value: "sGuid", width: "10%" }
       ],
       gridData: undefined,
        gridHeaders :{
@@ -222,8 +222,7 @@ export default {
         'Outbound Email': 'sOutboundEmail',
         'sFTP Username': 'sFTPUsername',
         'sFTP URL': 'sFTPUrl',
-        'GUID for URL': 'sGuid',
-        'Email Verification Enabled': 'bEmailVerificationEnabled'
+        'GUID for URL': 'sGuid'
       },
     };
   },
@@ -315,8 +314,8 @@ export default {
     // API Call to Get all Facility/Location Report
     getGridData() {
       var adminFilterParameter ={
-        dtStart:this.dtStart,
-        dtEnd:this.dtEnd,
+        sStart:this.dtStart,
+        sEnd:this.dtEnd,
         sFacilityName:this.sFacilityName,
         sLocationName:this.sLocationName
       };

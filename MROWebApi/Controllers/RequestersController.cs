@@ -172,7 +172,7 @@ namespace MROWebApi.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp", ex.Message, _info);
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - "+requester.nRequesterID+")" , ex.Message, _info);
                                 }
                             }
                             else
@@ -212,7 +212,7 @@ namespace MROWebApi.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP", ex.Message, _info);
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message, _info);
                                 }
                             }
 
@@ -234,14 +234,12 @@ namespace MROWebApi.Controllers
                     logger.LogRequesterRecords(nRequesterId, requester.nFacilityID, sDescrption, requester.sWizardName);
                 }
                 #endregion
-
-                return nRequesterId;
-
             }
             catch (Exception ex)
             {
-                throw ex;
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.(RequesterID - " + requester.nRequesterID + ")", ex.Message, _info);
             }
+            return requester.nRequesterID;
         }
         #endregion
 

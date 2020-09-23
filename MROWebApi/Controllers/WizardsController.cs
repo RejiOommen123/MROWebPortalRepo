@@ -70,7 +70,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID and LocationID", ex.Message, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message, _info);
                 return Content(ex.Message);
             }
         }
@@ -90,7 +90,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID", ex.Message, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID - "+ sGUID, ex.Message, _info);
                 return Content(ex.Message);
             }
         }
@@ -110,7 +110,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location - By LocationId", ex.Message, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location - By LocationId - "+nLocationID, ex.Message, _info);
                 return Content(ex.Message);
             }
         }
@@ -419,7 +419,7 @@ namespace MROWebApi.Controllers
                     }
                     catch (Exception ex)
                     {
-                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp", ex.Message, _info);
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp. RequesterID - "+requester.nRequesterID, ex.Message, _info);
                     }
                 }
                 else
@@ -459,7 +459,7 @@ namespace MROWebApi.Controllers
                     }
                     catch (Exception ex)
                     {
-                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP", ex.Message, _info);
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP. RequesterID - " + requester.nRequesterID, ex.Message, _info);
                     }
                 }
 
@@ -549,7 +549,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Sending Email", ex.Message, _info);
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Sending Email. RequesterID - " + requester.nRequesterID, ex.Message, _info);
                     return false;
                 }
                 client.Send(message);
@@ -638,7 +638,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Email Verification", ex.Message, _info);
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message, _info);
                     return Content(ex.Message);
                 }
                 return Ok(sOTP);
@@ -1057,7 +1057,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation Error", ex.Message, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation Error. RequesterID - " + requester.nRequesterID, ex.Message, _info);
                 return null;
             }
         }
@@ -1158,7 +1158,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email", ex.Message, _info);
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email. RequesterID - " + requester.nRequesterID, ex.Message, _info);
                     return false;
                 }
                 
