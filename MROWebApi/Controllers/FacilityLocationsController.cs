@@ -308,7 +308,9 @@ namespace MROWebApi.Controllers
                                 nAdminUserID = facilityLocation.nUpdatedAdminUserID,
                                 sDescription = sDescription,
                                 sModuleName = "Facility Location",
-                                sEventName = "Edit Facility Location"
+                                sEventName = "Edit Facility Location",
+                                nFacilityID = facilityLocation.nFacilityID,
+                                nFacilityLocationID = facilityLocation.nFacilityLocationID
                             };
                             logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
                         }
