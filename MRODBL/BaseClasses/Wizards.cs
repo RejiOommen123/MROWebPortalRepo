@@ -14,6 +14,7 @@ namespace MRODBL.BaseClasses
         public string sWizardName { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Wizard Description allowed")]
         public string sWizardDescription { get; set; }
+        [IgnorePropertyCompare]
         public DateTime dtLastUpdate { get; set; }
         #endregion
     }

@@ -10,6 +10,7 @@ namespace MRODBL.BaseClasses
         public int nConnectionID { get; set; }
         public string sConnectionString { get; set; }
         public string sConnectionDisplayName { get; set; }
+        [IgnorePropertyCompare]
         public DateTime dtLastUpdate { get; set; }
         #endregion
     }

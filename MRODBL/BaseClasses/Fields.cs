@@ -16,6 +16,7 @@ namespace MRODBL.BaseClasses
         public string sFieldName { get; set; }
         [MaxLength]
         public string sNormalizedFieldName { get; set; }
+        [IgnorePropertyCompare]
         public DateTime dtLastUpdate { get; set; }
         #endregion
     }

@@ -34,12 +34,15 @@ namespace MRODBL.BaseClasses
         public string sFaxNo { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Logo Name Allowed")]
         public string sConfigLogoName { get; set; }
+        [IgnorePropertyCompare]
         [MaxLength]
         public string sConfigLogoData { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Background Name Allowed")]
         public string sConfigBackgroundName { get; set; }
+        [IgnorePropertyCompare]
         [MaxLength]
         public string sConfigBackgroundData { get; set; }
+        [IgnorePropertyCompare]
         [MaxLength]
         public string sAuthTemplate { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Authentication Template Name Allowed")]

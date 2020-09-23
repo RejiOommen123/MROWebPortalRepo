@@ -134,6 +134,7 @@
           'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
+        fixed-header
         class="body-1"
         height="50vh"
       >
@@ -192,14 +193,14 @@ export default {
           text: "Admin Name",
           align: "start",
           value: "sName",
-          width: "10%",
+          width: "200px",
         },
-        { text: "Module Name", value: "sModuleName", width: "10%" },
-        { text: "Event Name", value: "sEventName", width: "10%" },       
-        { text: "Description", value: "sDescription", width: "30%" },    
-        { text: "New Value", value: "sNewValue", width: "15%" },
-        { text: "Old Value", value: "sOldValue", width: "15%" },       
-        { text: "Log Time", value: "dtLogTime", width: "10%" },    
+        { text: "Module Name", value: "sModuleName", width: "200px" },
+        { text: "Event Name", value: "sEventName", width: "200px" },       
+        { text: "Description", value: "sDescription", width: "300px" },    
+        { text: "New Value", value: "sNewValue", width: "300px" },
+        { text: "Old Value", value: "sOldValue", width: "300px" },       
+        { text: "Log Time", value: "dtLogTime", width: "250px" },    
       ],
       gridData: undefined,
       gridHeaders :{

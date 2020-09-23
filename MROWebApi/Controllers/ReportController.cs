@@ -31,7 +31,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetAuditReport(AuditFilterParameter auditFilterParameter)
+        public async Task<IActionResult> GetAuditReport(ReportFilterParameter auditFilterParameter)
         {
             if (ModelState.IsValid)
             {
@@ -67,20 +67,20 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationReport(AuditFilterParameter auditFilterParameter)
+        public async Task<IActionResult> GetFacilityLocationReport(ReportFilterParameter auditFilterParameter)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     #region Data Addition ! from UI
-                    AdminModuleLoggerRepository amFac = new AdminModuleLoggerRepository(_info);
+                    FacilitiesRepository faciFac = new FacilitiesRepository(_info);
                     if (!String.IsNullOrWhiteSpace(auditFilterParameter.sEnd))
                     {
                         DateTime endDate = Convert.ToDateTime(auditFilterParameter.sEnd).AddHours(23).AddMinutes(59).AddSeconds(59);
                         auditFilterParameter.sEnd = endDate.ToString("yyyy-MM-dd HH:mm:ss.fff");
                     }
-                    IEnumerable<dynamic> records = await amFac.GetFacilityLocationData(auditFilterParameter.sStart, auditFilterParameter.sEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName));
+                    IEnumerable<dynamic> records = await faciFac.GetFacilityLocationData(auditFilterParameter.sStart, auditFilterParameter.sEnd, (String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sLocationName) ? null : auditFilterParameter.sLocationName));
                     #endregion
 
                     return Ok(records);

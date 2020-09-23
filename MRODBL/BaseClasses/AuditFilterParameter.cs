@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MRODBL.BaseClasses
 {
-    public class AuditFilterParameter
+    public class ReportFilterParameter
     {
         #region Props
         public string sStart { get; set; }

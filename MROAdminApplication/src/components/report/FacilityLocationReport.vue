@@ -124,6 +124,7 @@
           'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
+        fixed-header
         class="body-1"        
         height="50vh"
       >
@@ -181,26 +182,26 @@ export default {
           text: "Facility Name",
           align: "start",
           value: "sFacilityName",
-          width: "10%",
+          width: "150px",
         },
-        { text: "Location Name", value: "sLocationName", width: "10%" },
-        { text: "Active(Location)", value: "bLocationActiveStatus", width: "10%" },       
-        { text: "ROI Location ID", value: "nROIFacilityID", width: "30%" },    
-        { text: "Location Code", value: "sLocationCode", width: "15%" },
-        { text: "Location Address", value: "sLocationAddress", width: "15%" },       
-        { text: "Ph Number", value: "sPhoneNo", width: "10%" },    
-        { text: "Fax Number", value: "sFaxNo", width: "10%" },   
-        { text: "Authorization Template", value: "bAuthTemplate", width: "10%" },   
-        { text: "Logo", value: "bLogo", width: "10%" },   
-        { text: "Background", value: "bBackground", width: "10%" },   
-        { text: "Active (Facility Active)", value: "bActiveStatus", width: "10%" },   
-        { text: "Description", value: "sDescription", width: "10%" },   
-        { text: "SMTP Username", value: "sSMTPUsername", width: "10%" },   
-        { text: "SMTP Url", value: "sSMTPUrl", width: "10%" },  
-        { text: "Outbound Email", value: "sOutboundEmail", width: "10%" },  
-        { text: "sFTP Username", value: "sFTPUsername", width: "10%" },  
-        { text: "sFTP URL", value: "sFTPUrl", width: "10%" },  
-        { text: "GUID for URL", value: "sGuid", width: "10%" }
+        { text: "Location Name", value: "sLocationName", width: "150px" },
+        { text: "Active(Location)", value: "bLocationActiveStatus", width: "150px" },       
+        { text: "ROI Location ID", value: "nROIFacilityID", width: "150px" },    
+        { text: "Location Code", value: "sLocationCode", width: "150px" },
+        { text: "Location Address", value: "sLocationAddress", width: "300px" },       
+        { text: "Ph Number", value: "sPhoneNo", width: "150px"},    
+        { text: "Fax Number", value: "sFaxNo", width: "150px"},   
+        { text: "Authorization Template", value: "bAuthTemplate", width: "200px" },   
+        { text: "Logo", value: "bLogo", width: "150px" },   
+        { text: "Background", value: "bBackground", width: "150px" },   
+        { text: "Active (Facility Active)", value: "bActiveStatus", width:"200px" },   
+        { text: "Description", value: "sDescription", width: "300px" },   
+        { text: "SMTP Username", value: "sSMTPUsername", width: "200px" },   
+        { text: "SMTP Url", value: "sSMTPUrl", width: "200px" },  
+        { text: "Outbound Email", value: "sOutboundEmail", width: "200px" },  
+        { text: "sFTP Username", value: "sFTPUsername", width: "200px" },  
+        { text: "sFTP URL", value: "sFTPUrl", width: "200px" },  
+        { text: "GUID for URL", value: "sGuid", width: "400px" }
       ],
       gridData: undefined,
        gridHeaders :{
