@@ -1,8 +1,11 @@
 <template>
   <div id="AuditReportPageBox">
     <v-card class="mb-5 pa-3">
+      <v-card-title>
+        Filters
+      </v-card-title>
       <v-row no-gutters>
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -33,7 +36,7 @@
           </v-menu>
         </v-col>
         <!-- End Date input -->
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-menu v-model="menu2" :close-on-content-click="false" max-width="290">
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
@@ -63,7 +66,7 @@
             ></v-date-picker>
           </v-menu>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-text-field
             label="Facility Name"
             v-model="sFacilityName"
@@ -73,7 +76,7 @@
             maxlength="40"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-text-field 
           label="Location Name"
           v-model="sLocationName"
@@ -83,7 +86,7 @@
           maxlength="100"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-text-field 
           label="Admin Name"
           v-model="sAdminName"
@@ -93,7 +96,7 @@
           maxlength="100"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="12" md="2" class="pl-4">
+        <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
           <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
         </v-col>
@@ -102,7 +105,17 @@
     <!-- Vuetify Card with Audit Report List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
-        Audit Report
+        Audit Report - 
+        <v-btn class="ml-3" color="primary" small>
+        <export-excel
+            :data="gridData"
+            :fields ="gridHeaders"
+            type="xls"
+            name="Audit Report.xls"
+        >
+            Export Excel
+        </export-excel>
+        </v-btn>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -188,6 +201,15 @@ export default {
         { text: "Log Time", value: "dtLogTime", width: "10%" },    
       ],
       gridData: undefined,
+      gridHeaders :{
+        'Admin Name':'sName',
+        'Module Name': 'sModuleName',
+        'Event Name':'sEventName',
+        'Description': 'sDescription',
+        'New Value':'sNewValue',
+        'Old Value': 'sOldValue',
+        'Log Time' : 'dtLogTime'
+      },
     };
   },
   watch: {
