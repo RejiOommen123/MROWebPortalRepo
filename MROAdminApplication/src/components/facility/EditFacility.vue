@@ -479,7 +479,14 @@ export default {
       response=>{if(response.ok==true){
         this.sBtnCode = response.bodyText;
       }},
-      error=>{console.log(error);}
+      error=>{        
+        if (error.status == 400) {
+            this.dialogLoader =false;
+            this.SMTPStatus='Error - Something went wrong';
+            this.SMTPResponseMsg=error.body;
+            this.SMTPResponseDialog=true;   
+          }      
+      }
     );
     this.$http.get("facility/GetFacility/sFacilityID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId).then(
       response => {
@@ -498,7 +505,12 @@ export default {
       },
       error => {
         // error callback
-        console.log(error);
+         if (error.status == 400) {
+            this.dialogLoader =false;
+            this.SMTPStatus='Error - Something went wrong';
+            this.SMTPResponseMsg=error.body;
+            this.SMTPResponseDialog=true;   
+          }    
       }
     );
     this.dialogLoader = false;

@@ -320,12 +320,10 @@ export default {
         sFacilityName:this.sFacilityName,
         sLocationName:this.sLocationName
       };
-      console.log(adminFilterParameter);
       this.dialogLoader = true;
       this.$http.post("Report/GetFacilityLocationReport",adminFilterParameter).then(
         (response) => {
           this.gridData = JSON.parse(response.bodyText);
-           console.log(this.gridData);
           this.dialogLoader = false;
         },
         (error) => {
