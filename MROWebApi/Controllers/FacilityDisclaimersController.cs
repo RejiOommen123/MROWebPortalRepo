@@ -110,12 +110,11 @@ namespace MROWebApi.Controllers
                     {
                         MROLogger logger = new MROLogger(_info);
                         string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Disclaimers Method for Facility ID: " + nFacilityID + " and Updated Disclaimer";
-                        //logger.LogAdminRecords(nAdminUserID, sDescription, "Edit Disclaimers", "Edit Disclaimers");
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,
                             sDescription = sDescription,
-                            sModuleName = "Edit Facility Fields",
+                            sModuleName = "Edit Facility Fields/Disclaimers",
                             sEventName = "Edit Facility Disclaimers",
                             nFacilityID= singleRecord.nFacilityID
                         };
