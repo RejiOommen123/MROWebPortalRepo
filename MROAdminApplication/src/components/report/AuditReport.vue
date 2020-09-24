@@ -318,12 +318,10 @@ export default {
         sLocationName:this.sLocationName,
         sAdminName:this.sAdminName
       };
-      console.log(adminFilterParameter);
       this.dialogLoader = true;
       this.$http.post("Report/GetAuditReport",adminFilterParameter).then(
         (response) => {
           this.gridData = JSON.parse(response.bodyText);
-           console.log(this.gridData);
           this.dialogLoader = false;
         },
         (error) => {
