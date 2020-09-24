@@ -89,7 +89,7 @@ namespace MROWebApi.Controllers
                 requester.sRelativeFileNameArray = new string[] { relativeFileNameArray };
                 #endregion
 
-                
+
                 if (requester.nRequesterID == 0)
                 {
                     //Insert in Table
@@ -173,7 +173,7 @@ namespace MROWebApi.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - "+requester.nRequesterID+")" , ex.Message, _info);
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - "+requester.nRequesterID+")" , ex.Message + " Stack Trace " + ex.StackTrace, _info);
                                 }
                             }
                             else
@@ -213,7 +213,7 @@ namespace MROWebApi.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message, _info);
+                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                                 }
                             }
 
@@ -238,7 +238,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.(RequesterID - " + requester.nRequesterID + ")", ex.Message, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
             }
             return nRequesterId;
         }
