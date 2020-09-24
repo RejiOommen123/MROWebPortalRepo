@@ -59,6 +59,7 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
+            int nRequesterId = 0;
             try
             {
                 #region Data Addition ! From UI
@@ -88,7 +89,7 @@ namespace MROWebApi.Controllers
                 requester.sRelativeFileNameArray = new string[] { relativeFileNameArray };
                 #endregion
 
-                int nRequesterId = 0;
+                
                 if (requester.nRequesterID == 0)
                 {
                     //Insert in Table
@@ -239,7 +240,7 @@ namespace MROWebApi.Controllers
             {
                 MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.(RequesterID - " + requester.nRequesterID + ")", ex.Message, _info);
             }
-            return requester.nRequesterID;
+            return nRequesterId;
         }
         #endregion
 

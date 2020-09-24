@@ -17,10 +17,7 @@
                 height="120px"
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
-              />
-               <!-- width="350px"
-                " -->
-              <!--<VueSignaturePad :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}" ref="signaturePad" />-->
+              />            
             </v-col>
           </div>
           <v-row>
@@ -35,14 +32,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
-    <!-- <iframe id="pdfViewer" :src="this.pdf" width="100%" height="1200px"></iframe> -->
-<!-- 
-    <pdf :src="this.pdfURL" :page="1">
-      <template slot="loading">
-        loading content here...
-      </template>
-    </pdf> -->
     <div>
 		<pdf
 			v-for="i in numPages"
@@ -130,8 +119,6 @@ export default {
         bIsTestRequest: false,
         sAuthTemplate: '',
       };  
-
-    // this.$vuetify.theme.dark = false;
     this.dialogLoader=true;
     this.$http
       .post("wizards/GeneratePDF/", 
@@ -180,7 +167,6 @@ export default {
         )
         .then(response => {
           let blobFile = new Blob([response.data], { type: "application/pdf" });
-          //let link = document.createElement('a');
           this.bFormSigned=true;
           var fileURL = URL.createObjectURL(blobFile);
           this.pdfURL = fileURL;
@@ -189,8 +175,7 @@ export default {
 
               this.numPages = pdf.numPages;
             });
-          this.dialogLoader=false;
-           //console.log(JSON.stringify(this.$store.state.requestermodule));          
+          this.dialogLoader=false;   
         });
     },
     change() {
@@ -211,10 +196,6 @@ export default {
         }
         this.bFormSigned=false;
         this.$store.commit("requestermodule/sSignatureData", '');
-        // this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
-        // this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
-        // this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-        // this.$vuetify.theme.dark = true;
         this.$store.commit("ConfigModule/mutatePreviousIndex");
        
     },
@@ -222,16 +203,12 @@ export default {
       this.dialog=true;
     },
     next(){      
+      this.$store.commit("requestermodule/sWizardName",this.$store.state.ConfigModule.selectedWizard);
       this.$store.commit("requestermodule/bRequestorFormSubmitted", true)
         this.$http
       .post("Wizards/GenerateXML/", 
       this.$store.state.requestermodule,
       )
-        // this.$store.commit("ConfigModule/mutatedialogMinWidth", '600px');
-        // this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
-        // this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
-        // this.$vuetify.theme.dark = true;
-        
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }
