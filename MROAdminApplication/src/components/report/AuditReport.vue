@@ -138,6 +138,9 @@
         class="body-1"
         height="50vh"
       >
+      <template v-slot:item.dtLogTime="{ item }">
+         {{ item.dtLogTime | moment }}
+      </template>
       </v-data-table>
       <!-- End Audit Report DataTable  -->
     </v-card>
@@ -197,9 +200,9 @@ export default {
         },
         { text: "Module Name", value: "sModuleName", width: "200px" },
         { text: "Event Name", value: "sEventName", width: "200px" },       
-        { text: "Description", value: "sDescription", width: "300px" },    
-        { text: "New Value", value: "sNewValue", width: "300px" },
-        { text: "Old Value", value: "sOldValue", width: "300px" },       
+        { text: "Description", value: "sDescription", width: "300px" },   
+        { text: "Previous Values", value: "sOldValue", width: "300px" },        
+        { text: "Current Values", value: "sNewValue", width: "300px" },        
         { text: "Log Time", value: "dtLogTime", width: "250px" },    
       ],
       gridData: undefined,
@@ -208,11 +211,16 @@ export default {
         'Module Name': 'sModuleName',
         'Event Name':'sEventName',
         'Description': 'sDescription',
-        'New Value':'sNewValue',
-        'Old Value': 'sOldValue',
+        'Previous Values': 'sOldValue',
+        'Current Values':'sNewValue',        
         'Log Time' : 'dtLogTime'
       },
     };
+  },
+  filters: {
+    moment: function (date) {
+      return moment(date).format('MMM Do, YYYY - hh:mm:ss a');
+    }
   },
   watch: {
     menu1(val) {
