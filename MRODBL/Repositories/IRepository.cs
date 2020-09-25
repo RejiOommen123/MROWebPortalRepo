@@ -212,10 +212,38 @@ namespace MRODBL.Repositories
         /// <param name="sEmail">Admin Email</param>
         /// <returns>Admin User ID (int)</returns>
         Task<int> GetAdminUserID(string sName, string sUPN, string sEmail);
-
+        /// <summary>
+        /// Get Disclaimers Per Facility ID
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
+        /// <summary>
+        /// Get Audir Report Data
+        /// </summary>
+        /// <param name="dtStart"></param>
+        /// <param name="dtEnd"></param>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sLocationName"></param>
+        /// <param name="sAdminName"></param>
+        /// <returns></returns>
         Task<IEnumerable<dynamic>> GetAuditData(string dtStart, string dtEnd, string sFacilityName, string sLocationName, string sAdminName);
+        /// <summary>
+        /// Get Facility/Location Data
+        /// </summary>
+        /// <param name="dtStart"></param>
+        /// <param name="dtEnd"></param>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sLocationName"></param>
+        /// <returns></returns>
         Task<IEnumerable<dynamic>> GetFacilityLocationData(string dtStart, string dtEnd, string sFacilityName, string sLocationName);
+        /// <summary>
+        /// Get Facility Configuration Data
+        /// </summary>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sWizardName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetFacilityConfigurationData(string sFacilityName, string sWizardName);
         #endregion
     }
 }

@@ -1,27 +1,50 @@
 <template>
-  <div id="PrimaryReasonPageBox">
-    <!-- Add Primary Reason Button which will redirect to Add Primary Reason Page -->
-    <v-row no-gutters>
-      <v-col cols="12" sm="12" md="6">
-        <v-btn
-          depressed
-          small
-          class="mx-2"
-          fab
-          dark
-          color="rgb(0, 91, 168)"
-          id="addPrimaryReason"
-          to="/PrimaryReason/AddPrimaryReason"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-        <span id="addRecBtn">Add Primary Reason</span>
-      </v-col>
-    </v-row>
-    <!-- Vuetify Card with Primary Reason List Title and Search Text Box  -->
+  <div id="FacilityConfigurationReportPageBox">
+    <v-card class="mb-5 pa-3">
+      <v-card-title>
+        Filters
+      </v-card-title>
+      <v-row no-gutters>
+        <v-col cols="6" sm="12" md="2" class="pl-4">
+          <v-text-field
+            label="Facility Name"
+            v-model="sFacilityName"
+            @input="$v.sFacilityName.$touch()"
+            @blur="$v.sFacilityName.$touch()"
+            :error-messages="sFacilityNameErrors"
+            maxlength="40"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="6" sm="12" md="2" class="pl-4">
+          <v-text-field 
+          label="Wizard Name"
+          v-model="sWizardName"
+          @input="$v.sWizardName.$touch()"
+          @blur="$v.sWizardName.$touch()"
+          :error-messages="sWizardNameErrors"
+          maxlength="50"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="6" sm="12" md="2" class="pl-4">
+          <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
+          <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
+        </v-col>
+      </v-row>
+    </v-card>
+    <!-- Vuetify Card with Facility Configuration Report List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
-        Primary Reason List
+        Facility Configuration Report -
+        <v-btn class="ml-3" color="primary" small>
+        <export-excel
+            :data="gridData"
+            :fields ="gridHeaders"
+            type="xls"
+            name="FacilityConfiguration Report.xls"
+        >
+            Export Excel
+        </export-excel>
+        </v-btn>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -31,59 +54,24 @@
           hide-details
         ></v-text-field>
       </v-card-title>
-      <!-- Primary Reason List DataTable  -->
+      <!-- Facility Configuration Report DataTable  -->
       <v-data-table
         :headers="headers"
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
-        class="body-1"
+        fixed-header
+        class="body-1"        
+        height="50vh"
       >
-        <!-- Primary Reason List Actions (Edit Primary Reason, Delete Primary Reason)  -->
-        <template v-slot:item.actions="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <router-link
-                class="mrorouterlink"
-                :to="'/PrimaryReason/EditPrimaryReason/'+item.nPrimaryReasonID"
-              >
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
-              </router-link>
-            </template>
-            <span>Edit Primary Reason</span>
-          </v-tooltip>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn icon @click="deleteItem(item.nPrimaryReasonID, item.sPrimaryReasonName)">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete Primary Reason</span>
-          </v-tooltip>
-        </template>
       </v-data-table>
-      <!-- End Primary Reason List DataTable  -->
+      <!-- End Facility Configuration Report DataTable  -->
     </v-card>
 
-    <!-- Dialog box for Toggle Delete Primary Reason Confirmation -->
-    <v-dialog v-model="dialog" max-width="360">
-      <v-card>
-        <v-card-title class="headline">
-          Are you sure you want to
-          <br />delete?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click="deletePrimaryReason(editedItem.nPrimaryReasonID)">Yes</v-btn>
-          <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Dialog Alert for errors Primary Reason -->
+    <!-- Dialog Alert for errors Facility Configuration Report -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -107,46 +95,84 @@
 </template>
 
 <script>
+import { maxLength } from "vuelidate/lib/validators";
 export default {
   data() {
     return {
+      sFacilityName: "",
+      sWizardName: "",
+      menu1: false,
+      menu2: false,
       dialogLoader: false,
       dialog: false,
       errorAlert: false,
       errorMessage: "",
       search: "",
       headers: [
-        {
-          text: "Name",
+       {
+          text: "Wizard Name",
           align: "start",
-          value: "sPrimaryReasonName",
-          width: "20%",
+          value: "sWizardName",
+          width: "150px",
         },
-        { text: "Tooltip", value: "sFieldToolTip", width: "40%" },
-        {
-          text: "Normalized Name",
-          value: "sNormalizedPrimaryReasonName",
-          width: "30%",
-        },
-        {
-          text: "Edit/Delete",
-          value: "actions",
-          align: "center",
-          sortable: false,
-        },
+        { text: "Wizard Description", value: "sWizardDescription", width: "150px" },
+        { text: "Value", value: "sFieldName", width: "300px" },       
+        { text: "Type", value: "sType", width: "150px" },    
+        { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "150px" },
+        { text: "Configurable in DB", value: "bConfigurableDB", width: "150px" },       
+        { text: "Facility", value: "sFacilityName", width: "150px"},    
+        { text: "In Use", value: "bInUse", width: "150px"}
       ],
-      gridData: this.getGridData(),
-      editedItem: {
-        nPrimaryReasonID: 0,
-        sPrimaryReasonName: "",
+      gridData: undefined,
+       gridHeaders :{
+        'Wizard Name':'sWizardName',
+        'Wizard Description': 'sWizardDescription',
+        'Value':'sFieldName',
+        'Type': 'sType',
+        'Configurable in Admin Module':'bConfigurableAdmin',
+        'Configurable in DB': 'bConfigurableDB',
+        'Facility' : 'sFacilityName',
+        "In Use": 'bInUse'
       },
     };
   },
+  // Start and end date validations
+  validations: {
+    sFacilityName: {
+        maxLength: maxLength(40)
+    },
+    sWizardName: {
+        maxLength: maxLength(50)
+    }
+  },
+  computed: {
+    sFacilityNameErrors() {
+      const errors = [];
+      if (!this.$v.sFacilityName.$dirty) return errors;
+      !this.$v.sFacilityName.maxLength &&
+        errors.push("Facility Name must be at most 40 characters long");
+      return errors;
+    },
+    sWizardNameErrors() {
+      const errors = [];
+      if (!this.$v.sWizardName.$dirty) return errors;
+      !this.$v.sWizardName.maxLength &&
+        errors.push("Wizard Name must be at most 50 characters long");
+      return errors;
+    }
+  },
+  mounted(){
+    this.getGridData();
+  },
   methods: {
-    // API Call to Get all Primary Reasons
+    // API Call to Get all Facility Configuartion Report
     getGridData() {
+      var adminFilterParameter ={
+        sFacilityName:this.sFacilityName,
+        sWizardName:this.sWizardName
+      };
       this.dialogLoader = true;
-      this.$http.get("Master/GetPrimaryReasons").then(
+      this.$http.post("Report/GetFacilityConfigurationReport",adminFilterParameter).then(
         (response) => {
           this.gridData = JSON.parse(response.bodyText);
           this.dialogLoader = false;
@@ -160,49 +186,14 @@ export default {
           }
         }
       );
-    },
-    //Method to pass nPrimaryReasonID & sPrimaryReasonName to dialog box
-    deleteItem(nPrimaryReasonID, sPrimaryReasonName) {
-      this.editedItem.nPrimaryReasonID = nPrimaryReasonID;
-      this.editedItem.sPrimaryReasonName = sPrimaryReasonName;
-      this.dialog = true;
-    },
-    //On Agree in dialog box API Call to Delete Primary Reason
-    deletePrimaryReason(id) {
-      this.dialogLoader = true;
-      this.dialog = false;
-      this.$http
-        .get(
-          "Master/DeletePrimaryReason/sPrimaryReasonID=" +
-            id +
-            "&sAdminUserID=" +
-            this.$store.state.adminUserId
-        )
-        .then(
-          (response) => {
-            if (response.ok == true) {
-              this.dialogLoader = false;
-              this.dialogLoader = false;
-              this.$router.go();
-            }
-          },
-          (error) => {
-            // Error Callback
-            if (error.status == 400) {
-              this.dialogLoader = false;
-              this.errorMessage = error.body;
-              this.errorAlert = true;
-            }
-          }
-        );
-    },
+    }
   },
 };
 </script>
 
 <style scoped>
 @media screen and (max-width: 500px) {
-  #PrimaryReasonPageBox {
+  #FacilityConfigurationReportPageBox {
     margin: 0 0em;
   }
   h1 {

@@ -548,6 +548,24 @@ namespace MRODBL.Repositories
                 }
             }
         }
+
+        public async Task<IEnumerable<dynamic>> GetFacilityConfigurationData(string sFacilityName = null, string sWizardName = null)
+        {
+            string SqlString = "spGetFacilityConfigurationReport";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @sFacilityName = sFacilityName, @sWizardName = sWizardName }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
         #endregion
     }
 }

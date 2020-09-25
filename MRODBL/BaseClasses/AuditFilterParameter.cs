@@ -12,6 +12,7 @@ namespace MRODBL.BaseClasses
         public string sFacilityName { get; set; }
         public string sLocationName { get; set; }
         public string sAdminName { get; set; }
+        public string sWizardName { get; set; }
         #endregion
     }
 }

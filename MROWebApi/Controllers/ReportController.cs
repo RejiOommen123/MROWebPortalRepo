@@ -99,5 +99,37 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
+
+        #region Get Facility Configuration Report
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetFacilityConfigurationReport(ReportFilterParameter auditFilterParameter)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    #region Data Addition ! from UI
+                    FacilitiesRepository faciFac = new FacilitiesRepository(_info);
+                    IEnumerable<dynamic> records = await faciFac.GetFacilityConfigurationData((String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sWizardName) ? null : auditFilterParameter.sWizardName));
+                    #endregion
+
+                    return Ok(records);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
     }
 }
