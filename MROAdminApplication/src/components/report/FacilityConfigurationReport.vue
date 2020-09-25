@@ -101,8 +101,6 @@ export default {
     return {
       sFacilityName: "",
       sWizardName: "",
-      menu1: false,
-      menu2: false,
       dialogLoader: false,
       dialog: false,
       errorAlert: false,
@@ -136,7 +134,6 @@ export default {
       },
     };
   },
-  // Start and end date validations
   validations: {
     sFacilityName: {
         maxLength: maxLength(40)
@@ -165,7 +162,7 @@ export default {
     this.getGridData();
   },
   methods: {
-    // API Call to Get all Facility Configuartion Report
+    // API Call to Get all Facility Configuration Report
     getGridData() {
       var adminFilterParameter ={
         sFacilityName:this.sFacilityName,
