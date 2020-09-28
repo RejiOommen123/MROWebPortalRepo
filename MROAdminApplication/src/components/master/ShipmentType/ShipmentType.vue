@@ -2,15 +2,14 @@
   <div id="ShipmentTypePageBox">
     <!-- Add Shipment Type Button which will redirect to Add Shipment Type Page -->
     <v-row no-gutters>
-      <v-col cols="12" sm="12" md="6">
+      <v-col cols="12" sm="12" md="6" >
         <v-btn
           depressed
           small
-          class="mx-2"
+          class="mx-2 addButton"
           fab
           dark
           color="rgb(0, 91, 168)"
-          id="addShipmentType"
           to="/ShipmentType/AddShipmentType"
         >
           <v-icon>mdi-plus</v-icon>
@@ -37,10 +36,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="65vh"
       >
         <!-- Shipment Type List Actions (Edit Shipment Type, Delete Shipment Type)  -->
         <template v-slot:item.actions="{ item }">

@@ -37,10 +37,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="60vh"
       >
         <!-- Facility Location Count Template -->
         <template v-slot:item.nFacLocCount="{ item }">

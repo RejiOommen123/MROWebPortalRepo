@@ -84,7 +84,7 @@ namespace MROWebApi.Controllers
                 if (dbRecordTypes.Count() != 0)
                 {
                     //Exit
-                    return BadRequest("Cannot Add Record Type \"" + recordType.sRecordTypeName + "\", Record Type with Same Name Exists");
+                    return BadRequest("Cannot add Record Type - \"" + recordType.sRecordTypeName + "\". Record type with same name already exists.");
                 }
                 try
                 {
@@ -139,7 +139,7 @@ namespace MROWebApi.Controllers
                     if (dbRecordTypes.First().nRecordTypeID != recordType.nRecordTypeID)
                     {
                         //Exit
-                        return BadRequest("Cannot Edit Record Type \"" + recordType.sRecordTypeName + "\", Record Type with Same Name Exists");
+                        return BadRequest("Cannot edit Record Type - \"" + recordType.sRecordTypeName + "\". Record type with same name already exists.");
                     }
                 }
                 try
@@ -264,7 +264,7 @@ namespace MROWebApi.Controllers
                 if (dbPrimaryReasons.Count() != 0)
                 {
                     //Exit
-                    return BadRequest("Cannot Add Primary Reason \"" + primaryReason.sPrimaryReasonName + "\", Primary Reason with Same Name Exists");
+                    return BadRequest("Cannot add Primary Reason - \"" + primaryReason.sPrimaryReasonName + "\". Primary reason with same name already exists.");
                 }
                 try
                 {
@@ -320,7 +320,7 @@ namespace MROWebApi.Controllers
                     if (dbPrimaryReasons.First().nPrimaryReasonID != primaryReason.nPrimaryReasonID)
                     {
                         //Exit
-                        return BadRequest("Cannot Edit Primary Reason \"" + primaryReason.sPrimaryReasonName + "\", Primary Reason with Same Name Exists");
+                        return BadRequest("Cannot edit Primary Reason - \"" + primaryReason.sPrimaryReasonName + "\". Primary reason with same name already exists.");
                     }
                 }
                 
@@ -446,7 +446,7 @@ namespace MROWebApi.Controllers
                 if (dbSensitiveInfo.Count() != 0)
                 {
                     //Exit
-                    return BadRequest("Cannot Add Sensitive Info \"" + sensitiveInfo.sSensitiveInfoName + "\", Sensitive Info with Same Name Exists");
+                    return BadRequest("Cannot add Sensitive Info - \"" + sensitiveInfo.sSensitiveInfoName + "\". Sensitive info with same name already exists.");
                 }
                 try
                 {
@@ -501,7 +501,7 @@ namespace MROWebApi.Controllers
                     if (dbSensitiveInfo.First().nSensitiveInfoID != sensitiveInfo.nSensitiveInfoID)
                     {
                         //Exit
-                        return BadRequest("Cannot Edit Sensitive Info \"" + sensitiveInfo.sSensitiveInfoName + "\", Sensitive Info with Same Name Exists");
+                        return BadRequest("Cannot edit Sensitive Info - \"" + sensitiveInfo.sSensitiveInfoName + "\". Sensitive info with same name already exists.");
                     }
                 }
                 try
@@ -626,7 +626,7 @@ namespace MROWebApi.Controllers
                 if (dbShipmentTypes.Count() != 0)
                 {
                     //Exit
-                    return BadRequest("Cannot Add Shipment Type \"" + shipmentType.sShipmentTypeName + "\", Shipment Type with Same Name Exists");
+                    return BadRequest("Cannot add Shipment Type - \"" + shipmentType.sShipmentTypeName + "\". Shipment type with same name already exists.");
                 }
                 try
                 {
@@ -681,7 +681,7 @@ namespace MROWebApi.Controllers
                     if (dbShipmentTypes.First().nShipmentTypeID != shipmentType.nShipmentTypeID)
                     {
                         //Exit
-                        return BadRequest("Cannot Edit Shipment Type \"" + shipmentType.sShipmentTypeName + "\", Shipment Type with Same Name Exists");
+                        return BadRequest("Cannot edit Shipment Type - \"" + shipmentType.sShipmentTypeName + "\". Shipment type with same name already exists.");
                     }
                 }
                 try

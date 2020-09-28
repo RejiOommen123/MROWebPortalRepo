@@ -16,7 +16,7 @@
           >
           <!-- This for 'i' button to give disclaimers/info about option -->
           <!-- display info only if it exist else no i button -->
-            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" top>
+            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" left>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>

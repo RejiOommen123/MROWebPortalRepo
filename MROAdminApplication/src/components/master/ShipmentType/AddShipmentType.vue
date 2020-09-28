@@ -14,6 +14,7 @@
               @blur="$v.shipmentType.sShipmentTypeName.$touch()"
               :error-messages="sShipmentTypeNameErrors"
               solo
+              counter
               maxlength="100"
             ></v-text-field>
           </v-col>
@@ -25,6 +26,7 @@
               placeholder="Enter Tooltip"
               v-model="shipmentType.sFieldToolTip"
               solo
+              counter
               maxlength="500"
             ></v-text-field>
           </v-col>
@@ -38,7 +40,7 @@
     <!-- Dialog Alert for errors Shipment Type -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
-        <v-card-title class="headline">Info</v-card-title>
+        <v-card-title class="headline">Warning</v-card-title>
         <v-card-text>{{errorMessage}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

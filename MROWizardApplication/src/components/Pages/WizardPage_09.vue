@@ -20,7 +20,7 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:350px; background-color:transparent">{{disclaimer01}}</p>
+                  <p style="width:250px; background-color:transparent">{{disclaimer01}}</p>
                 </v-col>
             </v-tooltip>
         </v-checkbox>
@@ -41,7 +41,7 @@
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:350px; background-color:transparent">{{disclaimer02}}</p>
+                  <p style="width:250px; background-color:transparent">{{disclaimer02}}</p>
                 </v-col>
             </v-tooltip>
         </v-checkbox>

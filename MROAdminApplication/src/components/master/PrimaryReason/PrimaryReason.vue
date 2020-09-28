@@ -6,11 +6,10 @@
         <v-btn
           depressed
           small
-          class="mx-2"
+          class="mx-2 addButton"
           fab
           dark
-          color="rgb(0, 91, 168)"
-          id="addPrimaryReason"
+          color="rgb(0, 91, 168)"       
           to="/PrimaryReason/AddPrimaryReason"
         >
           <v-icon>mdi-plus</v-icon>
@@ -37,10 +36,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="65vh"
       >
         <!-- Primary Reason List Actions (Edit Primary Reason, Delete Primary Reason)  -->
         <template v-slot:item.actions="{ item }">

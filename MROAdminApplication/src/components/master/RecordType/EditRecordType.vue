@@ -14,6 +14,7 @@
               @blur="$v.recordType.sRecordTypeName.$touch()"
               :error-messages="sRecordTypeNameErrors"
               solo
+              counter
               maxlength="100"
             ></v-text-field>
           </v-col>
@@ -25,6 +26,7 @@
               placeholder="Enter Tooltip"
               v-model="recordType.sFieldToolTip"
               solo
+              counter
               maxlength="500"
             ></v-text-field>
           </v-col>
@@ -43,7 +45,7 @@
     <!-- Dialog Alert for errors Record Type -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
-        <v-card-title class="headline">Info</v-card-title>
+        <v-card-title class="headline">Warning</v-card-title>
         <v-card-text>{{errorMessage}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>

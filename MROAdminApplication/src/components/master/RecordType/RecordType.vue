@@ -6,11 +6,10 @@
         <v-btn
           depressed
           small
-          class="mx-2"
+          class="mx-2 addButton"
           fab
           dark
           color="rgb(0, 91, 168)"
-          id="addRecordType"
           to="/RecordType/AddRecordType"
         >
           <v-icon>mdi-plus</v-icon>
@@ -37,10 +36,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="65vh"
       >
         <!-- Record Type List Actions (Edit Record Type, Delete Record Type)  -->
         <template v-slot:item.actions="{ item }">
