@@ -33,6 +33,11 @@
           <v-btn type="submit" color="primary" :disabled="$v.shipmentType.$invalid">Save</v-btn>
           <v-btn to="/Master/ShipmentType" type="button" color="primary">Cancel</v-btn>
         </div>
+         <v-row>
+          <v-col cols="12" offset-md="1" md="10">
+            {{noteMessage}}
+          </v-col>
+        </v-row> 
       </form>
     </div>
     <!-- Dialog Alert for errors Shipment Type -->
@@ -99,6 +104,7 @@ export default {
         nWizardID: 0,
         nUpdatedAdminUserID: this.$store.state.adminUserId,
       },
+      noteMessage:"Note :- Edit will only edit in the master table. However, changes in facility will have to be made manually by the authority."
     };
   },
   mounted() {
