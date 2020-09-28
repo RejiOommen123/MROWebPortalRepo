@@ -103,7 +103,7 @@
             type="xls"
             name="Facility_Location Report.xls"
         >
-            Export Excel
+            Export To Excel
         </export-excel>
         </v-btn>
         <v-spacer></v-spacer>
@@ -127,6 +127,7 @@
         fixed-header
         class="body-1"        
         height="50vh"
+        :page.sync="pageNo"
       >
       </v-data-table>
       <!-- End Facility/Location Report DataTable  -->
@@ -172,6 +173,7 @@ export default {
       sLocationName: "",
       menu1: false,
       menu2: false,
+      pageNo:1,
       dialogLoader: false,
       dialog: false,
       errorAlert: false,
@@ -323,6 +325,8 @@ export default {
       this.dialogLoader = true;
       this.$http.post("Report/GetFacilityLocationReport",adminFilterParameter).then(
         (response) => {
+          this.pageNo=1;
+          this.search="";
           this.gridData = JSON.parse(response.bodyText);
           this.dialogLoader = false;
         },

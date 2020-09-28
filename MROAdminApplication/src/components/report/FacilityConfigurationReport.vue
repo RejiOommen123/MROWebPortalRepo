@@ -26,8 +26,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="6" sm="12" md="2" class="pl-4">
-          <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
-          <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
+          <v-btn color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -42,7 +41,7 @@
             type="xls"
             name="FacilityConfiguration Report.xls"
         >
-            Export Excel
+            Export To Excel
         </export-excel>
         </v-btn>
         <v-spacer></v-spacer>
@@ -66,6 +65,7 @@
         fixed-header
         class="body-1"        
         height="50vh"
+        :page.sync="pageNo"
       >
       </v-data-table>
       <!-- End Facility Configuration Report DataTable  -->
@@ -101,6 +101,7 @@ export default {
     return {
       sFacilityName: "",
       sWizardName: "",
+      pageNo:1,
       dialogLoader: false,
       dialog: false,
       errorAlert: false,
@@ -171,6 +172,8 @@ export default {
       this.dialogLoader = true;
       this.$http.post("Report/GetFacilityConfigurationReport",adminFilterParameter).then(
         (response) => {
+          this.pageNo=1;
+          this.search="";
           this.gridData = JSON.parse(response.bodyText);
           this.dialogLoader = false;
         },

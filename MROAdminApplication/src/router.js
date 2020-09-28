@@ -32,11 +32,7 @@ Vue.use(store);
 
 const routes = [{
         path: '',
-        component: DashboardPage,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Manage Facilities");
-            next()
-        }
+        redirect: '/facility'
     },
     {
         path: '/index',

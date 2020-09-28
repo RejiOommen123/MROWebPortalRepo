@@ -113,7 +113,7 @@
             type="xls"
             name="Audit Report.xls"
         >
-            Export Excel
+            Export To Excel
         </export-excel>
         </v-btn>
         <v-spacer></v-spacer>
@@ -137,6 +137,7 @@
         fixed-header
         class="body-1"
         height="50vh"
+        :page.sync="pageNo"
       >
       <template v-slot:item.dtLogTime="{ item }">
          {{ item.dtLogTime | moment }}
@@ -186,6 +187,7 @@ export default {
       sAdminName: "",
       menu1: false,
       menu2: false,
+      pageNo:1,
       dialogLoader: false,
       dialog: false,
       errorAlert: false,
@@ -329,6 +331,8 @@ export default {
       this.dialogLoader = true;
       this.$http.post("Report/GetAuditReport",adminFilterParameter).then(
         (response) => {
+          this.pageNo=1;
+          this.search="";
           this.gridData = JSON.parse(response.bodyText);
           this.dialogLoader = false;
         },
