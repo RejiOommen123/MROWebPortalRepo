@@ -41,7 +41,7 @@
         :items-per-page="5"
         class="body-1"
         fixed-header
-        height="65vh"
+        height="60vh"
       >
         <!-- Primary Reason List Actions (Edit Primary Reason, Delete Primary Reason)  -->
         <template v-slot:item.actions="{ item }">

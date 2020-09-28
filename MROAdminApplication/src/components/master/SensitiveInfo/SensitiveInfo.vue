@@ -41,7 +41,7 @@
         :items-per-page="5"
         class="body-1"
         fixed-header
-        height="65vh"
+        height="60vh"
       >
         <!-- Sensitive Info List Actions (Edit Sensitive Info, Delete Sensitive Info)  -->
         <template v-slot:item.actions="{ item }">

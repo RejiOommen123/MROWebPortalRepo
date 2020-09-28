@@ -41,7 +41,7 @@
         :items-per-page="5"
         class="body-1"
         fixed-header
-        height="65vh"
+        height="60vh"
       >
         <!-- Record Type List Actions (Edit Record Type, Delete Record Type)  -->
         <template v-slot:item.actions="{ item }">
