@@ -80,6 +80,7 @@
                 v-bind="attrs"
                 v-on="on"
                 retain-focus-on-click
+                style="margin-right:0px"
               >
                 Master<v-icon>mdi-menu-down</v-icon>
               </v-btn>
