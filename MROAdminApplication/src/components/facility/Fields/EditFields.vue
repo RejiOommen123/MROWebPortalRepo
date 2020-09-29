@@ -27,13 +27,6 @@
               fixed-header
               height="55vh"
             >
-              <template v-slot:item.sTableName="{ item }">                
-                <label v-if="item.sTableName=='lnkFacilityFieldMaps'">Fields</label>
-                <label v-if="item.sTableName=='lnkFacilityPrimaryReasons'">Primary Reason</label>
-                <label v-if="item.sTableName=='lnkFacilityRecordTypes'">Record Type</label>
-                <label v-if="item.sTableName=='lnkFacilitySensitiveInfo'">Sensitive Info</label>
-                <label v-if="item.sTableName=='lnkFacilityShipmentTypes'">Shipment Type</label>
-              </template>
               <template v-slot:item.sFieldName="props">
                 <v-edit-dialog
                   v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
@@ -111,7 +104,7 @@ export default {
         {
           text: "Type",
           align: "start",
-          value: "sTableName",
+          value: "sType",
           width: "20%",
           searchable:true
         },

@@ -112,15 +112,15 @@ export default {
           text: "Wizard Name",
           align: "start",
           value: "sWizardName",
-          width: "150px",
+          width: "125px",
         },
         { text: "Wizard Description", value: "sWizardDescription", width: "150px" },
         { text: "Value", value: "sFieldName", width: "300px" },       
         { text: "Type", value: "sType", width: "150px" },    
-        { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "150px" },
+        { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "225px" },
         { text: "Configurable in DB", value: "bConfigurableDB", width: "150px" },       
         { text: "Facility", value: "sFacilityName", width: "150px"},    
-        { text: "In Use", value: "bInUse", width: "150px"}
+        { text: "In Use", value: "bInUse", width: "100px"}
       ],
       gridData: undefined,
        gridHeaders :{
