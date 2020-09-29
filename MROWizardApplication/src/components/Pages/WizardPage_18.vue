@@ -2,7 +2,6 @@
   <div class="center">
     <h1>What date do you need your record(s) by?</h1>
     <v-row>
-      <form>
         <!-- Date picker input to set deadline -->
         <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
           <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
@@ -43,7 +42,6 @@
             <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
           </div>
         </v-col>
-      </form>
     </v-row>
   </div>
 </template>

@@ -99,13 +99,13 @@ namespace MROWebApi.Controllers
                     FacilityRecordTypesRepository recordTypeRepo = new FacilityRecordTypesRepository(_info);
 
 
-                    foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
-                    {
-                        row.sFieldName = row.sFieldName.Replace("Primary Reason - ", string.Empty);
-                        row.sFieldName = row.sFieldName.Replace("Record Type - ", string.Empty);
-                        row.sFieldName = row.sFieldName.Replace("Sensitive Info - ", string.Empty);
-                        row.sFieldName = row.sFieldName.Replace("Shipment Type - ", string.Empty);
-                    }
+                    //foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
+                    //{
+                    //    row.sFieldName = row.sFieldName.Replace("Primary Reason - ", string.Empty);
+                    //    row.sFieldName = row.sFieldName.Replace("Record Type - ", string.Empty);
+                    //    row.sFieldName = row.sFieldName.Replace("Sensitive Info - ", string.Empty);
+                    //    row.sFieldName = row.sFieldName.Replace("Shipment Type - ", string.Empty);
+                    //}
 
                     //Separating Table Data
                     var PRList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPrimaryReasons");

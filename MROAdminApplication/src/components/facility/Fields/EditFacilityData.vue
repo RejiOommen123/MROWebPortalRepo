@@ -38,4 +38,7 @@ export default {
     margin: 0 0em;
   }
 }
+.v-tab {
+  text-transform: none !important;
+}
 </style>

@@ -41,9 +41,11 @@
         :search="search"
         class="body-1"
         :footer-props="{
-        'items-per-page-options': [5,10]
+        'items-per-page-options': [10,25,50,100]
       }"
         :items-per-page="5"
+        fixed-header
+        height="60vh"
       >
         <!-- Location List Edit Location Template  -->
         <template v-slot:item.actions="{ item }">

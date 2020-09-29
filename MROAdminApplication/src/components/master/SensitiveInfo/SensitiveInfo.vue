@@ -2,15 +2,14 @@
   <div id="SensitiveInfoPageBox">
     <!-- Add Sensitive Info Button which will redirect to Add Sensitive Info Page -->
     <v-row no-gutters>
-      <v-col cols="12" sm="12" md="6">
+      <v-col cols="12" sm="12" md="6" >
         <v-btn
           depressed
           small
-          class="mx-2"
+          class="mx-2 addButton"
           fab
           dark
           color="rgb(0, 91, 168)"
-          id="addSensitiveInfo"
           to="/SensitiveInfo/AddSensitiveInfo"
         >
           <v-icon>mdi-plus</v-icon>
@@ -37,10 +36,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="60vh"
       >
         <!-- Sensitive Info List Actions (Edit Sensitive Info, Delete Sensitive Info)  -->
         <template v-slot:item.actions="{ item }">

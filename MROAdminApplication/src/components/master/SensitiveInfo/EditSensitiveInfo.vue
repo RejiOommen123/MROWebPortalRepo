@@ -14,6 +14,7 @@
               @blur="$v.sensitiveInfo.sSensitiveInfoName.$touch()"
               :error-messages="sSensitiveInfoNameErrors"
               solo
+              counter
               maxlength="100"
             ></v-text-field>
           </v-col>
@@ -25,6 +26,7 @@
               placeholder="Enter Tooltip"
               v-model="sensitiveInfo.sFieldToolTip"
               solo
+              counter
               maxlength="500"
             ></v-text-field>
           </v-col>
@@ -33,6 +35,11 @@
           <v-btn type="submit" color="primary" :disabled="$v.sensitiveInfo.$invalid">Save</v-btn>
           <v-btn to="/Master/SensitiveInfo" type="button" color="primary">Cancel</v-btn>
         </div>
+         <v-row>
+          <v-col cols="12" offset-md="1" md="10">
+            {{noteMessage}}
+          </v-col>
+        </v-row> 
       </form>
     </div>
     <!-- Dialog Alert for errors Sensitive Info -->
@@ -99,6 +106,7 @@ export default {
         nWizardID: 0,
         nUpdatedAdminUserID: this.$store.state.adminUserId,
       },
+      noteMessage:"Note :- Edit will only edit in the master table. However, changes in facility will have to be made manually by the authority."
     };
   },
   mounted() {

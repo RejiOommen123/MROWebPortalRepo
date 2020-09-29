@@ -21,14 +21,22 @@
               :items="gridData"
               :search="search"
               :footer-props="{
-                'items-per-page-options': [5,10,20]
+                'items-per-page-options': [10,25,50,100]
               }"
               :items-per-page="10"
+              fixed-header
+              height="55vh"
             >
+              <template v-slot:item.sTableName="{ item }">                
+                <label v-if="item.sTableName=='lnkFacilityFieldMaps'">Fields</label>
+                <label v-if="item.sTableName=='lnkFacilityPrimaryReasons'">Primary Reason</label>
+                <label v-if="item.sTableName=='lnkFacilityRecordTypes'">Record Type</label>
+                <label v-if="item.sTableName=='lnkFacilitySensitiveInfo'">Sensitive Info</label>
+                <label v-if="item.sTableName=='lnkFacilityShipmentTypes'">Shipment Type</label>
+              </template>
               <template v-slot:item.sFieldName="props">
                 <v-edit-dialog
                   v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
-                  persistent
                   :return-value.sync="props.item.sFieldName"
                   @save="pushToArray(props.item)"
                 >
@@ -101,13 +109,20 @@ export default {
       search: "",
       headers: [
         {
+          text: "Type",
+          align: "start",
+          value: "sTableName",
+          width: "20%",
+          searchable:true
+        },
+        {
           text: "Name",
           align: "start",
           value: "sFieldName",
-          width: "60%",
+          width: "50%",
         },
         { text: "Order", value: "nFieldOrder", width: "20%" },
-        { text: "Action", value: "actions", width: "20%", sortable: false },
+        { text: "Action", value: "actions", width: "10%", sortable: false },
       ],
       gridData: this.getGridData(),
       updatedArray: [],

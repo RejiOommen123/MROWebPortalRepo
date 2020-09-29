@@ -14,6 +14,7 @@
               @blur="$v.recordType.sRecordTypeName.$touch()"
               :error-messages="sRecordTypeNameErrors"
               solo
+              counter
               maxlength="100"
             ></v-text-field>
           </v-col>
@@ -25,6 +26,7 @@
               placeholder="Enter Tooltip"
               v-model="recordType.sFieldToolTip"
               solo
+              counter
               maxlength="500"
             ></v-text-field>
           </v-col>

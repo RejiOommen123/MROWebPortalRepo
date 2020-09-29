@@ -20,6 +20,25 @@
             <v-list-group>
               <template v-slot:activator>
                 <v-list-item-content @click="closeMenu=false">
+                  <v-list-item-title>Master</v-list-item-title>
+                </v-list-item-content>
+              </template>
+              <v-list-item to="/Master/primaryreason"  @click="closeMenu=true"> 
+                <v-list-item-title>Primary Reason</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/Master/recordtype"  @click="closeMenu=true">
+                <v-list-item-title>Record Type</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/Master/sensitiveinfo"  @click="closeMenu=true">
+                <v-list-item-title>Sensitive Info</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/Master/shipmenttype"  @click="closeMenu=true">
+                <v-list-item-title>Shipment Type</v-list-item-title>
+              </v-list-item>
+            </v-list-group>
+            <v-list-group>
+              <template v-slot:activator>
+                <v-list-item-content @click="closeMenu=false">
                   <v-list-item-title>Reports</v-list-item-title>
                 </v-list-item-content>
               </template>
@@ -52,18 +71,29 @@
           >
         </li>
         <li>
-          <v-menu open-on-hover bottom offset-y>
+          <v-menu  open-on-hover open-on-click bottom offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <span
+              <v-btn 
+                id="masterButton"
+                text
                 class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
                 v-bind="attrs"
                 v-on="on"
-                text
+                retain-focus-on-click
               >
-                Master
-              </span>
+                Master<v-icon>mdi-menu-down</v-icon>
+              </v-btn>
             </template>
-
+             <!-- <template v-slot:activator="{ on, attrs }">
+              <v-btn 
+                text
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                Dropdown
+              </v-btn>
+            </template> -->
             <v-list>
               <v-list-item to="/Master/primaryreason">
                 <v-list-item-title>Primary Reason</v-list-item-title>

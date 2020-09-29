@@ -21,13 +21,14 @@
               :items="gridData"
               :search="search"
               :footer-props="{
-                'items-per-page-options': [5,10,20]
+                'items-per-page-options': [10,25,50,100]
               }"
               :items-per-page="10"
+              fixed-header
+              height="55vh"
             >
               <template v-slot:item.sWizardHelperValue="props">
                 <v-edit-dialog
-                  persistent
                   :return-value.sync="props.item.sWizardHelperValue"
                   @save="pushToArray(props.item)"
                 >
