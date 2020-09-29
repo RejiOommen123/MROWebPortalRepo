@@ -40,7 +40,7 @@
     <!-- Dialog Alert for errors Primary Reason -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
-        <v-card-title class="headline">Warning</v-card-title>
+        <v-card-title class="headline">Info</v-card-title>
         <v-card-text>{{errorMessage}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
