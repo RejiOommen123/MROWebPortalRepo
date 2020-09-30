@@ -14,7 +14,7 @@
                 :value="dtStartFormatted"
                 :error-messages="dtStartErrors"
                 clearable
-                label="START DATE"
+                label="Start Date"
                 placeholder="MM-DD-YYYY"
                 readonly
                 v-bind="attrs"
@@ -45,7 +45,7 @@
                 :value="dtEndFormatted"
                 :error-messages="dtEndErrors"
                 clearable
-                label="END DATE"
+                label="End Date"
                 placeholder="MM-DD-YYYY"
                 readonly
                 v-bind="attrs"
@@ -97,8 +97,8 @@
           ></v-text-field>
         </v-col>
         <v-col cols="6" sm="12" md="2" class="pl-4">
-          <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Filter</v-btn>
-          <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
+          <v-btn v-if="dtStart!=null || dtEnd!=null" color="primary" style="margin-top: 5%;" :disabled="$v.$invalid" @click="getGridData()">Apply Filter</v-btn>
+          <v-btn v-else color="primary" style="margin-top: 5%;"  @click="getGridData()">Apply Filter</v-btn>
         </v-col>
       </v-row>
     </v-card>

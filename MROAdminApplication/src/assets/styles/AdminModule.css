@@ -8,11 +8,11 @@ html {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     overflow-x: hidden !important;
 }
-
+/* 
 #footer {
     margin-top: -1.5625em;
     font-size: 1.0625em;
-}
+} */
 
 
 /* Header.vue */
@@ -201,4 +201,9 @@ html {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;
+}
+@media screen and (max-width: 500px) {
+    #pageHeaderH1 {
+      font-size: 16px;
+  }
 }

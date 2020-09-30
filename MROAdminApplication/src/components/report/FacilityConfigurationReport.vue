@@ -26,7 +26,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="6" sm="12" md="2" class="pl-4">
-          <v-btn color="primary" style="margin-top: 5%;"  @click="getGridData()">Filter</v-btn>
+          <v-btn color="primary" style="margin-top: 5%;"  @click="getGridData()">Apply Filter</v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -112,13 +112,13 @@ export default {
           text: "Wizard Name",
           align: "start",
           value: "sWizardName",
-          width: "125px",
+          width: "150px",
         },
-        { text: "Wizard Description", value: "sWizardDescription", width: "150px" },
+        { text: "Wizard Description", value: "sWizardDescription", width: "175px" },
         { text: "Value", value: "sFieldName", width: "300px" },       
         { text: "Type", value: "sType", width: "150px" },    
-        { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "225px" },
-        { text: "Configurable in DB", value: "bConfigurableDB", width: "150px" },       
+        { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "250px" },
+        { text: "Configurable in DB", value: "bConfigurableDB", width: "175px" },       
         { text: "Facility", value: "sFacilityName", width: "150px"},    
         { text: "In Use", value: "bInUse", width: "100px"}
       ],
