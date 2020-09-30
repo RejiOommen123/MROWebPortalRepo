@@ -109,28 +109,28 @@ export default {
       search: "",
       headers: [
        {
-          text: "Wizard Name",
+          text: "Facility",
           align: "start",
-          value: "sWizardName",
+          value: "sFacilityName",
           width: "150px",
         },
+        { text: "Wizard Name", value: "sWizardName", width: "150px"},   
         { text: "Wizard Description", value: "sWizardDescription", width: "175px" },
         { text: "Value", value: "sFieldName", width: "300px" },       
         { text: "Type", value: "sType", width: "150px" },    
         { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "250px" },
         { text: "Configurable in DB", value: "bConfigurableDB", width: "175px" },       
-        { text: "Facility", value: "sFacilityName", width: "150px"},    
         { text: "In Use", value: "bInUse", width: "100px"}
       ],
       gridData: undefined,
        gridHeaders :{
+        'Facility' : 'sFacilityName',
         'Wizard Name':'sWizardName',
         'Wizard Description': 'sWizardDescription',
         'Value':'sFieldName',
         'Type': 'sType',
         'Configurable in Admin Module':'bConfigurableAdmin',
         'Configurable in DB': 'bConfigurableDB',
-        'Facility' : 'sFacilityName',
         "In Use": 'bInUse'
       },
     };
