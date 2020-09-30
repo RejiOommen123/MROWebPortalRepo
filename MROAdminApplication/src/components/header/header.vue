@@ -178,7 +178,6 @@ export default {
       closeMenu: false,
       userName: AuthenticationContext.user.userName,
       menuItems: [
-        { title: "Dashboard", path: "/index", icon: "mdi-home" },
         { title: "Manage Facilites", path: "/facility", icon: "mdi-briefcase" },
       ],
     };

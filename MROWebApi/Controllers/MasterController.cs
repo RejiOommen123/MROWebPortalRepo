@@ -204,8 +204,8 @@ namespace MROWebApi.Controllers
             try
                 {
                 RecordTypes masterRecordType = await rtFac.Select(nRecordTypeID);
-                IEnumerable<FacilityRecordTypes> facilityRecordTypeIEnum = await rtFacilityFac.SelectWhere("nRecordTypeID", nRecordTypeID);
-                List<FacilityRecordTypes> facilityRecordTypeList = facilityRecordTypeIEnum.ToList();
+                //IEnumerable<FacilityRecordTypes> facilityRecordTypeIEnum = await rtFacilityFac.SelectWhere("nRecordTypeID", nRecordTypeID);
+                //List<FacilityRecordTypes> facilityRecordTypeList = facilityRecordTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nRecordTypeID, "lnkFacilityRecordTypes"))
                     {
                         #region Logging
@@ -218,7 +218,7 @@ namespace MROWebApi.Controllers
                             sModuleName = "Master Entry - Record Type",
                             sEventName = "Delete Record Type"
                         };
-                        logger.DeleteAuditMany(facilityRecordTypeList, adminModuleLogger);
+                        //logger.DeleteAuditMany(facilityRecordTypeList, adminModuleLogger);
                         logger.DeleteAuditSingle(masterRecordType, adminModuleLogger);
                     #endregion
                     return Ok();
@@ -414,8 +414,8 @@ namespace MROWebApi.Controllers
             try
             {
                 PrimaryReasons masterPrimaryReason = await rtFac.Select(nPrimaryReasonID);
-                IEnumerable<FacilityPrimaryReasons> facilityPrimaryReasonIEnum = await rtFacilityFac.SelectWhere("nPrimaryReasonID", nPrimaryReasonID);
-                List<FacilityPrimaryReasons> facilityPrimaryReasonList = facilityPrimaryReasonIEnum.ToList();
+                //IEnumerable<FacilityPrimaryReasons> facilityPrimaryReasonIEnum = await rtFacilityFac.SelectWhere("nPrimaryReasonID", nPrimaryReasonID);
+                //List<FacilityPrimaryReasons> facilityPrimaryReasonList = facilityPrimaryReasonIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nPrimaryReasonID, "lnkFacilityPrimaryReasons"))
                 {
                     #region Logging
@@ -428,7 +428,7 @@ namespace MROWebApi.Controllers
                         sModuleName = "Master Entry - Primary Reason",
                         sEventName = "Delete Primary Reason"
                     };
-                    logger.DeleteAuditMany(facilityPrimaryReasonList, adminModuleLogger);
+                    //logger.DeleteAuditMany(facilityPrimaryReasonList, adminModuleLogger);
                     logger.DeleteAuditSingle(masterPrimaryReason, adminModuleLogger);
                     #endregion
                     return Ok();
@@ -622,8 +622,8 @@ namespace MROWebApi.Controllers
             try
             {
                 SensitiveInfo masterSensitiveInfo = await rtFac.Select(nSensitiveInfoID);
-                IEnumerable<FacilitySensitiveInfo> facilitySensitiveInfoIEnum = await rtFacilityFac.SelectWhere("nSensitiveInfoID", nSensitiveInfoID);
-                List<FacilitySensitiveInfo> facilitySensitiveInfoList = facilitySensitiveInfoIEnum.ToList();
+                //IEnumerable<FacilitySensitiveInfo> facilitySensitiveInfoIEnum = await rtFacilityFac.SelectWhere("nSensitiveInfoID", nSensitiveInfoID);
+                //List<FacilitySensitiveInfo> facilitySensitiveInfoList = facilitySensitiveInfoIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nSensitiveInfoID, "lnkFacilitySensitiveInfo"))
                 {
                     #region Logging
@@ -636,7 +636,7 @@ namespace MROWebApi.Controllers
                         sModuleName = "Master Entry - Sensitive Info",
                         sEventName = "Delete Sensitive Info"
                     };
-                    logger.DeleteAuditMany(facilitySensitiveInfoList, adminModuleLogger);
+                    //logger.DeleteAuditMany(facilitySensitiveInfoList, adminModuleLogger);
                     logger.DeleteAuditSingle(masterSensitiveInfo, adminModuleLogger);
                     #endregion
                     return Ok();
@@ -830,8 +830,8 @@ namespace MROWebApi.Controllers
             try
             {
                 ShipmentTypes masterShipmentType = await rtFac.Select(nShipmentTypeID);
-                IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
-                List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
+                //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
+                //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nShipmentTypeID, "lnkFacilityShipmentTypes"))
                 {
                     #region Logging
@@ -844,7 +844,7 @@ namespace MROWebApi.Controllers
                         sModuleName = "Master Entry - Shipment Type",
                         sEventName = "Delete Shipment Type"
                     };
-                    logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
+                    //logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
                     logger.DeleteAuditSingle(masterShipmentType, adminModuleLogger);
                     #endregion
                     return Ok();
