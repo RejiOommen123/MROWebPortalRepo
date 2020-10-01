@@ -562,6 +562,7 @@ export default {
     },
     // API to Update location
     onSubmit() {
+      this.location.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader =true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nFacilityLocationID = parseInt(

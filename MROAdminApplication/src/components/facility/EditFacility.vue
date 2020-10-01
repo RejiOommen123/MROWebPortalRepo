@@ -580,6 +580,7 @@ export default {
     },
     // API call to post facility (Edit Facility)
     onSubmit() {
+      this.facility.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader = true;
       this.$http
         .post(
