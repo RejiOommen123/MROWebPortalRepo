@@ -44,7 +44,6 @@
               <template v-slot:item.nFieldOrder="props">
                 <v-edit-dialog
                   v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
-                  persistent
                   :return-value.sync="props.item.nFieldOrder"
                   @save="pushToArray(props.item)"
                 >
