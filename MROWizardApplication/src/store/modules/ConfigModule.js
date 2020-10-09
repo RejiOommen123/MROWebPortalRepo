@@ -67,7 +67,7 @@ const mutations = {
     mutateNextIndex(state) {
         state.nProgressBar+=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_17') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_09') || (state.bShowRecipientPage==false && state.selectedWizard == 'Wizard_14') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_21'))
+        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_17') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_09') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_21'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex + 2;
             state.nProgressBar+=state.nProgressBarIncrValue * 2;
@@ -83,7 +83,7 @@ const mutations = {
     mutatePreviousIndex(state) {
         state.nProgressBar-=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_19') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_11') || (state.bShowRecipientPage==false && state.selectedWizard == 'Wizard_16') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_23'))
+        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_19') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_11') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_23'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex - 2;
             state.nProgressBar-=state.nProgressBarIncrValue * 2;
