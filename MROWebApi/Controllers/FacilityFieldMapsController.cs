@@ -97,6 +97,7 @@ namespace MROWebApi.Controllers
                     FacilityShipmentTypesRepository shipmentTypeRepo = new FacilityShipmentTypesRepository(_info);
                     FacilitySensitiveInfoRepository sensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
                     FacilityRecordTypesRepository recordTypeRepo = new FacilityRecordTypesRepository(_info);
+                    FacilityPatientRepresentativesRepository patientRepresentativeRepo = new FacilityPatientRepresentativesRepository(_info);
 
 
                     //foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
@@ -113,6 +114,7 @@ namespace MROWebApi.Controllers
                     var SIList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilitySensitiveInfo");
                     var STList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
                     var FMList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
+                    var PRepList = fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPatientRepresentatives");
 
                     var singleRecord = fieldFacilityMapsTable.FirstOrDefault();
                     List<int> idList = new List<int>();
@@ -123,6 +125,7 @@ namespace MROWebApi.Controllers
                     List<FacilityRecordTypes> oldRecordsTypes = new List<FacilityRecordTypes>();
                     List<FacilitySensitiveInfo> oldSensitiveInfos = new List<FacilitySensitiveInfo>();
                     List<FacilityFieldMaps> oldFieldMaps = new List<FacilityFieldMaps>();
+                    List<FacilityPatientRepresentatives> oldPatientRepresentatives = new List<FacilityPatientRepresentatives>();
 
                     MROLogger logger = new MROLogger(_info);
                     int nAdminUserID = singleRecord.nUpdatedAdminUserID;
@@ -388,6 +391,60 @@ namespace MROWebApi.Controllers
                                 nFacilityID = singleRecord.nFacilityID
                             };
                             logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFieldID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
+                    }
+
+                    //Facility Patient Representative 
+                    if (PRepList.Count() != 0)
+                    {
+                        List<FacilityPatientRepresentatives> patientRepresentativeList = new List<FacilityPatientRepresentatives>();
+                        foreach (var patientRepresentative in PRepList)
+                        {
+                            if (patientRepresentative.nFieldOrder == null)
+                            {
+                                patientRepresentative.nFieldOrder = 1;
+                            }
+                            patientRepresentativeList.Add(
+                                new FacilityPatientRepresentatives()
+                                {
+                                    nPatientRepresentativeID = patientRepresentative.nFacilityFieldMapID,
+                                    nFacilityID = patientRepresentative.nFacilityID,
+                                    sPatientRepresentativeName = patientRepresentative.sFieldName,
+                                    nFieldOrder = patientRepresentative.nFieldOrder,
+                                    nWizardID = patientRepresentative.nWizardID,
+                                    bShow = patientRepresentative.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = patientRepresentative.nUpdatedAdminUserID,
+                                    dtCreated = patientRepresentative.dtCreated,
+                                    nCreatedAdminUserID = patientRepresentative.nCreatedAdminUserID
+                                }
+                                );
+                            idList.Add(patientRepresentative.nFacilityFieldMapID);
+                        }
+                        idArray = idList.ToArray();
+                        var ePatientReplist = await patientRepresentativeRepo.SelectListByInClause(idArray, "lnkFacilityPatientRepresentatives", "nPatientRepresentativeID", singleRecord.nFacilityID);
+
+                        foreach (var item in ePatientReplist)
+                        {
+                            oldPatientRepresentatives.Add(item);
+                        }
+
+                        patientRepresentativeRepo.UpdateMany(patientRepresentativeList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Patient Representative for Facility ID: " + singleRecord.nFacilityID,
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Patient Representative",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldPatientRepresentatives, patientRepresentativeList, adminModuleLogger, "nPatientRepresentativeID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;

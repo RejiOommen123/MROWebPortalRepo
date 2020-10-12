@@ -398,9 +398,10 @@ namespace MRODBL.Repositories
                 var oRecordTypes = wizardConfig.Read().ToList();
                 var oSensitiveInfo = wizardConfig.Read().ToList();
                 var oShipmentTypes = wizardConfig.Read().ToList();
+                var oPatientRepresentatives = wizardConfig.Read().ToList();
                 var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var oLocations = wizardConfig.Read().ToList();
-                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oWizardHelper, oLocations };
+                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWizardHelper, oLocations };
                 return newObject;
             }
         }

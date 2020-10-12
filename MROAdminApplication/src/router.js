@@ -22,6 +22,9 @@ import EditSensitiveInfo from './components/master/SensitiveInfo/EditSensitiveIn
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import AddShipmentType from './components/master/ShipmentType/AddShipmentType.vue';
 import EditShipmentType from './components/master/ShipmentType/EditShipmentType.vue';
+import PatientRepresentative from './components/master/PatientRepresentative/PatientRepresentative.vue';
+import AddPatientRepresentative from './components/master/PatientRepresentative/AddPatientRepresentative.vue';
+import EditPatientRepresentative from './components/master/PatientRepresentative/EditPatientRepresentative.vue';
 import AuditReport from './components/report/AuditReport.vue';
 import FacilityLocationReport from './components/report/FacilityLocationReport.vue';
 import FacilityConfigurationReport from './components/report/FacilityConfigurationReport.vue';
@@ -199,6 +202,31 @@ const routes = [{
         component: AddShipmentType,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Add Shipment Type");
+            next()
+        }
+    }
+    ,
+    {
+        path: '/Master/PatientRepresentative',
+        component: PatientRepresentative,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Patient Representative");
+            next()
+        }
+    },
+    {
+        path: '/PatientRepresentative/EditPatientRepresentative/:id',
+        component: EditPatientRepresentative,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Patient Representative");
+            next()
+        }
+    },
+    {
+        path: '/PatientRepresentative/AddPatientRepresentative',
+        component: AddPatientRepresentative,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Patient Representative");
             next()
         }
     }

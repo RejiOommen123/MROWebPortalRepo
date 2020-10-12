@@ -35,6 +35,9 @@
               <v-list-item to="/Master/shipmenttype"  @click="closeMenu=true">
                 <v-list-item-title>Shipment Type</v-list-item-title>
               </v-list-item>
+              <v-list-item to="/Master/patientrepresentative"  @click="closeMenu=true">
+                <v-list-item-title>Patient Representative</v-list-item-title>
+              </v-list-item>
             </v-list-group>
             <v-list-group>
               <template v-slot:activator>
@@ -107,6 +110,9 @@
               </v-list-item>
               <v-list-item to="/Master/shipmenttype">
                 <v-list-item-title>Shipment Type</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/Master/patientrepresentative">
+                <v-list-item-title>Patient Representative</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>

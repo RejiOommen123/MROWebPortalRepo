@@ -89,6 +89,17 @@
           </v-card-text>
         </v-card>
       </v-dialog>
+        <!-- Dialog Alert for errors Primary Reason -->
+        <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+          <v-card>
+            <v-card-title class="headline">Info</v-card-title>
+            <v-card-text>{{errorMessage}}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </form>
   </div>
 </template>
@@ -119,6 +130,8 @@ export default {
       gridData: this.getGridData(),
       updatedArray: [],
       facilityName: "",
+      errorAlert:false,
+      errorMessage:''
     };
   },
   mounted() {},
@@ -157,9 +170,18 @@ export default {
         this.updatedArray[index] = obj;
       }
     },
+    checkPatientRepValid(){
+      var status = (item) => item.sTableName==='lnkFacilityPatientRepresentatives'&&item.bShow===true;
+      this.errorMessage='Atleast one patient representative option must be active.'
+      this.errorAlert= !this.gridData.some(status);
+      this.dialogLoader=false;
+      return !this.errorAlert;
+    },
     onSubmit() {
       this.dialogLoader = true;
       var nAdminUserID = this.$store.state.adminUserId;
+      var PatientRepValid=this.checkPatientRepValid();    
+      if(PatientRepValid!=false){
       var FacilityFieldMapsList = this.updatedArray.map(function (item) {
         item["nUpdatedAdminUserID"] = nAdminUserID;
         return item;
@@ -172,6 +194,7 @@ export default {
             this.$router.push("/facility");
           }
         });
+      }
     },
   },
 };

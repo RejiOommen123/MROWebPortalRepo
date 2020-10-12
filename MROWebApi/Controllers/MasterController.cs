@@ -861,6 +861,214 @@ namespace MROWebApi.Controllers
 
         #endregion
 
+        #region Master - Patient Representative - Methods
+
+        #region Get PatientRepresentative / PatientRepresentatives
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetPatientRepresentatives()
+        {
+            try
+            {
+                PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
+                IEnumerable<PatientRepresentatives> patientRepresentatives = await rtFac.GetAllASC(1000, "sPatientRepresentativeName");
+                return Ok(patientRepresentatives);
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(exp.Message);
+            }
+        }
+
+        [HttpGet("GetPatientRepresentative/sPatientRepresentativeID={sPatientRepresentativeID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<PatientRepresentatives>> GetPatientRepresentative(string sPatientRepresentativeID, string sAdminUserID)
+        {
+            PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
+            bool resultPatientRepresentativeID = int.TryParse(sPatientRepresentativeID, out int nPatientRepresentativeID);
+            bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
+            PatientRepresentatives patientRepresentatives = await rtFac.Select(nPatientRepresentativeID);
+
+            #region Logging
+
+            MROLogger logger = new MROLogger(_info);
+            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Patient Representatives Method for Patient Representative ID: " + sPatientRepresentativeID;
+            logger.LogAdminRecords(nAdminUserID, sDescription, "Get Patient Representative By ID", "Master Entry - Patient Representatives");
+
+            #endregion
+
+            if (patientRepresentatives == null)
+                return NotFound();
+            return patientRepresentatives;
+        }
+        #endregion
+
+        #region Add Patient Representative
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> AddPatientRepresentative(PatientRepresentatives patientRepresentatives)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check if there's a Patient Representative with same name 
+                PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
+                IEnumerable<PatientRepresentatives> dbPatientRepresentatives = await rtFac.SelectWhere("sPatientRepresentativeName", patientRepresentatives.sPatientRepresentativeName);
+                if (dbPatientRepresentatives.Count() != 0)
+                {
+                    //Exit
+                    return BadRequest("Cannot add Patient Representative - \"" + patientRepresentatives.sPatientRepresentativeName + "\". Patient Representative with same name already exists.");
+                }
+                try
+                {
+                    #region Data Addition ! from UI
+                    patientRepresentatives.nWizardID = 3;
+                    patientRepresentatives.dtLastUpdate = DateTime.Now;
+                    patientRepresentatives.dtCreated = DateTime.Now;
+                    //spaces remove
+                    string sNormalizedName = GetNormalizedName(patientRepresentatives.sPatientRepresentativeName);
+                    patientRepresentatives.sNormalizedPatientRepresentativeName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
+
+                    #endregion
+
+                    int GeneratedID = (int)rtFac.Insert(patientRepresentatives);
+
+                    #region Logging
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + patientRepresentatives.nCreatedAdminUserID + " called Add Patient Representative Method & Created Patient Representative with ID: " + GeneratedID;
+                    patientRepresentatives.nPatientRepresentativeID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = patientRepresentatives.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Patient Representatives",
+                        sEventName = "Add Patient Representative"
+                    };
+                    logger.InsertAuditSingle(patientRepresentatives, adminModuleLogger);
+                    #endregion
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
+
+        #region Edit Patient Representative
+        [HttpPost("EditPatientRepresentative")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> EditPatientRepresentative(PatientRepresentatives patientRepresentatives)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check if there's a Patient Representative with same name 
+                PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
+                IEnumerable<PatientRepresentatives> dbPatientRepresentatives = await rtFac.SelectWhere("sPatientRepresentativeName", patientRepresentatives.sPatientRepresentativeName);
+                if (dbPatientRepresentatives.Count() != 0)
+                {
+                    if (dbPatientRepresentatives.First().nPatientRepresentativeID != patientRepresentatives.nPatientRepresentativeID)
+                    {
+                        //Exit
+                        return BadRequest("Cannot edit Patient Representative - \"" + patientRepresentatives.sPatientRepresentativeName + "\". Patient Representative with same name already exists.");
+                    }
+                }
+                try
+                {
+                    patientRepresentatives.dtLastUpdate = DateTime.Now;
+                    PatientRepresentatives oldPatientRepresentative = await rtFac.Select(patientRepresentatives.nPatientRepresentativeID);
+                    if (rtFac.Update(patientRepresentatives))
+                    {
+                        #region Logging
+
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Admin with ID: " + patientRepresentatives.nUpdatedAdminUserID + " called Edit Patient Representative Method for Patient Representative ID: " + patientRepresentatives.nPatientRepresentativeID;
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = patientRepresentatives.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Patient Representative",
+                            sEventName = "Edit Patient Representative"
+                        };
+                        logger.UpdateAuditSingle(oldPatientRepresentative, patientRepresentatives, adminModuleLogger);
+
+                        #endregion
+                        return Ok();
+                    }
+                    else
+                    { return NotFound(); }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
+
+        #region Delete PatientRepresentative      
+        [HttpGet("DeletePatientRepresentative/sPatientRepresentativeID={sPatientRepresentativeID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> DeletePatientRepresentative(string sPatientRepresentativeID, string sAdminUserID)
+        {
+            PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
+            FacilityPatientRepresentativesRepository rtFacilityFac = new FacilityPatientRepresentativesRepository(_info);
+            bool resultPatientRepresentativeID = int.TryParse(sPatientRepresentativeID, out int nPatientRepresentativeID);
+            bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
+            try
+            {
+                PatientRepresentatives masterPatientRepresentative = await rtFac.Select(nPatientRepresentativeID);
+                //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
+                //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
+                if (rtFac.DeleteOneToMany(nPatientRepresentativeID, "lnkFacilityPatientRepresentatives"))
+                {
+                    #region Logging
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Patient Representative Method for Patient Representative ID: " + sPatientRepresentativeID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Patient Representative",
+                        sEventName = "Delete Patient Representative"
+                    };
+                    //logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
+                    logger.DeleteAuditSingle(masterPatientRepresentative, adminModuleLogger);
+                    #endregion
+                    return Ok();
+                }
+                else
+                { return BadRequest("Error occur while delete record"); }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        #endregion
+
+        #endregion
+
         #region Generic GetNormalizedName method
         private string GetNormalizedName(string normalizedString)
         {
