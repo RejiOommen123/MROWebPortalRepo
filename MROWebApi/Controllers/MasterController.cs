@@ -60,7 +60,7 @@ namespace MROWebApi.Controllers
             #region Logging
             
             MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Record Type Method for Record Type ID: " + sRecordTypeID;
+            string sDescription = "Get Record Type Method was called for Record Type ID: " + sRecordTypeID;
             logger.LogAdminRecords(nAdminUserID, sDescription, "Get Record Type By ID", "Master Entry - Record Type");
            
             #endregion
@@ -103,7 +103,7 @@ namespace MROWebApi.Controllers
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + recordType.nCreatedAdminUserID + " called Add Record Type Method & Created Record Type with ID: " + GeneratedID;
+                    string sDescription = "Add Record Type Method was called & Created Record Type with ID: " + GeneratedID;
                     recordType.nRecordTypeID = GeneratedID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
@@ -160,7 +160,7 @@ namespace MROWebApi.Controllers
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + recordType.nUpdatedAdminUserID + " called Edit Record Type Method for Record Type ID: " + recordType.nRecordTypeID;
+                        string sDescription = "Edit Record Type Method was called for Record Type ID: " + recordType.nRecordTypeID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = recordType.nUpdatedAdminUserID,
@@ -210,7 +210,7 @@ namespace MROWebApi.Controllers
                     {
                         #region Logging
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Record Type Method for Record Type ID: " + sRecordTypeID;
+                        string sDescription = "Delete Record Type Method was called for Record Type ID: " + sRecordTypeID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = nAdminUserID,
@@ -268,7 +268,7 @@ namespace MROWebApi.Controllers
             #region Logging
 
             MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Primary Reason Method for Primary Reason ID: " + sPrimaryReasonID;
+            string sDescription = "Get Primary Reason Method was called for Primary Reason ID: " + sPrimaryReasonID;
             logger.LogAdminRecords(nAdminUserID, sDescription, "Get Primary Reason By ID", "Master Entry - Primary Reason");
 
             #endregion
@@ -311,7 +311,7 @@ namespace MROWebApi.Controllers
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + primaryReason.nCreatedAdminUserID + " called Add Primary Reason Method & Created Primary Reason with ID: " + GeneratedID;
+                    string sDescription = "Add Primary Reason Method was called & Created Primary Reason with ID: " + GeneratedID;
                     primaryReason.nPrimaryReasonID = GeneratedID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
@@ -370,7 +370,7 @@ namespace MROWebApi.Controllers
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + primaryReason.nUpdatedAdminUserID + " called Edit Primary Reason Method for Primary Reason ID: " + primaryReason.nPrimaryReasonID;
+                        string sDescription = "Edit Primary Reason Method was called for Primary Reason ID: " + primaryReason.nPrimaryReasonID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = primaryReason.nUpdatedAdminUserID,
@@ -420,7 +420,7 @@ namespace MROWebApi.Controllers
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Primary Reason Method for Primary Reason ID: " + sPrimaryReasonID;
+                    string sDescription = "Delete Primary Reason Method was called for Primary Reason ID: " + sPrimaryReasonID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
                         nAdminUserID = nAdminUserID,
@@ -478,7 +478,7 @@ namespace MROWebApi.Controllers
             #region Logging
 
             MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Sensitive Info Method for Sensitive Info ID: " + sSensitiveInfoID;
+            string sDescription = "Get Sensitive Info Method was called for Sensitive Info ID: " + sSensitiveInfoID;
             logger.LogAdminRecords(nAdminUserID, sDescription, "Get Sensitive Info By ID", "Master Entry - Sensitive Info");
 
             #endregion
@@ -521,7 +521,7 @@ namespace MROWebApi.Controllers
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + sensitiveInfo.nCreatedAdminUserID + " called Add Sensitive Info Method & Created Sensitive Info with ID: " + GeneratedID;
+                    string sDescription = "Add Sensitive Info Method was called & Created Sensitive Info with ID: " + GeneratedID;
                     sensitiveInfo.nSensitiveInfoID = GeneratedID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
@@ -578,7 +578,7 @@ namespace MROWebApi.Controllers
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + sensitiveInfo.nUpdatedAdminUserID + " called Edit Sensitive Info Method for Sensitive Info ID: " + sensitiveInfo.nSensitiveInfoID;
+                        string sDescription = "Edit Sensitive Info Method was called for Sensitive Info ID: " + sensitiveInfo.nSensitiveInfoID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
@@ -628,7 +628,7 @@ namespace MROWebApi.Controllers
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Sensitive Info Method for Sensitive Info ID: " + sSensitiveInfoID;
+                    string sDescription = "Delete Sensitive Info Method was called for Sensitive Info ID: " + sSensitiveInfoID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
                         nAdminUserID = nAdminUserID,
@@ -686,7 +686,7 @@ namespace MROWebApi.Controllers
             #region Logging
 
             MROLogger logger = new MROLogger(_info);
-            string sDescription = "Admin with ID: " + sAdminUserID + " called Get Shipment Type Method for Shipment Type ID: " + sShipmentTypeID;
+            string sDescription = "Get Shipment Type Method was called for Shipment Type ID: " + sShipmentTypeID;
             logger.LogAdminRecords(nAdminUserID, sDescription, "Get Shipment Type By ID", "Master Entry - Shipment Type");
 
             #endregion
@@ -729,7 +729,7 @@ namespace MROWebApi.Controllers
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + shipmentType.nCreatedAdminUserID + " called Add Shipment Type Method & Created Shipment Type with ID: " + GeneratedID;
+                    string sDescription = "Add Shipment Type Method was called & Created Shipment Type with ID: " + GeneratedID;
                     shipmentType.nShipmentTypeID = GeneratedID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
@@ -786,7 +786,7 @@ namespace MROWebApi.Controllers
                         #region Logging
 
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + shipmentType.nUpdatedAdminUserID + " called Edit Shipment Type Method for Shipment Type ID: " + shipmentType.nShipmentTypeID;
+                        string sDescription = "Edit Shipment Type Method was called for Shipment Type ID: " + shipmentType.nShipmentTypeID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = shipmentType.nUpdatedAdminUserID,
@@ -836,7 +836,7 @@ namespace MROWebApi.Controllers
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + sAdminUserID + " called Delete Shipment Type Method for Shipment Type ID: " + sShipmentTypeID;
+                    string sDescription = "Delete Shipment Type Method was called for Shipment Type ID: " + sShipmentTypeID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
                         nAdminUserID = nAdminUserID,

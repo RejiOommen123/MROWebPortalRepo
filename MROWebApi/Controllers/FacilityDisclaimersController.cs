@@ -46,7 +46,7 @@ namespace MROWebApi.Controllers
                 if (facility.bFacilityLogging)
                 {
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + nAdminUserID + " called Get Facility Disclaimers Method for Facility ID: " + nFacilityID;
+                    string sDescription = "Get Facility Disclaimers Method was called for Facility ID: " + nFacilityID;
                     logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Disclaimers By ID", "Manage Facilities");
                 }
                 #endregion
@@ -109,7 +109,7 @@ namespace MROWebApi.Controllers
                     if (facility.bFacilityLogging)
                     {
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + nAdminUserID + " called Edit Disclaimers Method for Facility ID: " + nFacilityID + " and Updated Disclaimer";
+                        string sDescription = "Edit Disclaimers Method was called for Facility ID: " + nFacilityID + " and Updated Disclaimer";
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = singleRecord.nUpdatedAdminUserID,

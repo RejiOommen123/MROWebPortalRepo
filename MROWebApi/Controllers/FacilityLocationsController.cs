@@ -45,7 +45,7 @@ namespace MROWebApi.Controllers
             Facilities facility = await rpFac.Select(location.nFacilityID);
             if (facility.bFacilityLogging) {
                 MROLogger logger = new MROLogger(_info);
-                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Location Method for Location ID: " + sFacilitylocationID;
+                string sDescription = "Get Location Method was called for Location ID: " + sFacilitylocationID;
                 logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
             }
             #endregion
@@ -85,7 +85,7 @@ namespace MROWebApi.Controllers
                 if (facility.bFacilityLogging)
                 {
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility locations Method for Facility ID: " + sFacilityID;
+                    string sDescription = "Get Facility Locations Method was called for Facility ID: " + sFacilityID;
                     logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
                 }
                 #endregion
@@ -202,7 +202,7 @@ namespace MROWebApi.Controllers
                         if (facility.bFacilityLogging)
                         {
                             MROLogger logger = new MROLogger(_info);
-                            string sDescription = "Admin with ID: " + facilityLocation.nCreatedAdminUserID + " called Add Location Method & Created Location with ID: " + addedLocationID;
+                            string sDescription = "Add Location Method was called & Created Location with ID: " + addedLocationID;
                             AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = facilityLocation.nCreatedAdminUserID,
@@ -302,7 +302,7 @@ namespace MROWebApi.Controllers
                         if (facility.bFacilityLogging)
                         {
                             MROLogger logger = new MROLogger(_info);
-                            string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
+                            string sDescription = "Edit Location Method was called for Facility Location ID: " + facilityLocation.nFacilityLocationID;
                             AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = facilityLocation.nUpdatedAdminUserID,
@@ -324,7 +324,7 @@ namespace MROWebApi.Controllers
                         facilityLocationsRepository.Update(facilityLocation);
                         #region Logging
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + facilityLocation.nUpdatedAdminUserID + " called Edit Location Method for Facility Location ID: " + facilityLocation.nFacilityLocationID;
+                        string sDescription = "Edit Location Method was called for Facility Location ID: " + facilityLocation.nFacilityLocationID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = facilityLocation.nUpdatedAdminUserID,
@@ -392,7 +392,7 @@ namespace MROWebApi.Controllers
                         if (facility.bFacilityLogging)
                         {
                             AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
-                            string sDescription = "Admin with ID: " + toggleLocation.nAdminUserID + " called Toggle Location Method for Location ID: " + toggleLocation.nFacilityLocationID;
+                            string sDescription = "Toggle Location Method was called for Location ID: " + toggleLocation.nFacilityLocationID;
                             AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = location.nUpdatedAdminUserID,
