@@ -3,6 +3,7 @@ using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -161,6 +162,7 @@ namespace MROWebApi.Services
             AdminModuleLogger result = new AdminModuleLogger();
             string combineNewData="";
             string combineOldData = "";
+            string propDisplayName = "";
             AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
             foreach (PropertyInfo pi in properties)
             {
@@ -173,8 +175,9 @@ namespace MROWebApi.Services
 
                 if (!object.Equals(oldValue, newValue))
                 {
-                    combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
-                    combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                    propDisplayName = (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName;
+                    combineNewData = combineNewData + "{" + propDisplayName + " : " + newValue + "}, ";
+                    combineOldData = combineOldData + "{" + propDisplayName + " : " + oldValue + "}, ";
                 }
             }
             if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData)))
@@ -202,6 +205,7 @@ namespace MROWebApi.Services
             List<AdminModuleLogger> result = new List<AdminModuleLogger>();
             string combineNewData = "";
             string combineOldData = "";
+            string propDisplayName = "";
             AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
 
             foreach (T newObject in newObjectList)
@@ -218,8 +222,9 @@ namespace MROWebApi.Services
 
                     if (!object.Equals(oldValue, newValue))
                     {
-                        combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
-                        combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                        propDisplayName = (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName;
+                        combineNewData = combineNewData + "{" + propDisplayName + " : " + newValue + "}, ";
+                        combineOldData = combineOldData + "{" + propDisplayName + " : " + oldValue + "}, ";
                     }
                 }
                 if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData))) 
@@ -266,7 +271,7 @@ namespace MROWebApi.Services
 
                 if (newValue != null)
                 {
-                    combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                    combineNewData = combineNewData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + newValue + "}, ";
                 }
             }
             combineNewData = removeComma(combineNewData);
@@ -303,7 +308,7 @@ namespace MROWebApi.Services
 
                     if (newValue != null)
                     {
-                        combineNewData = combineNewData + "{" + pi.Name + " : " + newValue + "}, ";
+                        combineNewData = combineNewData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + newValue + "}, ";
                     }
                 }
                 combineNewData = removeComma(combineNewData);
@@ -345,7 +350,7 @@ namespace MROWebApi.Services
 
                 if (oldValue!=null)
                 {
-                    combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                    combineOldData = combineOldData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + oldValue + "}, ";
                 }
             }
             combineOldData = removeComma(combineOldData);
@@ -382,7 +387,7 @@ namespace MROWebApi.Services
 
                     if (oldValue!=null)
                     {
-                        combineOldData = combineOldData + "{" + pi.Name + " : " + oldValue + "}, ";
+                        combineOldData = combineOldData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + oldValue + "}, ";
                     }
                 }
                 combineOldData = removeComma(combineOldData);
