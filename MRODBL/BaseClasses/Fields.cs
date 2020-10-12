@@ -22,7 +22,6 @@ namespace MRODBL.BaseClasses
         [DisplayName("Normalized Name")]
         public string sNormalizedFieldName { get; set; }
         [IgnorePropertyCompare]
-        [DisplayName("Date")]
         public DateTime dtLastUpdate { get; set; }
         #endregion
     }
