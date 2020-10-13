@@ -122,6 +122,7 @@ namespace MROWebApi.Controllers
                     facilityLocation.bLocationActiveStatus = false;
                     facilityLocation.dtCreated = DateTime.Now;
                     facilityLocation.dtLastUpdate = DateTime.Now;
+                    facilityLocation.bIncludeInFacilityLevel = true;
                     string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
                     string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
                     finalString = "MRO" + finalString;
@@ -434,6 +435,78 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
+
+        #region Toggle Facility Location
+        [HttpPost("ToggleFacilityLocationIncludeInFacility")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> ToggleFacilityLocationIncludeInFacility(ToggleLocation toggleLocation)
+        {
+            try
+            {
+                int nFacilityLocationID = toggleLocation.nFacilityLocationID;
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                FacilityLocations location = await facilityLocationsRepository.Select(nFacilityLocationID);
+                if (nFacilityLocationID != location.nFacilityLocationID)
+                {
+                    return BadRequest();
+                }
+
+                //IEnumerable<FacilityLocations> locationList = await facilityLocationsRepository.SelectWhere("nFacilityID", location.nFacilityID);
+                //locationList = locationList.Where(c => c.bLocationActiveStatus == false);
+                //if (await ValidateFacilityLocation(location, locationList, _info))
+                //{
+                    if (await facilityLocationsRepository.ToggleSoftDelete("bIncludeInFacilityLevel", nFacilityLocationID))
+                    {
+                        #region Logging
+                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                        Facilities facility = await rpFac.Select(location.nFacilityID);
+                        if (facility.bFacilityLogging)
+                        {
+                            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+                            string sDescription = "Toggle Include In Facility Level Method was called for Location ID: " + toggleLocation.nFacilityLocationID;
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = location.nUpdatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Facility Location",
+                                sEventName = "Toggle Include In Facility Level For Location",
+                                sNewValue = "{bIncludeInFacilityLevel : " + location.bIncludeInFacilityLevel + "}",
+                                sOldValue = "{bIncludeInFacilityLevel : " + !location.bIncludeInFacilityLevel + "}",
+                                dtLogTime = DateTime.Now,
+                                nFacilityID = location.nFacilityID,
+                                nFacilityLocationID = location.nFacilityLocationID
+
+                            };
+                            adminModuleLoggerRepository.Insert(adminModuleLogger);
+                        }
+                        #endregion
+                        return Ok("Success");
+                    }
+                    else
+                    {
+                        return NoContent();
+                    }
+                //}
+                //else
+                //{
+                //    return Content("Provide Valid Authorization PDF");
+                //}
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                if (!await FacilityLocationExists(toggleLocation.nFacilityLocationID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
+        #endregion
+        
 
         #region Facility Location Exist
         private async Task<bool> FacilityLocationExists(int id)
