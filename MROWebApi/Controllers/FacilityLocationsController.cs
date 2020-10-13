@@ -492,6 +492,53 @@ namespace MROWebApi.Controllers
         //}
         #endregion
 
+        #region Get Location Button & GUID
+        [HttpGet("GetBtnCodeAndGUID/{sFacilitylocationID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetBtnCodeAndGUID(string sFacilitylocationID)
+        {
+            try
+            {
+                bool resultFacilityLocationID = int.TryParse(sFacilitylocationID, out int nFacilitylocationID);
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                FacilityLocations facilityLocations = await facilityLocationsRepository.Select(nFacilitylocationID);
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                Facilities dbFacility = await rpFac.Select(facilityLocations.nFacilityID);
+                FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID", dbFacility.nFacilityID);
+                FacilityConnections connection = connections.FirstOrDefault();
+
+                if (!string.IsNullOrWhiteSpace(facilityLocations.sGUID))
+                {
+                    MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                    MROHelper helper = await helperRepo.Select(1);
+                    string patternFacGUID = @"\bMROFacilityGuid\b";
+                    string replaceFacGUID = connection.sGUID;
+                    string patternLocGUID = @"\bMROFacilityLocationGuid\b";
+                    string replaceLocGUID = facilityLocations.sGUID;
+                    
+                    helper.sFacilityLocationURL = Regex.Replace(helper.sFacilityLocationURL, patternFacGUID, replaceFacGUID);
+                    helper.sFacilityLocationURL = Regex.Replace(helper.sFacilityLocationURL, patternLocGUID, replaceLocGUID);
+
+                    helper.sFacilityLocationButtonHTMLCode = Regex.Replace(helper.sFacilityLocationButtonHTMLCode, patternFacGUID, replaceFacGUID);
+                    helper.sFacilityLocationButtonHTMLCode = Regex.Replace(helper.sFacilityLocationButtonHTMLCode, patternLocGUID, replaceLocGUID);
+                    string patternFname = @"\bMROFacilityName\b";
+                    string replaceFname = dbFacility.sFacilityName;
+                    helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternFname, replaceFname);
+
+                    return Ok(new{helper.sFacilityLocationURL, helper.sFacilityLocationButtonHTMLCode});
+                }
+                else
+                    return BadRequest();
+            }
+            catch (Exception exp)
+            {
+                return Content(exp.Message);
+            }
+        }
+        #endregion
+
         #region Server Validation for Duplicate Location names and check for only one 'Other' Location
         private async Task<string> ValidationForFacilityLocation(FacilityLocations facilityLocation)
         {

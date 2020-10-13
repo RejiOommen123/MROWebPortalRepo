@@ -77,20 +77,20 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Logo & BG for Facility using Facility GUID
-        [HttpGet("GetFacilityDatafromFacilityGUID/{sGUID}")]
+        [HttpGet("GetFacilityDatafromFacilityGUID")]
         [AllowAnonymous]
-        [Route("[action]")]
-        public async Task<object> GetFacilityDatafromFacilityGUID(string sGUID)
+        [Route("[action]/guid={guid}&locationguid={locationguid}")]
+        public async Task<object> GetFacilityDatafromFacilityGUID(string guid, string locationguid)
         {
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityByGUIDAsync(sGUID);
+                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityByGUIDAsync(guid,locationguid);
                 return LogoAndBackgroundImageforFacility;
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID - "+ sGUID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID - "+ guid+" LOcationGUID - "+locationguid, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }

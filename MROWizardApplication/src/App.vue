@@ -146,10 +146,16 @@ export default {
     //Get GUID from url
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
+    let locationguid = urlParams.get("locationguid");
+
+    if(locationguid==null)
+    {
+      locationguid = 'null';
+    }
 
     //API Request get wizard config based on facility guid.
     this.$http
-      .get("Wizards/GetFacilityDatafromFacilityGUID/" + guid)
+      .get("Wizards/GetFacilityDatafromFacilityGUID/guid=" + guid+"&locationguid="+locationguid)
       .then(response => {
         var apiFacilityResponse = response.body;
         if (response.body!="") {
