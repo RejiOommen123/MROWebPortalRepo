@@ -187,7 +187,8 @@ namespace MRODBL.Repositories
                       "sLocationAddress, " +
                       "sLocationCode, " +
                       "bLocationActiveStatus, " +
-                      "sFacilityName " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
                       "FROM " +
                       "tblFacilityLocations " +
                       "INNER JOIN " +

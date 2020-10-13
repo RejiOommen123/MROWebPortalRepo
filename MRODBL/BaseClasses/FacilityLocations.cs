@@ -65,6 +65,8 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Auth Expiration Month")]
         public int nAuthExpirationMonths { get; set; }
+        [DisplayName("Include In Facility Level")]
+        public bool bIncludeInFacilityLevel { get; set; }
         [IgnorePropertyCompare]
         [MaxLength]
         public string sGUID { get; set; }
