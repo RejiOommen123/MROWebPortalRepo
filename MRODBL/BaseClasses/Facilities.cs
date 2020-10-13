@@ -47,7 +47,7 @@ namespace MRODBL.BaseClasses
         public bool bFacilityLogging { get; set; }
         [DisplayName("Confirm Email Switch")]
         public bool bRequestorEmailConfirm { get; set; }
-        [DisplayName("Verify Email Switch")]
+        [IgnorePropertyCompare]
         public bool bRequestorEmailVerify { get; set; }
         #endregion
     }
