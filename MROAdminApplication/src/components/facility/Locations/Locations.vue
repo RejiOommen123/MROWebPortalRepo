@@ -70,12 +70,14 @@
 
          <!-- Location List Toggle location Include in Facility Status Template  -->
         <template v-slot:item.bIncludeInFacilityLevel="{ item }">
-          <v-switch
-            v-model="item.bIncludeInFacilityLevel"
-            color="#1AA260"
-            @click="deleteIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
-            :disabled="!item.bLocationActiveStatus"
-          ></v-switch>
+          <div class="d-flex justify-center">
+            <v-switch
+              v-model="item.bIncludeInFacilityLevel"
+              color="#1AA260"
+              @click="deleteIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
+              :disabled="!item.bLocationActiveStatus"
+            ></v-switch>
+          </div>
         </template>
       </v-data-table>
       <!-- End Location List DataTable  -->
