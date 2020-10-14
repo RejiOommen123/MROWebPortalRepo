@@ -400,8 +400,8 @@ namespace MROWebApi.Controllers
                                 sDescription = sDescription,
                                 sModuleName = "Facility Location",
                                 sEventName = "Toggle Facility Location",
-                                sNewValue = "{bLocationActiveStatus : " + location.bLocationActiveStatus + "}",
-                                sOldValue = "{bLocationActiveStatus : " + !location.bLocationActiveStatus + "}",
+                                sNewValue = "{Active Status : " + location.bLocationActiveStatus + "}",
+                                sOldValue = "{Active Status : " + !location.bLocationActiveStatus + "}",
                                 dtLogTime = DateTime.Now,
                                 nFacilityID = location.nFacilityID,
                                 nFacilityLocationID = location.nFacilityLocationID
@@ -471,8 +471,8 @@ namespace MROWebApi.Controllers
                                 sDescription = sDescription,
                                 sModuleName = "Facility Location",
                                 sEventName = "Toggle Include In Facility Level For Location",
-                                sNewValue = "{bIncludeInFacilityLevel : " + location.bIncludeInFacilityLevel + "}",
-                                sOldValue = "{bIncludeInFacilityLevel : " + !location.bIncludeInFacilityLevel + "}",
+                                sNewValue = "{Include In Facility Level : " + location.bIncludeInFacilityLevel + "}",
+                                sOldValue = "{Include In Facility Level : " + !location.bIncludeInFacilityLevel + "}",
                                 dtLogTime = DateTime.Now,
                                 nFacilityID = location.nFacilityID,
                                 nFacilityLocationID = location.nFacilityLocationID

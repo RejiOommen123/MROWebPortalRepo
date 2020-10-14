@@ -74,7 +74,7 @@
             <v-switch
               v-model="item.bIncludeInFacilityLevel"
               color="#1AA260"
-              @click="deleteIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
+              @click="toggleIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
               :disabled="!item.bLocationActiveStatus"
             ></v-switch>
           </div>
@@ -114,7 +114,7 @@
           <v-btn
             color="red darken-1"
             text
-            @click="deleteIncludeInFacility(editedItem.nFacilityLocationID)"
+            @click="toggleIncludeInFacility(editedItem.nFacilityLocationID)"
           >Yes</v-btn>
         </v-card-actions>
       </v-card>
@@ -199,7 +199,7 @@ export default {
       this.editedItem.sLocationName = sLocationName;
       this.dialog = true;
     },
-    deleteIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
+    toggleIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
     {
       this.editedItem.nFacilityLocationID = nFacilityLocationID;
       this.editedItem.sLocationName = sLocationName;
@@ -233,7 +233,7 @@ export default {
         });
     },
     //On Agree in dialog box API call to Toggle Include in Facility status for Location
-    deleteIncludeInFacility(id) {
+    toggleIncludeInFacility(id) {
       this.dialogLoader =true;
       var combinedObj = {
         nfacilityLocationID: id,

@@ -331,8 +331,8 @@ namespace MROWebAPI.Controllers
                             sDescription = sDescription,
                             sModuleName = "Manage Facilities",
                             sEventName = "Toggle Facility",
-                            sNewValue = "{bActiveStatus : " + facilityDB.bActiveStatus + "}",
-                            sOldValue= "{bActiveStatus : " + !facilityDB.bActiveStatus + "}",
+                            sNewValue = "{Active Status : " + facilityDB.bActiveStatus + "}",
+                            sOldValue= "{Active Status : " + !facilityDB.bActiveStatus + "}",
                             dtLogTime=DateTime.Now,
                             nFacilityID= facilityDB.nFacilityID
                         };
