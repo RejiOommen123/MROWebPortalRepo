@@ -259,6 +259,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Dialog Alert for Common errors  -->
+    <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Warning</v-card-title>
+        <v-card-text>{{errorMessage}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- PDF Preview Dialog -->
     <v-dialog
       v-model="previewPDFDialog"
@@ -439,6 +450,8 @@ export default {
       numPages: undefined,
       sBtnCode:'',
       sGUID: '',
+      errorAlert:false,
+      errorMessage:'',
       location: {
         nROIFacilityID: null,
         nFacilityID: null,
@@ -485,14 +498,12 @@ export default {
         if(response.ok==true){        
         this.sGUID = response.body.sFacilityLocationURL;
         this.sBtnCode = response.body.sFacilityLocationButtonHTMLCode;
-        console.log(response.body);
       }},
       error=>{        
         if (error.status == 400) {
             this.dialogLoader =false;
-            this.SMTPStatus='Error - Something went wrong';
-            this.SMTPResponseMsg=error.body;
-            this.SMTPResponseDialog=true;   
+            this.errorMessage='Error - Something went wrong while getting GUID.';
+            this.errorAlert=true;   
           }      
       }
     );  

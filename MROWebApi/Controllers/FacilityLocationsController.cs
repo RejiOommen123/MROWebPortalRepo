@@ -607,7 +607,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception exp)
             {
-                return Content(exp.Message);
+                return BadRequest();
             }
         }
         #endregion
