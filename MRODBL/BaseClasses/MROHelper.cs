@@ -23,6 +23,10 @@ namespace MRODBL.BaseClasses
         public string sFacilityButtonHTMLCode { get; set; }
         [StringLength(1000, ErrorMessage = "Maximum 1000 characters Facility URL Allowed")]
         public string sFacilityURL { get; set; }
+        [MaxLength]
+        public string sFacilityLocationButtonHTMLCode { get; set; }
+        [StringLength(1000, ErrorMessage = "Maximum 1000 characters Facility Location URL Allowed")]
+        public string sFacilityLocationURL { get; set; }
         #endregion
     }
 }

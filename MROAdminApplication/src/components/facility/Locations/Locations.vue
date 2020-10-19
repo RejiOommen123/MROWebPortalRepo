@@ -67,6 +67,18 @@
             @click="deleteItem(item.nFacilityLocationID,item.sLocationName)"
           ></v-switch>
         </template>
+
+         <!-- Location List Toggle location Include in Facility Status Template  -->
+        <template v-slot:item.bIncludeInFacilityLevel="{ item }">
+          <div class="d-flex justify-center">
+            <v-switch
+              v-model="item.bIncludeInFacilityLevel"
+              color="#1AA260"
+              @click="toggleIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
+              :disabled="!item.bLocationActiveStatus"
+            ></v-switch>
+          </div>
+        </template>
       </v-data-table>
       <!-- End Location List DataTable  -->
     </v-card>
@@ -85,6 +97,24 @@
             color="red darken-1"
             text
             @click="deleteLocation(editedItem.nFacilityLocationID)"
+          >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+       <!-- Dialog box for Toggle Include In Facility Level  -->
+    <v-dialog v-model="dialogIncludeInFacilityLevel" max-width="360">
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure you want to
+          <br />change the include in facility status?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogIncludeInFacilityLevel = false">No</v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="toggleIncludeInFacility(editedItem.nFacilityLocationID)"
           >Yes</v-btn>
         </v-card-actions>
       </v-card>
@@ -120,6 +150,7 @@ export default {
       dialog: false,
       locationAlert: false,
       search: "",
+      dialogIncludeInFacilityLevel: false,
       headers: [
         {
           text: "Name",
@@ -127,9 +158,10 @@ export default {
           value: "sLocationName",
           width: "20%"
         },
-        { text: "Address", value: "sLocationAddress", width: "50%" },
+        { text: "Address", value: "sLocationAddress", width: "45%" },
         { text: "Code", value: "sLocationCode", width: "15%" },
         { text: "Active", value: "bLocationActiveStatus", sortable: false },
+        { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
         { text: "Edit", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
@@ -167,6 +199,12 @@ export default {
       this.editedItem.sLocationName = sLocationName;
       this.dialog = true;
     },
+    toggleIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
+    {
+      this.editedItem.nFacilityLocationID = nFacilityLocationID;
+      this.editedItem.sLocationName = sLocationName;
+      this.dialogIncludeInFacilityLevel = true;
+    },
     //On Agree in dialog box API call to Toggle Active status for Location
     deleteLocation(id) {
       this.dialogLoader =true;
@@ -177,6 +215,33 @@ export default {
       this.dialog = false;
       this.$http
         .post("FacilityLocations/ToggleFacilityLocation/",combinedObj )
+        .then(response => {
+          if (response.ok == true) 
+          {
+            this.dialogLoader =false;
+            if (response.body == "Provide Valid Authorization PDF") 
+            {
+              this.dialogLoader =false;
+              this.locationAlert = true;
+            } 
+            else
+            { 
+              this.dialogLoader =false;
+              this.$router.go();
+            }
+          }
+        });
+    },
+    //On Agree in dialog box API call to Toggle Include in Facility status for Location
+    toggleIncludeInFacility(id) {
+      this.dialogLoader =true;
+      var combinedObj = {
+        nfacilityLocationID: id,
+        nAdminUserID: this.$store.state.adminUserId 
+      };
+      this.dialog = false;
+      this.$http
+        .post("FacilityLocations/ToggleFacilityLocationIncludeInFacility/",combinedObj )
         .then(response => {
           if (response.ok == true) 
           {

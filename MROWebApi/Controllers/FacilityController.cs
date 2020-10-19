@@ -74,7 +74,7 @@ namespace MROWebAPI.Controllers
             #region Logging
             if (facility.bFacilityLogging) {
                 MROLogger logger = new MROLogger(_info);
-                string sDescription = "Admin with ID: " + sAdminUserID + " called Get Facility Method for Facility ID: " + sFacilityID;
+                string sDescription = "Get Facility Method was called for Facility ID: " + sFacilityID;
                 logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility By ID", "Manage Facilities");
             }
             #endregion
@@ -139,7 +139,7 @@ namespace MROWebAPI.Controllers
                     if (dbFacility.bFacilityLogging)
                     {
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + dbFacility.nCreatedAdminUserID + " called Add Facility Method & Created Facility with ID: " + GeneratedID;
+                        string sDescription = "Add Facility Method was called & Created Facility with ID: " + GeneratedID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = dbFacility.nUpdatedAdminUserID,
@@ -210,7 +210,7 @@ namespace MROWebAPI.Controllers
                     if (facility.bFacilityLogging)
                     {
                         MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Admin with ID: " + facility.nUpdatedAdminUserID + " called Edit Facility Method for Facility ID: " + facility.nFacilityID;
+                        string sDescription = "Edit Facility Method was called for Facility ID: " + facility.nFacilityID;
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
                             nAdminUserID = facility.nUpdatedAdminUserID,
@@ -323,7 +323,7 @@ namespace MROWebAPI.Controllers
                     if (facilityDB.bFacilityLogging)
                     {
                         AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
-                        string sDescription = "Admin with ID: " + toggleFacility.nAdminuserID + " called Toggle Facility Method for Facility ID: " + nFacilityID;
+                        string sDescription = "Toggle Facility Method was called for Facility ID: " + nFacilityID;
                         //logger.LogAdminRecords(toggleFacility.nAdminuserID, sDescription, "Toggle Facility By ID", "Manage Facilities");
                         AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                         {
@@ -331,8 +331,8 @@ namespace MROWebAPI.Controllers
                             sDescription = sDescription,
                             sModuleName = "Manage Facilities",
                             sEventName = "Toggle Facility",
-                            sNewValue = "{bActiveStatus : " + facilityDB.bActiveStatus + "}",
-                            sOldValue= "{bActiveStatus : " + !facilityDB.bActiveStatus + "}",
+                            sNewValue = "{Active Status : " + !facilityDB.bActiveStatus + "}",
+                            sOldValue= "{Active Status : " + facilityDB.bActiveStatus + "}",
                             dtLogTime=DateTime.Now,
                             nFacilityID= facilityDB.nFacilityID
                         };

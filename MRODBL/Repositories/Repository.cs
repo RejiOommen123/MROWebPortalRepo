@@ -187,7 +187,8 @@ namespace MRODBL.Repositories
                       "sLocationAddress, " +
                       "sLocationCode, " +
                       "bLocationActiveStatus, " +
-                      "sFacilityName " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
                       "FROM " +
                       "tblFacilityLocations " +
                       "INNER JOIN " +
@@ -415,13 +416,13 @@ namespace MRODBL.Repositories
                 return logoBackgroundLocation;
             }
         }
-        public async Task<object> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID)
+        public async Task<object> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID, string sLocationGUID)
         {
             string SqlString = "spGetLogoAndBackgroundImageforFacilityGUID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID, @sLocationGuid = sLocationGUID }, commandType: CommandType.StoredProcedure);
                 var facilityLogoandBackground = logoBackgroundFacility.Read().ToList();
                 var sWizards = logoBackgroundFacility.Read().Select(d => new object[] { d.sWizardName });
                 List<string> soWizard = new List<string>();

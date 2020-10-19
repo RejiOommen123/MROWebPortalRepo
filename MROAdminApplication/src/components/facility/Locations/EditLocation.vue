@@ -71,6 +71,40 @@
               :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
+            <!-- Show GUID & -->
+            <label for="sGUID">
+              Guid for URL (Read Only):
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="copyGUID"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <span>Click to Copy GUID</span>
+              </v-tooltip>Button Code:
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="copyBtnCode"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <span>Click to copy Button Code</span>
+              </v-tooltip>
+            </label>
+            <!-- Show confirm email to requestor -->
+            <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:
@@ -152,8 +186,8 @@
                 </template>
                 <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
-            </v-file-input>
-          </v-col>
+            </v-file-input>            
+          </v-col>          
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
@@ -222,6 +256,17 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Dialog Alert for Common errors  -->
+    <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Warning</v-card-title>
+        <v-card-text>{{errorMessage}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -402,7 +447,11 @@ export default {
       previewPDFDialog:false,
       previewPDFPage:0,
       src: undefined,
-			numPages: undefined,
+      numPages: undefined,
+      sBtnCode:'',
+      sGUID: '',
+      errorAlert:false,
+      errorMessage:'',
       location: {
         nROIFacilityID: null,
         nFacilityID: null,
@@ -442,6 +491,22 @@ export default {
           this.gridData = response.body;          
         }
       );
+    //Get btn code for location and guid
+    this.$http.get("FacilityLocations/GetBtnCodeAndGUID/"+this.$route.params.id)
+    .then(
+      response=>{
+        if(response.ok==true){        
+        this.sGUID = response.body.sFacilityLocationURL;
+        this.sBtnCode = response.body.sFacilityLocationButtonHTMLCode;
+      }},
+      error=>{        
+        if (error.status == 400) {
+            this.dialogLoader =false;
+            this.errorMessage='Error - Something went wrong while getting GUID.';
+            this.errorAlert=true;   
+          }      
+      }
+    );  
   },
   methods: {
     clearBGField() {
@@ -559,6 +624,15 @@ export default {
               this.previewPDFDialog=true;   
             });          
         });
+    },
+    copyGUID() {
+      if(navigator.clipboard != undefined){//Chrome
+      navigator.clipboard.writeText(this.sGUID);}
+    },
+    copyBtnCode(){
+       if(navigator.clipboard != undefined){//Chrome
+          navigator.clipboard.writeText(this.sBtnCode);
+       }
     },
     // API to Update location
     onSubmit() {

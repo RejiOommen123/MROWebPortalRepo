@@ -67,7 +67,7 @@ namespace MROWebApi.Controllers
                 if (facility.bFacilityLogging)
                 {
                     MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Admin with ID: " + nAdminUserID + " called Get Facility Fields Method for Facility ID: " + nFacilityID;
+                    string sDescription = "Get Facility Fields Method was called for Facility ID: " + nFacilityID;
                     logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
                 }
                 #endregion
@@ -175,7 +175,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = "Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Shipment Type",
                                 nFacilityID = singleRecord.nFacilityID
@@ -228,7 +228,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = "Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Primary Reason",
                                 nFacilityID = singleRecord.nFacilityID
@@ -282,7 +282,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = "Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Sensitive Info",
                                 nFacilityID = singleRecord.nFacilityID
@@ -336,7 +336,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = "Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Record Type",
                                 nFacilityID = singleRecord.nFacilityID
@@ -385,7 +385,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Field for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = "Edited Field for Facility ID: " + singleRecord.nFacilityID,
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Field",
                                 nFacilityID = singleRecord.nFacilityID
