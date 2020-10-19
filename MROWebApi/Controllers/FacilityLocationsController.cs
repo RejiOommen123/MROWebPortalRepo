@@ -44,9 +44,22 @@ namespace MROWebApi.Controllers
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
             Facilities facility = await rpFac.Select(location.nFacilityID);
             if (facility.bFacilityLogging) {
-                MROLogger logger = new MROLogger(_info);
-                string sDescription = "Get Location Method was called for Location ID: " + sFacilitylocationID;
-                logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
+                //MROLogger logger = new MROLogger(_info);
+                //string sDescription = "Get Location Method was called for Location ID: " + sFacilitylocationID;
+                //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
+                AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+                string sDescription = "Get Location Method was called for Location ID: " + nFacilitylocationID;
+                AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                {
+                    nAdminUserID = nAdminUserID,
+                    sDescription = sDescription,
+                    sModuleName = "Manage Locations",
+                    sEventName = "Get Location By ID",
+                    nFacilityID = location.nFacilityID,
+                    nFacilityLocationID = location.nFacilityLocationID,
+                    dtLogTime = DateTime.Now,
+                };
+                adminModuleLoggerRepository.Insert(adminModuleLogger);
             }
             #endregion
             return location;
@@ -84,9 +97,21 @@ namespace MROWebApi.Controllers
 
                 if (facility.bFacilityLogging)
                 {
-                    MROLogger logger = new MROLogger(_info);
-                    string sDescription = "Get Facility Locations Method was called for Facility ID: " + sFacilityID;
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
+                    //MROLogger logger = new MROLogger(_info);
+                    //string sDescription = "Get Facility Locations Method was called for Facility ID: " + sFacilityID;
+                    //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
+                    AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+                    string sDescription = "Get Facility Locations Method was called for Facility ID: " + nFacilityID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Manage Facilities",
+                        sEventName = "Get Facility Locations By Facility ID",
+                        nFacilityID = facility.nFacilityID,
+                        dtLogTime = DateTime.Now,
+                    };
+                    adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
                 return Ok(new { locations, faciName });

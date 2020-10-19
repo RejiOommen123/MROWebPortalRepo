@@ -66,9 +66,21 @@ namespace MROWebApi.Controllers
                 #region Logging
                 if (facility.bFacilityLogging)
                 {
-                    MROLogger logger = new MROLogger(_info);
+                    //MROLogger logger = new MROLogger(_info);
+                    //string sDescription = "Get Facility Fields Method was called for Facility ID: " + nFacilityID;
+                    //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
+                    AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
                     string sDescription = "Get Facility Fields Method was called for Facility ID: " + nFacilityID;
-                    logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Fields By ID", "Manage Facilities");
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Manage Facilities",
+                        sEventName = "Get Facility Fields By ID",
+                        nFacilityID = facility.nFacilityID,
+                        dtLogTime = DateTime.Now,
+                    };
+                    adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
                 return Ok(new { fields, faciName });
