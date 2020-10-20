@@ -192,7 +192,7 @@ import { validationMixin } from "vuelidate";
 import { required, email, sameAs, numeric ,maxLength} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_15",
-  activated(){
+  mounted(){
     this.sSTEmailAddress = this.$store.state.requestermodule.sRequesterEmailId;
     this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;
     this.sSTAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;

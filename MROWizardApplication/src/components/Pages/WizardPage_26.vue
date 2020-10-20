@@ -1,6 +1,7 @@
 <template>
   <div class="center">
-    <h1>Thank you for your feedback!</h1>
+    <h1 v-if="bGivenFeedback">Thank you for your feedback!</h1>
+    <h1 v-else>Thank you!</h1>
         <div class="disclaimer">{{disclaimer01}}</div>
         <div class="disclaimer">{{disclaimer02}}</div>
         <div class="disclaimer">{{disclaimer03}}</div>
@@ -23,6 +24,11 @@ export default {
   methods: {
     closeWizard() {  
       window.top.postMessage("hello", "*");
+    }
+  },
+  computed: {
+    bGivenFeedback(){
+      return this.$store.state.requestermodule.nFeedbackRating > 0 ? true : false;
     }
   }
 };

@@ -23,9 +23,14 @@
         ></v-textarea>
       </div>
     </div>
-    <div>
-      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-    </div>
+     <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
+      <v-btn @click.prevent="nextPage" class="next">Rate Us</v-btn>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -45,6 +50,11 @@ export default {
     };
   },
   methods: {
+     skipPage(){
+      this.nFeedbackRating=0;
+      this.sFeedbackComment='';
+      this.nextPage();
+    },
     nextPage() {
       this.$store.commit("requestermodule/nFeedbackRating", this.nFeedbackRating);
       this.$store.commit("requestermodule/sFeedbackComment", this.sFeedbackComment);

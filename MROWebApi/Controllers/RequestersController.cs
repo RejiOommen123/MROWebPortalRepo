@@ -101,7 +101,7 @@ namespace MROWebApi.Controllers
                     if ((requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_24")|| (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25"))
                     {
                         nRequesterId = await requestersFac.UpdateRequesterFeedback(requester.nRequesterID,requester.bRequestAnotherRecord,requester.nFeedbackRating,requester.sFeedbackComment,requester.sWizardName);
-                        if (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25")
+                        if (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25" && requester.nFeedbackRating > 0)
                         {
                             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                             Facilities facility = await rpFac.Select(requester.nFacilityID);
