@@ -24,7 +24,7 @@
       </div>
     </div>
      <v-row>
-    <v-col cols="6" offset-sm="4" sm="2">
+    <v-col cols="6" offset-sm="3" sm="3">
       <v-btn @click.prevent="nextPage" class="next">Rate Us</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
