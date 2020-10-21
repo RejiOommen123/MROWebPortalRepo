@@ -688,6 +688,8 @@ export default {
       this.location.nFacilityLocationID = parseInt(
         this.location.nFacilityLocationID
       );
+      this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
+      this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
       this.$http
         .post(
           "FacilityLocations/EditFacilityLocation/" +

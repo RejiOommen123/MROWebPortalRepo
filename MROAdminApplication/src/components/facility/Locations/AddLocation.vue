@@ -602,6 +602,8 @@ export default {
       this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
+      this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
+      this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
         .then(
