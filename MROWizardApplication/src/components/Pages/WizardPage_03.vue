@@ -67,6 +67,7 @@
                 :key="patientRepresentative.sNormalizedPatientRepresentativeName"
                 row
                 wrap
+                style="width:100%"
               >
                 <v-col cols="12" offset-sm="2" sm="8">
                   <v-checkbox
