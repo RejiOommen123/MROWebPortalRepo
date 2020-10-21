@@ -299,6 +299,18 @@ export default {
       this.$store.commit("requestermodule/sSelectedRelation", "");
       this.$store.commit("requestermodule/sRelativeFileArray", []);
       this.$store.commit("requestermodule/sRelativeFileNameArray", []);
+      
+      //Partial Requester Data Save Start
+        this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+        if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+        {
+          this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+          .then(response => {
+            this.$store.commit("requestermodule/nRequesterID", response.body);
+          });
+        }
+        //Partial Requester Data Save End
+
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     // This will set bAreYouPatient status to false and set realtives variables
@@ -318,6 +330,18 @@ export default {
       this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
       this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
       this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedPatientRepresentatives[0]);
+
+      //Partial Requester Data Save Start
+        this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+        if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+        {
+          this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+          .then(response => {
+            this.$store.commit("requestermodule/nRequesterID", response.body);
+          });
+        }
+        //Partial Requester Data Save End
+
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
     filesChange(files){

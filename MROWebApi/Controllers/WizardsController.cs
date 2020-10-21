@@ -147,6 +147,16 @@ namespace MROWebApi.Controllers
                     string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
                     //DB Storing
                     RequestersController requestersController = new RequestersController(_info);
+
+                    #region Get requester OS and Browser Details
+                    var userAgent = HttpContext.Request.Headers["User-Agent"];
+                    string uaString = Convert.ToString(userAgent[0]);
+                    var uaParser = Parser.GetDefault();
+                    ClientInfo c = uaParser.Parse(uaString);
+                    requester.sOSInfo = c.OS.ToString();
+                    requester.sBrowserInfo = c.UserAgent.ToString();
+                    #endregion
+
                     await requestersController.AddRequester(requester);
 
                     //Send Email to Patient
@@ -172,18 +182,6 @@ namespace MROWebApi.Controllers
                     //to get the Record Type for this facility
                     SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
                     IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
-
-                    #region Get requester OS and Browser Details
-                    var userAgent = HttpContext.Request.Headers["User-Agent"];
-                    string uaString = Convert.ToString(userAgent[0]);
-                    var uaParser = Parser.GetDefault();
-                    ClientInfo c = uaParser.Parse(uaString);
-
-
-
-                    string requesterOS = c.OS.ToString();
-                    string requesterBrowser = c.UserAgent.ToString();
-                    #endregion
 
                     XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
                     //{
@@ -254,8 +252,8 @@ namespace MROWebApi.Controllers
                     }
                     writer.WriteEndElement();
                     writer.WriteElementString("additionalcomments", requester.sAdditionalData);
-                    writer.WriteElementString("os", requesterOS);
-                    writer.WriteElementString("browser", requesterBrowser);
+                    writer.WriteElementString("os", requester.sOSInfo);
+                    writer.WriteElementString("browser", requester.sBrowserInfo);
 
                     writer.WriteEndElement();
                     writer.WriteStartElement("patient");
