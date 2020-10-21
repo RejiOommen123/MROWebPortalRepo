@@ -36,14 +36,16 @@ export default {
             events :['click', 'mousemove', 'mousedown', 'scroll', 'keypress', 'load'],
             primaryTimer: null,
             secondaryTimer: null,
-            firstTime:600000,
-            secondTime:60000,
+            firstTime:0,
+            secondTime:0,
             time:0,
             warningZone: false,
             dialog:false
         }
     },
     mounted() {
+        this.firstTime = this.$store.state.ConfigModule.nPrimaryTimeout * 1000;
+        this.secondTime = this.$store.state.ConfigModule.nSecondaryTimeout * 1000;
         this.events.forEach(function (event) {
             window.addEventListener(event, this.resetTimer);
         }, this);
@@ -72,9 +74,8 @@ export default {
       }
     },
     methods: {
-        setTimers: function() {
+        setTimers: function() {          
             this.primaryTimer = setTimeout(this.warningMessage, this.firstTime); // 14 minutes - 14 * 60 * 1000
-            // this.secondaryTimer = setTimeout(this.logoutUser, 15 * 1000); // 15 minutes - 15 * 60 * 1000
             this.warningZone = false;
         },
         warningMessage: function() {    

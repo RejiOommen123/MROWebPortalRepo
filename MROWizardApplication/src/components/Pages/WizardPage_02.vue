@@ -162,6 +162,14 @@ export default {
                   "ConfigModule/nAuthExpirationMonths",
                   location.nAuthExpirationMonths
                 );
+                this.$store.commit(
+                  "ConfigModule/nPrimaryTimeout",
+                  apiLocationResponse.oLocations[0].nPrimaryTimeout
+                );
+                this.$store.commit(
+                  "ConfigModule/nSecondaryTimeout",
+                  apiLocationResponse.oLocations[0].nSecondaryTimeout
+                );
                 this.dialogLoader = false;
                 //Partial Requester Data Save Start
                 this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
