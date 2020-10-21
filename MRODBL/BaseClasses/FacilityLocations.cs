@@ -70,6 +70,10 @@ namespace MRODBL.BaseClasses
         [IgnorePropertyCompare]
         [MaxLength]
         public string sGUID { get; set; }
+        [DisplayName("Primary Timeout")]
+        public int nPrimaryTimeout { get; set; }
+        [DisplayName("Secondary Timeout")]
+        public int nSecondaryTimeout { get; set; }
         #endregion
     }
 }

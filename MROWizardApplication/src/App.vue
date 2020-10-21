@@ -48,6 +48,7 @@
                       id="logoImg"
                     />
                   </div>
+                  <ModalIdle/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -103,6 +104,7 @@
 </template>
 
 <script>
+import ModalIdle from "./components/ModalIdle";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -174,6 +176,14 @@ export default {
             "ConfigModule/setProgressBarIncrValue",
             apiFacilityResponse.oWizards
           );
+          this.$store.commit(
+            "ConfigModule/nPrimaryTimeout",
+            apiFacilityResponse.facilityLogoandBackground[0].nPrimaryTimeout
+          );
+          this.$store.commit(
+            "ConfigModule/nSecondaryTimeout",
+            apiFacilityResponse.facilityLogoandBackground[0].nSecondaryTimeout
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
@@ -215,6 +225,14 @@ export default {
                   this.$store.commit(
                     "ConfigModule/nAuthExpirationMonths",
                     singleLocation.nAuthExpirationMonths
+                  );
+                  this.$store.commit(
+                    "ConfigModule/nPrimaryTimeout",
+                    apiLocationResponse.oLocations[0].nPrimaryTimeout
+                  );
+                  this.$store.commit(
+                    "ConfigModule/nSecondaryTimeout",
+                    apiLocationResponse.oLocations[0].nSecondaryTimeout
                   );
                 }
               });
@@ -273,6 +291,7 @@ export default {
     }
   },
   components: {
+    ModalIdle,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

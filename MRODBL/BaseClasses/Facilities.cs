@@ -49,6 +49,10 @@ namespace MRODBL.BaseClasses
         public bool bRequestorEmailConfirm { get; set; }
         [IgnorePropertyCompare]
         public bool bRequestorEmailVerify { get; set; }
+        [DisplayName("Primary Timeout")]
+        public int nPrimaryTimeout { get; set; }
+        [DisplayName("Secondary Timeout")]
+        public int nSecondaryTimeout { get; set; }
         #endregion
     }
 }
