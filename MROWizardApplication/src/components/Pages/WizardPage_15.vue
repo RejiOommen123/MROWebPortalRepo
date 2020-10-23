@@ -222,7 +222,7 @@ export default {
       menu1: false,
 
       // disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
-      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_pickUpInstruction,
+      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_pickUpInstruction,
     };
   },
   //Shipment type validations

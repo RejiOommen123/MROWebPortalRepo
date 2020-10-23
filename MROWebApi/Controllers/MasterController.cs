@@ -716,7 +716,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    shipmentType.nWizardID = 14;
+                    shipmentType.nWizardID = 15;
                     shipmentType.dtLastUpdate = DateTime.Now;
                     shipmentType.dtCreated = DateTime.Now;
                     //spaces remove
