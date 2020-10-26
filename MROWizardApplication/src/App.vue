@@ -189,8 +189,10 @@ export default {
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;
           //disable loader and show wizard pop up screen
-          this.dialogLoader = false;
-          this.dialog = true;
+          if(locationLength != 1){
+            this.dialogLoader = false;
+            this.dialog = true;
+          }
           //API request to get wizard config data based on location id.
           if (locationLength == 1) {
             let singleLocation = this.$store.state.ConfigModule
@@ -234,6 +236,8 @@ export default {
                     "ConfigModule/nSecondaryTimeout",
                     apiLocationResponse.oLocations[0].nSecondaryTimeout
                   );
+                  this.dialogLoader = false;
+                  this.dialog = true;
                 }
               });
           }
