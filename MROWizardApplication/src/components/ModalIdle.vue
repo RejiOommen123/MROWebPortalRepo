@@ -33,7 +33,7 @@ export default {
     name: 'SessionTimeout',
     data: function () {
         return {
-            events :['click', 'mousemove', 'mousedown', 'scroll', 'keypress', 'load'],
+            events :['click', 'mousemove', 'mousedown', 'scroll', 'keypress', 'load', 'touchstart'],
             primaryTimer: null,
             secondaryTimer: null,
             firstTime:0,
