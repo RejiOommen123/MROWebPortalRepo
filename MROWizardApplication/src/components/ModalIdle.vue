@@ -2,15 +2,15 @@
   <div>
     <v-dialog
       v-model="dialog"
-      max-width="250"
+      max-width="280"
       light
     >
       <v-card>
         <v-card-title class="headline">Session Expired</v-card-title>
 
         <v-card-text>
-          <p>You have left this browser idle for {{this.secondTime/1000}} seconds.</p>
-          <p>{{ time/1000 }} second left</p>
+          <p>You have left this browser idle for {{this.firstTime/1000}} seconds.</p>
+          <p>{{ time/1000 }} second left for session timeout.</p>
         </v-card-text>
 
         <v-card-actions>
