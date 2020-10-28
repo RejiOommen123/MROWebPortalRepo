@@ -40,6 +40,19 @@
                 </v-edit-dialog>
                 <label v-else>{{props.item.sFieldName}}</label>
               </template>
+              <template v-slot:item.sFieldToolTip="props">
+                <v-edit-dialog
+                  v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
+                  :return-value.sync="props.item.sFieldToolTip"
+                  @save="pushToArray(props.item)"
+                >
+                  {{ props.item.sFieldToolTip }}
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.sFieldToolTip" label="Edit" counter maxlength="500"></v-text-field>
+                  </template>
+                </v-edit-dialog>
+                <label v-else>{{props.item.sFieldToolTip}}</label>
+              </template>
               <!-- Template for Field Order -->
               <template v-slot:item.nFieldOrder="props">
                 <v-edit-dialog
@@ -115,16 +128,22 @@ export default {
           text: "Type",
           align: "start",
           value: "sType",
-          width: "20%",
+          width: "15%",
           searchable:true
         },
         {
           text: "Name",
           align: "start",
           value: "sFieldName",
-          width: "50%",
+          width: "30%",
         },
-        { text: "Order", value: "nFieldOrder", width: "20%" },
+        {
+          text: "Tooltip",
+          align: "start",
+          value: "sFieldToolTip",
+          width: "40%",
+        },
+        { text: "Order", value: "nFieldOrder", width: "10%" },
         { text: "Action", value: "actions", width: "10%", sortable: false },
       ],
       gridData: this.getGridData(),

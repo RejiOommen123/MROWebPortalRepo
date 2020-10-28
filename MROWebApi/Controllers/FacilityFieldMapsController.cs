@@ -167,7 +167,8 @@ namespace MROWebApi.Controllers
                                     dtLastUpdate = DateTime.Now,
                                     nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
                                     dtCreated = shipmentType.dtCreated,
-                                    nCreatedAdminUserID = shipmentType.nCreatedAdminUserID
+                                    nCreatedAdminUserID = shipmentType.nCreatedAdminUserID,
+                                    sFieldToolTip=shipmentType.sFieldToolTip
                                 }
                                 );
                             idList.Add(shipmentType.nFacilityFieldMapID);
@@ -220,7 +221,8 @@ namespace MROWebApi.Controllers
                                     dtLastUpdate = DateTime.Now,
                                     nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
                                     dtCreated = primaryReason.dtCreated,
-                                    nCreatedAdminUserID = primaryReason.nCreatedAdminUserID
+                                    nCreatedAdminUserID = primaryReason.nCreatedAdminUserID,
+                                    sFieldToolTip = primaryReason.sFieldToolTip
                                 }
                                 );
                             idList.Add(primaryReason.nFacilityFieldMapID);
@@ -274,7 +276,8 @@ namespace MROWebApi.Controllers
                                     dtLastUpdate = DateTime.Now,
                                     nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
                                     dtCreated = sensitiveInfo.dtCreated,
-                                    nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID
+                                    nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID,
+                                    sFieldToolTip = sensitiveInfo.sFieldToolTip
                                 }
                                 );
                             idList.Add(sensitiveInfo.nFacilityFieldMapID);
@@ -328,7 +331,8 @@ namespace MROWebApi.Controllers
                                     dtLastUpdate = DateTime.Now,
                                     nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
                                     dtCreated = recordType.dtCreated,
-                                    nCreatedAdminUserID = recordType.nCreatedAdminUserID
+                                    nCreatedAdminUserID = recordType.nCreatedAdminUserID,
+                                    sFieldToolTip = recordType.sFieldToolTip
                                 }
                                 );
                             idList.Add(recordType.nFacilityFieldMapID);
@@ -377,7 +381,8 @@ namespace MROWebApi.Controllers
                                     nUpdatedAdminUserID = fieldMaps.nUpdatedAdminUserID,
                                     dtLastUpdate = DateTime.Now,
                                     dtCreated = fieldMaps.dtCreated,
-                                    nCreatedAdminUserID = fieldMaps.nCreatedAdminUserID
+                                    nCreatedAdminUserID = fieldMaps.nCreatedAdminUserID,
+                                    sFieldToolTip = fieldMaps.sFieldToolTip
                                 }
                                 );
                             idList.Add(fieldMaps.nFieldID);
@@ -431,7 +436,8 @@ namespace MROWebApi.Controllers
                                     dtLastUpdate = DateTime.Now,
                                     nUpdatedAdminUserID = patientRepresentative.nUpdatedAdminUserID,
                                     dtCreated = patientRepresentative.dtCreated,
-                                    nCreatedAdminUserID = patientRepresentative.nCreatedAdminUserID
+                                    nCreatedAdminUserID = patientRepresentative.nCreatedAdminUserID,
+                                    sFieldToolTip = patientRepresentative.sFieldToolTip
                                 }
                                 );
                             idList.Add(patientRepresentative.nFacilityFieldMapID);

@@ -25,6 +25,8 @@ namespace MRODBL.BaseClasses
         public int nWizardID { get; set; }
         [DisplayName("Active Status")]
         public bool bShow { get; set; }
+        [DisplayName("Tooltip")]
+        public string sFieldToolTip { get; set; }
         #endregion
     }
 

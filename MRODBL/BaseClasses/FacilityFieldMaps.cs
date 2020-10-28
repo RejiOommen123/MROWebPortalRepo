@@ -28,6 +28,8 @@ namespace MRODBL.BaseClasses
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         [DisplayName("Order")]
         public int? nFieldOrder { get; set; }
+        [DisplayName("Tooltip")]
+        public string sFieldToolTip { get; set; }
         #endregion
     }
 }

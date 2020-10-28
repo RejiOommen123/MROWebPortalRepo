@@ -32,6 +32,8 @@ namespace MRODBL.BaseClasses
         [MaxLength]
         [DisplayName("Field Name")]
         public string sFieldName { get; set; }
+        [DisplayName("Tooltip")]
+        public string sFieldToolTip { get; set; }
         #endregion
     }
 }
