@@ -33,7 +33,7 @@ export default {
     name: 'SessionTimeout',
     data: function () {
         return {
-            events :['click', 'mousemove', 'mousedown', 'scroll', 'keypress', 'load', 'touchstart'],
+            events :['click', 'mousemove', 'mousedown', 'scroll', 'keydown', 'load', 'touchstart'],
             primaryTimer: null,
             secondaryTimer: null,
             firstTime:0,
@@ -60,6 +60,7 @@ export default {
      watch: {
       firstTimer(newfirstTimer) {
         this.firstTime = newfirstTimer * 1000;
+        this.resetTimer();
       },
       secondTimer(newsecondTimer) {
         this.secondTime = newsecondTimer * 1000;
