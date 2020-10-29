@@ -152,7 +152,7 @@
             <v-btn
               v-else
               @click.prevent="continueAhead"
-              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedPatientRepresentatives[0]==''|| $v.files.$invalid "
+              :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedPatientRepresentatives.length==0|| $v.files.$invalid "
               class="mr-4 next"
             >Continue</v-btn>
           </v-col>
