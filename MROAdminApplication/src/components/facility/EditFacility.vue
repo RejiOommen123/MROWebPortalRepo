@@ -220,17 +220,34 @@
                 <span>Click to copy Button Code</span>
               </v-tooltip>
             </label>
-            <!-- Show confirm email to requestor -->
+            <!-- Show confirm email to requestor -->         
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
-            <v-switch
-              inset
-              flat
-              color="rgb(0,91,168)"
-              solo
-              id="bRequestorEmailConfirm"
-              v-model="facility.bRequestorEmailConfirm"
-            ></v-switch>
+            <v-row>
+              <v-col cols="6" md="6">    
+                <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailConfirm"
+                  v-model="facility.bRequestorEmailConfirm"
+                ></v-switch>
+              </v-col>
+              <v-col cols="6" md="6">  
+                <label for="bRequestorEmailVerify">Send email verification to Requestor ?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailVerify"
+                  v-model="facility.bRequestorEmailVerify"
+                ></v-switch>
+              </v-col>
+            </v-row>
             <v-row>
               <v-col cols="6" md="6">              
                 <label class="required" for="Primary Timeout">Primary Timeout:</label>
@@ -261,16 +278,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <div id="marginDiv7"></div>
-            <!-- <label for="bRequestorEmailVerify">Send email verification for Requestor email address ?</label>
-            <v-switch
-              inset
-              flat
-              color="rgb(0,91,168)"
-              solo
-              id="bRequestorEmailVerify"
-              v-model="facility.bRequestorEmailVerify"
-            ></v-switch> -->
+            <div id="marginDiv7"></div>            
           </v-col>
         </v-row>
         <div class="submit">

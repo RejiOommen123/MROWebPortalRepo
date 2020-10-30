@@ -23,6 +23,7 @@ const state = {
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
+    bEmailVerified:false,
     sAddZipCode: '',
     sAddCity: '',
     sAddState: '',
@@ -144,6 +145,9 @@ const mutations = {
     },
     bConfirmReport(state, payload) {
         state.bConfirmReport = payload;
+    },
+    bEmailVerified(state, payload) {
+        state.bEmailVerified = payload;
     },
     sAddZipCode(state, payload) {
         state.sAddZipCode = payload;

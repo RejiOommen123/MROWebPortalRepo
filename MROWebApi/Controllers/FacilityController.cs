@@ -132,7 +132,6 @@ namespace MROWebAPI.Controllers
                     facility.bActiveStatus = false;
                     facility.dtCreated = DateTime.Now;
                     facility.dtLastUpdate = DateTime.Now;
-                    facility.bRequestorEmailVerify = false;
                     #endregion
 
                     FacilitiesRepository rpFac = new FacilitiesRepository(_info);
