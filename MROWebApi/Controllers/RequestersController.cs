@@ -60,7 +60,7 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
-            int nRequesterId = 0;
+            int nRequesterId = requester.nRequesterID;
             try
             {
                 #region Data Addition ! From UI
