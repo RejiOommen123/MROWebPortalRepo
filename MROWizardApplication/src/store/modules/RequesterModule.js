@@ -78,8 +78,7 @@ const state = {
     nFeedbackRating:0,
     sFeedbackComment:'',   
     sWizardName:'',
-    bForceCompliance:false
-    sWizardName:'',
+    bForceCompliance:false,
     sGUID:''
 }
 const mutations = {
@@ -312,7 +311,6 @@ const mutations = {
     },
     bForceCompliance(state, payload) {
         state.bForceCompliance = payload;
-    },
     },
     sGUID(state, payload) {
         state.sGUID = payload;
