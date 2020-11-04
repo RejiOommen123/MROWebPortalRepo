@@ -176,17 +176,45 @@
             ></v-text-field> -->
             <v-select id="nConnectionId" :rules="[(v) => !!v || 'Connection string is required']" required solo v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" item-value="nConnectionID">
                 
-            </v-select>
-            
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
-            <v-switch
-              inset
-              flat
-              color="rgb(0,91,168)"
-              solo
-              id="bRequestorEmailConfirm"
-              v-model="facility.bRequestorEmailConfirm"
-            ></v-switch>
+            </v-select>            
+            <v-row>
+              <v-col cols="4" md="4">    
+                <label for="bRequestorEmailConfirm">Confirmation email?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailConfirm"
+                  v-model="facility.bRequestorEmailConfirm"
+                ></v-switch>
+              </v-col>
+              <v-col cols="4" md="4">  
+                <label for="bRequestorEmailVerify">Verification email?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailVerify"
+                  v-model="facility.bRequestorEmailVerify"
+                ></v-switch>
+              </v-col>
+              <v-col cols="4" md="4">  
+                <label for="bForceCompliance">Apply force Compliance</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bForceCompliance"
+                  v-model="facility.bForceCompliance"
+                ></v-switch>
+              </v-col>
+            </v-row>
             <v-row>
               <v-col cols="6" md="6">              
                 <label class="required" for="Primary Timeout">Primary Timeout:</label>
@@ -489,6 +517,8 @@ export default {
         sOutboundEmail: "",
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
+        bRequestorEmailVerify:false,
+        bForceCompliance:false,
         nPrimaryTimeout:0,
         nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,

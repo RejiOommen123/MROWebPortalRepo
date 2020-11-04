@@ -223,6 +223,9 @@ export default {
       dialog:true,
       diableCamera:false,
       unsupported:false,
+      facilityForceCompliance: this.$store.state.ConfigModule
+        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
+        .bForceCompliance,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };
   },
@@ -347,11 +350,22 @@ export default {
       this.sIdentityImage='';
       this.fileInput='';
       this.sStatus="CapturingImg";
+      if(!this.$store.state.requestermodule.bPhoneNoVerified && !this.$store.state.requestermodule.bEmailVerified){
+        if(this.facilityForceCompliance)
+        {
+          this.$store.commit("requestermodule/bForceCompliance", false);
+        }
+      }
       this.continue();
     },
     nextPage() {
       this.$store.commit("ConfigModule/bIdentitySkiped", false);
       this.$store.commit("requestermodule/sIdentityImage", this.sIdentityImage);
+      this.$store.commit("ConfigModule/bReturnedForCompliance",false);
+      if(this.facilityForceCompliance)
+      {
+        this.$store.commit("requestermodule/bForceCompliance", true);
+      }
       this.continue();
     },
     continue(){

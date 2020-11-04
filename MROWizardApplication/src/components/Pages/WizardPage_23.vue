@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>
+    <h3 class="page-title">Almost done! Review and sign when ready. (<a @click="previous">Edit Request</a>)</h3>   
+    <ModalForceCompliance v-if="bShowCompliance"/>
     <v-dialog v-model="dialog" max-width="400px" style="backgroundColor:white">
       <v-card id="signatureCard">
         <v-btn class="wizardClose" icon @click="dialog = false">
@@ -88,9 +89,11 @@
 
 <script>
 import pdf from "vue-pdf";
+import ModalForceCompliance from "../ModalForceCompliance";
 export default {
   components: {
-    pdf
+    pdf,
+    ModalForceCompliance
   },
   data() {
     return {
@@ -107,6 +110,7 @@ export default {
       bFormSigned:false,
       dialogLoader:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
+      bShowCompliance:false
     };
   },
   activated(){
@@ -114,6 +118,7 @@ export default {
     this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
     this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");
     this.$vuetify.theme.dark = false;    
+    this.bShowCompliance=true;
      var combinedObj = {
         oRequester: this.$store.state.requestermodule,
         bIsTestRequest: false,
@@ -143,6 +148,7 @@ export default {
     this.$store.commit("ConfigModule/mutatedialogMaxWidth", '600px');
     this.$store.commit("ConfigModule/mutatedialogMaxHeight", '653px');
     this.$vuetify.theme.dark = true;
+    this.bShowCompliance=false;
   },
   methods: {
     undo() {

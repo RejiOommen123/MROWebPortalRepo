@@ -289,6 +289,8 @@ namespace MROWebApi.Controllers
                     writer.WriteElementString("relation", sRelationToPatient);
                     writer.WriteElementString("relationcode", requester.sSelectedRelation);
                     writer.WriteElementString("email", requester.sRequesterEmailId);
+                    writer.WriteElementString("emailverified", requester.bEmailVerified.ToString());
+                    writer.WriteElementString("forcecompliance", requester.bForceCompliance.ToString());
                     writer.WriteStartElement("address");
                     //For Street,City,State,ZipCode
                     writer.WriteElementString("apartment", requester.sAddApartment);
@@ -592,8 +594,8 @@ namespace MROWebApi.Controllers
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
-            if (dbFacility.bRequestorEmailVerify)
-            {
+            //if (dbFacility.bRequestorEmailVerify)
+            //{
 
                 var sOTP = GenerateRandomNo().ToString();
 
@@ -656,8 +658,8 @@ namespace MROWebApi.Controllers
                     return Content(ex.Message);
                 }
                 return Ok(sOTP);
-            }
-            return "false";
+            //}
+          // return "false";
         }
         #endregion
 

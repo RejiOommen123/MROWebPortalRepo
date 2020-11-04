@@ -23,6 +23,7 @@ const state = {
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
+    bEmailVerified:false,
     sAddZipCode: '',
     sAddCity: '',
     sAddState: '',
@@ -76,6 +77,8 @@ const state = {
     bRequestAnotherRecord:false,
     nFeedbackRating:0,
     sFeedbackComment:'',   
+    sWizardName:'',
+    bForceCompliance:false
     sWizardName:'',
     sGUID:''
 }
@@ -145,6 +148,9 @@ const mutations = {
     },
     bConfirmReport(state, payload) {
         state.bConfirmReport = payload;
+    },
+    bEmailVerified(state, payload) {
+        state.bEmailVerified = payload;
     },
     sAddZipCode(state, payload) {
         state.sAddZipCode = payload;
@@ -303,6 +309,10 @@ const mutations = {
     },
     sWizardName(state, payload) {
         state.sWizardName = payload;
+    },
+    bForceCompliance(state, payload) {
+        state.bForceCompliance = payload;
+    },
     },
     sGUID(state, payload) {
         state.sGUID = payload;
