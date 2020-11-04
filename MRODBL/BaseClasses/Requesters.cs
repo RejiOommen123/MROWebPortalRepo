@@ -132,7 +132,8 @@ namespace MRODBL.BaseClasses
         public DateTime dtLastUpdate { get; set; }
         public string sOSInfo { get; set; }
         public string sBrowserInfo { get; set; }
-        public bool bEmailVerified { get; set; }        
+        public bool bEmailVerified { get; set; }
+        public bool bForceCompliance { get; set; }        
         #endregion
     }
 }

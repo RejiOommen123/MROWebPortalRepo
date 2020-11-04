@@ -98,7 +98,10 @@ export default {
       sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
       sVerify: "",
       service: "",
-      subData: {}
+      subData: {},
+      facilityForceCompliance: this.$store.state.ConfigModule
+        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
+        .bForceCompliance,
     };
   },
   // OTP and phono validations
@@ -179,6 +182,10 @@ export default {
             this.bOtpSend = false;
             this.showSuccessBlock = true;
             this.disableInput = true;
+            if(this.facilityForceCompliance)
+            {
+              this.$store.commit("requestermodule/bForceCompliance", true);
+            }
           }
           if (response.data.status == "ERROR") {
             alert("Invalid verification code");
@@ -208,8 +215,17 @@ export default {
           });
       }
       //Partial Requester Data Save End
-
-      this.$store.commit("ConfigModule/mutateNextIndex");
+      if(this.$store.state.ConfigModule.bReturnedForCompliance && this.showSuccessBlock)
+      {
+        var index,wizard='Wizard_23';
+        this.$store.commit("ConfigModule/bReturnedForCompliance",false);
+        index = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oWizards.indexOf(wizard);
+        this.$store.commit("ConfigModule/mutatewizardArrayIndex",index);
+        this.$store.commit("ConfigModule/mutateselectedWizard",wizard);
+      }
+      else{
+        this.$store.commit("ConfigModule/mutateNextIndex");
+      }
     },
     skipPage() {
       this.nextPage();

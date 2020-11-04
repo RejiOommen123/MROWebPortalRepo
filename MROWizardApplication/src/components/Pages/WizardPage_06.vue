@@ -37,7 +37,7 @@
             ></v-checkbox>
             <div v-if="verified==false">
             <v-btn
-              v-if="!showVerifyBlock || !bRequestorEmailVerify"
+              v-if="!showVerifyBlock || !(bRequestorEmailVerify || bReturnedForCompliance)"
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
@@ -48,7 +48,7 @@
         <v-col  cols="12" offset-sm="2" sm="8">
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-show="showVerifyBlock && bRequestorEmailVerify">
+            <div v-show="(showVerifyBlock && bRequestorEmailVerify) || (showVerifyBlock && bReturnedForCompliance)">
               <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
                <v-alert
                     v-if="otpSentAlert"
@@ -64,6 +64,13 @@
                 :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
               >Send Email Verification</v-btn>
+              <v-btn
+                v-if="emailSent==false"
+                @click.prevent="nextPage"
+                :disabled="$v.emailValid.$invalid"
+                style="margin-left:10px"
+                class="next"
+              >Skip</v-btn>
               <div v-if="showVerifyInput==true">
                 <v-col cols="12" offset-sm="3" sm="6">
                 <v-text-field
@@ -134,6 +141,10 @@ export default {
       inputDisabled: false,
       emailSent:false,
       otpSentAlert:false,
+      bReturnedForCompliance:false,
+      facilityForceCompliance: this.$store.state.ConfigModule
+        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
+        .bForceCompliance,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_06_disclaimer01,
@@ -164,6 +175,9 @@ export default {
       }
     },
     sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) }
+  },
+  activated(){
+    this.bReturnedForCompliance=this.$store.state.ConfigModule.bReturnedForCompliance;
   },
   computed: {
     // Email and verify OTP validations error message setter
@@ -236,6 +250,10 @@ export default {
         this.verified = true;
         this.inputDisabled = true;
         this.showVerifyBlock = false;
+        if(this.facilityForceCompliance)
+        {
+          this.$store.commit("requestermodule/bForceCompliance", true);
+        }
         // this.nextPage();
       } else {
         alert("Invalid Key");
@@ -268,8 +286,17 @@ export default {
         });
       }
       //Partial Requester Data Save End
-
-      this.$store.commit("ConfigModule/mutateNextIndex");
+      if(this.bReturnedForCompliance && this.verified)
+      {
+        var index,wizard='Wizard_23';
+        this.$store.commit("ConfigModule/bReturnedForCompliance",false);
+        index = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oWizards.indexOf(wizard);
+        this.$store.commit("ConfigModule/mutatewizardArrayIndex",index);
+        this.$store.commit("ConfigModule/mutateselectedWizard",wizard);
+      }
+      else{
+        this.$store.commit("ConfigModule/mutateNextIndex");
+      }
     }
   }
 };

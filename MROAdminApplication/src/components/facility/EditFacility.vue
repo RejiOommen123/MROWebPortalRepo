@@ -223,8 +223,8 @@
             <!-- Show confirm email to requestor -->         
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
             <v-row>
-              <v-col cols="6" md="6">    
-                <label for="bRequestorEmailConfirm">Send confirmation email to Requestor ?</label>
+              <v-col cols="4" md="4">    
+                <label for="bRequestorEmailConfirm">Confirmation email?</label>
                 <v-switch
                   hide-details
                   inset
@@ -235,8 +235,8 @@
                   v-model="facility.bRequestorEmailConfirm"
                 ></v-switch>
               </v-col>
-              <v-col cols="6" md="6">  
-                <label for="bRequestorEmailVerify">Send email verification to Requestor ?</label>
+              <v-col cols="4" md="4">  
+                <label for="bRequestorEmailVerify">Verification email?</label>
                 <v-switch
                   hide-details
                   inset
@@ -245,6 +245,18 @@
                   solo
                   id="bRequestorEmailVerify"
                   v-model="facility.bRequestorEmailVerify"
+                ></v-switch>
+              </v-col>
+              <v-col cols="4" md="4">  
+                <label for="bForceCompliance">Apply force Compliance</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bForceCompliance"
+                  v-model="facility.bForceCompliance"
                 ></v-switch>
               </v-col>
             </v-row>
@@ -526,6 +538,7 @@ export default {
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
         bRequestorEmailVerify:false,
+        bForceCompliance:false,
         nPrimaryTimeout:0,
         nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,

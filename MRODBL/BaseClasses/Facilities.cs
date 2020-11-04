@@ -47,12 +47,14 @@ namespace MRODBL.BaseClasses
         public bool bFacilityLogging { get; set; }
         [DisplayName("Confirm Email Switch")]
         public bool bRequestorEmailConfirm { get; set; }
-        [IgnorePropertyCompare]
+        [DisplayName("Verification Email Switch")]
         public bool bRequestorEmailVerify { get; set; }
         [DisplayName("Primary Timeout")]
         public int nPrimaryTimeout { get; set; }
         [DisplayName("Secondary Timeout")]
         public int nSecondaryTimeout { get; set; }
+        [DisplayName("Force Compliance Switch")]
+        public bool bForceCompliance { get; set; }
         #endregion
     }
 }

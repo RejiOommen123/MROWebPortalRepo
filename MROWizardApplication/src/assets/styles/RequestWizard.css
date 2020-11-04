@@ -278,7 +278,9 @@ button.wizardSelectionButton:hover {
   margin-left:10%;
   width:80%;
 }
-
+.forceCompliance{
+  width: 25%;
+}
 /* signature page css end */
 
 @media only screen and (max-width: 600px) {
@@ -334,7 +336,9 @@ button.wizardSelectionButton:hover {
     margin-left:0;
     width:100%;
   }
-  
+  .forceCompliance{
+    width: 90%;
+  }  
 }
 .input-group-addon {
   margin-top: 20px;
