@@ -5,20 +5,32 @@
         <v-col cols="12">
           <v-card>
             <v-card-title>
-              Edit Fields For Facility - {{facilityName}}
-              <v-spacer></v-spacer>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field>
+              <v-row>
+                <v-col cols="12" md="6">
+                  Edit Fields For Facility - {{facilityName}}
+                </v-col>
+                <v-col cols="12" md="2">
+                  <v-select 
+                    label="Field Type:"
+                    v-model="select" 
+                    :items="items" 
+                  ></v-select>  
+                </v-col>
+                <v-col cols="12" md="4"> 
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    single-line
+                    hide-details
+                  ></v-text-field>               
+                </v-col>
+              </v-row>
             </v-card-title>
             <!-- Facility List DataTable  -->
             <v-data-table
               :headers="headers"
-              :items="gridData"
+              :items="filteredItems"
               :search="search"
               :footer-props="{
                 'items-per-page-options': [10,25,50,100]
@@ -150,10 +162,31 @@ export default {
       updatedArray: [],
       facilityName: "",
       errorAlert:false,
-      errorMessage:''
+      errorMessage:'',
+      select: "--Select--",
+        items: [
+          '--Select--',
+          'Field',
+          'Patient Representative',          
+          'Primary Reason',
+          'Record Type',
+          'Sensitive Info',
+          'Shipment Type'
+        ],
     };
   },
-  mounted() {},
+  computed: {
+    filteredItems() {
+      if(this.select=='--Select--'){
+        return this.gridData;
+      }
+      else{
+      return this.gridData.filter((i) => {
+        return i.sType === this.select;
+      })
+      }
+    }
+  },
   methods: {
     // API call to Get all Fields Maps
     getGridData() {
