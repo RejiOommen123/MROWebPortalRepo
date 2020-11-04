@@ -45,7 +45,6 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    [APIKeyAuth]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
@@ -60,6 +59,7 @@ namespace MROWebApi.Controllers
         [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}")]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
         {
             try
@@ -120,6 +120,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<IActionResult> GenerateXML([FromBody] Requesters requester)
         {
             if (ModelState.IsValid)
@@ -664,6 +665,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<IActionResult> GeneratePDF(TestPdf testPdf)
         {
             if (ModelState.IsValid)

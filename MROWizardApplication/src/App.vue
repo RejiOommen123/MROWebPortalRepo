@@ -49,6 +49,7 @@
                     />
                   </div>
                   <ModalIdle/>
+                  <ModalUnauthorized/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -105,6 +106,7 @@
 
 <script>
 import ModalIdle from "./components/ModalIdle";
+import ModalUnauthorized from "./components/ModalUnauthorized";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -184,6 +186,14 @@ export default {
             "ConfigModule/nSecondaryTimeout",
             apiFacilityResponse.facilityLogoandBackground[0].nSecondaryTimeout
           );
+          this.$store.commit(
+            "requestermodule/nRequesterID",
+            apiFacilityResponse.requesterDetails[0].nRequestorID
+          );
+           this.$store.commit(
+            "requestermodule/sGUID",
+            apiFacilityResponse.requesterDetails[0].sGUID
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
@@ -197,7 +207,7 @@ export default {
           if (locationLength == 1) {
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
-
+              
             this.$http
               .get(
                 "Wizards/GetWizardConfig/fID=" +
@@ -296,6 +306,7 @@ export default {
   },
   components: {
     ModalIdle,
+    ModalUnauthorized,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

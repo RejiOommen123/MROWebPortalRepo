@@ -13,12 +13,15 @@ Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
 //Vuetify API Secret Key - Common Code for Adding Header
 Vue.http.interceptors.push((request, next) => {
-    // console.log(request);
-    var sAPIKey = "MRO@007"    
     if(request.url.indexOf('ringcaptcha') == -1){
-        request.headers.set('sAPIKey', sAPIKey)
+        request.headers.set('sRequestorID', (store.state.requestermodule.nRequesterID).toString());
+        request.headers.set('sGUID', store.state.requestermodule.sGUID);
     }
-    next()
+    next(function(response){
+        if(response.status == 401) {
+            store.commit("ConfigModule/bUnauthorized",true);
+          }
+    });
 })
 
 Vue.use(Vuelidate);

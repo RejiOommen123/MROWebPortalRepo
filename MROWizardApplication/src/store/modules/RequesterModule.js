@@ -76,7 +76,8 @@ const state = {
     bRequestAnotherRecord:false,
     nFeedbackRating:0,
     sFeedbackComment:'',   
-    sWizardName:''
+    sWizardName:'',
+    sGUID:''
 }
 const mutations = {
     nRequesterID(state, payload) {
@@ -302,6 +303,9 @@ const mutations = {
     },
     sWizardName(state, payload) {
         state.sWizardName = payload;
+    },
+    sGUID(state, payload) {
+        state.sGUID = payload;
     }
 }
 const actions = {}

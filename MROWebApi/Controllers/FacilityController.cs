@@ -18,7 +18,7 @@ namespace MROWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    [APIKeyAuth]
+    //[APIKeyAuth]
     public class FacilityController : ControllerBase
     {
         #region Facility Constructor

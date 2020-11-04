@@ -22,7 +22,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    [APIKeyAuth]
+    //[APIKeyAuth]
     public class RequestersController : ControllerBase
     {
         #region Requesters Constructor
@@ -58,9 +58,10 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
-            int nRequesterId = 0;
+            int nRequesterId = requester.nRequesterID;
             try
             {
                 #region Data Addition ! From UI

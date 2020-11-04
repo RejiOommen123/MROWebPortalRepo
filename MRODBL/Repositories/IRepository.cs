@@ -31,6 +31,8 @@ namespace MRODBL.Repositories
         /// <returns>Single Record of Table</returns>
         Task<T> Select(int Id);
 
+        Task<string> SelectGUID(int Id);
+
         /// <summary>
         /// Returns Latest Id of a Table
         /// </summary>
