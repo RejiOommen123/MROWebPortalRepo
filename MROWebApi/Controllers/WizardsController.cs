@@ -589,6 +589,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
