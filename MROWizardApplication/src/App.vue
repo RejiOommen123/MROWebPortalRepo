@@ -48,6 +48,21 @@
                       id="logoImg"
                     />
                   </div>
+                  <div id="helpBtnDiv">                    
+                      <v-tooltip  slot="append" bottom>
+                        <template v-slot:activator="{ on }">
+                          <a href="#"
+                            id="helpBtn"
+                            v-on="on"
+                          >
+                            Need Help?
+                          </a>
+                        </template>
+                        <v-col cols="12" sm="12">
+                          <p style="width:250px; background-color:transparent">Hello</p>
+                        </v-col>
+                      </v-tooltip>
+                  </div>
                   <ModalIdle/>
                   <ModalUnauthorized/>
                   <transition

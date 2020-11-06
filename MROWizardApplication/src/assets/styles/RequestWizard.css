@@ -281,6 +281,18 @@ button.wizardSelectionButton:hover {
 .forceCompliance{
   width: 25%;
 }
+
+#helpBtnDiv{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: none !important;
+}
+#helpBtn{
+  text-transform: none !important;
+  text-decoration: underline;
+  color: white;
+}
 /* signature page css end */
 
 @media only screen and (max-width: 600px) {
