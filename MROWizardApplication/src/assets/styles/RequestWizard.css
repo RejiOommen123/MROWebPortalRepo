@@ -281,7 +281,17 @@ button.wizardSelectionButton:hover {
 .forceCompliance{
   width: 25%;
 }
-
+.needHelp{
+  width: 30%;
+}
+.needHelp .col-12{
+  width: 30%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.needHelp .v-input input {
+  background-color: white !important;
+}
 #helpBtnDiv{
   display: flex;
   align-items: center;
@@ -292,6 +302,10 @@ button.wizardSelectionButton:hover {
   text-transform: none !important;
   text-decoration: underline;
   color: white;
+}
+.required:after {
+  content: " *";
+  color:#30c4b0;
 }
 /* signature page css end */
 
@@ -351,6 +365,9 @@ button.wizardSelectionButton:hover {
   .forceCompliance{
     width: 90%;
   }  
+  .needHelp{
+    width: 90%;
+  }
 }
 .input-group-addon {
   margin-top: 20px;

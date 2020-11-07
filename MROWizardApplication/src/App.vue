@@ -54,6 +54,7 @@
                           <a href="#"
                             id="helpBtn"
                             v-on="on"
+                            @click="showNeedHelp=true"
                           >
                             Need Help?
                           </a>
@@ -65,6 +66,7 @@
                   </div>
                   <ModalIdle/>
                   <ModalUnauthorized/>
+                  <ModalNeedHelp v-if="showNeedHelp"/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -122,6 +124,7 @@
 <script>
 import ModalIdle from "./components/ModalIdle";
 import ModalUnauthorized from "./components/ModalUnauthorized";
+import ModalNeedHelp from "./components/ModalNeedHelp";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -158,6 +161,7 @@ export default {
       phoneNo: 0,
       dialogLoader: false,
       dialogConfirm: false,
+      showNeedHelp:false
     };
   },
   created() {
@@ -322,6 +326,7 @@ export default {
   components: {
     ModalIdle,
     ModalUnauthorized,
+    ModalNeedHelp,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,
