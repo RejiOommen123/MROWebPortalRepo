@@ -5,7 +5,7 @@
         <v-card-title primary-title class="justify-center" style="color:white"><h2><b>Force Compliance</b></h2></v-card-title>
 
         <v-card-text style="color:white">
-            <h5>In order to comply with our privacy compliance needs, you are required to authentication using one of the following methods:</h5>
+            <h5>In order to comply with  privacy requirements, please verify your identity by one of the following methods:</h5>
           <v-row>
             <div style="width: 100%">
               <v-col cols="12" offset-sm="1" sm="10">
