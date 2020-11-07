@@ -209,9 +209,13 @@ export default {
             "requestermodule/nRequesterID",
             apiFacilityResponse.requesterDetails[0].nRequestorID
           );
-           this.$store.commit(
+          this.$store.commit(
             "requestermodule/sGUID",
             apiFacilityResponse.requesterDetails[0].sGUID
+          );
+          this.$store.commit(
+            "ConfigModule/bForceCompliance",
+            apiFacilityResponse.facilityLogoandBackground[0].bForceCompliance
           );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           //Check for number of locations in facility
@@ -264,6 +268,10 @@ export default {
                   this.$store.commit(
                     "ConfigModule/nSecondaryTimeout",
                     apiLocationResponse.oLocations[0].nSecondaryTimeout
+                  );
+                  this.$store.commit(
+                    "ConfigModule/bForceCompliance",
+                    apiLocationResponse.oLocations[0].bForceCompliance
                   );
                   this.dialogLoader = false;
                   this.dialog = true;

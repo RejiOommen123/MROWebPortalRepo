@@ -52,9 +52,7 @@ export default {
   name: "ForceCompliance",
   data: function () {
     return {
-        facilityForceCompliance: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
-        .bForceCompliance,
+        facilityForceCompliance: this.$store.state.ConfigModule.bForceCompliance,
         bForceCompliance:this.$store.state.requestermodule.bForceCompliance,
         dialog: false,
         sActiveBtn:''

@@ -71,6 +71,21 @@
               :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
+            <label for="bForceCompliance">Apply force Compliance:</label>
+            <v-btn-toggle
+                v-model="location.bForceCompliance"
+                mandatory
+              >
+                <v-btn :color="location.bForceCompliance==='true' ? 'green' : 'none'" value="true">
+                  Yes
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='null' ? 'primary' : 'none'" value="null">
+                  Default
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='false' ? 'red' : 'none'" value="false">
+                  NO
+                </v-btn>
+            </v-btn-toggle>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:
@@ -465,6 +480,7 @@ export default {
         sAuthTemplateName: "",
         nPrimaryTimeout:"",
         nSecondaryTimeout:"",
+        bForceCompliance:"null",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -604,6 +620,17 @@ export default {
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
       this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
       this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
+       switch(this.location.bForceCompliance){
+        case "true":
+          this.location.bForceCompliance=true;
+          break;
+        case "false":
+          this.location.bForceCompliance=false;
+          break;
+        case "null":
+          this.location.bForceCompliance=null;
+          break;
+      }
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
         .then(

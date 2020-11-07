@@ -170,6 +170,10 @@ export default {
                   "ConfigModule/nSecondaryTimeout",
                   apiLocationResponse.oLocations[0].nSecondaryTimeout
                 );
+                this.$store.commit(
+                  "ConfigModule/bForceCompliance",
+                  apiLocationResponse.oLocations[0].bForceCompliance
+                );
                 this.dialogLoader = false;
                 //Partial Requester Data Save Start
                 this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
