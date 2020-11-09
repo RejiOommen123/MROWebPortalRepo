@@ -24,7 +24,7 @@
                 v-model="sName"
                 :error-messages="sNameError"
                 required
-                maxlength="30"
+                maxlength="50"
                 @input="$v.sName.$touch()"
                 @blur="$v.sName.$touch()"
               ></v-text-field>
@@ -32,11 +32,12 @@
             <v-col cols="12" sm="4" >
               <label style="color:black" class="required" for="nPhoneNo">Phone Number:</label>
               <v-text-field
+                maxlength="10"
+                type="number"
                 solo
                 v-model="nPhoneNo"
                 :error-messages="nPhoneNoError"
                 required
-                maxlength="30"
                 @input="$v.nPhoneNo.$touch()"
                 @blur="$v.nPhoneNo.$touch()"
               ></v-text-field>
@@ -67,6 +68,7 @@
                 :disabled="$v.$invalid"
                 style=" text-transform: none;"
                 color="#30c4b0"
+                @click="onSubmit()"
               >Send Message</v-btn>    
             </v-col>
           </v-row>
@@ -82,6 +84,20 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+    <!-- Help mail send success -->
+        <v-dialog v-model="dialogSuccess" persistent width="300">
+          <v-card dark>
+            <v-card-text>
+              Your message has been sent. A Customer Service Expert will get back to you within 24 hours but please feel free to call if you need immediate assistance. Thank you!
+              <v-btn  
+                class="justify-center" 
+                style=" text-transform: none;"
+                color="#30c4b0"
+                @click="dialogSuccess=false"
+              >Close</v-btn>    
+            </v-card-text>
+          </v-card>
+        </v-dialog> 
   </div>
 </template>
 
@@ -92,7 +108,7 @@ export default {
   name: "NeedHelp",
   mixins: [validationMixin],
   validations: {
-    sName: { required, maxLength: maxLength(30) },
+    sName: { required, maxLength: maxLength(50) },
     nPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) },
     sEmail: { required, email},
     sMessage: { required }
@@ -104,7 +120,8 @@ export default {
         sEmail:'',
         sMessage:'',
         dialog:true,
-        dialogLoader:false
+        dialogLoader:false,
+        dialogSuccess:false
     };
   },
   computed: {
@@ -153,7 +170,7 @@ export default {
      var combinedObj = {
         oRequester: this.$store.state.requestermodule,
         sName: this.sName,
-        nPhoneNo: this.nPhoneNo,
+        nPhoneNo: parseInt(this.nPhoneNo),
         sEmail: this.sEmail,
         sMessage: this.sMessage
       };
@@ -161,6 +178,7 @@ export default {
         response => {
           if (response.ok == true) {
             this.dialogLoader = false;
+            this.dialogSuccess=false;
           }
         },
         error => {
