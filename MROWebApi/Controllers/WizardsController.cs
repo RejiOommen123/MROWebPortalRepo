@@ -1185,5 +1185,90 @@ namespace MROWebApi.Controllers
             return false;
         }
         #endregion
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        [SessionAuth]
+        public async Task<IActionResult> SendNeedHelpEmail(HelpInfo helpInfo)
+        {
+            try
+            {
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(helpInfo.oRequester.nFacilityID);
+
+                FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
+                FacilityLocations location = null;
+                if (helpInfo.oRequester.nLocationID > 0)
+                {
+                   location = await locaFac.Select(helpInfo.oRequester.nLocationID);
+                }
+
+                #region Decrypt SMTP Password
+                MROLogger password = new MROLogger(_info);
+                dbFacility.sSMTPPassword = password.DecryptString(dbFacility.sSMTPPassword);
+                #endregion
+
+                //From 
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress("Admin " + dbFacility.sFacilityName, dbFacility.sOutboundEmail);
+                message.From.Add(from);
+
+                //To
+                string toSupportEmailAddress = dbFacility.sSupportEmail;
+                if (!String.IsNullOrEmpty(location?.sSupportEmail))
+                {
+                    toSupportEmailAddress = location.sConfigLogoName;
+                }
+                MailboxAddress to = new MailboxAddress("Admin " + dbFacility.sFacilityName, toSupportEmailAddress);
+                message.To.Add(to);
+
+                //Subject
+                message.Subject = helpInfo.sName + " - Need Help while Requesting Data on eXpress";
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                string bodyText = "<h1>Please help!</h1><br/>" + "Requester details are below with the issue been faced<br/>" + "Name " + helpInfo.sName
+                    + "<br/> PhoneNo " + helpInfo.sPhoneNo
+                    + "<br/> Email " + helpInfo.sEmail
+                    + "<br/> Message " + helpInfo.sMessage;
+                bodyBuilder.HtmlBody = bodyText;
+                message.Body = bodyBuilder.ToMessageBody();
+                //GET Port number
+                //Make SSL true
+                try
+                {
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                }
+                catch (Exception ex)
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Trigger Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    return Content(ex.Message);
+                }
+                return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                return Content(ex.Message);
+            }
+        }
+
     }
 }

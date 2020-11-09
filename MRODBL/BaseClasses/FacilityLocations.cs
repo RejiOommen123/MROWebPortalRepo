@@ -76,6 +76,9 @@ namespace MRODBL.BaseClasses
         public int nSecondaryTimeout { get; set; }
         [DisplayName("Force Compliance Switch")]
         public bool? bForceCompliance { get; set; }
+        [MaxLength]
+        [DisplayName("Support Email")]
+        public string sSupportEmail { get; set; }
         #endregion
     }
 }

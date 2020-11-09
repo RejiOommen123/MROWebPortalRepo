@@ -216,6 +216,10 @@ export default {
             "ConfigModule/bForceCompliance",
             apiFacilityResponse.facilityLogoandBackground[0].bForceCompliance
           );
+          this.$store.commit(
+            "requestermodule/nFacilityID",
+            apiFacilityResponse.facilityLogoandBackground[0].nFacilityID
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule

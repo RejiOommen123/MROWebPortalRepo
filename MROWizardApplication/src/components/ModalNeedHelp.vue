@@ -30,16 +30,16 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="4" >
-              <label style="color:black" class="required" for="nPhoneNo">Phone Number:</label>
+              <label style="color:black" class="required" for="sPhoneNo">Phone Number:</label>
               <v-text-field
                 maxlength="10"
                 type="number"
                 solo
-                v-model="nPhoneNo"
-                :error-messages="nPhoneNoError"
+                v-model="sPhoneNo"
+                :error-messages="sPhoneNoError"
                 required
-                @input="$v.nPhoneNo.$touch()"
-                @blur="$v.nPhoneNo.$touch()"
+                @input="$v.sPhoneNo.$touch()"
+                @blur="$v.sPhoneNo.$touch()"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="4" >
@@ -109,14 +109,14 @@ export default {
   mixins: [validationMixin],
   validations: {
     sName: { required, maxLength: maxLength(50) },
-    nPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) },
+    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) },
     sEmail: { required, email},
     sMessage: { required }
   },
   data: function () {
     return {
         sName:'',
-        nPhoneNo:'',
+        sPhoneNo:'',
         sEmail:'',
         sMessage:'',
         dialog:true,
@@ -134,12 +134,12 @@ export default {
         errors.push("Name is required.");
       return errors;
     },
-    nPhoneNoError() {
+    sPhoneNoError() {
       const errors = [];
-      if (!this.$v.nPhoneNo.$dirty) return errors;
-      !this.$v.nPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
-      !this.$v.nPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
-      !this.$v.nPhoneNo.required && errors.push("Mobile No Required");
+      if (!this.$v.sPhoneNo.$dirty) return errors;
+      !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
       return errors;
     },
     sEmailError() {
@@ -170,7 +170,7 @@ export default {
      var combinedObj = {
         oRequester: this.$store.state.requestermodule,
         sName: this.sName,
-        nPhoneNo: parseInt(this.nPhoneNo),
+        sPhoneNo: this.sPhoneNo,
         sEmail: this.sEmail,
         sMessage: this.sMessage
       };
