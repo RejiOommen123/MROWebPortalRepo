@@ -60,7 +60,7 @@
                           </a>
                         </template>
                         <v-col cols="12" sm="12">
-                          <p style="width:250px; background-color:transparent">Hello</p>
+                          <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
                         </v-col>
                       </v-tooltip>
                   </div>
@@ -160,7 +160,8 @@ export default {
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
       phoneNo: 0,
       dialogLoader: false,
-      dialogConfirm: false
+      dialogConfirm: false,
+      disclaimer03: ''
     };
   },
   created() {
@@ -221,6 +222,7 @@ export default {
             apiFacilityResponse.facilityLogoandBackground[0].nFacilityID
           );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
+          this.disclaimer03 = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer03;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;

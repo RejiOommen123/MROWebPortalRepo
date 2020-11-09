@@ -88,7 +88,7 @@
         <v-dialog v-model="dialogSuccess" persistent width="300">
           <v-card dark>
             <v-card-text>
-              Your message has been sent. A Customer Service Expert will get back to you within 24 hours but please feel free to call if you need immediate assistance. Thank you!
+              {{disclaimer04}}
               <v-btn  
                 class="justify-center" 
                 style=" text-transform: none;"
@@ -121,7 +121,9 @@ export default {
         sMessage:'',
         dialog:true,
         dialogLoader:false,
-        dialogSuccess:false
+        dialogSuccess:false,        
+        disclaimer04: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer04,
     };
   },
   computed: {

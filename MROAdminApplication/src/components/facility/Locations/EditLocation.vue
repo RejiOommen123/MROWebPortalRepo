@@ -102,10 +102,21 @@
                 </template>
                 <span>Click to copy Button Code</span>
               </v-tooltip>
-            </label>
+            </label>            
             <!-- Show confirm email to requestor -->
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
-            <label for="bForceCompliance">Apply force Compliance:</label>
+            <label class="required" for="sSupportEmail">Support Email:</label>
+            <v-text-field
+              type="text"
+              id="sSupportEmail"
+              placeholder="Enter Support Email"
+              v-model="location.sSupportEmail"
+              @input="$v.location.sSupportEmail.$touch()"
+              @blur="$v.location.sSupportEmail.$touch()"
+              :error-messages="sSupportEmailErrors"
+              solo
+            ></v-text-field>
+            <label for="bForceCompliance">Apply force Compliance?</label>
             <v-btn-toggle
                 v-model="location.bForceCompliance"
                 mandatory
@@ -376,7 +387,8 @@ import {
   required,
   minLength,
   maxLength,
-  numeric
+  numeric,
+  email
 } from "vuelidate/lib/validators";
 export default {
     //custom option named myJson
@@ -408,6 +420,7 @@ export default {
       sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },      
       nPrimaryTimeout: { numeric },
       nSecondaryTimeout: { numeric },
+      sSupportEmail: { email },
     }
   },
   computed: {
@@ -489,7 +502,14 @@ export default {
       !this.$v.location.nSecondaryTimeout.numeric &&
         errors.push("Secondary Timeout Must be Numeric");
       return errors;
-    }
+    },
+    sSupportEmailErrors() {
+      const errors = [];
+      if (!this.$v.location.sSupportEmail.$dirty) return errors;
+      !this.$v.location.sSupportEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      return errors;
+    },
   },
   name: "EditLocation",
   data() {

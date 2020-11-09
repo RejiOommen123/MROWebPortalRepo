@@ -1218,7 +1218,7 @@ namespace MROWebApi.Controllers
                 string toSupportEmailAddress = dbFacility.sSupportEmail;
                 if (!String.IsNullOrEmpty(location?.sSupportEmail))
                 {
-                    toSupportEmailAddress = location.sConfigLogoName;
+                    toSupportEmailAddress = location.sSupportEmail;
                 }
                 MailboxAddress to = new MailboxAddress("Admin " + dbFacility.sFacilityName, toSupportEmailAddress);
                 message.To.Add(to);

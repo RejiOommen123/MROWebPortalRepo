@@ -128,6 +128,17 @@
               :error-messages="sOutboundEmailErrors"
               solo
             ></v-text-field>
+            <label class="required" for="sSupportEmail">Support Email:</label>
+            <v-text-field
+              type="text"
+              id="sSupportEmail"
+              placeholder="Enter Support Email"
+              v-model="facility.sSupportEmail"
+              @input="$v.facility.sSupportEmail.$touch()"
+              @blur="$v.facility.sSupportEmail.$touch()"
+              :error-messages="sSupportEmailErrors"
+              solo
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label class="required" for="sFTPUsername">FTP Username:</label>
@@ -179,7 +190,7 @@
             </v-select>            
             <v-row>
               <v-col cols="4" md="4">    
-                <label for="bRequestorEmailConfirm">Confirmation email?</label>
+                <label for="bRequestorEmailConfirm">Confirmation Email?</label>
                 <v-switch
                   hide-details
                   inset
@@ -191,7 +202,7 @@
                 ></v-switch>
               </v-col>
               <v-col cols="4" md="4">  
-                <label for="bRequestorEmailVerify">Verification email?</label>
+                <label for="bRequestorEmailVerify">Verification Email?</label>
                 <v-switch
                   hide-details
                   inset
@@ -203,7 +214,7 @@
                 ></v-switch>
               </v-col>
               <v-col cols="4" md="4">  
-                <label for="bForceCompliance">Apply force Compliance</label>
+                <label for="bForceCompliance">Apply Force Compliance?</label>
                 <v-switch
                   hide-details
                   inset
@@ -360,6 +371,7 @@ export default {
         maxLength: maxLength(200)
       },
       sOutboundEmail: { required, email },
+      sSupportEmail: { required, email },
       nPrimaryTimeout: { required, numeric },
       nSecondaryTimeout: { required, numeric },
     }
@@ -472,6 +484,15 @@ export default {
         errors.push("Email is required.");
       return errors;
     },
+    sSupportEmailErrors() {
+      const errors = [];
+      if (!this.$v.facility.sSupportEmail.$dirty) return errors;
+      !this.$v.facility.sSupportEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      !this.$v.facility.sSupportEmail.required &&
+        errors.push("Email is required.");
+      return errors;
+    },
     nPrimaryTimeoutErrors() {
       const errors = [];
       if (!this.$v.facility.nPrimaryTimeout.$dirty) return errors;
@@ -515,6 +536,7 @@ export default {
         sFTPPassword: "",
         sFTPUrl: "",
         sOutboundEmail: "",
+        sSupportEmail: "",
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
         bRequestorEmailVerify:false,
