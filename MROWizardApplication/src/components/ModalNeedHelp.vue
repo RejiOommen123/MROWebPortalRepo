@@ -1,16 +1,16 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" light persistent content-class="needHelp">
+    <v-dialog v-model="bShow" light persistent content-class="needHelp">
       <v-card >
         <v-card-title >
-          <v-btn style="font-size:36px;color:black"  class="wizardClose" icon dark @click="dialogConfirm=true" >
+          <v-btn style="font-size:18px;color:black"  class="wizardClose" icon dark @click="closeShowNeedHelp()" >
             <v-icon>mdi-close</v-icon>
           </v-btn>  
           <v-row>
-            <v-col cols="12" sm="12">
+            <v-col cols="11" sm="11">
             <h3>Your Details</h3>
             </v-col>
-            <v-col cols="12" sm="12">
+            <v-col cols="11" sm="11">
             <h5>Let us know how to get back to you.</h5>
             </v-col>
           </v-row>
@@ -64,6 +64,7 @@
             </v-col>
             <v-col cols="3" sm="3">             
               <v-btn  
+                :disabled="$v.$invalid"
                 style=" text-transform: none;"
                 color="#30c4b0"
               >Send Message</v-btn>    
@@ -72,6 +73,15 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <!-- Loader to indicate wizard is getting ready -->
+        <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="primary" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
 
@@ -85,6 +95,7 @@ export default {
     sName: { required, maxLength: maxLength(30) },
     nPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) },
     sEmail: { required, email},
+    sMessage: { required }
   },
   data: function () {
     return {
@@ -92,7 +103,8 @@ export default {
         nPhoneNo:'',
         sEmail:'',
         sMessage:'',
-        dialog:true
+        dialog:true,
+        dialogLoader:false
     };
   },
   computed: {
@@ -122,9 +134,44 @@ export default {
         errors.push("E-mail is required");
       return errors;
     },
+    sMessageError() {
+      const errors = [];
+      if (!this.$v.sMessage.$dirty) return errors;
+      !this.$v.sMessage.required &&
+        errors.push("Message is required");
+      return errors;
+    },
+    bShow() {
+      return this.$store.state.ConfigModule.bShowNeedHelp;
+    }
   },
   methods: {
-   
+   closeShowNeedHelp(){
+     this.$store.commit("ConfigModule/bShowNeedHelp",false);
+   },
+   onSubmit(){
+     var combinedObj = {
+        oRequester: this.$store.state.requestermodule,
+        sName: this.sName,
+        nPhoneNo: this.nPhoneNo,
+        sEmail: this.sEmail,
+        sMessage: this.sMessage
+      };
+      this.$http.post("wizards/SendNeedHelpEmail", combinedObj).then(
+        response => {
+          if (response.ok == true) {
+            this.dialogLoader = false;
+          }
+        },
+        error => {
+          // Error Callback
+          if (error.status == 400) {
+            this.dialogLoader = false;
+          }
+        }
+      );
+     this.$store.commit("ConfigModule/bShowNeedHelp",false);
+   }
   }
 };
 </script>

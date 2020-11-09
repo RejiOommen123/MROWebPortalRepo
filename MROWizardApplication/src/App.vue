@@ -54,7 +54,7 @@
                           <a href="#"
                             id="helpBtn"
                             v-on="on"
-                            @click="showNeedHelp=true"
+                            @click="showNeedHelp()"
                           >
                             Need Help?
                           </a>
@@ -66,7 +66,7 @@
                   </div>
                   <ModalIdle/>
                   <ModalUnauthorized/>
-                  <ModalNeedHelp v-if="showNeedHelp"/>
+                  <ModalNeedHelp/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -160,8 +160,7 @@ export default {
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
       phoneNo: 0,
       dialogLoader: false,
-      dialogConfirm: false,
-      showNeedHelp:false
+      dialogConfirm: false
     };
   },
   created() {
@@ -323,6 +322,9 @@ export default {
   methods: {
     previousPage() {
       this.$store.commit("ConfigModule/mutatePreviousIndex");
+    },
+    showNeedHelp(){
+      this.$store.commit("ConfigModule/bShowNeedHelp",true);
     },
     //To close wizard pop up window
     dialogClose() {
