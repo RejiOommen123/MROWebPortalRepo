@@ -55,6 +55,7 @@
                             id="helpBtn"
                             v-on="on"
                             @click="showNeedHelp()"
+                            :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}"
                           >
                             Need Help?
                           </a>
