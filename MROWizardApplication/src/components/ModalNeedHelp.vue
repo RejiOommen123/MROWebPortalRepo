@@ -87,17 +87,19 @@
     <!-- Help mail send success -->
         <v-dialog v-model="dialogSuccess" persistent width="350">
           <v-card light>
-            <v-card-text>
+            <v-card-text style="padding:10px">
               <div style="padding:10px">
                 {{disclaimer04}}
               </div>
               <div>
+                <v-col cols="4" offset="4" offset-sm="4" sm="4">
                 <v-btn  
                   dark
-                  style=" text-transform: none;"
+                  style="text-transform: none;"
                   color="#30c4b0"
                   @click="dialogSuccess=false"
                 >Close</v-btn>    
+                </v-col>
               </div>
             </v-card-text>
           </v-card>
@@ -173,6 +175,7 @@ export default {
      this.$store.commit("ConfigModule/bShowNeedHelp",false);
    },
    onSubmit(){
+     this.dialogLoader = true;
      var combinedObj = {
         oRequester: this.$store.state.requestermodule,
         sName: this.sName,
