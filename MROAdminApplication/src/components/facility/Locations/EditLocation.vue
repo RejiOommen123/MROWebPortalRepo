@@ -120,6 +120,7 @@
             <v-btn-toggle
                 v-model="location.bForceCompliance"
                 mandatory
+                class="btnGrp"
               >
                 <v-btn :color="location.bForceCompliance==='true' ? 'green' : 'none'" value="true">
                   Yes

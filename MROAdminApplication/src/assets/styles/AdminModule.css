@@ -211,3 +211,10 @@ html {
       font-size: 16px;
   }
 }
+.btnGrp{
+    margin-left:10px;
+}
+.btnGrp button{
+    height:36px !important;
+    margin-right: 0 !important;
+}

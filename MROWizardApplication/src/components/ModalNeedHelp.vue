@@ -85,16 +85,20 @@
           </v-card>
         </v-dialog>
     <!-- Help mail send success -->
-        <v-dialog v-model="dialogSuccess" persistent width="300">
-          <v-card dark>
+        <v-dialog v-model="dialogSuccess" persistent width="350">
+          <v-card light>
             <v-card-text>
-              {{disclaimer04}}
-              <v-btn  
-                class="justify-center" 
-                style=" text-transform: none;"
-                color="#30c4b0"
-                @click="dialogSuccess=false"
-              >Close</v-btn>    
+              <div style="padding:10px">
+                {{disclaimer04}}
+              </div>
+              <div>
+                <v-btn  
+                  dark
+                  style=" text-transform: none;"
+                  color="#30c4b0"
+                  @click="dialogSuccess=false"
+                >Close</v-btn>    
+              </div>
             </v-card-text>
           </v-card>
         </v-dialog> 
@@ -180,7 +184,7 @@ export default {
         response => {
           if (response.ok == true) {
             this.dialogLoader = false;
-            this.dialogSuccess=false;
+            this.dialogSuccess=true;
           }
         },
         error => {

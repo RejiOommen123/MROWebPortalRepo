@@ -84,6 +84,7 @@
             ></v-text-field>
             <label for="bForceCompliance">Apply force Compliance?</label>
             <v-btn-toggle
+                class="btnGrp"
                 v-model="location.bForceCompliance"
                 mandatory
               >
