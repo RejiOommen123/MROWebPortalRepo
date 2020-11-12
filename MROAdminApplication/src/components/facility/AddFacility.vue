@@ -550,10 +550,11 @@ export default {
   },
   mounted() {
     this.$http
-      .get("Facility/GetMROConnectionString/")
+      .get("Facility/GetDefaultFacilityData/")
       .then(resp => {
         if (resp.ok == true) {
-          this.connectionStrings = resp.body;
+          this.connectionStrings = resp.body["arrayconnectionString"];
+          this.facility.sSupportEmail = resp.body["supportEmail"];
         }
       });
   },

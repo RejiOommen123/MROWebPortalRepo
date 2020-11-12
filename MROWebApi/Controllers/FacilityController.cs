@@ -97,15 +97,18 @@ namespace MROWebAPI.Controllers
         }
         #endregion
 
-        #region Get MRO Connection String 
+        #region Get MRO Connection String & Support Email
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetMROConnectionString()
+        public async Task<IActionResult> GetDefaultFacilityData()
         {
             MROConnectionStringRepository mROConnectionStringRepository = new MROConnectionStringRepository(_info);
             //bool reslt = Int32.TryParse(id, out int number);
-            IEnumerable<MROConnectionString> arrayconnectionString = await mROConnectionStringRepository.GetAllASC(1000,"nConnectionId");
-            return Ok(arrayconnectionString);
+            IEnumerable<MROConnectionString> arrayconnectionString = await mROConnectionStringRepository.GetAllASC(1000, "nConnectionId");
+            MROHelperRepository helperRepo = new MROHelperRepository(_info);
+            MROHelper helper = await helperRepo.Select(1);
+            var supportEmail = helper.sSupportEmail;
+            return Ok(new {arrayconnectionString, supportEmail});
         }
         #endregion
 
