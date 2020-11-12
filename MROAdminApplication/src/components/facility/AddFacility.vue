@@ -540,7 +540,7 @@ export default {
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
         bRequestorEmailVerify:false,
-        bForceCompliance:false,
+        bForceCompliance:true,
         nPrimaryTimeout:0,
         nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
