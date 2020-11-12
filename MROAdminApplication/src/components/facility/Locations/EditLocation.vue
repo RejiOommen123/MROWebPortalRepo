@@ -105,7 +105,7 @@
             </label>            
             <!-- Show confirm email to requestor -->
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
-            <label class="required" for="sSupportEmail">Support Email:</label>
+            <label for="sSupportEmail">Support Email:</label>
             <v-text-field
               type="text"
               id="sSupportEmail"

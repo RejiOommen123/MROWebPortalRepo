@@ -33,7 +33,6 @@
               <label style="color:black" class="required" for="sPhoneNo">Phone Number:</label>
               <v-text-field
                 maxlength="10"
-                type="number"
                 solo
                 v-model="sPhoneNo"
                 :error-messages="sPhoneNoError"
@@ -61,6 +60,9 @@
                 rows="3"
                 row-height="30"
                 maxlength="250"
+                @input="$v.sMessage.$touch()"
+                @blur="$v.sMessage.$touch()"
+                :error-messages="sMessageError"
                 shaped counter v-model="sMessage"></v-textarea>    
             </v-col>
             <v-col cols="3" sm="3">             
@@ -109,13 +111,13 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, maxLength, minLength, email } from "vuelidate/lib/validators";
+import { required, maxLength, minLength, email, numeric } from "vuelidate/lib/validators";
 export default {
   name: "NeedHelp",
   mixins: [validationMixin],
   validations: {
     sName: { required, maxLength: maxLength(50) },
-    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) },
+    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10), numeric },
     sEmail: { required, email},
     sMessage: { required }
   },
@@ -147,6 +149,7 @@ export default {
       if (!this.$v.sPhoneNo.$dirty) return errors;
       !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
       !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.numeric && errors.push("Must be Numeric");
       !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
       return errors;
     },

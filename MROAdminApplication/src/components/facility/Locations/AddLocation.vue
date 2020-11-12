@@ -71,7 +71,7 @@
               :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
-            <label class="required" for="sSupportEmail">Support Email:</label>
+            <label for="sSupportEmail">Support Email:</label>
             <v-text-field
               type="text"
               id="sSupportEmail"
