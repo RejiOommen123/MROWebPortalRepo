@@ -181,6 +181,7 @@ export default {
      this.dialogLoader = true;
      var combinedObj = {
         oRequester: this.$store.state.requestermodule,
+        sWizardName:this.$store.state.ConfigModule.selectedWizard,
         sName: this.sName,
         sPhoneNo: this.sPhoneNo,
         sEmail: this.sEmail,

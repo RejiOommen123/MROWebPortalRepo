@@ -6,6 +6,7 @@ namespace MRODBL.BaseClasses
     {
         #region Props
         public Requesters oRequester { get; set; }
+        public string sWizardName { get; set; }
         public string sName { get; set; }
 
        public string sPhoneNo { get; set; }

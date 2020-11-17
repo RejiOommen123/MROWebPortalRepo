@@ -1272,6 +1272,7 @@ namespace MROWebApi.Controllers
 
                     PropertyRenameAndIgnoreSerializerContractResolver jsonResolver = new PropertyRenameAndIgnoreSerializerContractResolver();
                     jsonResolver.IgnoreProperty(typeof(HelpInfo), "oRequester");
+                    jsonResolver.IgnoreProperty(typeof(HelpInfo), "sWizardName");
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sName", "Name");
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sPhoneNo", "PhoneNo");
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sEmail", "Email");
@@ -1282,7 +1283,7 @@ namespace MROWebApi.Controllers
 
                     string sDescription = JsonConvert.SerializeObject(helpInfo, serializerSettings);
 
-                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescription, helpInfo.oRequester.sWizardName);
+                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescription, helpInfo.sWizardName);
                 }
                 catch(Exception ex)
                 {
