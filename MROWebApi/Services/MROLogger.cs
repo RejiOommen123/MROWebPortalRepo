@@ -91,6 +91,21 @@ namespace MROWebApi.Services
 
         }
 
+        public void LogRequesterEventRecords(int nRequesterID, string sEventname,int nFacilityID, string sDescription, string sWizardName)
+        {
+            RequesterEventLoggerRepository patientEventLoggerRepository = new RequesterEventLoggerRepository(_info);
+            RequesterEventLogger logRequesterEventDetails = new RequesterEventLogger()
+            {
+                nRequesterID = nRequesterID,
+                sEventName = sEventname,
+                sDescription = sDescription,
+                nFacilityID = nFacilityID,
+                sWizardName = sWizardName,
+                dtLogTime = DateTime.Now
+            };
+            patientEventLoggerRepository.Insert(logRequesterEventDetails);
+        }
+
         #endregion
 
         #region Encrypt Decrypt Strings

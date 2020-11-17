@@ -1254,13 +1254,28 @@ namespace MROWebApi.Controllers
                         client.Disconnect(true);
                         client.Dispose();
                     }
-                    //client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+
                 }
                 catch (Exception ex)
                 {
                     MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Trigger Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                     return Content(ex.Message);
                 }
+
+                #region Requestor Event Logger
+                try
+                {
+                    FacilitiesRepository facRepo = new FacilitiesRepository(_info);
+
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescrption = "Help Clicked";
+                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescrption, helpInfo.oRequester.sWizardName);
+                }
+                catch(Exception ex)
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email ROI Data Input Logging Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                }
+                #endregion
                 return Ok("Success");
             }
             catch (Exception ex)

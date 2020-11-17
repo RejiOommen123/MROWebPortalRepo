@@ -36,22 +36,22 @@ namespace MROWebApi.Controllers
         #region Requester Section
 
         #region Get Requester Data
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("[action]/{requesterID}")]
-        public async Task<IActionResult> GetRequester(int requesterID)
-        {
-            try
-            {
-                RequestersRepository requestorsFac = new RequestersRepository(_info);
-                Requesters requestor = await requestorsFac.Select(requesterID);
-                return Ok(requestor);
-            }
-            catch (Exception exp)
-            {
-                return Content(exp.Message);
-            }
-        }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //[Route("[action]/{requesterID}")]
+        //public async Task<IActionResult> GetRequester(int requesterID)
+        //{
+        //    try
+        //    {
+        //        RequestersRepository requestorsFac = new RequestersRepository(_info);
+        //        Requesters requestor = await requestorsFac.Select(requesterID);
+        //        return Ok(requestor);
+        //    }
+        //    catch (Exception exp)
+        //    {
+        //        return Content(exp.Message);
+        //    }
+        //}
         #endregion
 
         #region Add Requester Data
@@ -261,23 +261,23 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Edit Requester Data
-        [HttpPost("EditRequester/{id}")]
-        [AllowAnonymous]
-        [Route("[action]")]
-        public ActionResult<Requesters> EditRequestor(int id, Requesters requesters)
-        {
-            if (id != requesters.nRequesterID)
-            {
-                return BadRequest();
-            }
-            RequestersRepository requestorFac = new RequestersRepository(_info);
-            if (requestorFac.Update(requesters))
-            { return NoContent(); }
-            else
-            { return NotFound(); }
-        }
-        #endregion
+        //#region Edit Requester Data
+        //[HttpPost("EditRequester/{id}")]
+        //[AllowAnonymous]
+        //[Route("[action]")]
+        //public ActionResult<Requesters> EditRequestor(int id, Requesters requesters)
+        //{
+        //    if (id != requesters.nRequesterID)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    RequestersRepository requestorFac = new RequestersRepository(_info);
+        //    if (requestorFac.Update(requesters))
+        //    { return NoContent(); }
+        //    else
+        //    { return NotFound(); }
+        //}
+        //#endregion
 
         #endregion
 

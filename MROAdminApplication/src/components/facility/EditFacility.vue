@@ -406,7 +406,7 @@ export default {
         maxLength: maxLength(200)
       },
       sOutboundEmail: { required, email },
-      sSupportEmail: { required, email },
+      sSupportEmail: { required, email, maxLength: maxLength(150) },
       nPrimaryTimeout: { required, numeric },
       nSecondaryTimeout: { required, numeric },
     }
@@ -508,6 +508,8 @@ export default {
     sSupportEmailErrors() {
       const errors = [];
       if (!this.$v.facility.sSupportEmail.$dirty) return errors;
+      !this.$v.facility.sSupportEmail.maxLength &&
+        errors.push("Support Email must be at most 150 characters long");
       !this.$v.facility.sSupportEmail.email &&
         errors.push("Please provide a proper Email ID");
       !this.$v.facility.sSupportEmail.required &&

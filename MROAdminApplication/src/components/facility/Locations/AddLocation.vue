@@ -378,7 +378,7 @@ export default {
       sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },
       nPrimaryTimeout: { numeric },
       nSecondaryTimeout: { numeric },
-      sSupportEmail: { email },
+      sSupportEmail: { email, maxLength: maxLength(150) },
     }
   },
   computed: {
@@ -464,6 +464,8 @@ export default {
     sSupportEmailErrors() {
       const errors = [];
       if (!this.$v.location.sSupportEmail.$dirty) return errors;
+      !this.$v.location.sSupportEmail.maxLength &&
+        errors.push("Support Email must be at most 150 characters long");
       !this.$v.location.sSupportEmail.email &&
         errors.push("Please provide a proper Email ID");
       return errors;
