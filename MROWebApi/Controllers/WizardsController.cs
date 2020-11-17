@@ -22,6 +22,8 @@ using System.Xml;
 using WebSupergoo.ABCpdf11;
 using UAParser;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using NJsonSchema.Infrastructure;
 
 namespace MROWebApi.Controllers
 {
@@ -1266,10 +1268,21 @@ namespace MROWebApi.Controllers
                 try
                 {
                     FacilitiesRepository facRepo = new FacilitiesRepository(_info);
-
                     MROLogger logger = new MROLogger(_info);
-                    string sDescrption = "Help Clicked";
-                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescrption, helpInfo.oRequester.sWizardName);
+
+                    PropertyRenameAndIgnoreSerializerContractResolver jsonResolver = new PropertyRenameAndIgnoreSerializerContractResolver();
+                    jsonResolver.IgnoreProperty(typeof(HelpInfo), "oRequester");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sName", "Name");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sPhoneNo", "PhoneNo");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sEmail", "Email");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sMessage", "Message");
+
+                    JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+                    serializerSettings.ContractResolver = jsonResolver;
+
+                    string sDescription = JsonConvert.SerializeObject(helpInfo, serializerSettings);
+
+                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescription, helpInfo.oRequester.sWizardName);
                 }
                 catch(Exception ex)
                 {
