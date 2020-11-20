@@ -116,7 +116,7 @@
               :error-messages="sSupportEmailErrors"
               solo
             ></v-text-field>
-            <label for="bForceCompliance">Apply force Compliance?</label>
+            <label for="bForceCompliance">Apply Force Compliance?</label>
             <v-btn-toggle
                 v-model="location.bForceCompliance"
                 mandatory

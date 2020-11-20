@@ -139,7 +139,7 @@ export default {
       const errors = [];
       if (!this.$v.sName.$dirty) return errors;
       !this.$v.sName.maxLength &&
-        errors.push("Name must be at most 30 characters long");
+        errors.push("Name must be at most 50 characters long");
       !this.$v.sName.required &&
         errors.push("Name is required.");
       return errors;
