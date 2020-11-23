@@ -48,7 +48,7 @@
                 v-model="sEmail"
                 :error-messages="sEmailError"
                 required
-                maxlength="30"
+                maxlength="70"
                 @input="$v.sEmail.$touch()"
                 @blur="$v.sEmail.$touch()"
               ></v-text-field>
