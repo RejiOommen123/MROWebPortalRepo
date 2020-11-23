@@ -224,7 +224,6 @@ export default {
       diableCamera:false,
       unsupported:false,
       facilityForceCompliance: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
         .bForceCompliance,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
     };

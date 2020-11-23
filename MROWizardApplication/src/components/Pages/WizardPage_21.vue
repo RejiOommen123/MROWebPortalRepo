@@ -58,7 +58,6 @@ export default {
     return {
       nSelectedCheckBox:[],
       facilityForceCompliance: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
         .bForceCompliance,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_21_disclaimer01,
     };

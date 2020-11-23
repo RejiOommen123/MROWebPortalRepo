@@ -100,7 +100,6 @@ export default {
       service: "",
       subData: {},
       facilityForceCompliance: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
         .bForceCompliance,
     };
   },

@@ -143,7 +143,6 @@ export default {
       otpSentAlert:false,
       bReturnedForCompliance:false,
       facilityForceCompliance: this.$store.state.ConfigModule
-        .apiResponseDataByFacilityGUID.facilityLogoandBackground[0]
         .bForceCompliance,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
