@@ -49,21 +49,21 @@
                     />
                   </div>
                   <div id="helpBtnDiv">                    
-                      <v-tooltip  slot="append" bottom>
-                        <template v-slot:activator="{ on }">
-                          <a href="#"
-                            id="helpBtn"
-                            v-on="on"
-                            @click="showNeedHelp()"
-                            :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}"
-                          >
-                            Need Help?
-                          </a>
-                        </template>
-                        <v-col cols="12" sm="12">
-                          <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
-                        </v-col>
-                      </v-tooltip>
+                    <a href="#"
+                      id="helpBtn"
+                      @click="showNeedHelp()"
+                      :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}"
+                    >
+                      Need Help?
+                    </a>
+                    <v-tooltip slot="append" bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on" size="18" style="margin-left:5px"  :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}" top>mdi-information</v-icon>
+                      </template>
+                      <v-col cols="12" sm="12">
+                        <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
+                      </v-col>
+                    </v-tooltip>
                   </div>
                   <ModalIdle/>
                   <ModalUnauthorized/>
