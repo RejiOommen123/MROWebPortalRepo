@@ -111,11 +111,64 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
                                                             && frm.Name != "MROSignature03")
                     {
                         string sValue = null;
-                        string[] sa = frm.Name.Split('_');  //underscores allows fields to be concatinated
-                        foreach (string sName in sa)
+                        if (frm.Name.Contains('_'))
                         {
+                            string[] sa = frm.Name.Split('_');  //underscores allows concatination with spaces
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                    sValue += sNewValue + " ";
+                            }
+                        }
+                        else if (frm.Name.Contains(','))
+                        {
+                            string[] sa = frm.Name.Split(',');  //comma allows concatination with comma and space
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                {
+                                    if (sNewValue != "")
+                                    {
+                                        sValue += sNewValue + ", ";                                  
+                                    }
+                                }
+                            }
+                            //remove ',' from end
+                            if (sValue != null) { 
+                                if (sValue.EndsWith(", "))
+                                {
+                                    sValue = sValue.Remove(sValue.Length - 2, 2);
+                                }
+                            }
+                        }
+                        else if (frm.Name.Contains('-'))
+                        {
+                            string[] sa = frm.Name.Split('-');  //hyphen allows concatination with hyphen and space
+                            foreach (string sName in sa)
+                            {
+                                string sNewValue;
+                                if (InList(sName, allFields, out sNewValue))
+                                {
+                                    if (sNewValue != "")
+                                    {
+                                        sValue += sNewValue + " - ";
+                                    }
+                                }
+                            }
+                            //remove ',' from end
+                            if (sValue != null)
+                            {
+                                if (sValue.EndsWith(" - "))
+                                {
+                                    sValue = sValue.Remove(sValue.Length - 3, 3);
+                                }
+                            }
+                        }
+                        else {
                             string sNewValue;
-                            if (InList(sName, allFields, out sNewValue))
+                            if (InList(frm.Name, allFields, out sNewValue))
                                 sValue += sNewValue + " ";
                         }
                         if (sValue == null)
@@ -152,14 +205,14 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             theID = thePDFAuthDoc.AddTextStyled(theText);
             thePDFAuthDoc.FontSize = 12;
 
-            string emailStatus = requestor.bConfirmReport ? "(User Confirmed)" : "(User Not Confirmed)";
+            string emailStatus = requestor.bConfirmReport ? "(User consented to receive an unencrypted copy of their request documents emailed to this address)" : "(User declined to receive an unencrypted copy of their request documents emailed to this address)";
             string phoneStatus = requestor.bPhoneNoVerified ? "(Verified)" : "(Not Verified)";
             string primaryReason = string.IsNullOrEmpty(requestor.sSelectedPrimaryReasonsName) ? "Not Mentioned" : requestor.sSelectedPrimaryReasonsName;
             string deadlineDate = requestor.dtDeadline != null ? requestor.dtDeadline.Value.ToShortDateString() : "No deadline";
 
             thePDFAuthDoc.AddTextStyled("<br /><br /><b>Additional Identifiers Requested</b> <br /><b>1.ID Verification</b><br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>2.Mailing Address -<b> " + requestor.sAddStreetAddress + " " + requestor.sAddApartment + " " + requestor.sAddCity + " " + requestor.sAddState + " " + requestor.sAddZipCode + "<br />");
-            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address - "+emailStatus+"<b> " + requestor.sRequesterEmailId + " " + "(consented to an unencrypted emailed copy of their request)" + "<br /");
+            thePDFAuthDoc.AddTextStyled("<br /><b>3.Email Address - <b> " + requestor.sRequesterEmailId + " " + emailStatus + "<br /");
             thePDFAuthDoc.AddTextStyled("<br /><b>4.Phone Number - "+phoneStatus+"<b> " + requestor.sPhoneNo + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>5.Reason for Request<b> - " + primaryReason + "<br />");
             thePDFAuthDoc.AddTextStyled("<br /><b>6.Note:Time Sensitive<b> - " + deadlineDate + "<br />");
@@ -191,14 +244,6 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
             sReplaceFieldsList = "";
             return ArrayToReturn;
         }
-        public static string GetApplicationRoot()
-        {
-            var exePath = Path.GetDirectoryName(System.Reflection
-                              .Assembly.GetExecutingAssembly().CodeBase);
-            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
-            var appRoot = appPathMatcher.Match(exePath).Value;
-            return appRoot;
-        }
         private Dictionary<string, string> GetFieldSetValueFromAuthorizationDocFields(IEnumerable<ValidateAuthorizationDoc> authorizationDocFeilds)
         {
             _FieldList = authorizationDocFeilds.ToDictionary(sADF => sADF.sKeyword, sADF => sADF.sFieldname);
@@ -227,7 +272,7 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         static bool InList(string sField, Dictionary<string, string> allFields, out string sValue)
         {
                       
-            sValue = sField;
+            sValue = "";
             string sFromList;
             //Split
             string[] sSplitConditionalValue = sField.Split("?");

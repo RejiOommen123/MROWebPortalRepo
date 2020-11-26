@@ -1,5 +1,5 @@
 <template>
-  <div id="EditFieldsBox">
+  <div >
     <form @submit.prevent="onSubmit">
       <v-row>
         <v-col cols="12">
@@ -21,31 +21,54 @@
               :items="gridData"
               :search="search"
               :footer-props="{
-                'items-per-page-options': [5,10,20]
+                'items-per-page-options': [10,25,50,100]
               }"
               :items-per-page="10"
+              fixed-header
+              height="55vh"
             >
+              <template v-slot:item.sFieldName="props">
+                <v-edit-dialog
+                  v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
+                  :return-value.sync="props.item.sFieldName"
+                  @save="pushToArray(props.item)"
+                >
+                  {{ props.item.sFieldName }}
+                  <template v-slot:input>
+                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter maxlength="100"></v-text-field>
+                  </template>
+                </v-edit-dialog>
+                <label v-else>{{props.item.sFieldName}}</label>
+              </template>
               <!-- Template for Field Order -->
-              <template v-slot:item.nFieldOrder="{ item }">
-                <v-text-field
-                  type="number"
-                  min="1"
-                  v-model.number="item.nFieldOrder"
-                  v-show="item.nFieldOrder!=null"
-                  style="width: 4em"
-                ></v-text-field>
-                <label id="nFieldOrderLabel" v-if="item.nFieldOrder==null">
+              <template v-slot:item.nFieldOrder="props">
+                <v-edit-dialog
+                  v-if="props.item.sTableName!='lnkFacilityFieldMaps'"
+                  :return-value.sync="props.item.nFieldOrder"
+                  @save="pushToArray(props.item)"
+                >
+                  {{ props.item.nFieldOrder }}
+                  <template v-slot:input>
+                    <v-text-field
+                      type="number"
+                      min="1"
+                      v-model.number="props.item.nFieldOrder"
+                      v-show="props.item.nFieldOrder!=null"
+                    ></v-text-field>
+                  </template>
+                </v-edit-dialog>
+                <label id="nFieldOrderLabel" v-if="props.item.nFieldOrder==null">
                   <strong>-</strong>
                 </label>
               </template>
-              <!-- Template for Field Map Checkboxes  -->
-              <template v-slot:item.actions="{ item }">
-                <input
-                  type="checkbox"
-                  @click="toggleCheck(item.nFacilityFieldMapID,item.sTableName)"
-                  v-model="item.bShow"
-                  :value="item.bShow"
-                />
+              <template v-slot:item.actions="props">
+                <v-checkbox
+                  hide-details
+                  style="margin-top:0px"
+                  :return-value.sync="props.item.bShow"
+                  @change="pushToArray(props.item)"
+                  v-model="props.item.bShow"
+                ></v-checkbox>
               </template>
             </v-data-table>
             <!-- End Facility List DataTable  -->
@@ -53,19 +76,30 @@
         </v-col>
       </v-row>
       <div class="submit">
-        <v-btn type="submit" color="primary">Save</v-btn>
+        <v-btn type="submit" :disabled="updatedArray.length==0" color="primary">Save</v-btn>
         <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
       </div>
-      <br/>
+      <br />
       <!-- Common Loader -->
-              <v-dialog v-model="dialogLoader" persistent width="300">
-                <v-card color="rgb(0, 91, 168)" dark>
-                  <v-card-text>
-                    Please stand by
-                    <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
+      <v-dialog v-model="dialogLoader" persistent width="300">
+        <v-card color="rgb(0, 91, 168)" dark>
+          <v-card-text>
+            Please stand by
+            <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+        <!-- Dialog Alert for errors Primary Reason -->
+        <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+          <v-card>
+            <v-card-title class="headline">Info</v-card-title>
+            <v-card-text>{{errorMessage}}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </form>
   </div>
 </template>
@@ -74,20 +108,30 @@
 export default {
   data() {
     return {
-      dialogLoader:false,
+      dialogLoader: false,
       search: "",
       headers: [
+        {
+          text: "Type",
+          align: "start",
+          value: "sType",
+          width: "20%",
+          searchable:true
+        },
         {
           text: "Name",
           align: "start",
           value: "sFieldName",
-          width: "60%"
+          width: "50%",
         },
-        { text: "Order", value: "nFieldOrder", width: "20%"},
-        { text: "Action", value: "actions", width: "20%", sortable: false }
+        { text: "Order", value: "nFieldOrder", width: "20%" },
+        { text: "Action", value: "actions", width: "10%", sortable: false },
       ],
       gridData: this.getGridData(),
-      facilityName: ""
+      updatedArray: [],
+      facilityName: "",
+      errorAlert:false,
+      errorMessage:''
     };
   },
   mounted() {},
@@ -96,54 +140,67 @@ export default {
     getGridData() {
       this.dialogLoader = true;
       this.$http
-        .get("facilityfieldmaps/GetFieldsByFacilityID/nFacilityID=" + this.$route.params.id+"&nAdminUserID="+this.$store.state.adminUserId)
+        .get(
+          "facilityfieldmaps/GetFieldsByFacilityID/nFacilityID=" +
+            this.$route.params.id +
+            "&nAdminUserID=" +
+            this.$store.state.adminUserId
+        )
         .then(
-          response => {
+          (response) => {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["fields"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
-            this.dialogLoader =false;
+            this.dialogLoader = false;
           },
-          error => {
+          (error) => {
             // error callback
             this.gridData = error.body;
-            this.dialogLoader =false;
+            this.dialogLoader = false;
           }
         );
     },
-    //toggle Check Function
-    toggleCheck: function(nFacilityFieldMapId,sTableName) {
-      for (var i = 0; i < this.gridData.length; i++) {
-        if (this.gridData[i].nFacilityFieldMapID == nFacilityFieldMapId
-        && this.gridData[i].sTableName==sTableName) 
-        {
-          this.gridData[i].bShow = !this.gridData[i].bShow;
-        }
+    pushToArray(obj) {
+      const index = this.updatedArray.findIndex(
+        (e) => e.nFacilityFieldMapID === obj.nFacilityFieldMapID && e.sTableName === obj.sTableName
+      );
+      if (index === -1) {
+        this.updatedArray.push(obj);
+      } else {
+        this.updatedArray[index] = obj;
       }
+    },
+    checkPatientRepValid(){
+      var status = (item) => item.sTableName==='lnkFacilityPatientRepresentatives'&&item.bShow===true;
+      this.errorMessage='Atleast one patient representative option must be active.'
+      this.errorAlert= !this.gridData.some(status);
+      this.dialogLoader=false;
+      return !this.errorAlert;
     },
     onSubmit() {
       this.dialogLoader = true;
       var nAdminUserID = this.$store.state.adminUserId;
-      var FacilityFieldMapsList = this.gridData.map(function(item) {
-        item["nCreatedAdminUserID"]=nAdminUserID;
-        item["nUpdatedAdminUserID"]=nAdminUserID;
+      var PatientRepValid=this.checkPatientRepValid();    
+      if(PatientRepValid!=false){
+      var FacilityFieldMapsList = this.updatedArray.map(function (item) {
+        item["nUpdatedAdminUserID"] = nAdminUserID;
         return item;
       });
       this.$http
         .post("facilityfieldmaps/EditFacilityFields/", FacilityFieldMapsList)
-        .then(response => {
+        .then((response) => {
           if (response.ok == true) {
             this.dialogLoader = false;
             this.$router.push("/facility");
           }
         });
-    }
-  }
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-
 @media screen and (max-width: 500px) {
   #EditFieldsBox {
     margin: 0 0em;

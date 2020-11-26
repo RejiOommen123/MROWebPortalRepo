@@ -187,6 +187,36 @@
               id="bRequestorEmailConfirm"
               v-model="facility.bRequestorEmailConfirm"
             ></v-switch>
+            <v-row>
+              <v-col cols="6" md="6">              
+                <label class="required" for="Primary Timeout">Primary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nPrimaryTimeout"
+                  placeholder="Primary Timeout (In Seconds)"
+                  v-model="facility.nPrimaryTimeout"
+                  @input="$v.facility.nPrimaryTimeout.$touch()"
+                  @blur="$v.facility.nPrimaryTimeout.$touch()"
+                  :error-messages="nPrimaryTimeoutErrors"
+                  solo
+                  min="1"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6" md="6">              
+                <label class="required" for="Secondary Timeout">Secondary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nSecondaryTimeout"
+                  placeholder="Secondary Timeout (In Seconds)"
+                  v-model="facility.nSecondaryTimeout"
+                  @input="$v.facility.nSecondaryTimeout.$touch()"
+                  @blur="$v.facility.nSecondaryTimeout.$touch()"
+                  :error-messages="nSecondaryTimeoutErrors"
+                  solo
+                  min="1"
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <div class="submit">
@@ -301,7 +331,9 @@ export default {
         required,
         maxLength: maxLength(200)
       },
-      sOutboundEmail: { required, email }
+      sOutboundEmail: { required, email },
+      nPrimaryTimeout: { required, numeric },
+      nSecondaryTimeout: { required, numeric },
     }
   },
   computed: {
@@ -411,6 +443,24 @@ export default {
       !this.$v.facility.sOutboundEmail.required &&
         errors.push("Email is required.");
       return errors;
+    },
+    nPrimaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.facility.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.facility.nPrimaryTimeout.numeric &&
+        errors.push("Primary Timeout Must be Numeric");
+      !this.$v.facility.nPrimaryTimeout.required &&
+        errors.push("Primary Timeout is required.");
+      return errors;
+    },
+    nSecondaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.facility.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.facility.nSecondaryTimeout.numeric &&
+        errors.push("Secondary Timeout Must be Numeric");
+      !this.$v.facility.nSecondaryTimeout.required &&
+        errors.push("Secondary Timeout is required.");
+      return errors;
     }
   },
   name: "AddFacility",
@@ -439,6 +489,8 @@ export default {
         sOutboundEmail: "",
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
+        nPrimaryTimeout:0,
+        nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -450,8 +502,6 @@ export default {
       .then(resp => {
         if (resp.ok == true) {
           this.connectionStrings = resp.body;
-          console.log(resp.bodyText);
-        console.log("Response body " + this.connectionStrings);
         }
       });
   },
@@ -478,7 +528,6 @@ export default {
             this.dialogLoader = false;
             this.sameNameAlert = true;
           }
-          console.log(error.body);
         }
       );
     },
@@ -512,7 +561,6 @@ export default {
             this.SMTPResponseMsg=error.body;
             this.SMTPResponseDialog=true;   
           }
-          console.log(error.body);
         }
       );
     },
@@ -540,7 +588,6 @@ export default {
             this.dialogLoader =false;
             this.sameNameAlert = true;
           }
-          console.log(error.body);
         }
       );
     }

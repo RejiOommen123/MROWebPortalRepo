@@ -10,11 +10,11 @@ namespace MRODBL.BaseClasses
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         public int nRequesterID { get; set; }
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
+        //[Required]
+        //[Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nFacilityID { get; set; }
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
+        //[Required]
+        //[Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nLocationID { get; set; }
         public string sSelectedLocation { get; set; }
         public string sSelectedLocationName { get; set; }
@@ -28,10 +28,10 @@ namespace MRODBL.BaseClasses
         public string sSelectedRelationName { get; set; }
         public string[] sRelativeFileArray { get; set; }
         public string[] sRelativeFileNameArray { get; set; }
-        [Required]
+        //[Required]
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient First Name allowed")]
         public string sPatientFirstName { get; set; }
-        [Required]
+        //[Required]
         [StringLength(50, ErrorMessage = "Maximum 50 characters Patient Last Name allowed")]
         public string sPatientLastName { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 character Middle Name allowed")]
@@ -47,9 +47,9 @@ namespace MRODBL.BaseClasses
         public string sPatientPreviousMiddleName { get; set; }
         public bool bPatientNameChanged { get; set; }
 
-        [Required]
+        //[Required]
         public DateTime? dtPatientDOB { get; set; }
-        [Required]
+        //[Required]
         [StringLength(100, ErrorMessage = "Maximum 100 characters Email ID allowed")]
         public string sRequesterEmailId { get; set; }
         public bool bConfirmReport { get; set; }
@@ -130,7 +130,8 @@ namespace MRODBL.BaseClasses
         public bool bRequestorFormSubmitted { get; set; }
 
         public DateTime dtLastUpdate { get; set; }
-
+        public string sOSInfo { get; set; }
+        public string sBrowserInfo { get; set; }
         #endregion
     }
 }

@@ -1,11 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <style>
 
     </style>
-    <title>Facility Website</title>
+    <title>Trinity Hospital</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -14,22 +13,23 @@
 
 <body style="background-color: transparent;">
 
-    <button id="requestwizard" type="button" class="btn btn-primary">
-    Request Medical Records Here
+    <button id="MROeXpress" type="button" class="btn btn-primary">
+    REQUEST YOUR MEDICAL RECORDS HERE
   </button>
 
     <div id="MRO_request_container" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 10000000; background-color: transparent; display:none">
-        <iframe id="MRO_request_frame" name="MRO_request_frame" title="Request Wizard Frame" src="https://devmroportalcust1.azurewebsites.net/?guid=fc21f166-2f05-4450-adb3-cbc2202a138c" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera"
+        <iframe id="MRO_request_frame" name="MRO_request_frame" title="Request Wizard Frame" data-src="http://localhost:8080/?guid=B88BE68B-E92A-47E9-BC0A-656B3ED744E4" src="" allowtransparency="true" contentaccessible="true" marginwidth="0" tabindex="0" scrolling="no" allow="camera"
             style="width: 100%; height: 100%; background-color: transparent; border: 0px;" aria-label="Request Wizard Frame" loaded="1"></iframe>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
-            $("#requestwizard").click(function() {
+            $("#MROeXpress").click(function() {
+                var iframe = $("#MRO_request_frame");
+                iframe.attr("src", iframe.data("src"));
                 $("#MRO_request_container").show()
             });
         });
-
         window.onmessage = function(e){
         if (e.data == 'hello') {
             $("#MRO_request_container").hide();
@@ -38,53 +38,5 @@
         }
         };
     </script>
-
-
-    <!-- <div class="container-fluid">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-      Request Medical Records Here
-    </button>
-
-    <div class="modal" id="myModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered" style="max-width: 35%;"  role="document">
-        <div class="modal-content">
-          <button type="button" class="close" data-dismiss="modal" style="position: absolute; top: 5px; right: 20px; z-index: 99999;">&times;</button>
-
-          <div class="modal-body embed-responsive embed-responsive-1by1">         
-            <iframe class="embed-responsive-item" id="vueapp" src="http://localhost:8080/"></iframe>
-          </div>
-      
-        </div>
-      </div>
-    </div>
-  </div>
-  <script
-  src="https://code.jquery.com/jquery-3.5.1.js"
-  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-  crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.18.0/js/mdb.min.js"></script>
-  <script type="text/javascript">
-    $('#myModal').modal({
-      backdrop: 'static',
-      keyboard: true,
-      focus: true,
-      show: false
-    });
-    $('#myModal').on('hide.bs.modal', function (e) {
-     
-      if (confirm("You're about to close this request which will reset all fields. Do you want to continue ?")) {
-        location.reload(true);
-    
-        localStorage.clear("my-answers");
-      }
-      else {
-        e.preventDefault();
-      }
-
-    });
-   -->
-
 </body>
-
 </html>

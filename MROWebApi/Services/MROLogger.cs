@@ -2,7 +2,11 @@
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -40,7 +44,8 @@ namespace MROWebApi.Services
                 };
                 adminModuleLoggerRepository.Insert(logAdminDetails);
             }
-            catch (Exception ex) {
+            catch
+            {
 
             }
 
@@ -79,7 +84,7 @@ namespace MROWebApi.Services
                 };
                 exceptionLoggerRepository.Insert(exceptionLoggerDetails);
             }
-            catch (Exception ex)
+            catch
             {
 
             }
@@ -147,6 +152,275 @@ namespace MROWebApi.Services
                 }
             }
             return encryptString;
+        }
+        #endregion
+
+        #region Update audit single/many
+        public void UpdateAuditSingle<T>(T oldObject, T newObject,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineNewData="";
+            string combineOldData = "";
+            string propDisplayName = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object oldValue = pi.GetValue(oldObject), newValue = pi.GetValue(newObject);
+
+                if (!object.Equals(oldValue, newValue))
+                {
+                    propDisplayName = (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName;
+                    combineNewData = combineNewData + "{" + propDisplayName + " : " + newValue + "}, ";
+                    combineOldData = combineOldData + "{" + propDisplayName + " : " + oldValue + "}, ";
+                }
+            }
+            if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData)))
+            {
+                combineNewData = removeComma(combineNewData);
+                combineOldData = removeComma(combineOldData);
+
+                result.nAdminUserID = adminModuleLogger.nAdminUserID;
+                result.sEventName = adminModuleLogger.sEventName;
+                result.sModuleName = adminModuleLogger.sModuleName;
+                result.sDescription = adminModuleLogger.sDescription;
+                result.sNewValue = combineNewData;
+                result.sOldValue = combineOldData;
+                result.dtLogTime = DateTime.Now;
+                result.nFacilityID = adminModuleLogger.nFacilityID;
+                result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
+
+                adminModuleLoggerRepository.Insert(result);
+            }
+        }
+
+        public void UpdateAuditMany<T>(List<T> oldObjectList, List<T> newObjectList, AdminModuleLogger adminModuleLogger, string id)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineNewData = "";
+            string combineOldData = "";
+            string propDisplayName = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T newObject in newObjectList)
+            {
+                T oldObject = oldObjectList.FirstOrDefault(q => q.GetType().GetProperty(id).GetValue(q, null).Equals(newObject.GetType().GetProperty(id).GetValue(newObject, null)));
+                //T oldObject = oldObjectList.Where(newObject);
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }
+                    object oldValue = pi.GetValue(oldObject), newValue = pi.GetValue(newObject);
+
+                    if (!object.Equals(oldValue, newValue))
+                    {
+                        propDisplayName = (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName;
+                        combineNewData = combineNewData + "{" + propDisplayName + " : " + newValue + "}, ";
+                        combineOldData = combineOldData + "{" + propDisplayName + " : " + oldValue + "}, ";
+                    }
+                }
+                if (!(String.IsNullOrWhiteSpace(combineNewData) && String.IsNullOrWhiteSpace(combineOldData))) 
+                { 
+                    combineNewData = removeComma(combineNewData);
+                    combineOldData = removeComma(combineOldData);
+
+                    result.Add(new AdminModuleLogger
+                    {
+                        nAdminUserID = adminModuleLogger.nAdminUserID,
+                        sEventName = adminModuleLogger.sEventName,
+                        sModuleName = adminModuleLogger.sModuleName,
+                        sDescription = adminModuleLogger.sDescription,
+                        sNewValue = combineNewData,
+                        sOldValue = combineOldData,
+                        dtLogTime = DateTime.Now,
+                        nFacilityID = adminModuleLogger.nFacilityID,
+                        nFacilityLocationID = adminModuleLogger.nFacilityLocationID
+                    });
+                    combineNewData = "";
+                    combineOldData = "";
+                }
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Insert audit single/many
+        public void InsertAuditSingle<T>(T newObject, AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineNewData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object newValue = pi.GetValue(newObject);
+
+                if (newValue != null)
+                {
+                    combineNewData = combineNewData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + newValue + "}, ";
+                }
+            }
+            combineNewData = removeComma(combineNewData);
+
+            result.nAdminUserID = adminModuleLogger.nAdminUserID;
+            result.sEventName = adminModuleLogger.sEventName;
+            result.sModuleName = adminModuleLogger.sModuleName;
+            result.sDescription = adminModuleLogger.sDescription;
+            result.sNewValue = combineNewData;
+            result.sOldValue = null;
+            result.dtLogTime = DateTime.Now;
+            result.nFacilityID = adminModuleLogger.nFacilityID;
+            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
+
+            adminModuleLoggerRepository.Insert(result);
+        }
+
+        public void InsertAuditMany<T>(List<T> newObjectList, AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineNewData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T newObject in newObjectList)
+            {
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }
+                    object newValue = pi.GetValue(newObject);
+
+                    if (newValue != null)
+                    {
+                        combineNewData = combineNewData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + newValue + "}, ";
+                    }
+                }
+                combineNewData = removeComma(combineNewData);
+
+                result.Add(new AdminModuleLogger
+                {
+                    nAdminUserID = adminModuleLogger.nAdminUserID,
+                    sEventName = adminModuleLogger.sEventName,
+                    sModuleName = adminModuleLogger.sModuleName,
+                    sDescription = adminModuleLogger.sDescription,
+                    sNewValue = combineNewData,
+                    sOldValue = null,
+                    dtLogTime = DateTime.Now,
+                    nFacilityID = adminModuleLogger.nFacilityID,
+                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
+                });
+                combineNewData = "";
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Delete audit single/many
+        public void DeleteAuditSingle<T>(T oldObject,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            AdminModuleLogger result = new AdminModuleLogger();
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                {
+                    continue;
+                }
+
+                object oldValue = pi.GetValue(oldObject);
+
+                if (oldValue!=null)
+                {
+                    combineOldData = combineOldData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + oldValue + "}, ";
+                }
+            }
+            combineOldData = removeComma(combineOldData);
+
+            result.nAdminUserID = adminModuleLogger.nAdminUserID;
+            result.sEventName = adminModuleLogger.sEventName;
+            result.sModuleName = adminModuleLogger.sModuleName;
+            result.sDescription = adminModuleLogger.sDescription;
+            result.sNewValue = null;
+            result.sOldValue = combineOldData;
+            result.dtLogTime = DateTime.Now;
+            result.nFacilityID = adminModuleLogger.nFacilityID;
+            result.nFacilityLocationID = adminModuleLogger.nFacilityLocationID;
+
+            adminModuleLoggerRepository.Insert(result);
+        }
+
+        public void DeleteAuditMany<T>(List<T> oldObjectList,AdminModuleLogger adminModuleLogger)
+        {
+            PropertyInfo[] properties = typeof(T).GetProperties();
+            List<AdminModuleLogger> result = new List<AdminModuleLogger>();
+            string combineOldData = "";
+            AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
+
+            foreach (T oldObject in oldObjectList)
+            {
+                foreach (PropertyInfo pi in properties)
+                {
+                    if (pi.CustomAttributes.Any(ca => ca.AttributeType == typeof(IgnorePropertyCompareAttribute)))
+                    {
+                        continue;
+                    }
+                    object oldValue = pi.GetValue(oldObject);
+
+                    if (oldValue!=null)
+                    {
+                        combineOldData = combineOldData + "{" + (pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).Cast<DisplayNameAttribute>().Single()).DisplayName + " : " + oldValue + "}, ";
+                    }
+                }
+                combineOldData = removeComma(combineOldData);
+                result.Add(new AdminModuleLogger
+                {
+                    nAdminUserID = adminModuleLogger.nAdminUserID,
+                    sEventName = adminModuleLogger.sEventName,
+                    sModuleName = adminModuleLogger.sModuleName,
+                    sDescription = adminModuleLogger.sDescription,
+                    sNewValue = null,
+                    sOldValue = combineOldData,
+                    dtLogTime = DateTime.Now,
+                    nFacilityID = adminModuleLogger.nFacilityID,
+                    nFacilityLocationID = adminModuleLogger.nFacilityLocationID
+                });
+                combineOldData = "";
+            }
+
+            adminModuleLoggerRepository.InsertMany(result);
+        }
+        #endregion
+
+        #region Remove succeeding ", " from string
+        public string removeComma(string inputString)
+        {
+            if (!string.IsNullOrEmpty(inputString))
+            {
+                if (inputString.EndsWith(", "))
+                {
+                    inputString = inputString.Remove(inputString.Length - 2, 2);
+                }
+            }
+            return inputString;
         }
         #endregion
     }

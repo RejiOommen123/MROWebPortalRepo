@@ -37,10 +37,12 @@
         :items="gridData"
         :search="search"
         :footer-props="{
-          'items-per-page-options': [5,10]
+          'items-per-page-options': [10,25,50,100]
         }"
         :items-per-page="5"
         class="body-1"
+        fixed-header
+        height="60vh"
       >
         <!-- Facility Location Count Template -->
         <template v-slot:item.nFacLocCount="{ item }">
@@ -61,7 +63,7 @@
         <template v-slot:item.Fields="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditFields/'+item.facilities.nFacilityID">
+              <router-link class="mrorouterlink" :to="'/EditFacilityData/'+item.facilities.nFacilityID">
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
               </router-link>
             </template>
@@ -160,7 +162,7 @@ export default {
         { text: "Description", value: "facilities.sDescription", width: "40%" },
         { text: "Locations", value: "nFacLocCount", align: "center", width: "10%"},
         {
-          text: "Patient Form",
+          text: "Edit Fields/Disclaimers",
           value: "Fields",
           sortable: false,
           align: "center"

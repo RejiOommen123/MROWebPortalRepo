@@ -1,358 +1,239 @@
 <template>
   <div class="center">
-    <h1>How would you like us to send your record(s)?</h1>
-
-    <template>
-      <form>
-        <!-- Get all Shipment Type associated to facility and displayed as checkbox for selection-->
-        <v-layout
-          v-for="shipmentType in oShipmentTypeArray"
-          :key="shipmentType.sNormalizedShipmentTypeName"
-          row
-          wrap
-        >
-          <v-col cols="12" offset-sm="2" sm="8">
-            <v-checkbox
-              hide-details
-              dark
-              class="checkboxBorder"
-              :label="shipmentType.sShipmentTypeName"
-              color="white"
-              :value="shipmentType.sNormalizedShipmentTypeName"
-              v-model="sSelectedShipmentTypes"
-              @change="check(shipmentType)"
-            >
-              <v-tooltip v-if="shipmentType.sFieldToolTip" slot="append" top>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="white" top>mdi-information</v-icon>
-                </template>
-                <v-col cols="12" sm="12">
-                  <p style="width:200px; background-color:white;color:black">{{shipmentType.sFieldToolTip}}</p>
-                </v-col>
-              </v-tooltip>
-            </v-checkbox>
-
-            <!-- MROSTEmail Block -->
-            <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTEmail'">
-              <v-col v-if="sSelectedShipmentTypes[0]=='MROSTEmail'" slot="MROSTEmail" cols="12" sm="12">
-                <v-text-field
-                  v-model="sSTEmailAddress"
-                  :error-messages="sSTEmailAddressErrors"
-                  label="EMAIL"
-                  required
-                  maxlength="70"
-                  @input="$v.sSTEmailAddress.$touch()"
-                  @blur="$v.sSTEmailAddress.$touch()"
-                ></v-text-field>
-                <v-text-field
-                  @paste.prevent
-                  v-model="sSTConfirmEmailId"
-                  :error-messages="sSTConfirmEmailIdErrors"
-                  label="CONFIRM EMAIL"
-                  required
-                  maxlength="70"
-                  @input="$v.sSTConfirmEmailId.$touch()"
-                  @blur="$v.sSTConfirmEmailId.$touch()"
-                ></v-text-field>
-              </v-col>
-            </div>
-
-            <!-- MROSTMail Block -->
-            <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTMail'">
-              <v-col
-                v-if="sSelectedShipmentTypes[0]=='MROSTMail'"
-                slot="MROSTMail"
-                cols="12"
-                sm="12"
-              >
-              <v-row>
-              <v-col cols="12" offset-sm="2" sm="8">
-              <v-text-field
-                v-model="sSTAddStreetAddress"
-                :error-messages="streetErrors"
-                label="STREET"
-                required
-                maxlength="50"
-                @input="$v.sSTAddStreetAddress.$touch()"
-                @blur="$v.sSTAddStreetAddress.$touch()"
-              ></v-text-field>
-              </v-col>
-              <v-col cols="12" offset-sm="2" sm="8">
-                <v-text-field
-                  v-model="sSTAddApartment"
-                  label="Apartment/Building"
-                  maxlength="50"
-                ></v-text-field>
-              </v-col>
-              <v-col  cols="5" sm="5">
-                <v-text-field
-                  v-model="sSTAddCity"
-                  :error-messages="cityErrors"
-                  label="CITY"
-                  required
-                  maxlength="20"
-                  @input="$v.sSTAddCity.$touch()"
-                  @blur="$v.sSTAddCity.$touch()"
-                ></v-text-field>
-              </v-col>
-              <v-col  cols="3"  sm="3">
-                <v-text-field
-                  v-model="sSTAddState"
-                  :error-messages="stateErrors"
-                  label="STATE"
-                  required
-                  maxlength="2"
-                  @input="sSTAddStateToUpper"
-                  @blur="$v.sSTAddState.$touch()"
-                ></v-text-field>
-              </v-col>
-              <v-col  cols="4" sm="4">
-                <v-text-field
-                  type="tel"
-                  v-model="sSTAddZipCode"
-                  :error-messages="sSTAddZipCodeErrors"
-                  label="ZIP CODE"
-                  required
-                  @input="$v.sSTAddZipCode.$touch()"
-                  @blur="$v.sSTAddZipCode.$touch()"
-                  maxlength="10"
-                ></v-text-field>
-              </v-col>
-              </v-row>
-              </v-col>
-            </div>
-
-            <!-- MROSTPatientPickUp slot -->
-            <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTPatientPickUp'">
-              <v-col
-                v-if="sSelectedShipmentTypes[0]=='MROSTPatientPickUp'"
-                slot="MROSTPatientPickUp"
-                cols="12"
-                sm="12"
-              >
-              <!-- <div class="disclaimer">{{disclaimer}}</div> -->
-              <div v-if="pickUpInstruction!=''" class="disclaimer">{{pickUpInstruction}}</div>               
-              </v-col>                
-            </div>
-
-            <!-- MROSTFax Block -->
-            <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTFax'">
-              <v-col
-                v-if="sSelectedShipmentTypes[0]=='MROSTFax'"
-                slot="MROSTFax"
-                cols="12"
-                sm="12"
-              >
-                <v-text-field
-                  type="tel"
-                  v-model="sSTFaxNumber"
-                  :error-messages="sSTFaxNumberErrors"
-                  label="FAX NO"
-                  required
-                  maxlength="10"
-                  @input="$v.sSTFaxNumber.$touch()"
-                  @blur="$v.sSTFaxNumber.$touch()"
-                ></v-text-field>
-                <v-text-field
-                  type="tel"
-                  v-model="sSTConfirmFaxNumber"
-                  :error-messages="sSTConfirmFaxNumberErrors"
-                  label="CONFIRM FAX NO"
-                  required
-                  maxlength="10"
-                  @input="$v.sSTConfirmFaxNumber.$touch()"
-                  @blur="$v.sSTConfirmFaxNumber.$touch()"
-                ></v-text-field>
-              </v-col>
-            </div>
-          </v-col>
-        </v-layout>      
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTEmail'">
-          <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTMail'">
-          <v-btn :disabled="$v.sSTAddStreetAddress.$invalid || $v.sSTAddCity.$invalid || $v.sSTAddState.$invalid || $v.sSTAddZipCode.$invalid " @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>        
-        <div v-if="sSelectedShipmentTypes[0]=='MROSTFax'">
-          <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.sSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
-        <div v-if="sSelectedShipmentTypes[0]!='MROSTEmail' && sSelectedShipmentTypes[0]!='MROSTMail' && sSelectedShipmentTypes[0]!='MROSTFax'">
-          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.prevent="nextPage" class="next">Next</v-btn>
-        </div>
-      </form>
-    </template>
+    <form>
+      <h1>Please provide recipient information.</h1>
+      <v-row>
+         <v-col style="padding-bottom:0px;padding-top:0px" cols="6" offset-sm="2" sm="4">
+          <v-text-field
+            label="FIRST NAME"
+            v-model="sRecipientFirstName"
+            :error-messages="sRecipientFirstNameError"
+            required
+            maxlength="30"
+            @input="$v.sRecipientFirstName.$touch()"
+            @blur="$v.sRecipientFirstName.$touch()"
+          ></v-text-field>
+        </v-col>
+        <!-- <v-col v-if="MRORecipientMiddleName"  cols="12" sm="3" xs="3">
+          <v-text-field label="MIDDLE NAME" v-model="sRecipientMiddleName"></v-text-field>
+        </v-col> -->
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="6" sm="4">
+          <v-text-field
+            label="LAST NAME"
+            v-model="sRecipientLastName"
+            :error-messages="sRecipientLastNameError"
+            required
+            maxlength="30"
+            @input="$v.sRecipientLastName.$touch()"
+            @blur="$v.sRecipientLastName.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-text-field
+            label="ORGANIZATION NAME"
+            v-model="sRecipientOrganizationName"
+            maxlength="50"
+          ></v-text-field>
+        </v-col>
+        <!-- TODO: v-if="MROAddApartment" -->
+        
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="2" sm="8">
+          <v-text-field
+            v-model="sRecipientAddStreetAddress"
+            :error-messages="streetErrors"
+            label="STREET"
+            required
+            maxlength="50"
+            @input="$v.sRecipientAddStreetAddress.$touch()"
+            @blur="$v.sRecipientAddStreetAddress.$touch()"
+          ></v-text-field>
+        </v-col>
+         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" offset-sm="2" sm="8">
+          <v-text-field
+            v-model="sRecipientAddApartment"
+            label="APARTMENT/BUILDING"
+            maxlength="50"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+          <v-text-field
+            v-model="sRecipientAddCity"
+            :error-messages="cityErrors"
+            label="CITY"
+            required
+            maxlength="20"
+            @input="$v.sRecipientAddCity.$touch()"
+            @blur="$v.sRecipientAddCity.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px"  offset-sm="1" cols="12"  sm="2">
+          <v-text-field
+            v-model="sRecipientAddState"
+            :error-messages="stateErrors"
+            label="STATE"
+            required
+            maxlength="2"
+            @input="sRecipientAddStateToUpper"
+            @blur="$v.sRecipientAddState.$touch()"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+          <v-text-field
+            type="tel"
+            v-model="sRecipientAddZipCode"
+            :error-messages="sRecipientAddZipCodeErrors"
+            label="ZIP CODE"
+            required
+            @input="$v.sRecipientAddZipCode.$touch()"
+            @blur="$v.sRecipientAddZipCode.$touch()"
+            maxlength="10"
+          ></v-text-field>
+        </v-col>
+        <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
+          <div class="disclaimer">{{disclaimer}}</div>
+        </v-col>
+        <v-col  style="padding-top:0px" cols="12" offset-sm="3" sm="6">
+          <v-btn  @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+        </v-col>
+      </v-row>
+    </form>
   </div>
 </template>
-
 <script>
 import { validationMixin } from "vuelidate";
-import { required, email, sameAs, numeric ,maxLength} from "vuelidate/lib/validators";
+import {
+  required,
+  maxLength,
+  numeric
+} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_14",
+  mounted(){
+    if(this.$store.state.requestermodule.sReleaseTo=='MROReleaseToMyself')
+    {
+      if(this.$store.state.requestermodule.bAreYouPatient)
+      {
+        this.sRecipientFirstName = this.$store.state.requestermodule.sPatientFirstName;
+        this.sRecipientLastName=this.$store.state.requestermodule.sPatientLastName;
+      }
+      else
+      {
+        this.sRecipientFirstName = this.$store.state.requestermodule.sRelativeFirstName;
+        this.sRecipientLastName=this.$store.state.requestermodule.sRelativeLastName;
+      }
+      this.sRecipientAddZipCode= this.$store.state.requestermodule.sAddZipCode,
+      this.sRecipientAddCity=this.$store.state.requestermodule.sAddCity,
+      this.sRecipientAddState= this.$store.state.requestermodule.sAddState,
+      this.sRecipientAddStreetAddress =this.$store.state.requestermodule.sAddStreetAddress,
+      this.sRecipientAddApartment = this.$store.state.requestermodule.sAddApartment;
+    }
+    else
+    {
+      this.sRecipientFirstName = '';
+      this.sRecipientLastName='';
+      this.sRecipientAddZipCode= '';
+      this.sRecipientAddCity='';
+      this.sRecipientAddState= '';
+      this.sRecipientAddStreetAddress ='';
+      this.sRecipientAddApartment = '';
+    }
+  },
   data() {
     return {
-      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
-      // oShipmentTypeArray: this.$store.state.ConfigModule.oShipmentTypes,
-      sSelectedShipmentTypes: [],
-      sSelectedShipmentTypesName:'',
-      // combine previously entered data by requester
+      sRecipientFirstName: "",
+      sRecipientLastName: "",
+      sRecipientOrganizationName: "",
+      sRecipientAddZipCode: '',
+      sRecipientAddCity:'',
+      sRecipientAddState: '',
+      sRecipientAddStreetAddress: '',
+      sRecipientAddApartment:'',
 
-      sSTFaxNumber: '',
-      sSTConfirmFaxNumber:'',
-      sSTEmailAddress: this.$store.state.requestermodule.sRequesterEmailId,
-      sSTConfirmEmailId: this.$store.state.requestermodule.sRequesterEmailId,
-      // combine previously entered data by requester
-      sSTAddZipCode: this.$store.state.requestermodule.sAddZipCode,
-      sSTAddCity: this.$store.state.requestermodule.sAddCity,
-      sSTAddState: this.$store.state.requestermodule.sAddState,
-      sSTAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
-      sSTAddApartment:this.$store.state.requestermodule.sAddApartment,
-      menu1: false,
+      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
 
-      // disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
-      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_pickUpInstruction,
+     // Show and Hide Fields Values
+      MRORecipientMiddleName: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientMiddleName,
+      MRORecipientAddApartment: this.$store.state.ConfigModule.apiResponseDataByLocation
+        .oFields.MRORecipientAddApartment,
     };
   },
-  //Shipment type validations
+  //Requester address validations
   mixins: [validationMixin],
   validations: {
-    sSTFaxNumber: {
-      required,
-      numeric
-    },
-    sSTConfirmFaxNumber:{
-      required,
-      numeric,
-      sameAsFaxNo: sameAs("sSTFaxNumber")
-    },
-    sSTEmailAddress: {
-      required,
-      email
-    },
-    sSTConfirmEmailId: {
-      required,
-      email,
-      sameAsemailID: sameAs("sSTEmailAddress")
-    },
-    sSTAddZipCode: {
+    sRecipientFirstName: { required, maxLength: maxLength(30) },
+    sRecipientLastName: { required, maxLength: maxLength(30) },
+    sRecipientAddZipCode: {
       required,
       maxLength: maxLength(10),
       numeric
     },
-    sSTAddCity: { required },
-    sSTAddState: { required },
-    sSTAddStreetAddress: { required },
+    sRecipientAddCity: { required },
+    sRecipientAddState: { required },
+    sRecipientAddStreetAddress: { required }
   },
   computed: {
-    //validations error message setter
-    sSTFaxNumberErrors() {
+    sRecipientFirstNameError() {
       const errors = [];
-      if (!this.$v.sSTFaxNumber.$dirty) return errors;
-      !this.$v.sSTFaxNumber.numeric && errors.push("Fax must be numeric.");
-      !this.$v.sSTFaxNumber.required && errors.push("Fax No is required.");
+      if (!this.$v.sRecipientFirstName.$dirty) return errors;
+      !this.$v.sRecipientFirstName.maxLength &&
+        errors.push("First Name must be at most 30 characters long");
+      !this.$v.sRecipientFirstName.required &&
+        errors.push("First Name is required.");
       return errors;
     },
-    sSTConfirmFaxNumberErrors() {
+    sRecipientLastNameError() {
       const errors = [];
-      if (!this.$v.sSTConfirmFaxNumber.$dirty) return errors;
-      !this.$v.sSTConfirmFaxNumber.numeric && errors.push("Confirm Fax must be numeric.");
-      !this.$v.sSTConfirmFaxNumber.sameAsFaxNo &&
-        errors.push("Please enter correct Fax No");
-      !this.$v.sSTConfirmFaxNumber.required && errors.push("Fax No is required.");
+      if (!this.$v.sRecipientLastName.$dirty) return errors;
+      !this.$v.sRecipientLastName.maxLength &&
+        errors.push("Last Name must be at most 30 characters long");
+      !this.$v.sRecipientLastName.required &&
+        errors.push("Last Name is required.");
       return errors;
     },
-    sSTEmailAddressErrors() {
+    //Requester address validation error message setter
+    sRecipientAddZipCodeErrors() {
       const errors = [];
-      if (!this.$v.sSTEmailAddress.$dirty) return errors;
-      !this.$v.sSTEmailAddress.email && errors.push("Must be valid e-mail");
-      !this.$v.sSTEmailAddress.required && errors.push("E-mail is required");
-      return errors;
-    },
-    sSTConfirmEmailIdErrors() {
-      const errors = [];
-      if (!this.$v.sSTConfirmEmailId.$dirty) return errors;
-      !this.$v.sSTConfirmEmailId.sameAsemailID &&
-        errors.push("Please enter correct e-mail");
-      !this.$v.sSTConfirmEmailId.email && errors.push("Must be valid e-mail");
-      !this.$v.sSTConfirmEmailId.required && errors.push("E-mail is required");
-      return errors;
-    },
-    sSTAddZipCodeErrors() {
-      const errors = [];
-      if (!this.$v.sSTAddZipCode.$dirty) return errors;
-      !this.$v.sSTAddZipCode.maxLength && errors.push("ZipCode must be 10 digit");
-      !this.$v.sSTAddZipCode.numeric && errors.push("ZipCode must me numeric.");
-      !this.$v.sSTAddZipCode.required && errors.push("ZipCode is required.");
+      if (!this.$v.sRecipientAddZipCode.$dirty) return errors;
+      !this.$v.sRecipientAddZipCode.maxLength && errors.push("ZipCode must be 10 digit");
+      !this.$v.sRecipientAddZipCode.numeric && errors.push("ZipCode must me numeric.");
+      !this.$v.sRecipientAddZipCode.required && errors.push("ZipCode is required.");
       return errors;
     },
     cityErrors() {
       const errors = [];
-      if (!this.$v.sSTAddCity.$dirty) return errors;
-      !this.$v.sSTAddCity.required && errors.push("City is required.");
+      if (!this.$v.sRecipientAddCity.$dirty) return errors;
+      !this.$v.sRecipientAddCity.required && errors.push("City is required.");
       return errors;
     },
     stateErrors() {
       const errors = [];
-      if (!this.$v.sSTAddState.$dirty) return errors;
-      !this.$v.sSTAddState.required && errors.push("State is required.");
+      if (!this.$v.sRecipientAddState.$dirty) return errors;
+      !this.$v.sRecipientAddState.required && errors.push("State is required.");
       return errors;
     },
     streetErrors() {
       const errors = [];
-      if (!this.$v.sSTAddStreetAddress.$dirty) return errors;
-      !this.$v.sSTAddStreetAddress.required &&
+      if (!this.$v.sRecipientAddStreetAddress.$dirty) return errors;
+      !this.$v.sRecipientAddStreetAddress.required &&
         errors.push("Street Address is required.");
       return errors;
-    },
+    }
   },
   methods: {
-    sSTAddStateToUpper(val) {
-      this.sSTAddState = val.toUpperCase()
+    sRecipientAddStateToUpper(val) {
+      this.sRecipientAddState = val.toUpperCase()
     },
     nextPage() {
-      // Before switching shipment type reset state data for shipment type
-        this.resetSTState();
-      //Switch based on selection and set state data
-      switch (this.sSelectedShipmentTypes[0]) {
-        case "MROSTEmail":
-          if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
-            this.$store.commit("ConfigModule/bShowRecipientPage",true);
-          }
-          else{
-            this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          }
-          this.$store.commit("requestermodule/sSTEmailAddress", this.sSTEmailAddress);          
-          break;
-        case "MROSTMail":
-          this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          this.$store.commit("requestermodule/sSTAddApartment", this.sSTAddApartment);
-          this.$store.commit("requestermodule/sSTAddZipCode", this.sSTAddZipCode);
-          this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
-          this.$store.commit("requestermodule/sSTAddState", this.sSTAddState);
-          this.$store.commit(
-            "requestermodule/sSTAddStreetAddress",
-            this.sSTAddStreetAddress
-          );      
-          break;
-        case "MROSTFax":
-          if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
-            this.$store.commit("ConfigModule/bShowRecipientPage",true);
-          }
-          else{
-            this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          }
-          this.$store.commit("requestermodule/sSTFaxNumber",this.sSTFaxNumber);         
-          break;
-        default:
-            this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          break;
-      }
+      this.$store.commit("requestermodule/sRecipientFirstName",this.sRecipientFirstName);
+      this.$store.commit("requestermodule/sRecipientLastName",this.sRecipientLastName);
+      this.$store.commit("requestermodule/sRecipientOrganizationName",this.sRecipientOrganizationName);
+      this.$store.commit("requestermodule/sRecipientAddZipCode", this.sRecipientAddZipCode);
+      this.$store.commit("requestermodule/sRecipientAddCity", this.sRecipientAddCity);
+      this.$store.commit("requestermodule/sRecipientAddState", this.sRecipientAddState);
+      this.$store.commit("requestermodule/sRecipientAddStreetAddress",this.sRecipientAddStreetAddress);
+      this.$store.commit("requestermodule/sRecipientAddApartment",this.sRecipientAddApartment);
 
-      this.$store.commit("requestermodule/sSelectedShipmentTypes", this.sSelectedShipmentTypes);       
-      this.$store.commit("requestermodule/sSelectedShipmentTypesName", this.sSelectedShipmentTypesName);     
-      
-
-      
       //Partial Requester Data Save Start
       this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
       if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
@@ -363,39 +244,9 @@ export default {
         });
       }
       //Partial Requester Data Save End
-
+      
       this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    //set variable based on selection
-    check(shipment) {
-      this.sSelectedShipmentTypes = [];
-      this.sSelectedShipmentTypes.push(shipment.sNormalizedShipmentTypeName);
-      this.sSelectedShipmentTypesName=shipment.sShipmentTypeName;
-    },
-    resetSTState(){
-      this.$store.commit("requestermodule/sSTEmailAddress", '');
-      this.$store.commit("requestermodule/sSTAddApartment",'');
-      this.$store.commit("requestermodule/sSTAddZipCode", '');
-      this.$store.commit("requestermodule/sSTAddCity", '');
-      this.$store.commit("requestermodule/sSTAddState",'');
-      this.$store.commit("requestermodule/sSTAddStreetAddress", '');
-      this.$store.commit("requestermodule/sSTFaxNumber",'');
-
-      this.$store.commit("requestermodule/sRecipientFirstName",'');
-      this.$store.commit("requestermodule/sRecipientLastName",'');
-      // this.$store.commit("requestermodule/sRecipientMiddleName",'');
-      this.$store.commit("requestermodule/sRecipientAddZipCode", '');
-      this.$store.commit("requestermodule/sRecipientAddCity", '');
-      this.$store.commit("requestermodule/sRecipientAddState", '');
-      this.$store.commit("requestermodule/sRecipientAddStreetAddress",'');
-      this.$store.commit("requestermodule/sRecipientAddApartment",'');
     }
   }
 };
 </script>
-<style scoped>
-.v-tooltip__content{
-  color: black;
-  background: white;
-}
-</style>

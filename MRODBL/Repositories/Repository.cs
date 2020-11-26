@@ -187,7 +187,8 @@ namespace MRODBL.Repositories
                       "sLocationAddress, " +
                       "sLocationCode, " +
                       "bLocationActiveStatus, " +
-                      "sFacilityName " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
                       "FROM " +
                       "tblFacilityLocations " +
                       "INNER JOIN " +
@@ -208,6 +209,17 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync(SqlString);
             }
         }
+
+       
+        public async Task<IEnumerable<T>> SelectListByInClause(int[] ids,string tblName, string colName,int nFacilityId)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT * FROM "+tblName +" WHERE nFacilityId="+ nFacilityId +"AND "+colName+" IN @ids";
+                return await db.QueryAsync<T>(SqlString, new { @ids = ids });
+            }
+        }
+
         #endregion
 
         #region INSERT Queries
@@ -233,15 +245,21 @@ namespace MRODBL.Repositories
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                db.Open();
-                int count = 0;
-                using (var trans = db.BeginTransaction())
+                try
                 {
-                    count = await db.InsertAsync(ourModels, trans);
-                    trans.Commit();
+                    db.Open();
+                    long count = 0;
+                    using (var trans = db.BeginTransaction())
+                    {
+                        count = db.Insert(ourModels, trans);
+                        trans.Commit();
+                    }
+                    if (count > 0) { return true; }
+                    else { return false; }
                 }
-                if (count > 0) { return true; }
-                else { return false; }
+                catch (Exception ex) {
+                    return false;
+                }
             }
         }
         #endregion
@@ -276,6 +294,32 @@ namespace MRODBL.Repositories
                 int nRowAffected = await db.ExecuteAsync(sdSql);
                 return nRowAffected == 1 ? true : false;
             }
+        }
+        public bool DeleteOneToMany(int id, string lnkTable)
+        {
+            using (var connection = new SqlConnection(sConnect))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var rowsAffected = connection.Execute(
+                                         "DELETE " + lnkTable + @" 
+                                    WHERE " + sKeyName + @" =@ID " +
+                                         "DELETE " + sTableName + @" 
+                                    WHERE " + sKeyName + @" =@ID",
+                                         new { ID = id }, transaction);
+                    }
+                    catch (Exception ex) {
+                        transaction.Rollback();
+                        return false;
+                    }
+                    transaction.Commit();
+                }
+            }
+            return true;
         }
         #endregion
 
@@ -327,7 +371,7 @@ namespace MRODBL.Repositories
         #endregion
 
         #region Stored Procedures
-        public async Task<IEnumerable<dynamic>> EditFields(int ID)
+        public async Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID)
         {
             string SqlString = "spGetPatientFormBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -335,7 +379,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID , @nAdminUserID = nAdminUserID }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex) {
@@ -355,9 +399,10 @@ namespace MRODBL.Repositories
                 var oRecordTypes = wizardConfig.Read().ToList();
                 var oSensitiveInfo = wizardConfig.Read().ToList();
                 var oShipmentTypes = wizardConfig.Read().ToList();
+                var oPatientRepresentatives = wizardConfig.Read().ToList();
                 var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var oLocations = wizardConfig.Read().ToList();
-                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oWizardHelper, oLocations };
+                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWizardHelper, oLocations };
                 return newObject;
             }
         }
@@ -371,13 +416,13 @@ namespace MRODBL.Repositories
                 return logoBackgroundLocation;
             }
         }
-        public async Task<object> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID)
+        public async Task<object> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID, string sLocationGUID)
         {
             string SqlString = "spGetLogoAndBackgroundImageforFacilityGUID";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader logoBackgroundFacility = await db.QueryMultipleAsync(SqlString, new { @sGuid = sGUID, @sLocationGuid = sLocationGUID }, commandType: CommandType.StoredProcedure);
                 var facilityLogoandBackground = logoBackgroundFacility.Read().ToList();
                 var sWizards = logoBackgroundFacility.Read().Select(d => new object[] { d.sWizardName });
                 List<string> soWizard = new List<string>();
@@ -441,7 +486,88 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<string> GetNormalizedNameByMasterName(string sMasterName)
+        {
+            string SqlString = "spGetNormalizedNameByMasterName";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                db.Open();
+                string sNormalizedName = await db.QueryFirstAsync<string>(SqlString, new { @sMasterName = sMasterName }, commandType: CommandType.StoredProcedure);
+                return sNormalizedName;
+            }
+        }
 
+        public async Task<IEnumerable<dynamic>> EditDisclaimers(int ID)
+        {
+            string SqlString = "spGetDisclaimerInfoBynFacilityID";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetAuditData(string sStart= null,string sEnd=null, string sFacilityName = null, string sLocationName = null, string sAdminName = null)
+        {
+            string SqlString = "spGetAuditReport";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @sStart = sStart, @sEnd = sEnd, @sFacilityName = sFacilityName, @sLocationName = sLocationName , @sAdminName = sAdminName }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetFacilityLocationData(string sStart = null, string sEnd = null, string sFacilityName = null, string sLocationName = null)
+        {
+            string SqlString = "spGetFacilityLocationReport";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @sStart = sStart, @sEnd = sEnd, @sFacilityName = sFacilityName, @sLocationName = sLocationName }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetFacilityConfigurationData(string sFacilityName = null, string sWizardName = null)
+        {
+            string SqlString = "spGetFacilityConfigurationReport";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @sFacilityName = sFacilityName, @sWizardName = sWizardName }, commandType: CommandType.StoredProcedure);
+                    return a;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+            }
+        }
         #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MRODBL.BaseClasses;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MRODBL.Repositories
@@ -91,6 +93,7 @@ namespace MRODBL.Repositories
         /// <param name="tB">Table B Name</param>
         /// <returns>Inner Joined Data of 2 tables</returns>
         Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB);
+       
         #endregion
 
         #region INSERT Queries
@@ -117,7 +120,13 @@ namespace MRODBL.Repositories
         /// <param name="ID">ID of record which is to be Soft Deleted</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
         Task<bool> ToggleSoftDelete(string sdColName, int ID);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">ID of record which is to be Deleted</param>
+        /// <param name="lnkTable">Name of the link table</param>
+        /// <returns></returns>
+        bool DeleteOneToMany(int id, string lnkTable);
         /// <summary>
         /// Delete a Record in a Table
         /// </summary>
@@ -158,7 +167,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="ID">Facility ID</param>
         /// <returns>Facility Field Map Values based on given Facility ID</returns>
-        Task<IEnumerable<dynamic>> EditFields(int ID);
+        Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID);
 
         /// <summary>
         /// Get Wizard Config Details (SP)
@@ -173,7 +182,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="nFacilityID">Facility ID</param>
         /// <returns>Logo & Background Details for Facility based on Provided Facility ID</returns>
-        Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID);
+        Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID, string sLocationGUID);
 
         /// <summary>
         /// Get Logo & Background For Location based on Location ID (SP)
@@ -203,6 +212,38 @@ namespace MRODBL.Repositories
         /// <param name="sEmail">Admin Email</param>
         /// <returns>Admin User ID (int)</returns>
         Task<int> GetAdminUserID(string sName, string sUPN, string sEmail);
+        /// <summary>
+        /// Get Disclaimers Per Facility ID
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
+        /// <summary>
+        /// Get Audir Report Data
+        /// </summary>
+        /// <param name="dtStart"></param>
+        /// <param name="dtEnd"></param>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sLocationName"></param>
+        /// <param name="sAdminName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetAuditData(string dtStart, string dtEnd, string sFacilityName, string sLocationName, string sAdminName);
+        /// <summary>
+        /// Get Facility/Location Data
+        /// </summary>
+        /// <param name="dtStart"></param>
+        /// <param name="dtEnd"></param>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sLocationName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetFacilityLocationData(string dtStart, string dtEnd, string sFacilityName, string sLocationName);
+        /// <summary>
+        /// Get Facility Configuration Data
+        /// </summary>
+        /// <param name="sFacilityName"></param>
+        /// <param name="sWizardName"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetFacilityConfigurationData(string sFacilityName, string sWizardName);
         #endregion
     }
 }

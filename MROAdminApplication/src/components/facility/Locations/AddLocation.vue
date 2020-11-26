@@ -153,6 +153,34 @@
                 <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
             </v-file-input>
+            <v-row>
+              <v-col cols="6" md="6">              
+                <label  for="Primary Timeout">Primary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nPrimaryTimeout"
+                  placeholder="Primary Timeout (In Seconds)"
+                  v-model="location.nPrimaryTimeout"
+                  @input="$v.location.nPrimaryTimeout.$touch()"
+                  @blur="$v.location.nPrimaryTimeout.$touch()"
+                  :error-messages="nPrimaryTimeoutErrors"
+                  solo
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6" md="6">              
+                <label for="Secondary Timeout">Secondary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nSecondaryTimeout"
+                  placeholder="Secondary Timeout (In Seconds)"
+                  v-model="location.nSecondaryTimeout"
+                  @input="$v.location.nSecondaryTimeout.$touch()"
+                  @blur="$v.location.nSecondaryTimeout.$touch()"
+                  :error-messages="nSecondaryTimeoutErrors"
+                  solo
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <div class="submit">
@@ -319,7 +347,9 @@ export default {
         minLength: minLength(10),
         numeric
       },
-      sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric }
+      sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },
+      nPrimaryTimeout: { numeric },
+      nSecondaryTimeout: { numeric },
     }
   },
   computed: {
@@ -387,6 +417,20 @@ export default {
       !this.$v.location.sFaxNo.maxLength &&
         errors.push("Fax Number must be at most 10 characters long");
       return errors;
+    },
+    nPrimaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.location.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.location.nPrimaryTimeout.numeric &&
+        errors.push("Primary Timeout Must be Numeric");
+      return errors;
+    },
+    nSecondaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.location.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.location.nSecondaryTimeout.numeric &&
+        errors.push("Secondary Timeout Must be Numeric");
+      return errors;
     }
   },
   name: "AddLocation",
@@ -419,6 +463,8 @@ export default {
         nROILocationID: "",
         sAuthTemplate: "",
         sAuthTemplateName: "",
+        nPrimaryTimeout:"",
+        nSecondaryTimeout:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -556,7 +602,8 @@ export default {
       this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
-      console.log(this.location);
+      this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
+      this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
         .then(

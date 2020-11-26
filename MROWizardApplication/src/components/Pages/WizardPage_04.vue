@@ -75,7 +75,9 @@
         <v-col v-else cols="12" offset-sm="3" sm="6">
           <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.sPatientFirstName.$invalid  || $v.sPatientLastName.$invalid ">Next</v-btn>
         </v-col>
-        <div v-if="disclaimer!='' && bPatientNameChanged==true" class="disclaimer">{{bAreYouPatient ? disclaimer : disclaimer02}}</div>
+        <v-col v-if="disclaimer!='' && bPatientNameChanged==true" cols="12" sm="12">
+        <div class="disclaimer">{{bAreYouPatient ? disclaimer : disclaimer02}}</div>
+        </v-col>
       </v-row>
     </form>
   </div>
@@ -200,6 +202,18 @@ export default {
         "requestermodule/bPatientNameChanged",
         this.bPatientNameChanged
       );
+
+      //Partial Requester Data Save Start
+        this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
+        if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
+        {
+          this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
+          .then(response => {
+            this.$store.commit("requestermodule/nRequesterID", response.body);
+          });
+        }
+        //Partial Requester Data Save End
+        
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   }

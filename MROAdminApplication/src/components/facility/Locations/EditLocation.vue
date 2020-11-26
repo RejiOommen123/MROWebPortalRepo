@@ -71,6 +71,40 @@
               :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
+            <!-- Show GUID & -->
+            <label for="sGUID">
+              Guid for URL (Read Only):
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="copyGUID"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <span>Click to Copy GUID</span>
+              </v-tooltip>Button Code:
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ma-0 pa-0">
+                    <v-icon
+                      @click="copyBtnCode"
+                      small
+                      color="rgb(0,91,168)"
+                      v-bind="attrs"
+                      v-on="on"
+                    >mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                <span>Click to copy Button Code</span>
+              </v-tooltip>
+            </label>
+            <!-- Show confirm email to requestor -->
+            <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:
@@ -152,8 +186,36 @@
                 </template>
                 <span>Please upload logo with height 50px/0.375em</span>
               </v-tooltip>
-            </v-file-input>
-          </v-col>
+            </v-file-input>      
+            <v-row>
+              <v-col cols="6" md="6">              
+                <label  for="Primary Timeout">Primary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nPrimaryTimeout"
+                  placeholder="Primary Timeout (In Seconds)"
+                  v-model="location.nPrimaryTimeout"
+                  @input="$v.location.nPrimaryTimeout.$touch()"
+                  @blur="$v.location.nPrimaryTimeout.$touch()"
+                  :error-messages="nPrimaryTimeoutErrors"
+                  solo
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6" md="6">              
+                <label for="Secondary Timeout">Secondary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nSecondaryTimeout"
+                  placeholder="Secondary Timeout (In Seconds)"
+                  v-model="location.nSecondaryTimeout"
+                  @input="$v.location.nSecondaryTimeout.$touch()"
+                  @blur="$v.location.nSecondaryTimeout.$touch()"
+                  :error-messages="nSecondaryTimeoutErrors"
+                  solo
+                ></v-text-field>
+              </v-col>
+            </v-row>      
+          </v-col>          
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
@@ -222,6 +284,17 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Dialog Alert for Common errors  -->
+    <v-dialog v-model="errorAlert" width="350px" max-width="360px">
+      <v-card>
+        <v-card-title class="headline">Warning</v-card-title>
+        <v-card-text>{{errorMessage}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="errorAlert = false">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -317,7 +390,9 @@ export default {
         minLength: minLength(10),
         numeric
       },
-      sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric }
+      sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },      
+      nPrimaryTimeout: { numeric },
+      nSecondaryTimeout: { numeric },
     }
   },
   computed: {
@@ -385,6 +460,20 @@ export default {
       !this.$v.location.sFaxNo.maxLength &&
         errors.push("Fax Number must be at most 10 characters long");
       return errors;
+    },
+    nPrimaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.location.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.location.nPrimaryTimeout.numeric &&
+        errors.push("Primary Timeout Must be Numeric");
+      return errors;
+    },
+    nSecondaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.location.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.location.nSecondaryTimeout.numeric &&
+        errors.push("Secondary Timeout Must be Numeric");
+      return errors;
     }
   },
   name: "EditLocation",
@@ -402,7 +491,11 @@ export default {
       previewPDFDialog:false,
       previewPDFPage:0,
       src: undefined,
-			numPages: undefined,
+      numPages: undefined,
+      sBtnCode:'',
+      sGUID: '',
+      errorAlert:false,
+      errorMessage:'',
       location: {
         nROIFacilityID: null,
         nFacilityID: null,
@@ -419,6 +512,8 @@ export default {
         sAuthTemplate: "",
         nROILocationID: "",
         sAuthTemplateName: "",
+        nPrimaryTimeout:"",
+        nSecondaryTimeout:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -442,6 +537,22 @@ export default {
           this.gridData = response.body;          
         }
       );
+    //Get btn code for location and guid
+    this.$http.get("FacilityLocations/GetBtnCodeAndGUID/"+this.$route.params.id)
+    .then(
+      response=>{
+        if(response.ok==true){        
+        this.sGUID = response.body.sFacilityLocationURL;
+        this.sBtnCode = response.body.sFacilityLocationButtonHTMLCode;
+      }},
+      error=>{        
+        if (error.status == 400) {
+            this.dialogLoader =false;
+            this.errorMessage='Error - Something went wrong while getting GUID.';
+            this.errorAlert=true;   
+          }      
+      }
+    );  
   },
   methods: {
     clearBGField() {
@@ -560,14 +671,25 @@ export default {
             });          
         });
     },
+    copyGUID() {
+      if(navigator.clipboard != undefined){//Chrome
+      navigator.clipboard.writeText(this.sGUID);}
+    },
+    copyBtnCode(){
+       if(navigator.clipboard != undefined){//Chrome
+          navigator.clipboard.writeText(this.sBtnCode);
+       }
+    },
     // API to Update location
     onSubmit() {
+      this.location.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader =true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nFacilityLocationID = parseInt(
         this.location.nFacilityLocationID
       );
-      console.log(this.location);
+      this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
+      this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
       this.$http
         .post(
           "FacilityLocations/EditFacilityLocation/" +

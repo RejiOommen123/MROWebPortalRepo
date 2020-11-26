@@ -360,3 +360,6 @@ button.wizardSelectionButton:hover {
   max-height: 100%  !important;
   overflow: hidden !important;
 }
+.v-text-field .v-label {
+  margin-top: -5px !important; 
+} 

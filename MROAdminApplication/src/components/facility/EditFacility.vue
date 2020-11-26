@@ -231,6 +231,36 @@
               id="bRequestorEmailConfirm"
               v-model="facility.bRequestorEmailConfirm"
             ></v-switch>
+            <v-row>
+              <v-col cols="6" md="6">              
+                <label class="required" for="Primary Timeout">Primary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nPrimaryTimeout"
+                  placeholder="Primary Timeout (In Seconds)"
+                  v-model="facility.nPrimaryTimeout"
+                  @input="$v.facility.nPrimaryTimeout.$touch()"
+                  @blur="$v.facility.nPrimaryTimeout.$touch()"
+                  :error-messages="nPrimaryTimeoutErrors"
+                  solo
+                  min="1"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6" md="6">              
+                <label class="required" for="Secondary Timeout">Secondary Timeout:</label>
+                <v-text-field
+                  type="number"
+                  id="nSecondaryTimeout"
+                  placeholder="Secondary Timeout (In Seconds)"
+                  v-model="facility.nSecondaryTimeout"
+                  @input="$v.facility.nSecondaryTimeout.$touch()"
+                  @blur="$v.facility.nSecondaryTimeout.$touch()"
+                  :error-messages="nSecondaryTimeoutErrors"
+                  solo
+                  min="1"
+                ></v-text-field>
+              </v-col>
+            </v-row>
             <div id="marginDiv7"></div>
             <!-- <label for="bRequestorEmailVerify">Send email verification for Requestor email address ?</label>
             <v-switch
@@ -300,7 +330,8 @@ import {
   required,
   minLength,
   maxLength,
-  email
+  email,
+  numeric
 } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
@@ -343,7 +374,9 @@ export default {
         required,
         maxLength: maxLength(200)
       },
-      sOutboundEmail: { required, email }
+      sOutboundEmail: { required, email },
+      nPrimaryTimeout: { required, numeric },
+      nSecondaryTimeout: { required, numeric },
     }
   },
   computed: {
@@ -439,6 +472,24 @@ export default {
       !this.$v.facility.sOutboundEmail.required &&
         errors.push("Email is required.");
       return errors;
+    },
+    nPrimaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.facility.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.facility.nPrimaryTimeout.numeric &&
+        errors.push("Primary Timeout Must be Numeric");
+      !this.$v.facility.nPrimaryTimeout.required &&
+        errors.push("Primary Timeout is required.");
+      return errors;
+    },
+    nSecondaryTimeoutErrors() {
+      const errors = [];
+      if (!this.$v.facility.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.facility.nSecondaryTimeout.numeric &&
+        errors.push("Secondary Timeout Must be Numeric");
+      !this.$v.facility.nSecondaryTimeout.required &&
+        errors.push("Secondary Timeout is required.");
+      return errors;
     }
   },
   name: "EditFacility",
@@ -467,6 +518,8 @@ export default {
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
         bRequestorEmailVerify:false,
+        nPrimaryTimeout:0,
+        nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -478,9 +531,15 @@ export default {
     this.$http.get("facility/GetHTMLButtonCode/sFacilityID="+this.$route.params.id).then(
       response=>{if(response.ok==true){
         this.sBtnCode = response.bodyText;
-        //console.log(response.bodyText);
       }},
-      error=>{console.log(error);}
+      error=>{        
+        if (error.status == 400) {
+            this.dialogLoader =false;
+            this.SMTPStatus='Error - Something went wrong';
+            this.SMTPResponseMsg=error.body;
+            this.SMTPResponseDialog=true;   
+          }      
+      }
     );
     this.$http.get("facility/GetFacility/sFacilityID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId).then(
       response => {
@@ -499,7 +558,12 @@ export default {
       },
       error => {
         // error callback
-        console.log(error);
+         if (error.status == 400) {
+            this.dialogLoader =false;
+            this.SMTPStatus='Error - Something went wrong';
+            this.SMTPResponseMsg=error.body;
+            this.SMTPResponseDialog=true;   
+          }    
       }
     );
     this.dialogLoader = false;
@@ -564,12 +628,12 @@ export default {
             this.SMTPResponseMsg=error.body;
             this.SMTPResponseDialog=true;   
           }
-          console.log(error.body);
         }
       );
     },
     // API call to post facility (Edit Facility)
     onSubmit() {
+      this.facility.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader = true;
       this.$http
         .post(
@@ -590,7 +654,6 @@ export default {
             this.dialogLoader =false;
             this.sameNameAlert = true;
           }
-          console.log(error.body);
         }
         );
     }

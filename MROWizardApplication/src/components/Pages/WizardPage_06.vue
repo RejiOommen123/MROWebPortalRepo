@@ -26,31 +26,18 @@
             ></v-text-field>
         </v-col>
         <v-col  cols="12" sm="12">
-            <!-- <v-col cols="12" offset-sm="2" sm="8"> -->
             <div v-if="disclaimer01!=''" class="disclaimer">{{disclaimer01}}</div>
-        
-            <!-- </v-col> -->
-            <!-- <div v-if="bRequestorEmailConfirm==false">
-               <v-btn
-              :disabled="$v.emailValid.$invalid"
-              class="mr-4 next"
-              @click.prevent="nextPage"
-              >Next</v-btn>
-            </div> -->
-            <!-- v-if="bRequestorEmailConfirm==true" -->
             <div> 
             <v-checkbox          
               hide-details
               id="checkbox"
               v-model="bConfirmReport"
               :disabled="inputDisabled"
-              @change="checked()"
               color="white"
               :label="disclaimer02"
             ></v-checkbox>
-            <div v-if="verified==false">
+            <div>
             <v-btn
-              v-if="!showVerifyBlock || !bRequestorEmailVerify"
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
               @click.prevent="nextPage"
@@ -58,58 +45,6 @@
             </div>
             </div>
           </v-col>
-        <v-col  cols="12" offset-sm="2" sm="8">
-          <form>
-            <!-- if please email copy checkbox is check then below fields are visible -->
-            <div v-show="showVerifyBlock && bRequestorEmailVerify">
-              <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
-               <v-alert
-                    v-if="otpSentAlert"
-                    dense
-                    text
-                    type="success"
-                  >
-                   Sending Email
-                  </v-alert>
-              <v-btn
-                v-if="emailSent==false"
-                @click="sendEmail"
-                :disabled="$v.emailValid.$invalid || emailSent==true"
-                class="next"
-              >Send Email Verification</v-btn>
-              <div v-if="showVerifyInput==true">
-                <v-col cols="12" offset-sm="3" sm="6">
-                <v-text-field
-                  ref="otp"
-                  :error-messages="sVerifyError"
-                  @input="$v.sVerify.$touch()"
-                  @blur="$v.sVerify.$touch()"
-                  v-model="sVerify"
-                  label="Enter Code"
-                  required
-                ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12">
-                <v-btn @click.prevent="sendEmail" :disabled="$v.emailValid.$invalid" class="next">Resend Code</v-btn>
-
-                <v-btn
-                  @click.prevent="verifyCode"
-                  :disabled="$v.sVerify.$invalid || $v.emailValid.$invalid"
-                  style="margin-left:10px"
-                  class="next"
-                >Verify</v-btn>
-                </v-col>
-                <!-- <v-col cols="12" offset-sm="3" sm="6">
-                  <v-btn @click.prevent="nextPage" :disabled="$v.emailValid.$invalid" class="next">Skip</v-btn>
-                </v-col> -->
-              </div>
-            </div>
-            <div v-if="showSuccessBlock">
-              <p class="disclaimer">Email Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
-            </div>
-          </form>
-        </v-col>
       </v-row>
   </div>
 </template>
@@ -118,9 +53,7 @@ import { validationMixin } from "vuelidate";
 import {
   required,
   email,
-  sameAs,
-  maxLength,
-  minLength
+  sameAs
 } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_06",
@@ -131,16 +64,7 @@ export default {
         sConfirmEmailId: ""
       },
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
-      showVerifyInput: false,
-      sVerify: "",
-      sResponseKey: "",
-      isDisable: false,
-      verified: false,
-      showVerifyBlock: false,
-      showSuccessBlock: false,
       inputDisabled: false,
-      emailSent:false,
-      otpSentAlert:false,
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_06_disclaimer01,
@@ -151,11 +75,7 @@ export default {
       MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
         .oFields.MROPEmailId,
       MROConfirmReport: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROConfirmReport,
-      bRequestorEmailConfirm:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .facilityLogoandBackground[0].bRequestorEmailConfirm,
-      bRequestorEmailVerify:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .facilityLogoandBackground[0].bRequestorEmailVerify,
+        .oFields.MROConfirmReport
     };
   },
   //Email on verify OTP validations
@@ -171,8 +91,7 @@ export default {
         email,
         sameAsemailID: sameAs("sRequesterEmailId")
       }
-    },
-    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) }
+    }
   },
   computed: {
     // Email and verify OTP validations error message setter
@@ -195,64 +114,9 @@ export default {
       !this.$v.emailValid.sConfirmEmailId.required &&
         errors.push("E-mail is required");
       return errors;
-    },
-    sVerifyError() {
-      const errors = [];
-      if (!this.$v.sVerify.$dirty) return errors;
-      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit Code");
-      !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
-      !this.$v.sVerify.required && errors.push("Verification Code required");
-      return errors;
     }
   },
   methods: {
-    sendEmail() {
-      this.$store.commit(
-        "requestermodule/sRequesterEmailId",
-        this.sRequesterEmailId
-      );
-      this.otpSentAlert=true;
-      this.emailSent=true;
-      this.isDisable = true;
-      this.showVerifyInput = true;
-      var emailConfirm = {
-        nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        sRequesterEmailId: this.emailValid.sRequesterEmailId,
-        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-        sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
-        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
-        sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
-        sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
-      };
-      // api to send mail and get opt in response
-      this.$http
-        // TODO: check requestor/requester
-        .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
-        .then(response => {
-          if (response.body) {
-            this.sResponseKey = response.body;
-          }
-        });
-        setTimeout(() => {
-        this.otpSentAlert=false;
-        this.$refs.otp.focus();
-      }, 5000)
-    },
-    //Check response opt and entered opt matched or not
-    verifyCode() {
-      if (this.sResponseKey == this.sVerify) {
-        this.showSuccessBlock = true;
-        this.verified = true;
-        this.inputDisabled = true;
-        this.showVerifyBlock = false;
-        // this.nextPage();
-      } else {
-        alert("Invalid Key");
-      }
-    },
-    checked() {
-      this.showVerifyBlock = !this.showVerifyBlock;
-    },
     sRequesterEmailIdToLower(val) {
       this.emailValid.sRequesterEmailId = val.toLowerCase()
     },

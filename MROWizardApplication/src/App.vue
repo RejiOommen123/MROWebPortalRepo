@@ -48,6 +48,7 @@
                       id="logoImg"
                     />
                   </div>
+                  <ModalIdle/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -103,6 +104,7 @@
 </template>
 
 <script>
+import ModalIdle from "./components/ModalIdle";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -146,10 +148,14 @@ export default {
     //Get GUID from url
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
-
-    //API Request get wizard config based on facility guid.
+    let locationguid = urlParams.get("locationguid");
+     var guidParameters = {
+        guid: guid,
+        locationguid: locationguid 
+      };
+    //API Request get wizard config based on facility guid and locationguid.
     this.$http
-      .get("Wizards/GetFacilityDatafromFacilityGUID/" + guid)
+      .post("Wizards/GetFacilityDatafromFacilityGUID", guidParameters)
       .then(response => {
         var apiFacilityResponse = response.body;
         if (response.body!="") {
@@ -170,13 +176,23 @@ export default {
             "ConfigModule/setProgressBarIncrValue",
             apiFacilityResponse.oWizards
           );
+          this.$store.commit(
+            "ConfigModule/nPrimaryTimeout",
+            apiFacilityResponse.facilityLogoandBackground[0].nPrimaryTimeout
+          );
+          this.$store.commit(
+            "ConfigModule/nSecondaryTimeout",
+            apiFacilityResponse.facilityLogoandBackground[0].nSecondaryTimeout
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;
           //disable loader and show wizard pop up screen
-          this.dialogLoader = false;
-          this.dialog = true;
+          if(locationLength != 1){
+            this.dialogLoader = false;
+            this.dialog = true;
+          }
           //API request to get wizard config data based on location id.
           if (locationLength == 1) {
             let singleLocation = this.$store.state.ConfigModule
@@ -212,6 +228,16 @@ export default {
                     "ConfigModule/nAuthExpirationMonths",
                     singleLocation.nAuthExpirationMonths
                   );
+                  this.$store.commit(
+                    "ConfigModule/nPrimaryTimeout",
+                    apiLocationResponse.oLocations[0].nPrimaryTimeout
+                  );
+                  this.$store.commit(
+                    "ConfigModule/nSecondaryTimeout",
+                    apiLocationResponse.oLocations[0].nSecondaryTimeout
+                  );
+                  this.dialogLoader = false;
+                  this.dialog = true;
                 }
               });
           }
@@ -269,6 +295,7 @@ export default {
     }
   },
   components: {
+    ModalIdle,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

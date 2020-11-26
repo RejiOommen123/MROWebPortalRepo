@@ -4,7 +4,7 @@ namespace MRODBL.BaseClasses
 {
     public class ToggleLocation
     {
-        public int nFacilityLocationID;
-        public int nAdminUserID;
+        public int nFacilityLocationID { get; set; }
+        public int nAdminUserID { get; set; }
     }
 }

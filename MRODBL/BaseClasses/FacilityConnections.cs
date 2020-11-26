@@ -16,11 +16,15 @@ namespace MRODBL.BaseClasses
 		[StringLength(200, ErrorMessage = "Maximum 200 charcters GUID Allowed")]
 		public string sConnectionString { get; set; }
 		[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+		[IgnorePropertyCompare]
 		public int nCreatingAdminUserID { get; set; }
+		[IgnorePropertyCompare]
 		public DateTime dtCreated { get; set; }
 		[Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
 		public int nConnectionID { get; set; }
+		[IgnorePropertyCompare]
 		public int nUpdateAdminUserID { get; set; }
+		[IgnorePropertyCompare]
 		public DateTime dtLastUpdate { get; set; }
 		#endregion
 	}
