@@ -77,6 +77,15 @@ namespace MRODBL.Repositories
                                     new { ID = Id });
             }
         }
+
+        public async Task<string> SelectGUID(int Id)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT sGUID FROM " + sTableName + " WHERE " + sKeyName + " = @ID";
+                return await db.ExecuteScalarAsync<string>(SqlString, new { ID = Id });
+            }
+        }
         //public int GetROILocationID(dynamic paramKeyName, dynamic paramValue)
         //{
         //    using (SqlConnection db = new SqlConnection(sConnect))
@@ -435,7 +444,8 @@ namespace MRODBL.Repositories
                 var wizardHelper = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var locationDetails = logoBackgroundFacility.Read().ToList();
                 var wizardsSave = logoBackgroundFacility.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequester);
-                object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails, wizardsSave };
+                var requesterDetails = logoBackgroundFacility.Read().ToList();
+                object newObject = new { facilityLogoandBackground, oWizards, wizardHelper, locationDetails, wizardsSave, requesterDetails };
                 return newObject;
             }
         }

@@ -22,6 +22,8 @@ using System.Xml;
 using WebSupergoo.ABCpdf11;
 using UAParser;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using NJsonSchema.Infrastructure;
 
 namespace MROWebApi.Controllers
 {
@@ -45,7 +47,6 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    [APIKeyAuth]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
@@ -60,6 +61,7 @@ namespace MROWebApi.Controllers
         [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}")]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
         {
             try
@@ -96,371 +98,403 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Logo & BG for Location using Location ID
-        [HttpGet("GetLogoAndBackgroundImageforLocation/{nLocationID}")]
-        [AllowAnonymous]
-        [Route("[action]")]
-        public async Task<dynamic> GetLogoAndBackgroundImageforLocation(int nLocationID)
-        {
-            try
-            {
-                FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                dynamic LogoAndBackgroundImageforLocation = await fieldsRepository.GetLogoBackGroundforLocationsync(nLocationID);
-                return LogoAndBackgroundImageforLocation;
-            }
-            catch (Exception ex)
-            {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location - By LocationId - "+nLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
-                return Content(ex.Message);
-            }
-        }
-        #endregion
+        //#region Logo & BG for Location using Location ID
+        //[HttpGet("GetLogoAndBackgroundImageforLocation/{nLocationID}")]
+        //[AllowAnonymous]
+        //[Route("[action]")]
+        //public async Task<dynamic> GetLogoAndBackgroundImageforLocation(int nLocationID)
+        //{
+        //    try
+        //    {
+        //        FieldsRepository fieldsRepository = new FieldsRepository(_info);
+        //        dynamic LogoAndBackgroundImageforLocation = await fieldsRepository.GetLogoBackGroundforLocationsync(nLocationID);
+        //        return LogoAndBackgroundImageforLocation;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location - By LocationId - "+nLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+        //        return Content(ex.Message);
+        //    }
+        //}
+        //#endregion
 
         #region  Add Requester to DB, Generate XML, Send Attachment Email and ROI Email
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<IActionResult> GenerateXML([FromBody] Requesters requester)
         {
             if (ModelState.IsValid)
             {
+                bool isValidRequest = true;
                 try 
-                { 
-                    FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                    Facilities facility = await rpFac.Select(requester.nFacilityID);
-                    FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
-                    FacilityLocations location = await locaFac.Select(requester.nLocationID);
+                {
+                    DBConnectionInfo _infoRequester = new DBConnectionInfo();
+                    FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                    _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(requester.nFacilityID);
+                    RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 
-                    byte[] signedPDF = await GetSignedPDF(requester,facility,location);
-
-                    requester.sPDF = Convert.ToBase64String(signedPDF);
-                    requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
-                    var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
-                    var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
-                    var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
-                    var sRelationToPatient = string.IsNullOrEmpty(requester.sSelectedRelationName) ? "" : requester.sSelectedRelationName;
-                    var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
-                    var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
-                    //var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
-
-                    string[] sSelectedRecordTypesForXML = requester.sSelectedRecordTypes;
-                    string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
-                    //DB Storing
-                    RequestersController requestersController = new RequestersController(_info);
-
-                    #region Get requester OS and Browser Details
-                    var userAgent = HttpContext.Request.Headers["User-Agent"];
-                    string uaString = Convert.ToString(userAgent[0]);
-                    var uaParser = Parser.GetDefault();
-                    ClientInfo c = uaParser.Parse(uaString);
-                    requester.sOSInfo = c.OS.ToString();
-                    requester.sBrowserInfo = c.UserAgent.ToString();
-                    #endregion
-
-                    await requestersController.AddRequester(requester);
-
-                    //Send Email to Patient
-                    MROLogger passwordDecrypt = new MROLogger(_info);
-                    if (facility.bRequestorEmailConfirm)
+                    #region Matching GUID with the GUID in DB
+                    if (requester.nRequesterID > 0)
                     {
-                        if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
+                        string GUIDfromDB = await requestersFac.SelectGUID(requester.nRequesterID);
+                        if (!(!String.IsNullOrEmpty(GUIDfromDB) && ((GUIDfromDB).Equals(requester.sGUID))))
                         {
-                            //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
-
+                            isValidRequest = false;
                         }
-                        else
-                        {
-                            MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
-                            //return Content("Email Not Sent");
-                        }
-                    }
-                    else {
-                        MROLogger reqLogger = new MROLogger(_info);
-                        reqLogger.LogRequesterRecords(requester.nRequesterID,requester.nFacilityID,"Confirmation email not send because Sending email is switched of for this facility",requester.sWizardName);
-                        //public void LogRequesterRecords(int nRequesterID, int nFacilityID, string sDescription, string sWizardName)
-                    }
-                    //to get the Record Type for this facility
-                    SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
-                    IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
-
-                    XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
-                    //{
-                    //    OmitXmlDeclaration = false,
-                    //    Encoding = Encoding.UTF8,
-                    //    ConformanceLevel = ConformanceLevel.Document
-                    //};
-
-                    //XmlWriterSettings settings = new XmlWriterSettings(); 
-                    xmlWriterSetting.Indent = true;
-                    xmlWriterSetting.Encoding = Encoding.UTF8;
-
-                    var xmlString = new StringWriterWithEncoding(Encoding.UTF8);
-
-                    //StringBuilder xmlString = new StringBuilder();
-                    using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
-                    writer.WriteStartElement("request");
-                    writer.WriteStartElement("detail");
-                    writer.WriteStartElement("facilityrequester");
-                    writer.WriteElementString("id", requester.nRequesterID.ToString());
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("facility");
-                    writer.WriteElementString("value", facility.nROIFacilityID.ToString());
-                    writer.WriteElementString("name", facility.sFacilityName);
-                    writer.WriteElementString("id", facility.nFacilityID.ToString());
-                    writer.WriteEndElement();
-
-                    writer.WriteStartElement("locations");
-                    writer.WriteStartElement("item");
-                    //For Location Code,Name,ID
-                    writer.WriteElementString("code", location.sLocationCode);
-                    writer.WriteElementString("value", location.nROILocationID.ToString());
-                    writer.WriteElementString("name", requester.sSelectedLocationName);
-                    writer.WriteElementString("id", location.nFacilityLocationID.ToString());
-                    writer.WriteEndElement();
-                    writer.WriteElementString("submitted", requester.bRequestorFormSubmitted.ToString());
-                    writer.WriteEndElement();
-                    //For Date, Reason,Comments
-                    writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss") );
-                    writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : ""); 
-                    //writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
-                    //writer.WriteElementString("reasoncode", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
-                    writer.WriteStartElement("reason");
-                    writer.WriteElementString("code", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
-                    writer.WriteElementString("name", sSelectedPrimaryReasonsName);
-                    writer.WriteEndElement();
-
-                    //writer.WriteElementString("comments", sComments);
-                    writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : "");
-                    writer.WriteElementString("confirmwithdata", requester.bConfirmReport.ToString());
-                    writer.WriteElementString("authevent", requester.sAuthSpecificEvent);
-                    writer.WriteElementString("date_required", requester.bDeadlineStatus.ToString());
-                    writer.WriteStartElement("deliverymethod");
-                    writer.WriteElementString("code", requester.sReleaseTo);
-                    writer.WriteElementString("name", requester.sReleaseToName);
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("sensitive");
-                    //Sensational Info
-                    foreach (SensitiveInfo singleSensitiveInfo in facilitySensitiveInfo)
-                    {
-                        if (sSelectedSensitiveInfoForXML.Contains(singleSensitiveInfo.sNormalizedSensitiveInfoName))
-                        {
-                            writer.WriteStartElement("item");
-                            writer.WriteElementString("code", singleSensitiveInfo.sNormalizedSensitiveInfoName);
-                            writer.WriteElementString("name", singleSensitiveInfo.sSensitiveInfoName);
-                            writer.WriteEndElement();
-                        }
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteElementString("additionalcomments", requester.sAdditionalData);
-                    writer.WriteElementString("os", requester.sOSInfo);
-                    writer.WriteElementString("browser", requester.sBrowserInfo);
-
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("patient");
-                    writer.WriteElementString("firstname", requester.sPatientFirstName);
-                    writer.WriteElementString("lastname", requester.sPatientLastName);
-                    writer.WriteElementString("middle_name", sMiddleName);
-                    writer.WriteElementString("previousfirstname", requester.sPatientPreviousFirstName);
-                    writer.WriteElementString("previouslastname", requester.sPatientPreviousLastName);
-                    writer.WriteElementString("previousmiddlename", requester.sPatientPreviousMiddleName);
-                    writer.WriteElementString("haspreviousname", requester.bPatientNameChanged.ToString());
-
-                    writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
-                    writer.WriteStartElement("address");
-                    //For Appartment,Street,City,State,ZipCode
-                    writer.WriteElementString("apartment", requester.sAddApartment);
-                    writer.WriteElementString("street", requester.sAddStreetAddress);
-                    writer.WriteElementString("city", requester.sAddCity);
-                    writer.WriteElementString("state", requester.sAddState);
-                    writer.WriteElementString("zipcode", requester.sAddZipCode);
-                    writer.WriteEndElement();
-                    writer.WriteElementString("phone_number", requester.sPhoneNo);
-                    writer.WriteElementString("phoneverified", requester.bPhoneNoVerified.ToString());
-                    writer.WriteEndElement();
-
-                    //Requester - Part
-                    #region Requester Part
-                    writer.WriteStartElement("requester");
-                    writer.WriteElementString("firstname", requester.sRelativeFirstName);
-                    writer.WriteElementString("lastname", requester.sRelativeLastName);
-                    writer.WriteElementString("organization", requester.sRecipientOrganizationName);
-                    writer.WriteElementString("is_patient", requester.bAreYouPatient.ToString());
-                    writer.WriteElementString("relation", sRelationToPatient);
-                    writer.WriteElementString("relationcode", requester.sSelectedRelation);
-                    writer.WriteElementString("email", requester.sRequesterEmailId);
-                    writer.WriteStartElement("address");
-                    //For Street,City,State,ZipCode
-                    writer.WriteElementString("apartment", requester.sAddApartment);
-                    writer.WriteElementString("street", requester.sAddStreetAddress);
-                    writer.WriteElementString("city", requester.sAddCity);
-                    writer.WriteElementString("state", requester.sAddState);
-                    writer.WriteElementString("zipcode", requester.sAddZipCode);
-                    writer.WriteEndElement();
-                    writer.WriteElementString("phone_number", requester.sPhoneNo);
-                    writer.WriteElementString("fax_number", requester.sSTFaxNumber);
-                    writer.WriteEndElement();
-
-                    //Requester Part Ends Here
-                    #endregion
-
-                    writer.WriteStartElement("requested_information");
-                    writer.WriteStartElement("dates_of_service");
-                    if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
-                    {
-                        writer.WriteElementString("start", requester.dtRecordRangeStart.Value.ToString("yyyy-MM-dd"));
-                        writer.WriteElementString("end", requester.dtRecordRangeEnd.Value.ToString("yyyy-MM-dd"));
                     }
                     else
                     {
-                        writer.WriteElementString("start", string.Empty);
-                        writer.WriteElementString("end", string.Empty);
+                        isValidRequest = false;
                     }
-                    writer.WriteElementString("mostrecent", requester.bRecordMostRecentVisit.ToString());
-                    writer.WriteElementString("IsSpecifyVisit", requester.bSpecifyVisit.ToString());
-                    writer.WriteElementString("SpecifyVisitText", requester.sSpecifyVisitText);
-                    //Specific Event
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("types");
-                    if (!requester.bRTManualSelection)
-                    {
-                        writer.WriteStartElement("item");
-                        writer.WriteElementString("code", "MRORecordTypeAbstract");
-                        writer.WriteElementString("name", "Abstract");
-                        writer.WriteEndElement();
-                    }
-
-                    //to get the Record Type for this facility
-                    RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                    IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
-             
-                    foreach (RecordTypes singleRecordType in facilityRecordTypes)
-                    {
-                        if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
-                        {
-                            writer.WriteStartElement("item");
-                            writer.WriteElementString("code", singleRecordType.sNormalizedRecordTypeName);
-                            writer.WriteElementString("name", singleRecordType.sRecordTypeName);
-                            writer.WriteEndElement();
-                        }
-                    }
-                    writer.WriteEndElement();
-                    writer.WriteElementString("otherrt", requester.sOtherRTText);
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("shipment");
-                    writer.WriteStartElement("types");
-                    writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
-                    writer.WriteElementString("name", requester.sSelectedShipmentTypesName);
-                    writer.WriteEndElement();
-                    writer.WriteElementString("email", requester.sSTEmailAddress);
-                    writer.WriteStartElement("address");
-                    writer.WriteElementString("apartment", requester.sSTAddApartment);
-                    writer.WriteElementString("street", requester.sSTAddStreetAddress);
-                    writer.WriteElementString("city", requester.sSTAddCity);
-                    writer.WriteElementString("state", requester.sSTAddState);
-                    writer.WriteElementString("zipcode", requester.sSTAddZipCode);
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("recipient");
-                    writer.WriteElementString("firstname", requester.sRecipientFirstName);
-                    writer.WriteElementString("lastname", requester.sRecipientLastName);
-                    writer.WriteElementString("organization", requester.sRecipientOrganizationName);
-                    writer.WriteStartElement("address");
-                    writer.WriteElementString("apartment", requester.sRecipientAddApartment);
-                    writer.WriteElementString("street", requester.sRecipientAddStreetAddress);
-                    writer.WriteElementString("city", requester.sRecipientAddCity);
-                    writer.WriteElementString("state", requester.sRecipientAddState);
-                    writer.WriteElementString("zipcode", requester.sRecipientAddZipCode);
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
-
-                    //PDF in Base 64 Encoding
-                    requester.sPDF = new LocationAuthorizationDocumentController().GeneratePDFForXML(requester.sPDF, requester.sRelativeFileArray);
-                    writer.WriteElementString("pdf", requester.sPDF);         
-             
-                    //writer.WriteEndElement();
-                    writer.WriteEndElement();
-                    writer.Flush();
-
-                
-
-
-                    #region Decrypt FTP Password
-                    MROLogger password = new MROLogger(_info);
-                    facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
                     #endregion
-
-                    //XML File Genration 
-                    //File Name
-                    string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + "_" + Guid.NewGuid().ToString() + ".xml";
-
-                    if ((facility.sFTPUrl.ToLower().Contains("ftp://")
-                        && !facility.sFTPUrl.ToLower().Contains("sftp://"))
-                        || facility.sFTPUrl.ToLower().Contains("ftps://"))
+                    if (isValidRequest)
                     {
-                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + sXMLFileName);
+                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                        Facilities facility = await rpFac.Select(requester.nFacilityID);
+                        FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
+                        FacilityLocations location = await locaFac.Select(requester.nLocationID);
 
-                        #region Request Params
-                        request.Method = WebRequestMethods.Ftp.UploadFile;
-                        request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
-                        request.UsePassive = true;
-                        request.UseBinary = true;
-                        request.KeepAlive = false;
-                        request.EnableSsl = true;
+                        byte[] signedPDF = await GetSignedPDF(requester, facility, location);
+
+                        requester.sPDF = Convert.ToBase64String(signedPDF);
+                        requester.sPDF = "data:application/pdf;base64," + requester.sPDF;
+                        var sMiddleName = string.IsNullOrEmpty(requester.sPatientMiddleName) ? "" : requester.sPatientMiddleName;
+                        var sAreYouPatient = requester.bAreYouPatient ? "No" : "Yes";
+                        var sRelativeName = string.IsNullOrEmpty(requester.sRelativeFirstName) || string.IsNullOrEmpty(requester.sRelativeLastName) ? "" : requester.sRelativeFirstName + " " + requester.sRelativeLastName;
+                        var sRelationToPatient = string.IsNullOrEmpty(requester.sSelectedRelationName) ? "" : requester.sSelectedRelationName;
+                        var sConfirmReport = requester.bConfirmReport ? "Opted to be mailed to registered Email ID" : "Not Opted";
+                        var sSelectedPrimaryReasonsName = string.IsNullOrEmpty(requester.sSelectedPrimaryReasonsName) ? "" : requester.sSelectedPrimaryReasonsName;
+                        //var sComments = string.IsNullOrEmpty(requester.sFeedbackComment) ? "" : requester.sFeedbackComment;
+
+                        string[] sSelectedRecordTypesForXML = requester.sSelectedRecordTypes;
+                        string[] sSelectedSensitiveInfoForXML = requester.sSelectedSensitiveInfo;
+                        //DB Storing
+                        RequestersController requestersController = new RequestersController(_info);
+
+                        #region Get requester OS and Browser Details
+                        var userAgent = HttpContext.Request.Headers["User-Agent"];
+                        string uaString = Convert.ToString(userAgent[0]);
+                        var uaParser = Parser.GetDefault();
+                        ClientInfo c = uaParser.Parse(uaString);
+                        requester.sOSInfo = c.OS.ToString();
+                        requester.sBrowserInfo = c.UserAgent.ToString();
                         #endregion
 
-                        byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+                        await requestersController.AddRequester(requester);
 
-                        //Upload file
-                        try
+                        //Send Email to Patient
+                        MROLogger passwordDecrypt = new MROLogger(_info);
+                        if (facility.bRequestorEmailConfirm)
                         {
-                            Stream reqStream = request.GetRequestStream();
-                            reqStream.Write(buffer, 0, buffer.Length);
-                            reqStream.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp. RequesterID - "+requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            string sFTPURL = facility.sFTPUrl.ToLower();
-                            if (sFTPURL.Contains("sftp://"))
+                            if (await SendEmail(requester, signedPDF, _info, passwordDecrypt))
                             {
-                                sFTPURL = sFTPURL.Replace("sftp://", "");
-                            }
-                            string sDomanName, sFolderPath = string.Empty;
-                            string[] sFtpFolderPath = sFTPURL.Split(".com");
-                            if (sFtpFolderPath.Length == 2)
-                            {
-                                sDomanName = sFtpFolderPath[0] + ".com";
-                                sFolderPath = sFtpFolderPath[1];
+                                //await SendROIEmail(requester, signedPDF, _info, passwordDecrypt);
+
                             }
                             else
                             {
-                                sDomanName = sFtpFolderPath[0] + ".com";
-                                sFolderPath = "/";
+                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                                //return Content("Email Not Sent");
                             }
+                        }
+                        else
+                        {
+                            MROLogger reqLogger = new MROLogger(_info);
+                            reqLogger.LogRequesterRecords(requester.nRequesterID, requester.nFacilityID, "Confirmation email not send because Sending email is switched of for this facility", requester.sWizardName);
+                            //public void LogRequesterRecords(int nRequesterID, int nFacilityID, string sDescription, string sWizardName)
+                        }
+                        //to get the Record Type for this facility
+                        SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
+                        IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
+
+                        XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
+                        //{
+                        //    OmitXmlDeclaration = false,
+                        //    Encoding = Encoding.UTF8,
+                        //    ConformanceLevel = ConformanceLevel.Document
+                        //};
+
+                        //XmlWriterSettings settings = new XmlWriterSettings(); 
+                        xmlWriterSetting.Indent = true;
+                        xmlWriterSetting.Encoding = Encoding.UTF8;
+
+                        var xmlString = new StringWriterWithEncoding(Encoding.UTF8);
+
+                        //StringBuilder xmlString = new StringBuilder();
+                        using XmlWriter writer = XmlWriter.Create(xmlString, xmlWriterSetting);
+                        writer.WriteStartElement("request");
+                        writer.WriteStartElement("detail");
+                        writer.WriteStartElement("facilityrequester");
+                        writer.WriteElementString("id", requester.nRequesterID.ToString());
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("facility");
+                        writer.WriteElementString("value", facility.nROIFacilityID.ToString());
+                        writer.WriteElementString("name", facility.sFacilityName);
+                        writer.WriteElementString("id", facility.nFacilityID.ToString());
+                        writer.WriteEndElement();
+
+                        writer.WriteStartElement("locations");
+                        writer.WriteStartElement("item");
+                        //For Location Code,Name,ID
+                        writer.WriteElementString("code", location.sLocationCode);
+                        writer.WriteElementString("value", location.nROILocationID.ToString());
+                        writer.WriteElementString("name", requester.sSelectedLocationName);
+                        writer.WriteElementString("id", location.nFacilityLocationID.ToString());
+                        writer.WriteEndElement();
+                        writer.WriteElementString("submitted", requester.bRequestorFormSubmitted.ToString());
+                        writer.WriteEndElement();
+                        //For Date, Reason,Comments
+                        writer.WriteElementString("date", DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss"));
+                        writer.WriteElementString("date_required_by", requester.dtDeadline != null ? requester.dtDeadline.Value.ToString("yyyy-MM-dd") : "");
+                        //writer.WriteElementString("reason", sSelectedPrimaryReasonsName);
+                        //writer.WriteElementString("reasoncode", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                        writer.WriteStartElement("reason");
+                        writer.WriteElementString("code", requester.sSelectedPrimaryReasons.Count() > 0 ? requester.sSelectedPrimaryReasons[0].ToString() : "");
+                        writer.WriteElementString("name", sSelectedPrimaryReasonsName);
+                        writer.WriteEndElement();
+
+                        //writer.WriteElementString("comments", sComments);
+                        writer.WriteElementString("expiration", requester.dtAuthExpire != null ? requester.dtAuthExpire.Value.ToString("yyyy-MM-dd") : "");
+                        writer.WriteElementString("confirmwithdata", requester.bConfirmReport.ToString());
+                        writer.WriteElementString("authevent", requester.sAuthSpecificEvent);
+                        writer.WriteElementString("date_required", requester.bDeadlineStatus.ToString());
+                        writer.WriteStartElement("deliverymethod");
+                        writer.WriteElementString("code", requester.sReleaseTo);
+                        writer.WriteElementString("name", requester.sReleaseToName);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("sensitive");
+                        //Sensational Info
+                        foreach (SensitiveInfo singleSensitiveInfo in facilitySensitiveInfo)
+                        {
+                            if (sSelectedSensitiveInfoForXML.Contains(singleSensitiveInfo.sNormalizedSensitiveInfoName))
+                            {
+                                writer.WriteStartElement("item");
+                                writer.WriteElementString("code", singleSensitiveInfo.sNormalizedSensitiveInfoName);
+                                writer.WriteElementString("name", singleSensitiveInfo.sSensitiveInfoName);
+                                writer.WriteEndElement();
+                            }
+                        }
+                        writer.WriteEndElement();
+                        writer.WriteElementString("additionalcomments", requester.sAdditionalData);
+                        writer.WriteElementString("os", requester.sOSInfo);
+                        writer.WriteElementString("browser", requester.sBrowserInfo);
+
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("patient");
+                        writer.WriteElementString("firstname", requester.sPatientFirstName);
+                        writer.WriteElementString("lastname", requester.sPatientLastName);
+                        writer.WriteElementString("middle_name", sMiddleName);
+                        writer.WriteElementString("previousfirstname", requester.sPatientPreviousFirstName);
+                        writer.WriteElementString("previouslastname", requester.sPatientPreviousLastName);
+                        writer.WriteElementString("previousmiddlename", requester.sPatientPreviousMiddleName);
+                        writer.WriteElementString("haspreviousname", requester.bPatientNameChanged.ToString());
+
+                        writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
+                        writer.WriteStartElement("address");
+                        //For Appartment,Street,City,State,ZipCode
+                        writer.WriteElementString("apartment", requester.sAddApartment);
+                        writer.WriteElementString("street", requester.sAddStreetAddress);
+                        writer.WriteElementString("city", requester.sAddCity);
+                        writer.WriteElementString("state", requester.sAddState);
+                        writer.WriteElementString("zipcode", requester.sAddZipCode);
+                        writer.WriteEndElement();
+                        writer.WriteElementString("phone_number", requester.sPhoneNo);
+                        writer.WriteElementString("phoneverified", requester.bPhoneNoVerified.ToString());
+                        writer.WriteEndElement();
+
+                        //Requester - Part
+                        #region Requester Part
+                        writer.WriteStartElement("requester");
+                        writer.WriteElementString("firstname", requester.sRelativeFirstName);
+                        writer.WriteElementString("lastname", requester.sRelativeLastName);
+                        writer.WriteElementString("organization", requester.sRecipientOrganizationName);
+                        writer.WriteElementString("is_patient", requester.bAreYouPatient.ToString());
+                        writer.WriteElementString("relation", sRelationToPatient);
+                        writer.WriteElementString("relationcode", requester.sSelectedRelation);
+                        writer.WriteElementString("email", requester.sRequesterEmailId);
+                        writer.WriteElementString("emailverified", requester.bEmailVerified.ToString());
+                        writer.WriteElementString("forcecompliance", requester.bForceCompliance.ToString());
+                        writer.WriteStartElement("address");
+                        //For Street,City,State,ZipCode
+                        writer.WriteElementString("apartment", requester.sAddApartment);
+                        writer.WriteElementString("street", requester.sAddStreetAddress);
+                        writer.WriteElementString("city", requester.sAddCity);
+                        writer.WriteElementString("state", requester.sAddState);
+                        writer.WriteElementString("zipcode", requester.sAddZipCode);
+                        writer.WriteEndElement();
+                        writer.WriteElementString("phone_number", requester.sPhoneNo);
+                        writer.WriteElementString("fax_number", requester.sSTFaxNumber);
+                        writer.WriteEndElement();
+
+                        //Requester Part Ends Here
+                        #endregion
+
+                        writer.WriteStartElement("requested_information");
+                        writer.WriteStartElement("dates_of_service");
+                        if ((requester.dtRecordRangeStart != null) && (requester.dtRecordRangeEnd != null))
+                        {
+                            writer.WriteElementString("start", requester.dtRecordRangeStart.Value.ToString("yyyy-MM-dd"));
+                            writer.WriteElementString("end", requester.dtRecordRangeEnd.Value.ToString("yyyy-MM-dd"));
+                        }
+                        else
+                        {
+                            writer.WriteElementString("start", string.Empty);
+                            writer.WriteElementString("end", string.Empty);
+                        }
+                        writer.WriteElementString("mostrecent", requester.bRecordMostRecentVisit.ToString());
+                        writer.WriteElementString("IsSpecifyVisit", requester.bSpecifyVisit.ToString());
+                        writer.WriteElementString("SpecifyVisitText", requester.sSpecifyVisitText);
+                        //Specific Event
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("types");
+                        if (!requester.bRTManualSelection)
+                        {
+                            writer.WriteStartElement("item");
+                            writer.WriteElementString("code", "MRORecordTypeAbstract");
+                            writer.WriteElementString("name", "Abstract");
+                            writer.WriteEndElement();
+                        }
+
+                        //to get the Record Type for this facility
+                        RecordTypesRepository rtFac = new RecordTypesRepository(_info);
+                        IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
+
+                        foreach (RecordTypes singleRecordType in facilityRecordTypes)
+                        {
+                            if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
+                            {
+                                writer.WriteStartElement("item");
+                                writer.WriteElementString("code", singleRecordType.sNormalizedRecordTypeName);
+                                writer.WriteElementString("name", singleRecordType.sRecordTypeName);
+                                writer.WriteEndElement();
+                            }
+                        }
+                        writer.WriteEndElement();
+                        writer.WriteElementString("otherrt", requester.sOtherRTText);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("shipment");
+                        writer.WriteStartElement("types");
+                        writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
+                        writer.WriteElementString("name", requester.sSelectedShipmentTypesName);
+                        writer.WriteEndElement();
+                        writer.WriteElementString("email", requester.sSTEmailAddress);
+                        writer.WriteStartElement("address");
+                        writer.WriteElementString("apartment", requester.sSTAddApartment);
+                        writer.WriteElementString("street", requester.sSTAddStreetAddress);
+                        writer.WriteElementString("city", requester.sSTAddCity);
+                        writer.WriteElementString("state", requester.sSTAddState);
+                        writer.WriteElementString("zipcode", requester.sSTAddZipCode);
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("recipient");
+                        writer.WriteElementString("firstname", requester.sRecipientFirstName);
+                        writer.WriteElementString("lastname", requester.sRecipientLastName);
+                        writer.WriteElementString("organization", requester.sRecipientOrganizationName);
+                        writer.WriteStartElement("address");
+                        writer.WriteElementString("apartment", requester.sRecipientAddApartment);
+                        writer.WriteElementString("street", requester.sRecipientAddStreetAddress);
+                        writer.WriteElementString("city", requester.sRecipientAddCity);
+                        writer.WriteElementString("state", requester.sRecipientAddState);
+                        writer.WriteElementString("zipcode", requester.sRecipientAddZipCode);
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+
+                        //PDF in Base 64 Encoding
+                        requester.sPDF = new LocationAuthorizationDocumentController().GeneratePDFForXML(requester.sPDF, requester.sRelativeFileArray);
+                        writer.WriteElementString("pdf", requester.sPDF);
+
+                        //writer.WriteEndElement();
+                        writer.WriteEndElement();
+                        writer.Flush();
+
+
+
+
+                        #region Decrypt FTP Password
+                        MROLogger password = new MROLogger(_info);
+                        facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
+                        #endregion
+
+                        //XML File Genration 
+                        //File Name
+                        string sXMLFileName = facility.sFacilityName + "_" + requester.sPatientFirstName + requester.sPatientLastName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + "_" + Guid.NewGuid().ToString() + ".xml";
+
+                        if ((facility.sFTPUrl.ToLower().Contains("ftp://")
+                            && !facility.sFTPUrl.ToLower().Contains("sftp://"))
+                            || facility.sFTPUrl.ToLower().Contains("ftps://"))
+                        {
+                            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + sXMLFileName);
+
+                            #region Request Params
+                            request.Method = WebRequestMethods.Ftp.UploadFile;
+                            request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
+                            request.UsePassive = true;
+                            request.UseBinary = true;
+                            request.KeepAlive = false;
+                            request.EnableSsl = true;
+                            #endregion
 
                             byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
-                            Stream stream = new MemoryStream(buffer);
 
-                            ////Passing the sftp host without the "sftp://"
-                            var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
-                            client.Connect();
-                            if (client.IsConnected)
+                            //Upload file
+                            try
                             {
-                                client.UploadFile(stream, sFolderPath + sXMLFileName, null);
-                                client.Disconnect();
-                                client.Dispose();
+                                Stream reqStream = request.GetRequestStream();
+                                reqStream.Write(buffer, 0, buffer.Length);
+                                reqStream.Close();
+                            }
+                            catch (Exception ex)
+                            {
+                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                             }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                            try
+                            {
+                                string sFTPURL = facility.sFTPUrl.ToLower();
+                                if (sFTPURL.Contains("sftp://"))
+                                {
+                                    sFTPURL = sFTPURL.Replace("sftp://", "");
+                                }
+                                string sDomanName, sFolderPath = string.Empty;
+                                string[] sFtpFolderPath = sFTPURL.Split(".com");
+                                if (sFtpFolderPath.Length == 2)
+                                {
+                                    sDomanName = sFtpFolderPath[0] + ".com";
+                                    sFolderPath = sFtpFolderPath[1];
+                                }
+                                else
+                                {
+                                    sDomanName = sFtpFolderPath[0] + ".com";
+                                    sFolderPath = "/";
+                                }
+
+                                byte[] buffer = Encoding.ASCII.GetBytes(xmlString.ToString());
+                                Stream stream = new MemoryStream(buffer);
+
+                                ////Passing the sftp host without the "sftp://"
+                                var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
+                                client.Connect();
+                                if (client.IsConnected)
+                                {
+                                    client.UploadFile(stream, sFolderPath + sXMLFileName, null);
+                                    client.Disconnect();
+                                    client.Dispose();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                            }
                         }
+                    }
+                    else
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML. RequesterID - " + requester.nRequesterID, " Authorization failed when comparing the GUID", _info);
+                        return Unauthorized();
                     }
                 }
                 catch (Exception ex)
@@ -586,13 +620,14 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
-            if (dbFacility.bRequestorEmailVerify)
-            {
+            //if (dbFacility.bRequestorEmailVerify)
+            //{
 
                 var sOTP = GenerateRandomNo().ToString();
 
@@ -655,8 +690,8 @@ namespace MROWebApi.Controllers
                     return Content(ex.Message);
                 }
                 return Ok(sOTP);
-            }
-            return "false";
+            //}
+          // return "false";
         }
         #endregion
 
@@ -668,7 +703,7 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                byte[] pdfBytes;
+                byte[] pdfBytes = null;
                 if (testPdf.bIsTestRequest)
                 {
                     Facilities facility = new Facilities()
@@ -683,15 +718,50 @@ namespace MROWebApi.Controllers
                     pdfBytes = await GetSignedPDF(testPdf.oRequester,facility,location);
                 }
                 else {
+                    bool isValidRequest = true;
+                    if (!HttpContext.Request.Headers.TryGetValue("sRequestorID", out var sPotentialRequestorIDValue)
+                    || !HttpContext.Request.Headers.TryGetValue("sGUID", out var sPotentialGUIDValue))
+                    {
+                        isValidRequest = false;
+                    }
 
-                    FacilitiesRepository fRep = new FacilitiesRepository(_info);
-                    Facilities dbFacility = await fRep.Select(testPdf.oRequester.nFacilityID);
+                    DBConnectionInfo _infoRequester = new DBConnectionInfo();
+                    FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                    _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(testPdf.oRequester.nFacilityID);
+                    RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
+
+                    #region Matching GUID with the GUID in DB
+                    if (testPdf.oRequester.nRequesterID > 0)
+                    {
+                        string GUIDfromDB = await requestersFac.SelectGUID(testPdf.oRequester.nRequesterID);
+                        if (!(!String.IsNullOrEmpty(GUIDfromDB) && ((GUIDfromDB).Equals(testPdf.oRequester.sGUID))))
+                        {
+                            isValidRequest = false;
+                        }
+                    }
+                    else
+                    {
+                        isValidRequest = false;
+                    }
+                    #endregion
+
+                    if (isValidRequest)
+                    {
+
+                        FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                        Facilities dbFacility = await fRep.Select(testPdf.oRequester.nFacilityID);
 
 
-                    FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
-                    FacilityLocations location = await locRepo.Select(testPdf.oRequester.nLocationID);
+                        FacilityLocationsRepository locRepo = new FacilityLocationsRepository(_info);
+                        FacilityLocations location = await locRepo.Select(testPdf.oRequester.nLocationID);
 
-                    pdfBytes = await GetSignedPDF(testPdf.oRequester, dbFacility, location);
+                        pdfBytes = await GetSignedPDF(testPdf.oRequester, dbFacility, location);
+                    }
+                    else
+                    {
+                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate Pdf. RequesterID - " + testPdf.oRequester.nRequesterID, " Authorization failed when comparing the GUID", _info);
+                        return Unauthorized();
+                    }
                 }
                 return File(pdfBytes, "application/pdf");
             }
@@ -1180,5 +1250,117 @@ namespace MROWebApi.Controllers
             return false;
         }
         #endregion
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        [SessionAuth]
+        public async Task<IActionResult> SendNeedHelpEmail(HelpInfo helpInfo)
+        {
+            try
+            {
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(helpInfo.oRequester.nFacilityID);
+
+                FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
+                FacilityLocations location = null;
+                if (helpInfo.oRequester.nLocationID > 0)
+                {
+                   location = await locaFac.Select(helpInfo.oRequester.nLocationID);
+                }
+
+                #region Decrypt SMTP Password
+                MROLogger password = new MROLogger(_info);
+                dbFacility.sSMTPPassword = password.DecryptString(dbFacility.sSMTPPassword);
+                #endregion
+
+                //From 
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress("Admin " + dbFacility.sFacilityName, dbFacility.sOutboundEmail);
+                message.From.Add(from);
+
+                //To
+                string toSupportEmailAddress = dbFacility.sSupportEmail;
+                if (!String.IsNullOrEmpty(location?.sSupportEmail))
+                {
+                    toSupportEmailAddress = location.sSupportEmail;
+                }
+                MailboxAddress to = new MailboxAddress("Admin " + dbFacility.sFacilityName, toSupportEmailAddress);
+                message.To.Add(to);
+
+                //Subject
+                message.Subject = helpInfo.sName + " - Need Help while Requesting Data on eXpress";
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                string bodyText = "<h1>Please help!</h1><br/>" + "<b>Requester details are below with the issue been faced :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
+                    + "</td></tr><tr><td><b>PhoneNo</b></td><td>" + helpInfo.sPhoneNo
+                    + "</td></tr><tr><td><b>Email</b></td><td>" + helpInfo.sEmail
+                    + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage + "</td></tr></table>";
+                bodyBuilder.HtmlBody = bodyText;
+                message.Body = bodyBuilder.ToMessageBody();
+                //GET Port number
+                //Make SSL true
+                try
+                {
+                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Capabilities &= ~SmtpCapabilities.Pipelining;
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+                    else
+                    {
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(dbFacility.sSMTPUrl, 25, false);
+                        client.Authenticate(dbFacility.sSMTPUsername, dbFacility.sSMTPPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Trigger Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    return Content(ex.Message);
+                }
+
+                #region Requestor Event Logger
+                try
+                {
+                    FacilitiesRepository facRepo = new FacilitiesRepository(_info);
+                    MROLogger logger = new MROLogger(_info);
+
+                    PropertyRenameAndIgnoreSerializerContractResolver jsonResolver = new PropertyRenameAndIgnoreSerializerContractResolver();
+                    jsonResolver.IgnoreProperty(typeof(HelpInfo), "oRequester");
+                    jsonResolver.IgnoreProperty(typeof(HelpInfo), "sWizardName");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sName", "Name");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sPhoneNo", "PhoneNo");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sEmail", "Email");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sMessage", "Message");
+
+                    JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
+                    serializerSettings.ContractResolver = jsonResolver;
+
+                    string sDescription = JsonConvert.SerializeObject(helpInfo, serializerSettings);
+
+                    logger.LogRequesterEventRecords(helpInfo.oRequester.nRequesterID, "Help Button Used", helpInfo.oRequester.nFacilityID, sDescription, helpInfo.sWizardName);
+                }
+                catch(Exception ex)
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email ROI Data Input Logging Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                }
+                #endregion
+                return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                return Content(ex.Message);
+            }
+        }
+
     }
 }

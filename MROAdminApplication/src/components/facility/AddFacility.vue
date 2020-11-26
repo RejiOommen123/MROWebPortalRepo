@@ -128,6 +128,17 @@
               :error-messages="sOutboundEmailErrors"
               solo
             ></v-text-field>
+            <label class="required" for="sSupportEmail">Support Email:</label>
+            <v-text-field
+              type="text"
+              id="sSupportEmail"
+              placeholder="Enter Support Email"
+              v-model="facility.sSupportEmail"
+              @input="$v.facility.sSupportEmail.$touch()"
+              @blur="$v.facility.sSupportEmail.$touch()"
+              :error-messages="sSupportEmailErrors"
+              solo
+            ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
             <label class="required" for="sFTPUsername">FTP Username:</label>
@@ -176,17 +187,45 @@
             ></v-text-field> -->
             <v-select id="nConnectionId" :rules="[(v) => !!v || 'Connection string is required']" required solo v-model="nConnectionId" :items="connectionStrings" item-text="sConnectionDisplayName" item-value="nConnectionID">
                 
-            </v-select>
-            
-            <label for="bRequestorEmailConfirm">Send confirmation email to Requester ?</label>
-            <v-switch
-              inset
-              flat
-              color="rgb(0,91,168)"
-              solo
-              id="bRequestorEmailConfirm"
-              v-model="facility.bRequestorEmailConfirm"
-            ></v-switch>
+            </v-select>            
+            <v-row>
+              <v-col cols="4" md="4">    
+                <label for="bRequestorEmailConfirm">Confirmation Email?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailConfirm"
+                  v-model="facility.bRequestorEmailConfirm"
+                ></v-switch>
+              </v-col>
+              <v-col cols="4" md="4">  
+                <label for="bRequestorEmailVerify">Verification Email?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bRequestorEmailVerify"
+                  v-model="facility.bRequestorEmailVerify"
+                ></v-switch>
+              </v-col>
+              <v-col cols="4" md="4">  
+                <label for="bForceCompliance">Apply Force Compliance?</label>
+                <v-switch
+                  hide-details
+                  inset
+                  flat
+                  color="rgb(0,91,168)"
+                  solo
+                  id="bForceCompliance"
+                  v-model="facility.bForceCompliance"
+                ></v-switch>
+              </v-col>
+            </v-row>
             <v-row>
               <v-col cols="6" md="6">              
                 <label class="required" for="Primary Timeout">Primary Timeout:</label>
@@ -332,6 +371,7 @@ export default {
         maxLength: maxLength(200)
       },
       sOutboundEmail: { required, email },
+      sSupportEmail: { required, email, maxLength: maxLength(150) },
       nPrimaryTimeout: { required, numeric },
       nSecondaryTimeout: { required, numeric },
     }
@@ -444,6 +484,17 @@ export default {
         errors.push("Email is required.");
       return errors;
     },
+    sSupportEmailErrors() {
+      const errors = [];
+      if (!this.$v.facility.sSupportEmail.$dirty) return errors;
+      !this.$v.facility.sSupportEmail.maxLength &&
+        errors.push("Support Email must be at most 150 characters long");
+      !this.$v.facility.sSupportEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      !this.$v.facility.sSupportEmail.required &&
+        errors.push("Email is required.");
+      return errors;
+    },
     nPrimaryTimeoutErrors() {
       const errors = [];
       if (!this.$v.facility.nPrimaryTimeout.$dirty) return errors;
@@ -487,8 +538,11 @@ export default {
         sFTPPassword: "",
         sFTPUrl: "",
         sOutboundEmail: "",
+        sSupportEmail: "",
         bActiveStatus: true,
         bRequestorEmailConfirm: false,
+        bRequestorEmailVerify:false,
+        bForceCompliance:true,
         nPrimaryTimeout:0,
         nSecondaryTimeout:0,
         nCreatedAdminUserID: this.$store.state.adminUserId,
@@ -498,10 +552,11 @@ export default {
   },
   mounted() {
     this.$http
-      .get("Facility/GetMROConnectionString/")
+      .get("Facility/GetDefaultFacilityData/")
       .then(resp => {
         if (resp.ok == true) {
-          this.connectionStrings = resp.body;
+          this.connectionStrings = resp.body["arrayconnectionString"];
+          this.facility.sSupportEmail = resp.body["supportEmail"];
         }
       });
   },

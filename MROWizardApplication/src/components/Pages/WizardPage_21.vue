@@ -57,6 +57,8 @@ export default {
   data() {
     return {
       nSelectedCheckBox:[],
+      facilityForceCompliance: this.$store.state.ConfigModule
+        .bForceCompliance,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_21_disclaimer01,
     };
   },
@@ -65,11 +67,17 @@ export default {
       this.nSelectedCheckBox = [];
       this.$store.commit("requestermodule/sIdentityIdName", '');   
       this.$store.commit("ConfigModule/bIdentitySkiped", true);
+      if(!this.$store.state.requestermodule.bPhoneNoVerified && !this.$store.state.requestermodule.bEmailVerified){
+        if(this.facilityForceCompliance)
+        {
+          this.$store.commit("requestermodule/bForceCompliance", false);
+        }
+      }
       this.continue();
     },
     nextPage() {
       this.$store.commit("ConfigModule/bIdentitySkiped", false);
-      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);     
+      this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);    
       this.continue();
     },
     continue(){

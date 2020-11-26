@@ -22,7 +22,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
-    [APIKeyAuth]
+    //[APIKeyAuth]
     public class RequestersController : ControllerBase
     {
         #region Requesters Constructor
@@ -36,36 +36,35 @@ namespace MROWebApi.Controllers
         #region Requester Section
 
         #region Get Requester Data
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("[action]/{requesterID}")]
-        public async Task<IActionResult> GetRequester(int requesterID)
-        {
-            try
-            {
-                RequestersRepository requestorsFac = new RequestersRepository(_info);
-                Requesters requestor = await requestorsFac.Select(requesterID);
-                return Ok(requestor);
-            }
-            catch (Exception exp)
-            {
-                return Content(exp.Message);
-            }
-        }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //[Route("[action]/{requesterID}")]
+        //public async Task<IActionResult> GetRequester(int requesterID)
+        //{
+        //    try
+        //    {
+        //        RequestersRepository requestorsFac = new RequestersRepository(_info);
+        //        Requesters requestor = await requestorsFac.Select(requesterID);
+        //        return Ok(requestor);
+        //    }
+        //    catch (Exception exp)
+        //    {
+        //        return Content(exp.Message);
+        //    }
+        //}
         #endregion
 
         #region Add Requester Data
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
+        [SessionAuth]
         public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
             int nRequesterId = requester.nRequesterID;
+            bool isValidRequest = true;
             try
             {
-                #region Data Addition ! From UI
-                requester.dtLastUpdate = DateTime.Now;
-                #endregion
                 DBConnectionInfo _infoRequester = new DBConnectionInfo();
                 FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
                 // IEnumerable<FacilityConnections> facility = await connectionRepo.SelectWhere("nFacilityID", requester.nFacilityID);
@@ -73,8 +72,28 @@ namespace MROWebApi.Controllers
                 //_infoRequester.ConnectionString = facility.FirstOrDefault().sConnectionString;
                 _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(requester.nFacilityID);
 
-                    RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
+                RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 
+                #region Matching GUID with the GUID in DB
+                if (requester.nRequesterID > 0)
+                {
+                    string GUIDfromDB = await requestersFac.SelectGUID(requester.nRequesterID);
+                    if (!(!String.IsNullOrEmpty(GUIDfromDB) && ((GUIDfromDB).Equals(requester.sGUID))))
+                    {
+                        isValidRequest = false;
+                    }
+                }
+                else
+                {
+                    isValidRequest = false;
+                }
+                #endregion
+
+                if (isValidRequest)
+                {
+                    #region Data Addition ! From UI
+                    requester.dtLastUpdate = DateTime.Now;
+                    #endregion
                     #region Array Processing
                     var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
                     var SRArray = requester.sSelectedRecordTypes.Length != 0 ? string.Join(",", requester.sSelectedRecordTypes) : "";
@@ -107,16 +126,16 @@ namespace MROWebApi.Controllers
                         //Insert in Table
                         if (!String.IsNullOrEmpty(_infoRequester.ConnectionString))
                         {
-                            
+
                             nRequesterId = (int)requestersFac.Insert(requester);
                         }
                     }
                     else
                     {
                         //Update in table 
-                        if ((requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_24")|| (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25"))
+                        if ((requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_24") || (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25"))
                         {
-                            nRequesterId = await requestersFac.UpdateRequesterFeedback(requester.nRequesterID,requester.bRequestAnotherRecord,requester.nFeedbackRating,requester.sFeedbackComment,requester.sWizardName);
+                            nRequesterId = await requestersFac.UpdateRequesterFeedback(requester.nRequesterID, requester.bRequestAnotherRecord, requester.nFeedbackRating, requester.sFeedbackComment, requester.sWizardName);
                             if (requester.bRequestorFormSubmitted && requester.sWizardName == "Wizard_25" && requester.nFeedbackRating > 0)
                             {
                                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
@@ -148,8 +167,8 @@ namespace MROWebApi.Controllers
                                 writer.WriteEndElement();
                                 writer.WriteEndElement();
                                 writer.WriteStartElement("feedback");
-                                writer.WriteElementString("rating",requester.nFeedbackRating.ToString());
-                                writer.WriteElementString("comment",requester.sFeedbackComment);
+                                writer.WriteElementString("rating", requester.nFeedbackRating.ToString());
+                                writer.WriteElementString("comment", requester.sFeedbackComment);
                                 writer.WriteEndElement();
                                 writer.WriteEndElement();
                                 writer.Flush();
@@ -189,7 +208,7 @@ namespace MROWebApi.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-                                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - "+requester.nRequesterID+")" , ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                                     }
                                 }
                                 else
@@ -229,13 +248,14 @@ namespace MROWebApi.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-                                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
-                                }
+                                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                    }
                                 }
 
                             }
                         }
-                        else {
+                        else
+                        {
                             requestersFac.Update(requester);
                             nRequesterId = requester.nRequesterID;
                         }
@@ -251,6 +271,7 @@ namespace MROWebApi.Controllers
                         logger.LogRequesterRecords(nRequesterId, requester.nFacilityID, sDescrption, requester.sWizardName);
                     }
                     #endregion
+                }
             }
             catch (Exception ex)
             {
@@ -260,23 +281,23 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Edit Requester Data
-        [HttpPost("EditRequester/{id}")]
-        [AllowAnonymous]
-        [Route("[action]")]
-        public ActionResult<Requesters> EditRequestor(int id, Requesters requesters)
-        {
-            if (id != requesters.nRequesterID)
-            {
-                return BadRequest();
-            }
-            RequestersRepository requestorFac = new RequestersRepository(_info);
-            if (requestorFac.Update(requesters))
-            { return NoContent(); }
-            else
-            { return NotFound(); }
-        }
-        #endregion
+        //#region Edit Requester Data
+        //[HttpPost("EditRequester/{id}")]
+        //[AllowAnonymous]
+        //[Route("[action]")]
+        //public ActionResult<Requesters> EditRequestor(int id, Requesters requesters)
+        //{
+        //    if (id != requesters.nRequesterID)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    RequestersRepository requestorFac = new RequestersRepository(_info);
+        //    if (requestorFac.Update(requesters))
+        //    { return NoContent(); }
+        //    else
+        //    { return NotFound(); }
+        //}
+        //#endregion
 
         #endregion
 

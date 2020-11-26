@@ -102,9 +102,36 @@
                 </template>
                 <span>Click to copy Button Code</span>
               </v-tooltip>
-            </label>
+            </label>            
             <!-- Show confirm email to requestor -->
             <v-text-field type="text" v-model="sGUID" :readonly="true" id="sGUID" solo></v-text-field>
+            <label for="sSupportEmail">Support Email:</label>
+            <v-text-field
+              type="text"
+              id="sSupportEmail"
+              placeholder="Enter Support Email"
+              v-model="location.sSupportEmail"
+              @input="$v.location.sSupportEmail.$touch()"
+              @blur="$v.location.sSupportEmail.$touch()"
+              :error-messages="sSupportEmailErrors"
+              solo
+            ></v-text-field>
+            <label for="bForceCompliance">Apply Force Compliance?</label>
+            <v-btn-toggle
+                v-model="location.bForceCompliance"
+                mandatory
+                class="btnGrp"
+              >
+                <v-btn :color="location.bForceCompliance==='true' ? 'green' : 'none'" value="true">
+                  Yes
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='null' ? 'primary' : 'none'" value="null">
+                  Default
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='false' ? 'red' : 'none'" value="false">
+                  NO
+                </v-btn>
+            </v-btn-toggle>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:
@@ -361,7 +388,8 @@ import {
   required,
   minLength,
   maxLength,
-  numeric
+  numeric,
+  email
 } from "vuelidate/lib/validators";
 export default {
     //custom option named myJson
@@ -393,6 +421,7 @@ export default {
       sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },      
       nPrimaryTimeout: { numeric },
       nSecondaryTimeout: { numeric },
+      sSupportEmail: { email, maxLength: maxLength(150) },
     }
   },
   computed: {
@@ -474,7 +503,16 @@ export default {
       !this.$v.location.nSecondaryTimeout.numeric &&
         errors.push("Secondary Timeout Must be Numeric");
       return errors;
-    }
+    },
+    sSupportEmailErrors() {
+      const errors = [];
+      if (!this.$v.location.sSupportEmail.$dirty) return errors;
+       !this.$v.location.sSupportEmail.maxLength &&
+        errors.push("Support Email must be at most 150 characters long");
+      !this.$v.location.sSupportEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      return errors;
+    },
   },
   name: "EditLocation",
   data() {
@@ -514,6 +552,7 @@ export default {
         sAuthTemplateName: "",
         nPrimaryTimeout:"",
         nSecondaryTimeout:"",
+        bForceCompliance:"null",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -530,13 +569,25 @@ export default {
         response => {
           // get body data
           this.location = JSON.parse(response.bodyText);
-          this.dialogLoader =false;
+          this.dialogLoader =false;    
+          switch(this.location.bForceCompliance){
+          case true:
+            this.location.bForceCompliance="true";
+            break;
+          case false:
+            this.location.bForceCompliance="false";
+            break;
+          case null:
+            this.location.bForceCompliance="null";
+            break;
+        }
         },
         response => {
           // error callback
           this.gridData = response.body;          
         }
-      );
+      ); 
+      
     //Get btn code for location and guid
     this.$http.get("FacilityLocations/GetBtnCodeAndGUID/"+this.$route.params.id)
     .then(
@@ -553,6 +604,7 @@ export default {
           }      
       }
     );  
+    
   },
   methods: {
     clearBGField() {
@@ -690,6 +742,17 @@ export default {
       );
       this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
       this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
+      switch(this.location.bForceCompliance){
+        case "true":
+          this.location.bForceCompliance=true;
+          break;
+        case "false":
+          this.location.bForceCompliance=false;
+          break;
+        case "null":
+          this.location.bForceCompliance=null;
+          break;
+      }
       this.$http
         .post(
           "FacilityLocations/EditFacilityLocation/" +

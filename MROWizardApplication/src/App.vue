@@ -48,7 +48,26 @@
                       id="logoImg"
                     />
                   </div>
+                  <div id="helpBtnDiv">                    
+                    <a href="#"
+                      id="helpBtn"
+                      @click="showNeedHelp()"
+                      :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}"
+                    >
+                      Need Help?
+                    </a>
+                    <v-tooltip slot="append" bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on" size="18" style="margin-left:5px"  :style="selectedWizard=='Wizard_23'?  {color:'black'} : {color:`white`}" top>mdi-information</v-icon>
+                      </template>
+                      <v-col cols="12" sm="12">
+                        <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
+                      </v-col>
+                    </v-tooltip>
+                  </div>
                   <ModalIdle/>
+                  <ModalUnauthorized/>
+                  <ModalNeedHelp/>
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -105,6 +124,8 @@
 
 <script>
 import ModalIdle from "./components/ModalIdle";
+import ModalUnauthorized from "./components/ModalUnauthorized";
+import ModalNeedHelp from "./components/ModalNeedHelp";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -141,6 +162,7 @@ export default {
       phoneNo: 0,
       dialogLoader: false,
       dialogConfirm: false,
+      disclaimer03: ''
     };
   },
   created() {
@@ -184,7 +206,24 @@ export default {
             "ConfigModule/nSecondaryTimeout",
             apiFacilityResponse.facilityLogoandBackground[0].nSecondaryTimeout
           );
+          this.$store.commit(
+            "requestermodule/nRequesterID",
+            apiFacilityResponse.requesterDetails[0].nRequestorID
+          );
+          this.$store.commit(
+            "requestermodule/sGUID",
+            apiFacilityResponse.requesterDetails[0].sGUID
+          );
+          this.$store.commit(
+            "ConfigModule/bForceCompliance",
+            apiFacilityResponse.facilityLogoandBackground[0].bForceCompliance
+          );
+          this.$store.commit(
+            "requestermodule/nFacilityID",
+            apiFacilityResponse.facilityLogoandBackground[0].nFacilityID
+          );
           this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
+          this.disclaimer03 = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer03;
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;
@@ -197,7 +236,7 @@ export default {
           if (locationLength == 1) {
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
-
+              
             this.$http
               .get(
                 "Wizards/GetWizardConfig/fID=" +
@@ -235,6 +274,10 @@ export default {
                   this.$store.commit(
                     "ConfigModule/nSecondaryTimeout",
                     apiLocationResponse.oLocations[0].nSecondaryTimeout
+                  );
+                  this.$store.commit(
+                    "ConfigModule/bForceCompliance",
+                    apiLocationResponse.oLocations[0].bForceCompliance
                   );
                   this.dialogLoader = false;
                   this.dialog = true;
@@ -287,6 +330,9 @@ export default {
     previousPage() {
       this.$store.commit("ConfigModule/mutatePreviousIndex");
     },
+    showNeedHelp(){
+      this.$store.commit("ConfigModule/bShowNeedHelp",true);
+    },
     //To close wizard pop up window
     dialogClose() {
       this.dialogConfirm = false;
@@ -296,6 +342,8 @@ export default {
   },
   components: {
     ModalIdle,
+    ModalUnauthorized,
+    ModalNeedHelp,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

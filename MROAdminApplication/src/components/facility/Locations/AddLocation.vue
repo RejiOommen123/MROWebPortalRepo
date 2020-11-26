@@ -71,6 +71,33 @@
               :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
+            <label for="sSupportEmail">Support Email:</label>
+            <v-text-field
+              type="text"
+              id="sSupportEmail"
+              placeholder="Enter Support Email"
+              v-model="location.sSupportEmail"
+              @input="$v.location.sSupportEmail.$touch()"
+              @blur="$v.location.sSupportEmail.$touch()"
+              :error-messages="sSupportEmailErrors"
+              solo
+            ></v-text-field>
+            <label for="bForceCompliance">Apply Force Compliance?</label>
+            <v-btn-toggle
+                class="btnGrp"
+                v-model="location.bForceCompliance"
+                mandatory
+              >
+                <v-btn :color="location.bForceCompliance==='true' ? 'green' : 'none'" value="true">
+                  Yes
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='null' ? 'primary' : 'none'" value="null">
+                  Default
+                </v-btn>
+                <v-btn :color="location.bForceCompliance==='false' ? 'red' : 'none'" value="false">
+                  NO
+                </v-btn>
+            </v-btn-toggle>
           </v-col>
           <v-col cols="12" md="5">
             <label for="sAuthTemplate">Authorization Template:
@@ -318,7 +345,8 @@ import {
   required,
   minLength,
   maxLength,
-  numeric
+  numeric,
+  email
 } from "vuelidate/lib/validators";
 export default {
   //custom option named myJson
@@ -350,6 +378,7 @@ export default {
       sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },
       nPrimaryTimeout: { numeric },
       nSecondaryTimeout: { numeric },
+      sSupportEmail: { email, maxLength: maxLength(150) },
     }
   },
   computed: {
@@ -431,7 +460,16 @@ export default {
       !this.$v.location.nSecondaryTimeout.numeric &&
         errors.push("Secondary Timeout Must be Numeric");
       return errors;
-    }
+    },
+    sSupportEmailErrors() {
+      const errors = [];
+      if (!this.$v.location.sSupportEmail.$dirty) return errors;
+      !this.$v.location.sSupportEmail.maxLength &&
+        errors.push("Support Email must be at most 150 characters long");
+      !this.$v.location.sSupportEmail.email &&
+        errors.push("Please provide a proper Email ID");
+      return errors;
+    },
   },
   name: "AddLocation",
   data() {
@@ -465,6 +503,8 @@ export default {
         sAuthTemplateName: "",
         nPrimaryTimeout:"",
         nSecondaryTimeout:"",
+        bForceCompliance:"null",
+        sSupportEmail:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -604,6 +644,17 @@ export default {
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
       this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
       this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
+       switch(this.location.bForceCompliance){
+        case "true":
+          this.location.bForceCompliance=true;
+          break;
+        case "false":
+          this.location.bForceCompliance=false;
+          break;
+        case "null":
+          this.location.bForceCompliance=null;
+          break;
+      }
       this.$http
         .post("FacilityLocations/AddFacilityLocation/", this.location)
         .then(

@@ -34,7 +34,7 @@ background-color: rgba(0,0,0,0.5);
   margin-top: -20px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   height: 70px;
   width: auto;
 }
@@ -278,7 +278,35 @@ button.wizardSelectionButton:hover {
   margin-left:10%;
   width:80%;
 }
-
+.forceCompliance{
+  width: 25%;
+}
+.needHelp{
+  width: 550px;
+}
+.needHelp .col-12{
+  width: 30%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.needHelp .v-input input {
+  background-color: white !important;
+}
+#helpBtnDiv{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: none !important;
+}
+#helpBtn{
+  text-transform: none !important;
+  text-decoration: underline;
+  color: white;
+}
+.required:after {
+  content: " *";
+  color:#30c4b0;
+}
 /* signature page css end */
 
 @media only screen and (max-width: 600px) {
@@ -334,7 +362,12 @@ button.wizardSelectionButton:hover {
     margin-left:0;
     width:100%;
   }
-  
+  .forceCompliance{
+    width: 90%;
+  }  
+  .needHelp{
+    width: 90%;
+  }
 }
 .input-group-addon {
   margin-top: 20px;
@@ -362,4 +395,4 @@ button.wizardSelectionButton:hover {
 }
 .v-text-field .v-label {
   margin-top: -5px !important; 
-} 
+}
