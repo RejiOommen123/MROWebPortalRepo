@@ -238,7 +238,6 @@
                   @blur="$v.facility.nPrimaryTimeout.$touch()"
                   :error-messages="nPrimaryTimeoutErrors"
                   solo
-                  min="1"
                 ></v-text-field>
               </v-col>
               <v-col cols="6" md="6">              
@@ -252,7 +251,6 @@
                   @blur="$v.facility.nSecondaryTimeout.$touch()"
                   :error-messages="nSecondaryTimeoutErrors"
                   solo
-                  min="1"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -324,7 +322,8 @@ import {
   minLength,
   maxLength,
   email,
-  numeric
+  numeric,
+  minValue
 } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
@@ -372,8 +371,8 @@ export default {
       },
       sOutboundEmail: { required, email },
       sSupportEmail: { required, email, maxLength: maxLength(150) },
-      nPrimaryTimeout: { required, numeric },
-      nSecondaryTimeout: { required, numeric },
+      nPrimaryTimeout: { required, numeric , minValue : minValue(1)},
+      nSecondaryTimeout: { required, numeric, minValue : minValue(1)},
     }
   },
   computed: {
@@ -498,6 +497,8 @@ export default {
     nPrimaryTimeoutErrors() {
       const errors = [];
       if (!this.$v.facility.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.facility.nPrimaryTimeout.minValue &&
+        errors.push("Primary Timeout Must be Greater than 1");
       !this.$v.facility.nPrimaryTimeout.numeric &&
         errors.push("Primary Timeout Must be Numeric");
       !this.$v.facility.nPrimaryTimeout.required &&
@@ -507,6 +508,8 @@ export default {
     nSecondaryTimeoutErrors() {
       const errors = [];
       if (!this.$v.facility.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.facility.nSecondaryTimeout.minValue &&
+        errors.push("Secondary Timeout Must be Greater than 1");
       !this.$v.facility.nSecondaryTimeout.numeric &&
         errors.push("Secondary Timeout Must be Numeric");
       !this.$v.facility.nSecondaryTimeout.required &&
@@ -543,8 +546,8 @@ export default {
         bRequestorEmailConfirm: false,
         bRequestorEmailVerify:false,
         bForceCompliance:true,
-        nPrimaryTimeout:0,
-        nSecondaryTimeout:0,
+        nPrimaryTimeout:'',
+        nSecondaryTimeout:'',
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
