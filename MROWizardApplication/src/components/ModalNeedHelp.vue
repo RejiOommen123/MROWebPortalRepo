@@ -150,7 +150,7 @@ export default {
       !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit phone no");
       !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit phone no");
       !this.$v.sPhoneNo.numeric && errors.push("Must be Numeric");
-      !this.$v.sPhoneNo.required && errors.push("Phone Number Required");
+      !this.$v.sPhoneNo.required && errors.push("Phone number is required");
       return errors;
     },
     sEmailError() {
