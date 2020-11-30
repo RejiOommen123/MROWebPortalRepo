@@ -147,19 +147,19 @@ export default {
     sPhoneNoError() {
       const errors = [];
       if (!this.$v.sPhoneNo.$dirty) return errors;
-      !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
-      !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
+      !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit phone no");
+      !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit phone no");
       !this.$v.sPhoneNo.numeric && errors.push("Must be Numeric");
-      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
+      !this.$v.sPhoneNo.required && errors.push("Phone Number Required");
       return errors;
     },
     sEmailError() {
       const errors = [];
       if (!this.$v.sEmail.$dirty) return errors;
       !this.$v.sEmail.email &&
-        errors.push("Must be valid e-mail");
+        errors.push("Must be valid email");
       !this.$v.sEmail.required &&
-        errors.push("E-mail is required");
+        errors.push("Email is required");
       return errors;
     },
     sMessageError() {
