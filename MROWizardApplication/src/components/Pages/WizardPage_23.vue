@@ -18,16 +18,17 @@
                 height="120px"
                 ref="signaturePad"
                 :options="{onBegin: () => {$refs.signaturePad.resizeCanvas()}}"
+                @hook:mounted="bShowAddSignature=true"
               />            
             </v-col>
           </div>
-          <v-row>
+          <v-row v-if="bShowAddSignature">
             <v-col cols="3" sm="3">
-              <button class="btn btn-outline-secondary" @click="undo">Undo</button>
+              <button :disabled="this.$refs.signaturePad.isEmpty()" class="btn btn-outline-secondary" @click="undo">Undo</button>
                           
             </v-col>
             <v-col cols="6" offset-sm="3" sm="6">
-              <button class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Add my signature</button>
+              <button :disabled="this.$refs.signaturePad.isEmpty()" class="btn btn-outline-primary" style="align right" @click="save" data-dismiss="modal">Add my signature</button>
             </v-col>
           </v-row>
         </v-card-text>
@@ -110,7 +111,8 @@ export default {
       bFormSigned:false,
       dialogLoader:false,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
-      bShowCompliance:false
+      bShowCompliance:false,
+      bShowAddSignature:false
     };
   },
   activated(){
