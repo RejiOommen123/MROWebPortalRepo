@@ -10,7 +10,7 @@
         <v-card-title class="headline">System Issue</v-card-title>
 
         <v-card-text>
-          <p>Something went wrong.Please contact the system administrator.</p>
+          <p>{{disclaimer05}}</p>
         </v-card-text>
 
         <v-card-actions>
@@ -33,7 +33,9 @@ export default {
     name: 'Unauthorized',
     data: function () {
         return {
-            dialog:false
+            dialog:false,
+            disclaimer05: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
+            .wizardHelper.Wizard_01_disclaimer05,
         }
     },
     computed: {
