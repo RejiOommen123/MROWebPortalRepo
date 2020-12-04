@@ -396,3 +396,7 @@ button.wizardSelectionButton:hover {
 .v-text-field .v-label {
   margin-top: -5px !important; 
 }
+.v-file-input input[type=file] {
+  position: fixed;
+  width: 100%;
+}

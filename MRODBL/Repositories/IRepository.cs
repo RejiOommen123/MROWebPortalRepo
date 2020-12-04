@@ -146,6 +146,13 @@ namespace MRODBL.Repositories
         bool Update(T ourModel);
 
         /// <summary>
+        /// Update requester record in a table
+        /// </summary>
+        /// <param name="ourModel">Requester record to be updated</param>
+        /// <returns>Bool based on whether operation was successful or not</returns>
+        bool UpdateSingleRequestor(T ourModel);
+
+        /// <summary>
         /// Update Records in a Table
         /// </summary>
         /// <param name="ourModels">List of Records to be Updated</param>

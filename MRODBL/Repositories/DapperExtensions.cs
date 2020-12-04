@@ -10,14 +10,14 @@ namespace MRODBL.BaseClasses
         #region Extension Methods Dapper
         public static T Insert<T>(this IDbConnection cnn, string tableName, dynamic param, string sIDFieldName, IDbTransaction transaction)
         {
-            IEnumerable<T> result = SqlMapper.Query<T>(cnn, DynamicQuery.GetInsertQuery(tableName, param, sIDFieldName), param, transaction);
+            IEnumerable<T> result = SqlMapper.Query<T>(cnn, DynamicQuery.GetInsertQuery(tableName, param, sIDFieldName), param, transaction, commandTimeout: 120);
             transaction.Commit();
             return result.First();
         }
 
         public static int Update(this IDbConnection cnn, string tableName, dynamic param, string sKeyName, IDbTransaction transaction)
         {
-            int count = SqlMapper.Execute(cnn, DynamicQuery.GetUpdateQuery(tableName, param, sKeyName), param, transaction);
+            int count = SqlMapper.Execute(cnn, DynamicQuery.GetUpdateQuery(tableName, param, sKeyName), param, transaction, commandTimeout: 120);
             transaction.Commit();
             return count;
         }

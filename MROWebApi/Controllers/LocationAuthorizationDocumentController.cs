@@ -301,10 +301,13 @@ W9iOxBEYtRrdvsjs1 / hf0baE = ");
         #region generate pdf for xml
         public string GeneratePDFForXML(string stringPDFFile,string[] FileArray)
         {
-            string stringPDFFileReplaced = stringPDFFile.Replace("data:application/pdf;base64,", string.Empty);
-            byte[] pdfByteArray = Convert.FromBase64String(stringPDFFileReplaced);
             Doc pdfFromDB = new Doc();
-            pdfFromDB.Read(pdfByteArray);
+            if (!string.IsNullOrEmpty(stringPDFFile))
+            {
+                string stringPDFFileReplaced = stringPDFFile.Replace("data:application/pdf;base64,", string.Empty);
+                byte[] pdfByteArray = Convert.FromBase64String(stringPDFFileReplaced);
+                pdfFromDB.Read(pdfByteArray);
+            }
             string[] files;
             if (FileArray.Length > 0)
             {

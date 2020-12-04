@@ -137,7 +137,7 @@
                   <template v-slot:activator="{ on }">
                     <v-icon style="cursor:pointer" v-on="on" color="white" top>mdi-information</v-icon>
                   </template>
-                  <span >You can upload upto 3 image or pdf files.</span>
+                  <span >You can upload upto 3 image or pdf files per 10 MB.</span>
                 </v-tooltip>
               </v-file-input>
             </template>
@@ -204,6 +204,18 @@ const maxThree = (value) => value.length <= 3;
 //   if(v.size>2000)
 //     return false;
 // }));
+const maxSize = (value) =>  {
+  if (!value) {
+    return true;
+  }
+  let file = value;
+  let status = true;
+  file.forEach(element => {
+  if(element.size > 10485760)
+    status=false;
+  });
+  return status;
+};
 export default {
   name: "WizardPage_03",
   data() {
@@ -254,7 +266,7 @@ export default {
     sRelativeFirstName: { required },
     sRelativeLastName: { required },
     sOtherPatientRepresentatives: { required },
-    files: { maxThree }
+    files: { maxThree ,maxSize }
     // ,maxSize
   },
   computed: {
@@ -285,7 +297,7 @@ export default {
       const errors = [];
       if (!this.$v.files.$dirty) return errors;
       !this.$v.files.maxThree && errors.push("You can upload only 3 files");
-      // !this.$v.files.maxSize && errors.push("File size exceed 2mb");
+      !this.$v.files.maxSize && errors.push("One of the uploaded file is greater than 10 MB");
       return errors;
     }
   },

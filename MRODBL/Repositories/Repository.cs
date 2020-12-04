@@ -347,6 +347,17 @@ namespace MRODBL.Repositories
             }
             return rowsAffected > 0;
         }
+        public bool UpdateSingleRequestor<T>(T ourModel) where T : class
+        {
+            //int rowsAffected = 0;
+            using (IDbConnection cn = new SqlConnection(sConnect))
+            {
+                //var parameters = (object)Mapping(ourModel);
+                cn.Open();
+                return cn.Update(ourModel);
+            }
+            //return rowsAffected > 0;
+        }
         public bool UpdateMany(List<T> ourModels)
         {
             try {

@@ -59,6 +59,7 @@ namespace MROWebApi.Controllers
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
+        [RequestSizeLimit(52428800)]
         public async Task<ActionResult<int>> AddRequester(Requesters requester)
         {
             int nRequesterId = requester.nRequesterID;
@@ -107,6 +108,7 @@ namespace MROWebApi.Controllers
                     requester.sSelectedSensitiveInfo = new string[] { SIArray };
                     requester.sRelativeFileArray = new string[] { relativeFileArray };
                     requester.sRelativeFileNameArray = new string[] { relativeFileNameArray };
+                    //requester.sRelativeFileArray = new string[] { new LocationAuthorizationDocumentController().GeneratePDFForXML("", requester.sRelativeFileArray) };
                     #endregion
 
                     #region Get requester OS and Browser Details
@@ -256,7 +258,8 @@ namespace MROWebApi.Controllers
                         }
                         else
                         {
-                            requestersFac.Update(requester);
+                            //requestersFac.Update(requester);
+                            requestersFac.UpdateSingleRequestor(requester);
                             nRequesterId = requester.nRequesterID;
                         }
                     }

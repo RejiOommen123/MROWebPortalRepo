@@ -47,6 +47,7 @@ namespace MROWebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("AllowOrigin")]
+    [RequestSizeLimit(52428800)]
     public class WizardsController : ControllerBase
     {
         #region Wizards Constructor
