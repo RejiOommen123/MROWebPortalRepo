@@ -360,13 +360,31 @@ export default {
     filesChange(files){
       this.sRelativeFileArray=[];
       this.sRelativeFileNameArray=[];
+      var counter=0;
+      var fileLength=files.length;
       for( var i = 0; i < files.length; i++ ){        
         var file_name_array = files[i].name.split(".");
         var file_extension = file_name_array[file_name_array.length - 1];
         if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "pdf"){
           const reader = new FileReader();
           reader.addEventListener("load", () => {
-            this.sRelativeFileArray.push(reader.result);          
+            this.sRelativeFileArray.push(reader.result);   
+            counter++;       
+          });
+          reader.addEventListener("loadend", () => {
+            if(counter==fileLength){
+              var supportDocObj = {
+                nRequesterID: this.$store.state.requestermodule.nRequesterID,
+                nFacilityID: this.$store.state.requestermodule.nFacilityID,
+                sRelativeFileArray: this.sRelativeFileArray,
+                sRelativeFileNameArray: this.sRelativeFileNameArray,
+                sWizardName: this.$store.state.ConfigModule.selectedWizard
+              };
+              this.$http.post("requesters/UpdateSupportDocs/",supportDocObj)
+                .then(response => {
+                  this.$store.commit("requestermodule/nRequesterID", response.body);
+                });         
+            }
           });
           reader.readAsDataURL(files[i]);
           this.sRelativeFileNameArray.push(this.files[i].name);
@@ -379,7 +397,7 @@ export default {
       }    
       if(this.files.length>0 && !this.$v.files.$invalid)
       {
-        this.dialog=true;
+        this.dialog=true;        
       }
     },
     // to check if selected checkbox is other reason

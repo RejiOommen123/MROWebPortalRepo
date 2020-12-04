@@ -301,7 +301,37 @@ namespace MROWebApi.Controllers
         //    { return NotFound(); }
         //}
         //#endregion
+        #region Update supporting document
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        [SessionAuth]
+        [RequestSizeLimit(52428800)]
+        public async Task<ActionResult<int>> UpdateSupportDocs(SupportDocs supportDocs)
+        {
+            int nRequesterId = supportDocs.nRequesterID;
+            try
+            {
+                DBConnectionInfo _infoRequester = new DBConnectionInfo();
+                FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
+                _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(supportDocs.nFacilityID);
+                RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 
+                var relativeFileArray = supportDocs.sRelativeFileArray.Length != 0 ? string.Join("_", supportDocs.sRelativeFileArray) : "";
+                var relativeFileNameArray = supportDocs.sRelativeFileNameArray.Length != 0 ? string.Join("/", supportDocs.sRelativeFileNameArray) : "";
+                supportDocs.sRelativeFileArray = new string[] { relativeFileArray };
+                relativeFileArray = new LocationAuthorizationDocumentController().GeneratePDFForXML("", supportDocs.sRelativeFileArray);
+
+                nRequesterId =await requestersFac.UpdateRequesterSupportDocs(supportDocs.nRequesterID, relativeFileArray, relativeFileNameArray, supportDocs.sWizardName);
+
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Update Support Doc Method.(RequesterID - " + supportDocs.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+            }
+            return nRequesterId;
+        }
+        #endregion
         #endregion
 
     }

@@ -388,6 +388,20 @@ namespace MRODBL.Repositories
                 return nRequesterID;
             }
         }
+        public async Task<int> UpdateRequesterSupportDocs(int nRequesterID,string sRelativeFileArray,string sRelativeFileNameArray,string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET sRelativeFileArray = @sRelativeFileArray, " +
+                      "sRelativeFileNameArray = @sRelativeFileNameArray, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @sRelativeFileArray = sRelativeFileArray, @sRelativeFileNameArray = sRelativeFileNameArray, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
         #endregion
 
         #region Stored Procedures

@@ -150,7 +150,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="ourModel">Requester record to be updated</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
-        bool UpdateSingleRequestor(T ourModel);
+        bool UpdateSingleRequestor<T>(T ourModel) where T : class;
 
         /// <summary>
         /// Update Records in a Table
