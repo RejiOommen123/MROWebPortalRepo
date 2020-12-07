@@ -168,6 +168,23 @@ namespace MRODBL.Repositories
         /// <param name="sWizardName">Name of the wizard</param>
         /// <returns></returns>
         Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
+        /// <summary>
+        /// Update requester supporting docs
+        /// </summary>
+        /// <param name="nRequesterID">Requester Id</param>
+        /// <param name="sRelativeFileArray">Array of supporting docs</param>
+        /// <param name="sRelativeFileNameArray">Array of supporting docs name</param>
+        /// <param name="sWizardName">Wizard name</param>
+        /// <returns></returns>
+        Task<int> UpdateRequesterSupportDocs(int nRequesterID, string sRelativeFileArray, string sRelativeFileNameArray, string sWizardName);
+        /// <summary>
+        /// Update requester identity doc
+        /// </summary>
+        /// <param name="nRequesterID">Requester Id</param>
+        /// <param name="sIdentityImage">Base64 identity doc</param>
+        /// <param name="sWizardName">Wizard name</param>
+        /// <returns></returns>
+        Task<int> UpdateRequesterIdentityDoc(int nRequesterID, string sIdentityImage, string sWizardName);
         #endregion
 
         #region Stored Procedures

@@ -89,6 +89,7 @@ namespace MRODBL.BaseClasses
         public string sAdditionalData { get; set; }
         public string sIdentityIdName { get; set; }
         [MaxLength]
+        [Write(false)]
         public string sIdentityImage { get; set; }
         [MaxLength]
         public string sSignatureData { get; set; }

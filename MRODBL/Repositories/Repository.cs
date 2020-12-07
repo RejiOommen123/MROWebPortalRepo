@@ -402,6 +402,19 @@ namespace MRODBL.Repositories
                 return nRequesterID;
             }
         }
+        public async Task<int> UpdateRequesterIdentityDoc(int nRequesterID, string sIdentityImage, string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET sIdentityImage = @sIdentityImage, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @sIdentityImage = sIdentityImage, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
         #endregion
 
         #region Stored Procedures

@@ -353,7 +353,7 @@ const actions = {
             sFeedbackComment: requester.sFeedbackComment,
             sGUID: requester.sGUID,
             sIdentityIdName: requester.sIdentityIdName,
-            sIdentityImage: requester.sIdentityImage,
+            sIdentityImage: '',
             sOtherRTText: requester.sOtherRTText,
             sPatientFirstName: requester.sPatientFirstName,
             sPatientLastName: requester.sPatientLastName,
