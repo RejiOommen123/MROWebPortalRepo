@@ -344,7 +344,6 @@ export default {
     filesChange(files){
       this.sRelativeFileArray=[];
       this.sRelativeFileNameArray=[];
-      var counter=0;
       var fileLength=files.length;
       for( var i = 0; i < files.length; i++ ){        
         var file_name_array = files[i].name.split(".");
@@ -353,10 +352,9 @@ export default {
           const reader = new FileReader();
           reader.addEventListener("load", () => {
             this.sRelativeFileArray.push(reader.result);   
-            counter++;       
           });
           reader.addEventListener("loadend", () => {
-            if(counter==fileLength){
+            if(this.sRelativeFileArray.length==fileLength){
               var supportDocObj = {
                 nRequesterID: this.$store.state.requestermodule.nRequesterID,
                 nFacilityID: this.$store.state.requestermodule.nFacilityID,
