@@ -157,7 +157,7 @@
             <v-btn type="button" :disabled="diableCamera" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
           </v-col>
           <v-col cols="6" sm="4">
-            <v-btn type="button" :disabled="fileInput==''" class="next" @click="nextPage">Save & Next</v-btn>
+            <v-btn type="button" :disabled="fileInput==null" class="next" @click="nextPage">Save & Next</v-btn>
           </v-col>           
           <v-col cols="12" sm="4">
             <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
@@ -218,7 +218,7 @@ export default {
       deviceId: null,
       devices: [],
       sStatus: "CapturingImg",
-      fileInput: "",
+      fileInput: null,
       bShowImage: "",
       dialog:true,
       diableCamera:false,
@@ -347,7 +347,7 @@ export default {
       this.$store.commit("requestermodule/sIdentityIdName", '');   
       this.$store.commit("requestermodule/sIdentityImage", '');
       this.sIdentityImage='';
-      this.fileInput='';
+      this.fileInput=null;
       this.sStatus="CapturingImg";
       if(!this.$store.state.requestermodule.bPhoneNoVerified && !this.$store.state.requestermodule.bEmailVerified){
         if(this.facilityForceCompliance)
@@ -404,13 +404,13 @@ export default {
           this.bShowImage = file.name;
         }
         else{
-          this.fileInput = "";
+          this.fileInput = null;
           this.bShowImage = "";
           this.$refs.clearInput.clearableCallback();
           this.unsupported=true;
         }
       } else {
-        this.fileInput = "";
+        this.fileInput = null;
         this.bShowImage = "";
       }
     }

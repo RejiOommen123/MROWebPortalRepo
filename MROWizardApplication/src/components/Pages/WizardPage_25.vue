@@ -15,7 +15,6 @@
           width:100
           rows="4"
           row-height="30"
-          shaped
           maxlength="500"
           counter
           v-model="sFeedbackComment"

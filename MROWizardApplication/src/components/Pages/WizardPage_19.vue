@@ -13,7 +13,7 @@
           rows="3"
           row-height="30"
           maxlength="250"
-          shaped counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
+          counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
     </v-col>
     </v-row>
     <!-- <div>

@@ -63,7 +63,7 @@
                 @input="$v.sMessage.$touch()"
                 @blur="$v.sMessage.$touch()"
                 :error-messages="sMessageError"
-                shaped counter v-model="sMessage"></v-textarea>    
+                counter v-model="sMessage"></v-textarea>    
             </v-col>
             <v-col cols="3" sm="3">             
               <v-btn  

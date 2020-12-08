@@ -21,14 +21,29 @@ Vue.use(VueResource);
 Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
 
+window.onerror = function(message, source, line, column, error) {
+  console.log('Message:', message);
+  console.log('Source:', source);
+  console.log('Line:', line);
+  console.log('Column:', column);
+  console.log('Error:', error);
+  console.log('Vm:',Vm);
+  console.log('Requester:',Vm.$store.state.requestermodule);
+}
+
 Vue.config.errorHandler = function(err, vm, info) {
-    console.log(`Error: ${err.toString()}\nInfo: ${info}`);
-  }
-  Vue.config.warnHandler = function(msg, vm, trace) {
-    //console.log(`Warn Hello: ${msg}\nTrace: ${trace}`);
-    //vm.$appInsights.trackEvent({name:"Test Warning main"}, { value: `Warn Hello: ${msg}\nTrace: ${trace}`});
-    console.log(`Warn Hello: ${msg}\nTrace: ${trace} \nStore:${JSON.stringify(vm.$store.state.requestermodule)}`);
-  }
+  console.log('Err:', err);
+  console.log('Vm:', vm);
+  console.log('Info:', info);
+}
+Vue.config.warnHandler = function(msg, vm, trace) {
+  console.log('Msg:', msg);
+  console.log('Vm:', vm);
+  console.log('Trace:', trace);
+  //console.log(`Warn Hello: ${msg}\nTrace: ${trace}`);
+  //vm.$appInsights.trackEvent({name:"Test Warning main"}, { value: `Warn Hello: ${msg}\nTrace: ${trace}`});
+  //console.log(`Warn Hello: ${msg}\nTrace: ${trace} \nStore:${JSON.stringify(vm.$store.state.requestermodule)}`);
+}
 
 //Vuetify API Secret Key - Common Code for Adding Header
 Vue.http.interceptors.push((request, next) => {
@@ -44,7 +59,7 @@ Vue.http.interceptors.push((request, next) => {
 })
 
 Vue.use(Vuelidate);
-new Vue({
+var Vm=new Vue({
     vuetify,
     store,
     render: h => h(App)
