@@ -22,15 +22,19 @@ Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
 
 window.onerror = function(message, source, line, column, error) {
+  //error = '';
+ // message = null;
+ //////////// error.stack needs to be put ///////////////////
   var jsErrObj={
-    Error:message,
+    //Error:(message === undefined || message == null) ? '' : message,
+    Error:isEmpty(message),
     Description:{
-      Detail:error,
-      Source:source,
-      Line:line,
-      Column:column
+      Detail:isEmpty(error),
+      Source:isEmpty(source),
+      Line:isEmpty(line),
+      Column:isEmpty(column)
     },
-    RequesterInfo:store.state.requestermodule
+    RequesterInfo:isEmpty(store.state.requestermodule)
   }
   console.log('Complete Object-',jsErrObj);
   //vueInstance.$appInsights.trackEvent({name:"Javascript_Error"}, { value: jsErrObj});
@@ -38,32 +42,44 @@ window.onerror = function(message, source, line, column, error) {
 
 Vue.config.errorHandler = function(err, vm, info) {
   var errObj={
-    Error:err,
-    Description:info,
-    RequesterInfo:vm.$store.state.requestermodule
+    Error:isEmpty(err),
+    Description:isEmpty(info),
+    RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
   console.log('Complete Object-',errObj);
 }
 Vue.config.warnHandler = function(msg, vm, trace) {
   var warnObj={
-    Error:msg,
-    Description:trace,
-    RequesterInfo:vm.$store.state.requestermodule
+    Error:isEmpty(msg),
+    Description:isEmpty(trace),
+    RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
   console.log('Complete Object-',warnObj);
 }
 
 //Vuetify API Secret Key - Common Code for Adding Header
 Vue.http.interceptors.push((request, next) => {
-    if(request.url.indexOf('ringcaptcha') == -1){
-        request.headers.set('sRequestorID', (store.state.requestermodule.nRequesterID).toString());
-        request.headers.set('sGUID', store.state.requestermodule.sGUID);
+  if(request.url.indexOf('ringcaptcha') == -1){
+      request.headers.set('sRequestorID', (store.state.requestermodule.nRequesterID).toString());
+      request.headers.set('sGUID', store.state.requestermodule.sGUID);
+  }
+  next(function(response){
+    if(response.status != 200) {
+      if(response.status == 401) {
+        store.commit("ConfigModule/bUnauthorized",true);
+      }
+      var apiObj={
+        Error:isEmpty(response.statusText),
+        Description:isEmpty(response),
+        RequesterInfo:isEmpty(store.state.requestermodule)
+      }
+      // Appinsight Call
+      //console.log(response);
+      //console.log(store.state.requestermodule);
+      console.log('Complete Object-',apiObj);
     }
-    next(function(response){
-        if(response.status == 401) {
-            store.commit("ConfigModule/bUnauthorized",true);
-          }
-    });
+      
+  });
 })
 
 Vue.use(Vuelidate);
@@ -73,3 +89,7 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount('#app')
+
+function isEmpty(val){
+  return (val === undefined || val == null) ? '' : val;
+}
