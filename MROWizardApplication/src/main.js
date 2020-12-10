@@ -39,13 +39,13 @@ window.onerror = function(message, source, line, column, error) {
     },
     RequesterInfo:isEmpty(store.state.requestermodule)
   }
-  console.log('Complete Object-',jsErrObj);
+  console.log('Complete Object- JS',jsErrObj);
   //vueInstance.$appInsights.trackEvent({name:"Javascript_Error"}, { value: jsErrObj});
 }
 
 Vue.config.errorHandler = function(err, vm, info) {
   var errObj={
-    Error:isEmpty(err),
+    Error:isEmpty(err.stack),
     Description:isEmpty(info),
     BrowserInfo:{
       Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
@@ -54,7 +54,8 @@ Vue.config.errorHandler = function(err, vm, info) {
     },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
-  console.log('Complete Object-',errObj);
+  console.log('Complete Object- Vue Error',errObj);
+  //vueInstance.$appInsights.trackEvent({name:"Vue_Error"}, { value: errObj});
 }
 Vue.config.warnHandler = function(msg, vm, trace) {
   var warnObj={
@@ -67,7 +68,8 @@ Vue.config.warnHandler = function(msg, vm, trace) {
     },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
-  console.log('Complete Object-',warnObj);
+  console.log('Complete Object- Vue Warning',warnObj);
+  //vueInstance.$appInsights.trackEvent({name:"Vue_Warning"}, { value: warnObj});
 }
 
 //Vuetify API Secret Key - Common Code for Adding Header
@@ -91,10 +93,8 @@ Vue.http.interceptors.push((request, next) => {
         },
         RequesterInfo:isEmpty(store.state.requestermodule)
       }
-      // Appinsight Call
-      //console.log(response);
-      //console.log(store.state.requestermodule);
-      console.log('Complete Object-',apiObj);
+      console.log('Complete Object- API',apiObj);
+      //vueInstance.$appInsights.trackEvent({name:"API Error"}, { value: apiObj});
     }
       
   });
