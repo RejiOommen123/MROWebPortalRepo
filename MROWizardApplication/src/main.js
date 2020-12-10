@@ -6,6 +6,7 @@ import Vuelidate from 'vuelidate'
 import VueResource from 'vue-resource'
 import VueSignature from "vue-signature-pad";
 import VueAppInsights from 'vue-application-insights'
+import browserDetect from "vue-browser-detect-plugin";
 
 Vue.use(VueAppInsights, {
     id: '00000000-0000-0000-0000-000000000000',
@@ -17,22 +18,24 @@ Vue.use(VueAppInsights, {
 
 Vue.use(VueSignature);
 Vue.use(VueResource);
+Vue.use(browserDetect);
 
 Vue.http.options.root = process.env.VUE_APP_ROOT_URL;
 Vue.config.productionTip = false;
 
 window.onerror = function(message, source, line, column, error) {
-  //error = '';
- // message = null;
- //////////// error.stack needs to be put ///////////////////
   var jsErrObj={
-    //Error:(message === undefined || message == null) ? '' : message,
     Error:isEmpty(message),
     Description:{
-      Detail:isEmpty(error),
+      Detail:isEmpty(error.stack),
       Source:isEmpty(source),
       Line:isEmpty(line),
       Column:isEmpty(column)
+    },
+    BrowserInfo:{
+      Name:vueInstance.$browserDetect.meta.name,
+      Version:vueInstance.$browserDetect.meta.version,
+      UserAgent:vueInstance.$browserDetect.meta.ua
     },
     RequesterInfo:isEmpty(store.state.requestermodule)
   }
@@ -44,6 +47,11 @@ Vue.config.errorHandler = function(err, vm, info) {
   var errObj={
     Error:isEmpty(err),
     Description:isEmpty(info),
+    BrowserInfo:{
+      Name:vueInstance.$browserDetect.meta.name,
+      Version:vueInstance.$browserDetect.meta.version,
+      UserAgent:vueInstance.$browserDetect.meta.ua
+    },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
   console.log('Complete Object-',errObj);
@@ -52,6 +60,11 @@ Vue.config.warnHandler = function(msg, vm, trace) {
   var warnObj={
     Error:isEmpty(msg),
     Description:isEmpty(trace),
+    BrowserInfo:{
+      Name:vueInstance.$browserDetect.meta.name,
+      Version:vueInstance.$browserDetect.meta.version,
+      UserAgent:vueInstance.$browserDetect.meta.ua
+    },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
   console.log('Complete Object-',warnObj);
@@ -71,6 +84,11 @@ Vue.http.interceptors.push((request, next) => {
       var apiObj={
         Error:isEmpty(response.statusText),
         Description:isEmpty(response),
+        BrowserInfo:{
+          Name:vueInstance.$browserDetect.meta.name,
+          Version:vueInstance.$browserDetect.meta.version,
+          UserAgent:vueInstance.$browserDetect.meta.ua
+        },
         RequesterInfo:isEmpty(store.state.requestermodule)
       }
       // Appinsight Call
@@ -83,7 +101,7 @@ Vue.http.interceptors.push((request, next) => {
 })
 
 Vue.use(Vuelidate);
-//var vueInstance=
+var vueInstance=
 new Vue({
     vuetify,
     store,
