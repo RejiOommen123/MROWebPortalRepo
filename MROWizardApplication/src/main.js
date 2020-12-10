@@ -33,9 +33,9 @@ window.onerror = function(message, source, line, column, error) {
       Column:isEmpty(column)
     },
     BrowserInfo:{
-      Name:vueInstance.$browserDetect.meta.name,
-      Version:vueInstance.$browserDetect.meta.version,
-      UserAgent:vueInstance.$browserDetect.meta.ua
+      Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
+      Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
+      UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
     RequesterInfo:isEmpty(store.state.requestermodule)
   }
@@ -48,9 +48,9 @@ Vue.config.errorHandler = function(err, vm, info) {
     Error:isEmpty(err),
     Description:isEmpty(info),
     BrowserInfo:{
-      Name:vueInstance.$browserDetect.meta.name,
-      Version:vueInstance.$browserDetect.meta.version,
-      UserAgent:vueInstance.$browserDetect.meta.ua
+      Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
+      Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
+      UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
@@ -61,9 +61,9 @@ Vue.config.warnHandler = function(msg, vm, trace) {
     Error:isEmpty(msg),
     Description:isEmpty(trace),
     BrowserInfo:{
-      Name:vueInstance.$browserDetect.meta.name,
-      Version:vueInstance.$browserDetect.meta.version,
-      UserAgent:vueInstance.$browserDetect.meta.ua
+      Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
+      Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
+      UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
     RequesterInfo:isEmpty(vm.$store.state.requestermodule)
   }
@@ -85,9 +85,9 @@ Vue.http.interceptors.push((request, next) => {
         Error:isEmpty(response.statusText),
         Description:isEmpty(response),
         BrowserInfo:{
-          Name:vueInstance.$browserDetect.meta.name,
-          Version:vueInstance.$browserDetect.meta.version,
-          UserAgent:vueInstance.$browserDetect.meta.ua
+          Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
+          Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
+          UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
         },
         RequesterInfo:isEmpty(store.state.requestermodule)
       }
