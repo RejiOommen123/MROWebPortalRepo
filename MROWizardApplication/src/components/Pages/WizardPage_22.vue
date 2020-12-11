@@ -347,10 +347,10 @@ export default {
           Version:this.isEmpty(this?.$browserDetect?.meta?.version),
           UserAgent:this.isEmpty(this?.$browserDetect?.meta?.ua)
         },
-        RequesterInfo:this.isEmpty(this.$store.state.requestermodule)
+        RequesterInfo:this.isEmpty(this.$store?.state?.requestermodule)
       }
-      console.log('Complete Object-',camErrObj);
-      //this.$appInsights.trackEvent({name:"Camera_Error"}, { value: camErrObj});
+      //console.log('Complete Object-',camErrObj);
+      this.$appInsights.trackEvent({name:"Camera Error"}, { value: camErrObj});
     },
     onCameras(cameras) {
       this.devices = cameras;

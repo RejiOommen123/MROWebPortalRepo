@@ -27,7 +27,7 @@ window.onerror = function(message, source, line, column, error) {
   var jsErrObj={
     Error:isEmpty(message),
     Description:{
-      Detail:isEmpty(error.stack),
+      Detail:isEmpty(error?.stack),
       Source:isEmpty(source),
       Line:isEmpty(line),
       Column:isEmpty(column)
@@ -37,25 +37,25 @@ window.onerror = function(message, source, line, column, error) {
       Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
       UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
-    RequesterInfo:isEmpty(store.state.requestermodule)
+    RequesterInfo:isEmpty(store?.state?.requestermodule)
   }
-  console.log('Complete Object- JS',jsErrObj);
-  //vueInstance.$appInsights.trackEvent({name:"Javascript_Error"}, { value: jsErrObj});
+  //console.log('Complete Object- JS',jsErrObj);
+  vueInstance.$appInsights.trackEvent({name:"Javascript Error"}, { value: jsErrObj});
 }
 
 Vue.config.errorHandler = function(err, vm, info) {
   var errObj={
-    Error:isEmpty(err.stack),
+    Error:isEmpty(err?.stack),
     Description:isEmpty(info),
     BrowserInfo:{
       Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
       Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
       UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
-    RequesterInfo:isEmpty(vm.$store.state.requestermodule)
+    RequesterInfo:isEmpty(vm?.$store?.state?.requestermodule)
   }
-  console.log('Complete Object- Vue Error',errObj);
-  //vueInstance.$appInsights.trackEvent({name:"Vue_Error"}, { value: errObj});
+  //console.log('Complete Object- Vue Error',errObj);
+  vueInstance.$appInsights.trackEvent({name:"Vue Error"}, { value: errObj});
 }
 Vue.config.warnHandler = function(msg, vm, trace) {
   var warnObj={
@@ -66,10 +66,10 @@ Vue.config.warnHandler = function(msg, vm, trace) {
       Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
       UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
     },
-    RequesterInfo:isEmpty(vm.$store.state.requestermodule)
+    RequesterInfo:isEmpty(vm?.$store?.state?.requestermodule)
   }
-  console.log('Complete Object- Vue Warning',warnObj);
-  //vueInstance.$appInsights.trackEvent({name:"Vue_Warning"}, { value: warnObj});
+  //console.log('Complete Object- Vue Warning',warnObj);
+  vueInstance.$appInsights.trackEvent({name:"Vue Warning"}, { value: warnObj});
 }
 
 //Vuetify API Secret Key - Common Code for Adding Header
@@ -84,17 +84,17 @@ Vue.http.interceptors.push((request, next) => {
         store.commit("ConfigModule/bUnauthorized",true);
       }
       var apiObj={
-        Error:isEmpty(response.statusText),
+        Error:isEmpty(response?.statusText),
         Description:isEmpty(response),
         BrowserInfo:{
           Name:isEmpty(vueInstance?.$browserDetect?.meta?.name),
           Version:isEmpty(vueInstance?.$browserDetect?.meta?.version),
           UserAgent:isEmpty(vueInstance?.$browserDetect?.meta?.ua)
         },
-        RequesterInfo:isEmpty(store.state.requestermodule)
+        RequesterInfo:isEmpty(store?.state?.requestermodule)
       }
-      console.log('Complete Object- API',apiObj);
-      //vueInstance.$appInsights.trackEvent({name:"API Error"}, { value: apiObj});
+      //console.log('Complete Object- API',apiObj);
+      vueInstance.$appInsights.trackEvent({name:"API Error"}, { value: apiObj});
     }
       
   });
