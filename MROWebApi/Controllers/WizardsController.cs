@@ -1289,9 +1289,9 @@ namespace MROWebApi.Controllers
                 message.To.Add(to);
 
                 //Subject
-                message.Subject = helpInfo.sName + " - Need Help while Requesting Data on eXpress";
+                message.Subject = helpInfo.sName + " - Needs Help with an eXpress Request";
                 BodyBuilder bodyBuilder = new BodyBuilder();
-                string bodyText = "<h1>Please help!</h1><br/>" + "<b>Requester details are below with the issue been faced :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
+                string bodyText = "<br/><b>Please see the requester contact information and issue detail below :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
                     + "</td></tr><tr><td><b>PhoneNo</b></td><td>" + helpInfo.sPhoneNo
                     + "</td></tr><tr><td><b>Email</b></td><td>" + helpInfo.sEmail
                     + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage + "</td></tr></table>";

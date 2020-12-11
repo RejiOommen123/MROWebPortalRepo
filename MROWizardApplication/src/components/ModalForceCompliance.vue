@@ -2,9 +2,9 @@
   <div>
     <v-dialog v-model="dialog" light persistent content-class="forceCompliance">
       <v-card color="#006bfa">
-        <!-- <v-card-title primary-title class="justify-center" style="color:white"><h2><b>Force Compliance</b></h2></v-card-title> -->
+        <v-card-title primary-title class="justify-center" style="color:white"><h2><b>Identity Verification</b></h2></v-card-title>
 
-        <v-card-text style="color:white;padding-top: 30px;">
+        <v-card-text style="color:white;">
             <h5>In order to comply with  privacy requirements, please verify your identity by one of the following methods:</h5>
           <v-row>
             <div style="width: 100%">
