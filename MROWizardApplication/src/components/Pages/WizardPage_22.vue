@@ -130,7 +130,8 @@
             filled
             prepend-icon="mdi-camera"
             @change="onFileChanged"
-            accept="image/png, image/jpeg, image/jpg, image/bmp"     
+            accept="image/png, image/jpeg, image/jpg, image/bmp"  
+            :rules="rules"   
           >
               <!-- :error-messages="fileInputErrors"
             required
@@ -226,6 +227,9 @@ export default {
       facilityForceCompliance: this.$store.state.ConfigModule
         .bForceCompliance,
       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
+      rules: [
+         value => !value || value.size < 10485760 || 'Uploaded file is greater than 10 MB',
+      ],
     };
   },
   // mixins: [validationMixin],
@@ -365,25 +369,12 @@ export default {
       {
         this.$store.commit("requestermodule/bForceCompliance", true);
       }
+      this.UploadIdentityImage();
       this.continue();
     },
     continue(){
       //Partial Requester Data Save Start
-      this.$store.commit(
-        "requestermodule/sWizardName",
-        this.$store.state.ConfigModule.selectedWizard
-      );
-      if (
-        this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-          .wizardsSave[this.$store.state.ConfigModule.selectedWizard] == 1
-      ) {
-        this.$http
-          .post("requesters/AddRequester/", this.$store.state.requestermodule)
-          .then(response => {
-            this.$store.commit("requestermodule/nRequesterID", response.body);
-          });
-      }
-      //Partial Requester Data Save End
+      this.$store.dispatch('requestermodule/partialAddReq');
       // console.log(JSON.stringify(this.$store.state.requestermodule));
       // this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
       // this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
@@ -413,6 +404,18 @@ export default {
         this.fileInput = "";
         this.bShowImage = "";
       }
+    },
+    UploadIdentityImage(){
+      var identityDocObj = {
+        nRequesterID: this.$store.state.requestermodule.nRequesterID,
+        nFacilityID: this.$store.state.requestermodule.nFacilityID,
+        sIdentityImage: this.sIdentityImage,
+        sWizardName: this.$store.state.ConfigModule.selectedWizard
+      };
+      this.$http.post("requesters/UpdateIdentityDoc/",identityDocObj)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+      });  
     }
   }
 };

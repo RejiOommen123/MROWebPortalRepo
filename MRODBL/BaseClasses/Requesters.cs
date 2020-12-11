@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
+    [Table("tblRequesters")]
     public partial class Requesters
     {
         #region Props
@@ -26,6 +28,7 @@ namespace MRODBL.BaseClasses
         public string sRelativeLastName { get; set; }
         public string sSelectedRelation { get; set; }
         public string sSelectedRelationName { get; set; }
+        [Write(false)]
         public string[] sRelativeFileArray { get; set; }
         public string[] sRelativeFileNameArray { get; set; }
         //[Required]
@@ -86,6 +89,7 @@ namespace MRODBL.BaseClasses
         public string sAdditionalData { get; set; }
         public string sIdentityIdName { get; set; }
         [MaxLength]
+        [Write(false)]
         public string sIdentityImage { get; set; }
         [MaxLength]
         public string sSignatureData { get; set; }

@@ -1,4 +1,5 @@
-﻿//requestermodule
+﻿import Vue from 'vue';
+//requestermodule
 const state = {
     // TODO: check requestor/requester
     nRequesterID: 0,
@@ -316,7 +317,97 @@ const mutations = {
         state.sGUID = payload;
     }
 }
-const actions = {}
+const actions = {
+    async partialAddReq({ commit,rootState}) {
+        commit("requestermodule/sWizardName", rootState.ConfigModule.selectedWizard,{ root: true });
+        let requester=rootState.requestermodule;
+        var requesterObj={
+            bAreYouPatient: requester.bAreYouPatient,
+            bConfirmReport: requester.bConfirmReport,
+            bDeadlineStatus: requester.bDeadlineStatus,
+            bEmailVerified: requester.bEmailVerified,
+            bForceCompliance: requester.bForceCompliance,
+            bPatientNameChanged: requester.bPatientNameChanged,
+            bPhoneNoVerified: requester.bPhoneNoVerified,
+            bRTManualSelection: requester.bRTManualSelection,
+            bRecordMostRecentVisit: requester.bRecordMostRecentVisit,
+            bRequestAnotherRecord: requester.bRequestAnotherRecord,
+            bRequestorFormSubmitted: requester.bRequestorFormSubmitted,
+            bSpecifyVisit: requester.bSpecifyVisit,
+            dtAuthExpire: requester.dtAuthExpire,
+            dtDeadline: requester.dtDeadline,
+            dtPatientDOB: requester.dtPatientDOB,
+            dtRecordRangeEnd: requester.dtRecordRangeEnd,
+            dtRecordRangeStart: requester.dtRecordRangeStart,
+            nFacilityID: requester.nFacilityID,
+            nFeedbackRating: requester.nFeedbackRating,
+            nLocationID: requester.nLocationID,
+            nRequesterID: requester.nRequesterID,
+            sAddApartment: requester.sAddApartment,
+            sAddCity: requester.sAddCity,
+            sAddState: requester.sAddState,
+            sAddStreetAddress: requester.sAddStreetAddress,
+            sAddZipCode: requester.sAddZipCode,
+            sAdditionalData: requester.sAdditionalData,
+            sAuthSpecificEvent: requester.sAuthSpecificEvent,
+            sFeedbackComment: requester.sFeedbackComment,
+            sGUID: requester.sGUID,
+            sIdentityIdName: requester.sIdentityIdName,
+            sIdentityImage: '',
+            sOtherRTText: requester.sOtherRTText,
+            sPatientFirstName: requester.sPatientFirstName,
+            sPatientLastName: requester.sPatientLastName,
+            sPatientMiddleName: requester.sPatientMiddleName,
+            sPatientPreviousFirstName: requester.sPatientPreviousFirstName,
+            sPatientPreviousLastName: requester.sPatientPreviousLastName,
+            sPatientPreviousMiddleName: requester.sPatientPreviousMiddleName,
+            sPhoneNo: requester.sPhoneNo,
+            sRecipientAddApartment: requester.sRecipientAddApartment,
+            sRecipientAddCity: requester.sRecipientAddCity,
+            sRecipientAddState: requester.sRecipientAddState,
+            sRecipientAddStreetAddress: requester.sRecipientAddStreetAddress,
+            sRecipientAddZipCode: requester.sRecipientAddZipCode,
+            sRecipientFirstName: requester.sRecipientFirstName,
+            sRecipientLastName: requester.sRecipientLastName,
+            sRecipientOrganizationName: requester.sRecipientOrganizationName,
+            sRelativeFileArray: [],
+            sRelativeFileNameArray: requester.sRelativeFileNameArray,
+            sRelativeFirstName: requester.sRelativeFirstName,
+            sRelativeLastName: requester.sRelativeLastName,
+            sReleaseTo: requester.sReleaseTo,
+            sReleaseToName: requester.sReleaseToName,
+            sRequesterEmailId: requester.sRequesterEmailId,
+            sSTAddApartment: requester.sSTAddApartment,
+            sSTAddCity: requester.sSTAddCity,
+            sSTAddState: requester.sSTAddState,
+            sSTAddStreetAddress: requester.sSTAddStreetAddress,
+            sSTAddZipCode: requester.sSTAddZipCode,
+            sSTEmailAddress: requester.sSTEmailAddress,
+            sSTFaxCompAdd: requester.sSTFaxCompAdd,
+            sSTFaxNumber: requester.sSTFaxNumber,
+            sSelectedLocation: requester.sSelectedLocation,
+            sSelectedLocationName: requester.sSelectedLocationName,
+            sSelectedPrimaryReasons: requester.sSelectedPrimaryReasons,
+            sSelectedPrimaryReasonsName: requester.sSelectedPrimaryReasonsName,
+            sSelectedRecordTypes: requester.sSelectedRecordTypes,
+            sSelectedRelation: requester.sSelectedRelation,
+            sSelectedRelationName: requester.sSelectedRelationName,
+            sSelectedSensitiveInfo: requester.sSelectedSensitiveInfo,
+            sSelectedShipmentTypes: requester.sSelectedShipmentTypes,
+            sSelectedShipmentTypesName: requester.sSelectedShipmentTypesName,
+            sSignatureData: requester.sSignatureData,
+            sSpecifyVisitText: requester.sSpecifyVisitText,
+            sWizardName: requester.sWizardName,
+        }
+        if(rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1)
+        {
+           Vue.http.post("requesters/AddRequester/",requesterObj)
+          .then(response => {
+           commit("requestermodule/nRequesterID", response.body,{ root: true });
+          });
+        }
+    }
+}
 const getter = {}
 
 export default {

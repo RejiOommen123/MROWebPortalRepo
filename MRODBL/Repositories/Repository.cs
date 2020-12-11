@@ -347,6 +347,17 @@ namespace MRODBL.Repositories
             }
             return rowsAffected > 0;
         }
+        public bool UpdateSingleRequestor<T>(T ourModel) where T : class
+        {
+            //int rowsAffected = 0;
+            using (IDbConnection cn = new SqlConnection(sConnect))
+            {
+                //var parameters = (object)Mapping(ourModel);
+                cn.Open();
+                return cn.Update(ourModel);
+            }
+            //return rowsAffected > 0;
+        }
         public bool UpdateMany(List<T> ourModels)
         {
             try {
@@ -374,6 +385,33 @@ namespace MRODBL.Repositories
                         "WHERE " +
                         "tblRequesters.nRequesterID = @nRequesterID";
                 await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @bRequestAnotherRecord = bRequestAnotherRecord, @nFeedbackRating = nFeedbackRating, @sFeedbackComment = sFeedbackComment, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
+        public async Task<int> UpdateRequesterSupportDocs(int nRequesterID,string sRelativeFileArray,string sRelativeFileNameArray,string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET sRelativeFileArray = @sRelativeFileArray, " +
+                      "sRelativeFileNameArray = @sRelativeFileNameArray, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @sRelativeFileArray = sRelativeFileArray, @sRelativeFileNameArray = sRelativeFileNameArray, @sWizardName = sWizardName });
+                return nRequesterID;
+            }
+        }
+        public async Task<int> UpdateRequesterIdentityDoc(int nRequesterID, string sIdentityImage, string sWizardName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblRequesters SET sIdentityImage = @sIdentityImage, " +
+                      "sWizardName = @sWizardName " +
+                        "WHERE " +
+                        "tblRequesters.nRequesterID = @nRequesterID";
+                await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @sIdentityImage = sIdentityImage, @sWizardName = sWizardName });
                 return nRequesterID;
             }
         }

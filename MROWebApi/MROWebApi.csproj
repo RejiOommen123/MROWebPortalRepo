@@ -13,6 +13,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="web.config" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="ABCpdfCore" Version="11.3.8" />
 		<PackageReference Include="DinkToPdf" Version="1.0.8" />
 		<PackageReference Include="MailKit" Version="2.8.0" />
@@ -70,6 +74,14 @@
 
 	<ItemGroup>
 	  <NativeLibs Remove="Services\SessionAuthAttribute.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <NativeLibs Remove="web.config" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="web.config" />
 	</ItemGroup>
 
 

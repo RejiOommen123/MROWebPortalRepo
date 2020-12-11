@@ -52,15 +52,7 @@ export default {
       this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
 
       //Partial Requester Data Save Start
-      this.$store.commit("requestermodule/sWizardName", this.$store.state.ConfigModule.selectedWizard);
-      if(this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[this.$store.state.ConfigModule.selectedWizard]==1)
-      {
-        this.$http.post("requesters/AddRequester/",this.$store.state.requestermodule)
-        .then(response => {
-          this.$store.commit("requestermodule/nRequesterID", response.body);
-        });
-      }
-      //Partial Requester Data Save End
+      this.$store.dispatch('requestermodule/partialAddReq');
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
