@@ -158,7 +158,7 @@
             <v-btn type="button" :disabled="diableCamera" @click="sStatus='CapturingImg'" class="next">Take Picture</v-btn>
           </v-col>
           <v-col cols="6" sm="4">
-            <v-btn type="button" :disabled="fileInput==''" class="next" @click="nextPage">Save & Next</v-btn>
+            <v-btn type="button" :disabled="fileInput==null" class="next" @click="nextPage">Save & Next</v-btn>
           </v-col>           
           <v-col cols="12" sm="4">
             <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
@@ -219,7 +219,7 @@ export default {
       deviceId: null,
       devices: [],
       sStatus: "CapturingImg",
-      fileInput: "",
+      fileInput: null,
       bShowImage: "",
       dialog:true,
       diableCamera:false,
@@ -300,6 +300,9 @@ export default {
     //   this.$refs.webcam.capture().then(function(defs) {
     //     self.sIdentityImage = defs;
     //   });
+    isEmpty(val){
+      return (val === undefined || val == null) ? '' : val;
+    },
     switchCamera(){
        if(this.devices.length!=0){
         var index = this.devices.findIndex(x => x.deviceId === this.deviceId);
@@ -336,6 +339,18 @@ export default {
         alert("Camera Not Found. Redirecting to upload file page.");
         this.sStatus = "UploadImg";
       }
+      var camErrObj={
+        Error:this.isEmpty(error?.name),    
+        Description:this.isEmpty(error?.message),
+        BrowserInfo:{
+          Name:this.isEmpty(this?.$browserDetect?.meta?.name),
+          Version:this.isEmpty(this?.$browserDetect?.meta?.version),
+          UserAgent:this.isEmpty(this?.$browserDetect?.meta?.ua)
+        },
+        RequesterInfo:this.isEmpty(this.$store.state.requestermodule)
+      }
+      console.log('Complete Object-',camErrObj);
+      //this.$appInsights.trackEvent({name:"Camera_Error"}, { value: camErrObj});
     },
     onCameras(cameras) {
       this.devices = cameras;
@@ -351,7 +366,7 @@ export default {
       this.$store.commit("requestermodule/sIdentityIdName", '');   
       this.$store.commit("requestermodule/sIdentityImage", '');
       this.sIdentityImage='';
-      this.fileInput='';
+      this.fileInput=null;
       this.sStatus="CapturingImg";
       if(!this.$store.state.requestermodule.bPhoneNoVerified && !this.$store.state.requestermodule.bEmailVerified){
         if(this.facilityForceCompliance)
@@ -395,13 +410,13 @@ export default {
           this.bShowImage = file.name;
         }
         else{
-          this.fileInput = "";
+          this.fileInput = null;
           this.bShowImage = "";
           this.$refs.clearInput.clearableCallback();
           this.unsupported=true;
         }
       } else {
-        this.fileInput = "";
+        this.fileInput = null;
         this.bShowImage = "";
       }
     },
@@ -417,7 +432,7 @@ export default {
           this.$store.commit("requestermodule/nRequesterID", response.body);
       });  
     }
-  }
+  }  
 };
 </script>
 <style>

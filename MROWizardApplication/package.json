@@ -11,6 +11,8 @@
     "core-js": "^3.6.5",
     "moment": "^2.26.0",
     "vue": "^2.6.11",
+    "vue-application-insights": "^1.0.7",
+    "vue-browser-detect-plugin": "^0.1.13",
     "vue-cam-vision": "0.0.8",
     "vue-pdf": "^4.1.0",
     "vue-resource": "^1.5.1",
