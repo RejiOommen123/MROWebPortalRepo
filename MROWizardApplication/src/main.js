@@ -9,7 +9,7 @@ import VueAppInsights from 'vue-application-insights'
 import browserDetect from "vue-browser-detect-plugin";
 
 Vue.use(VueAppInsights, {
-    id: '00000000-0000-0000-0000-000000000000',
+    id: process.env.VUE_APP_INSIGHTS_ID,
     appInsights: window.appInsights,
     trackInitialPageView: false
     //,

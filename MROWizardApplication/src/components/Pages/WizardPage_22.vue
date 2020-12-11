@@ -296,6 +296,9 @@ export default {
     //   this.$refs.webcam.capture().then(function(defs) {
     //     self.sIdentityImage = defs;
     //   });
+    isEmpty(val){
+      return (val === undefined || val == null) ? '' : val;
+    },
     switchCamera(){
        if(this.devices.length!=0){
         var index = this.devices.findIndex(x => x.deviceId === this.deviceId);
@@ -332,6 +335,18 @@ export default {
         alert("Camera Not Found. Redirecting to upload file page.");
         this.sStatus = "UploadImg";
       }
+      var camErrObj={
+        Error:this.isEmpty(error?.name),    
+        Description:this.isEmpty(error?.message),
+        BrowserInfo:{
+          Name:this.isEmpty(this?.$browserDetect?.meta?.name),
+          Version:this.isEmpty(this?.$browserDetect?.meta?.version),
+          UserAgent:this.isEmpty(this?.$browserDetect?.meta?.ua)
+        },
+        RequesterInfo:this.isEmpty(this.$store.state.requestermodule)
+      }
+      console.log('Complete Object-',camErrObj);
+      //this.$appInsights.trackEvent({name:"Camera_Error"}, { value: camErrObj});
     },
     onCameras(cameras) {
       this.devices = cameras;
@@ -414,7 +429,7 @@ export default {
         this.bShowImage = "";
       }
     }
-  }
+  }  
 };
 </script>
 <style>
