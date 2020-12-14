@@ -1280,7 +1280,7 @@ namespace MROWebApi.Controllers
 
                 #region saving facility and location name in helpinfo obj
                 helpInfo.sFacilityName = dbFacility.sFacilityName;
-                helpInfo.sLocationName = helpInfo.oRequester.sSelectedLocationName;
+                helpInfo.sLocationName = String.IsNullOrEmpty(helpInfo.oRequester.sSelectedLocationName) ? "" : helpInfo.oRequester.sSelectedLocationName;
                 #endregion
 
                 #region Decrypt SMTP Password
