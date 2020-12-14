@@ -1269,6 +1269,19 @@ namespace MROWebApi.Controllers
                 {
                    location = await locaFac.Select(helpInfo.oRequester.nLocationID);
                 }
+                #region Get requester OS and Browser Details
+                var userAgent = HttpContext.Request.Headers["User-Agent"];
+                string uaString = Convert.ToString(userAgent[0]);
+                var uaParser = Parser.GetDefault();
+                ClientInfo c = uaParser.Parse(uaString);
+                helpInfo.sOS = c.OS.ToString();
+                helpInfo.sBrowser = c.UserAgent.ToString();
+                #endregion
+
+                #region saving facility and location name in helpinfo obj
+                helpInfo.sFacilityName = dbFacility.sFacilityName;
+                helpInfo.sLocationName = helpInfo.oRequester.sSelectedLocationName;
+                #endregion
 
                 #region Decrypt SMTP Password
                 MROLogger password = new MROLogger(_info);
@@ -1295,7 +1308,13 @@ namespace MROWebApi.Controllers
                 string bodyText = "<br/><b>Please see the requester contact information and issue detail below :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
                     + "</td></tr><tr><td><b>PhoneNo</b></td><td>" + helpInfo.sPhoneNo
                     + "</td></tr><tr><td><b>Email</b></td><td>" + helpInfo.sEmail
-                    + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage + "</td></tr></table>";
+                    + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage
+                    + "</td></tr><tr><td><b>Facility Name</b></td><td>" + helpInfo.sFacilityName
+                    + "</td></tr><tr><td><b>Location Name</b></td><td>" + helpInfo.sLocationName
+                    + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + helpInfo.sWizardName
+                    + "</td></tr><tr><td><b>OS</b></td><td>" + helpInfo.sOS
+                    + "</td></tr><tr><td><b>Browser</b></td><td>" + helpInfo.sBrowser
+                    + "</td></tr></table>";
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
                 //GET Port number
@@ -1341,6 +1360,10 @@ namespace MROWebApi.Controllers
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sPhoneNo", "PhoneNo");
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sEmail", "Email");
                     jsonResolver.RenameProperty(typeof(HelpInfo), "sMessage", "Message");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sFacilityName", "Facility Name");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sLocationName", "Location Name");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sOS", "OS");
+                    jsonResolver.RenameProperty(typeof(HelpInfo), "sBrowser", "Browser");
 
                     JsonSerializerSettings serializerSettings = new JsonSerializerSettings();
                     serializerSettings.ContractResolver = jsonResolver;

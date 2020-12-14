@@ -185,7 +185,11 @@ export default {
         sName: this.sName,
         sPhoneNo: this.sPhoneNo,
         sEmail: this.sEmail,
-        sMessage: this.sMessage
+        sMessage: this.sMessage,
+        sFacilityName:'',
+        sLocationName:'',        
+        sOS:'',
+        sBrowser:''
       };
       this.$http.post("wizards/SendNeedHelpEmail", combinedObj).then(
         response => {
