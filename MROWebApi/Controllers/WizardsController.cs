@@ -1265,9 +1265,18 @@ namespace MROWebApi.Controllers
 
                 FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                 FacilityLocations location = null;
+
+                #region saving facility and location name in helpinfo obj
+                helpInfo.sFacilityName = dbFacility.sFacilityName;
+                helpInfo.sLocationName = String.IsNullOrEmpty(helpInfo.oRequester.sSelectedLocationName) ? "" : helpInfo.oRequester.sSelectedLocationName;
+                #endregion
                 if (helpInfo.oRequester.nLocationID > 0)
                 {
-                   location = await locaFac.Select(helpInfo.oRequester.nLocationID);
+                    location = await locaFac.Select(helpInfo.oRequester.nLocationID);
+                    if (String.IsNullOrEmpty(helpInfo.sLocationName) && !String.IsNullOrEmpty(location.sLocationName))
+                    {
+                        helpInfo.sLocationName = location.sLocationName;
+                    }
                 }
                 #region Get requester OS and Browser Details
                 var userAgent = HttpContext.Request.Headers["User-Agent"];
@@ -1276,11 +1285,6 @@ namespace MROWebApi.Controllers
                 ClientInfo c = uaParser.Parse(uaString);
                 helpInfo.sOS = c.OS.ToString();
                 helpInfo.sBrowser = c.UserAgent.ToString();
-                #endregion
-
-                #region saving facility and location name in helpinfo obj
-                helpInfo.sFacilityName = dbFacility.sFacilityName;
-                helpInfo.sLocationName = String.IsNullOrEmpty(helpInfo.oRequester.sSelectedLocationName) ? "" : helpInfo.oRequester.sSelectedLocationName;
                 #endregion
 
                 #region Decrypt SMTP Password
