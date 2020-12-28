@@ -72,7 +72,18 @@ export default {
         {
           this.$store.commit("requestermodule/bForceCompliance", false);
         }
-      }
+      }      
+      //remove sIdentityImage on skipping
+      var identityDocObj = {
+        nRequesterID: this.$store.state.requestermodule.nRequesterID,
+        nFacilityID: this.$store.state.requestermodule.nFacilityID,
+        sIdentityImage: "",
+        sWizardName: this.$store.state.ConfigModule.selectedWizard
+      };
+      this.$http.post("requesters/UpdateIdentityDoc/",identityDocObj)
+        .then(response => {
+          this.$store.commit("requestermodule/nRequesterID", response.body);
+      });  
       this.continue();
     },
     nextPage() {

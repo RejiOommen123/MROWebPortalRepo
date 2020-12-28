@@ -348,7 +348,7 @@ namespace MROWebApi.Controllers
                 _infoRequester.ConnectionString = await connectionRepo.GetConnectionStringByFacilityID(identityDoc.nFacilityID);
                 RequestersRepository requestersFac = new RequestersRepository(_infoRequester);
 
-                var identityImageAsPdf = new LocationAuthorizationDocumentController().GeneratePDFForXML("", new string[] { identityDoc.sIdentityImage });
+                var identityImageAsPdf = string.IsNullOrEmpty(identityDoc.sIdentityImage) ? "" : new LocationAuthorizationDocumentController().GeneratePDFForXML("", new string[] { identityDoc.sIdentityImage });
 
                 nRequesterId = await requestersFac.UpdateRequesterIdentityDoc(identityDoc.nRequesterID, identityImageAsPdf, identityDoc.sWizardName);
 

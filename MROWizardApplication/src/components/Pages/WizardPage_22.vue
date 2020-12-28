@@ -34,7 +34,7 @@
           <v-col cols="4"  sm="4">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn :disabled="diableCamera" @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
+                <v-btn :disabled="diableCamera || !cameraStarted" @click="onCapture" fab dark color="teal" v-bind="attrs" v-on="on">
                   <v-icon dark>mdi-camera</v-icon>
                 </v-btn>
               </template>
@@ -47,7 +47,7 @@
           <v-col v-if="devices.length>1" cols="4" sm="4">
              <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="switchCamera" fab dark color="teal" v-bind="attrs" v-on="on">
+                <v-btn :disabled="diableCamera || !cameraStarted" @click="switchCamera" fab dark color="teal" v-bind="attrs" v-on="on">
                   <v-icon dark>mdi-cached</v-icon>
                 </v-btn>
               </template>
@@ -230,6 +230,7 @@ export default {
       rules: [
          value => !value || value.size < 10485760 || 'Uploaded file is greater than 10 MB',
       ],
+      cameraStarted:false
     };
   },
   // mixins: [validationMixin],
@@ -321,9 +322,11 @@ export default {
       this.camera=null;
     },
     onStarted(stream) {
+      this.cameraStarted=true;
       console.log("On Started Event", stream);
     },
     onStopped(stream) {
+      this.cameraStarted=false;
       console.log("On Stopped Event", stream);
     },
     onStop() {
@@ -374,6 +377,7 @@ export default {
           this.$store.commit("requestermodule/bForceCompliance", false);
         }
       }
+      this.UploadIdentityImage();
       this.continue();
     },
     nextPage() {
@@ -424,7 +428,7 @@ export default {
       var identityDocObj = {
         nRequesterID: this.$store.state.requestermodule.nRequesterID,
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        sIdentityImage: this.sIdentityImage,
+        sIdentityImage: this.$store.state.requestermodule.sIdentityImage,
         sWizardName: this.$store.state.ConfigModule.selectedWizard
       };
       this.$http.post("requesters/UpdateIdentityDoc/",identityDocObj)
