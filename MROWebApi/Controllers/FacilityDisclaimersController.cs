@@ -28,15 +28,15 @@ namespace MROWebApi.Controllers
 
 
         #region Get Facility Disclaimers
-        [HttpGet("GetDisclaimersByFacilityID/nFacilityID={nFacilityID}&nAdminUserID={nAdminUserID}")]
+        [HttpGet("GetDisclaimersByFacilityID/nFacilityID={nFacilityID}&nFacilityLocationID={nFacilityLocationID}&nAdminUserID={nAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetDisclaimersByFacilityID(int nFacilityID, int nAdminUserID)
+        public async Task<IActionResult> GetDisclaimersByFacilityID(int nFacilityID, int nFacilityLocationID, int nAdminUserID)
         {
             try
             {
                 FacilityDisclaimersRepository disclaimersRepository = new FacilityDisclaimersRepository(_info);
-                IEnumerable<dynamic> disclaimers = await disclaimersRepository.EditDisclaimers(nFacilityID);
+                IEnumerable<dynamic> disclaimers = await disclaimersRepository.EditDisclaimers(nFacilityID, nFacilityLocationID);
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 Facilities facility = await rpFac.Select(nFacilityID);
                 if (facility == null)
@@ -70,75 +70,190 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
-        #region Edit Facility Field Maps 
+
+        #region Edit Facility Disclaimers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityDisclaimers([FromBody] FacilityDisclaimers[] facilityDisclaimers)
+        public async Task<IActionResult> EditFacilityDisclaimers(EditDisclaimers editDisclaimers)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    IEnumerable<FacilityDisclaimers> InsertDisclaimers = null, UpdateDisclaimers = null;
                     FacilityDisclaimersRepository fdFac = new FacilityDisclaimersRepository(_info);
                     List<FacilityDisclaimers> facilityDisclaimersList = new List<FacilityDisclaimers>();
                     List<int> idList = new List<int>();
-                    var singleRecord = facilityDisclaimers.FirstOrDefault();
-
-                    foreach (var disclaimer in facilityDisclaimers)
-                    {
-                        facilityDisclaimersList.Add(
-                            new FacilityDisclaimers()
-                            {
-                                nFacilityWizardHelperID = disclaimer.nFacilityWizardHelperID,
-                                nFacilityID = disclaimer.nFacilityID,
-                                sWizardHelperType = disclaimer.sWizardHelperType,
-                                sWizardHelperValue = disclaimer.sWizardHelperValue,
-                                nWizardID = disclaimer.nWizardID,
-                                dtLastUpdate = DateTime.Now,
-                                nUpdatedAdminUserID = disclaimer.nUpdatedAdminUserID,
-                                dtCreated = disclaimer.dtCreated,
-                                nCreatedAdminUserID = disclaimer.nCreatedAdminUserID
-                            });
-                        idList.Add(disclaimer.nFacilityWizardHelperID);
-                    }
-                    int[] idArray = idList.ToArray();
-                    List<FacilityDisclaimers> oldFacilityDisclaimers = new List<FacilityDisclaimers>();
-                    var elist = await fdFac.SelectListByInClause(idArray, "lnkFacilityWizardHelper", "nFacilityWizardHelperID", singleRecord.nFacilityID);
-
-                    foreach (var item in elist)
-                    {
-                        oldFacilityDisclaimers.Add(item);
-                    }
-
-                    fdFac.UpdateMany(facilityDisclaimersList);
-                    
-                    #region Logging
+                    var singleRecord = editDisclaimers.facilityDisclaimers.FirstOrDefault();
                     int nAdminUserID = singleRecord.nUpdatedAdminUserID;
                     int nFacilityID = singleRecord.nFacilityID;
                     FacilitiesRepository facRepo = new FacilitiesRepository(_info);
                     Facilities facility = await facRepo.Select(nFacilityID);
-                    if (facility.bFacilityLogging)
-                    {
-                        MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Edit Disclaimers Method was called for Facility ID: " + nFacilityID + " and Updated Disclaimer";
-                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
-                        {
-                            nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                            sDescription = sDescription,
-                            sModuleName = "Edit Facility Fields/Disclaimers",
-                            sEventName = "Edit Facility Disclaimers",
-                            nFacilityID= singleRecord.nFacilityID
-                        };
-                        logger.UpdateAuditMany(oldFacilityDisclaimers, facilityDisclaimersList, adminModuleLogger, "nFacilityWizardHelperID");
-                    }
-                    #endregion
 
+
+                    if (editDisclaimers.nFacilityLocationID != 0)
+                    {
+                        InsertDisclaimers = editDisclaimers.facilityDisclaimers.Where(map => map.nFacilityLocationID == 0);
+                        UpdateDisclaimers = editDisclaimers.facilityDisclaimers.Where(map => map.nFacilityLocationID != 0);
+                    }
+                    else
+                    {
+                        UpdateDisclaimers = editDisclaimers.facilityDisclaimers;
+                    }
+
+                    if (editDisclaimers.nFacilityLocationID != 0)
+                    {
+                        if (InsertDisclaimers.Count() != 0)
+                        {
+                            foreach (var disclaimer in InsertDisclaimers)
+                            {
+                                facilityDisclaimersList.Add(
+                                    new FacilityDisclaimers()
+                                    {
+                                        nFacilityWizardHelperID = disclaimer.nFacilityWizardHelperID,
+                                        nFacilityID = disclaimer.nFacilityID,
+                                        sWizardHelperType = disclaimer.sWizardHelperType,
+                                        sWizardHelperValue = disclaimer.sWizardHelperValue,
+                                        nWizardID = disclaimer.nWizardID,
+                                        dtLastUpdate = DateTime.Now,
+                                        nUpdatedAdminUserID = disclaimer.nUpdatedAdminUserID,
+                                        dtCreated = disclaimer.dtCreated,
+                                        nCreatedAdminUserID = disclaimer.nCreatedAdminUserID,
+                                        nFacilityLocationID = editDisclaimers.nFacilityLocationID
+                                    });
+                            }
+                            fdFac.InsertMany(facilityDisclaimersList);
+
+                            #region Logging
+
+                            if (facility.bFacilityLogging)
+                            {
+                                MROLogger logger = new MROLogger(_info);
+                                string sDescription = "Edit Disclaimers Location ID: " + editDisclaimers.nFacilityLocationID;
+                                AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                                {
+                                    nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                    sDescription = sDescription,
+                                    sModuleName = "Edit Facility Fields/Disclaimers",
+                                    sEventName = "Edit Facility Disclaimers",
+                                    nFacilityID = singleRecord.nFacilityID
+                                };
+                                logger.InsertAuditMany(facilityDisclaimersList, adminModuleLogger);
+                            }
+                            #endregion
+                        }
+                    }
+
+                    if (UpdateDisclaimers.Count() != 0)
+                    {
+                        foreach (var disclaimer in UpdateDisclaimers)
+                        {
+                            facilityDisclaimersList.Add(
+                                new FacilityDisclaimers()
+                                {
+                                    nFacilityWizardHelperID = disclaimer.nFacilityWizardHelperID,
+                                    nFacilityID = disclaimer.nFacilityID,
+                                    sWizardHelperType = disclaimer.sWizardHelperType,
+                                    sWizardHelperValue = disclaimer.sWizardHelperValue,
+                                    nWizardID = disclaimer.nWizardID,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = disclaimer.nUpdatedAdminUserID,
+                                    dtCreated = disclaimer.dtCreated,
+                                    nCreatedAdminUserID = disclaimer.nCreatedAdminUserID,
+                                    nFacilityLocationID = editDisclaimers.nFacilityLocationID
+                                });
+                            idList.Add(disclaimer.nFacilityWizardHelperID);
+                        }
+                        int[] idArray = idList.ToArray();
+                        List<FacilityDisclaimers> oldFacilityDisclaimers = new List<FacilityDisclaimers>();
+                        var elist = await fdFac.SelectListByInClause(idArray, "lnkFacilityWizardHelper", "nFacilityWizardHelperID", singleRecord.nFacilityID, editDisclaimers.nFacilityLocationID);
+
+                        foreach (var item in elist)
+                        {
+                            oldFacilityDisclaimers.Add(item);
+                        }
+
+                        fdFac.UpdateMany(facilityDisclaimersList);
+
+                        #region Logging
+                        if (facility.bFacilityLogging)
+                        {
+                            MROLogger logger = new MROLogger(_info);
+                            string sDescription = "Edit Disclaimers Location ID: " + editDisclaimers.nFacilityLocationID;
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Edit Facility Fields/Disclaimers",
+                                sEventName = "Edit Facility Disclaimers",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldFacilityDisclaimers, facilityDisclaimersList, adminModuleLogger, "nFacilityWizardHelperID");
+                        }
+                        #endregion
+                    }
                     return Ok("Success");
                 }
                 catch (Exception ex)
                 {
                     return Content(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
+
+        #region Reset To Deafult Facility Disclaimers
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> ResetToDeafult(FacilityDisclaimers facilityDisclaimer)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    
+                    FacilitiesRepository facRepo = new FacilitiesRepository(_info);
+                    Facilities facility = await facRepo.Select(facilityDisclaimer.nFacilityID);
+                    FacilityDisclaimersRepository fdFac = new FacilityDisclaimersRepository(_info);
+                    FacilityDisclaimers dbFacilityDisclaimer = await fdFac.SelectFourWhereClause("sWizardHelperType", facilityDisclaimer.sWizardHelperType, "nWizardID", facilityDisclaimer.nWizardID,"nFacilityId",facilityDisclaimer.nFacilityID,"nFacilityLocationId",0);
+
+                    bool deleteResult = fdFac.Delete(facilityDisclaimer.nFacilityWizardHelperID);
+                    if (deleteResult)
+                    {
+                        #region Logging
+                        if (facility.bFacilityLogging)
+                        {
+                            MROLogger logger = new MROLogger(_info);
+                            string sDescription = "Reset to Default Disclaimer Location ID: " + facilityDisclaimer.nFacilityLocationID;
+                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = facilityDisclaimer.nUpdatedAdminUserID,
+                                sDescription = sDescription,
+                                sModuleName = "Edit Facility Fields/Disclaimers",
+                                sEventName = "Reset to Default Disclaimer",
+                                nFacilityID = facilityDisclaimer.nFacilityID
+                            };
+                            logger.UpdateAuditSingle(facilityDisclaimer,dbFacilityDisclaimer,adminModuleLogger);
+                        }
+                        #endregion
+                        return Ok(dbFacilityDisclaimer);
+                    }
+                    else {
+                        return BadRequest("Record not deleted");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex);
                 }
             }
             else

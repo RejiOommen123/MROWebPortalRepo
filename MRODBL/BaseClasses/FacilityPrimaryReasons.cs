@@ -10,12 +10,17 @@ namespace MRODBL.BaseClasses
         #region Props
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Id")]
+        public int nFacilityPrimaryReasonID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Primary Reason Id")]
+        public int nPrimaryReasonID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
-        [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Id")]
-        public int nPrimaryReasonID { get; set; }
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Primary Reason Allowed")]
         [DisplayName("Name")]
         public string sPrimaryReasonName { get; set; }

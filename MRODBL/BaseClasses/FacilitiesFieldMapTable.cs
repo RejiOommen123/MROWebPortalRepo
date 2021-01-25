@@ -15,6 +15,9 @@ namespace MRODBL.BaseClasses
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }        
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Field Id")]
         public int nFieldID { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]

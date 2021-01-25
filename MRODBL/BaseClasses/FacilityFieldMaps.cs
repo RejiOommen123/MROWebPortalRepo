@@ -11,13 +11,17 @@ namespace MRODBL.BaseClasses
         [Required]
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Id")]
+        public int nFacilityFieldMapID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Field Id")]
+        public int nFieldID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
-        [Required]
-        [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Id")]
-        public int nFieldID { get; set; }
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Wizard Id")]

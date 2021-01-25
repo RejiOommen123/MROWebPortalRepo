@@ -95,7 +95,33 @@ namespace MRODBL.Repositories
         /// <param name="tB">Table B Name</param>
         /// <returns>Inner Joined Data of 2 tables</returns>
         Task<IEnumerable<dynamic>> InnerJoin(string cA, string cB, string tA, string tB);
-       
+
+        /// <summary>
+        /// Select data where three conditions with AND
+        /// </summary>
+        /// <param name="PN1">column name 1</param>
+        /// <param name="PV1">column value 1</param>
+        /// <param name="PN2">column name 2</param>
+        /// <param name="PV2">column value 2</param>
+        /// <param name="PN3">column name 3</param>
+        /// <param name="PV3">column value 3</param>
+        /// <returns></returns>
+        Task<T> SelectThreeWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3)
+
+        /// <summary>
+        /// Select data where four conditions with AND
+        /// </summary>
+        /// <param name="PN1">column name 1</param>
+        /// <param name="PV1">column value 1</param>
+        /// <param name="PN2">column name 2</param>
+        /// <param name="PV2">column value 2</param>
+        /// <param name="PN3">column name 3</param>
+        /// <param name="PV3">column value 3</param>
+        /// <param name="PN4">column name 4</param>
+        /// <param name="PV4">column value 4</param>
+        /// <returns></returns>
+        Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4)
+
         #endregion
 
         #region INSERT Queries
@@ -191,9 +217,11 @@ namespace MRODBL.Repositories
         /// <summary>
         /// Get Edit Fields Form Details (SP)
         /// </summary>
-        /// <param name="ID">Facility ID</param>
+        /// <param name="nFacilityID">Facility ID</param>
+        /// <param name="nFacilityLocationID">Location ID</param>
+        /// <param name="nAdminUserID">Admin user ID</param>
         /// <returns>Facility Field Map Values based on given Facility ID</returns>
-        Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID);
+        Task<IEnumerable<dynamic>> EditFields(int nFacilityID, int nFacilityLocationID, int nAdminUserID);
 
         /// <summary>
         /// Get Wizard Config Details (SP)
@@ -241,9 +269,10 @@ namespace MRODBL.Repositories
         /// <summary>
         /// Get Disclaimers Per Facility ID
         /// </summary>
-        /// <param name="ID"></param>
+        /// <param name="nFacilityID"> Facility ID</param>
+        /// <param name="nFacilityLocationID">Location ID</param>
         /// <returns></returns>
-        Task<IEnumerable<dynamic>> EditDisclaimers(int ID);
+        Task<IEnumerable<dynamic>> EditDisclaimers(int nFacilityID, int nFacilityLocationID);
         /// <summary>
         /// Get Audir Report Data
         /// </summary>

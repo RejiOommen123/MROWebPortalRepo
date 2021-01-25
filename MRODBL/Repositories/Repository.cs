@@ -102,6 +102,22 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString, new { ID = paramValue });
             }
         }
+        public async Task<T> SelectThreeWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT * FROM " + sTableName + " WHERE " + PN1 + " = @value1 AND " + PN2 + " = @value2 AND " + PN3 + " = @value3";
+                return await db.QueryFirstAsync<T>(SqlString, new { value1 = PV1, value2 = PV2, value3 = PV3 });
+            }
+        }
+        public async Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT * FROM " + sTableName + " WHERE " + PN1 + " = @value1 AND " + PN2 + " = @value2 AND " + PN3 + " = @value3 AND "+ PN4 + " = @value4";
+                return await db.QueryFirstAsync<T>(SqlString, new { value1 = PV1, value2 = PV2, value3 = PV3, value4 = PV4 });
+            }
+        }
         public async Task<IEnumerable<T>> SelectLocationByLocationName( int nFacilityLocationID, string sLocationName)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -220,11 +236,11 @@ namespace MRODBL.Repositories
         }
 
        
-        public async Task<IEnumerable<T>> SelectListByInClause(int[] ids,string tblName, string colName,int nFacilityId)
+        public async Task<IEnumerable<T>> SelectListByInClause(int[] ids,string tblName, string colName,int nFacilityId, int nFacilityLocationId)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
-                string SqlString = "SELECT * FROM "+tblName +" WHERE nFacilityId="+ nFacilityId +"AND "+colName+" IN @ids";
+                string SqlString = "SELECT * FROM "+tblName +" WHERE nFacilityId="+ nFacilityId +" AND nFacilityLocationId="+nFacilityLocationId+" AND "+colName+" IN @ids";
                 return await db.QueryAsync<T>(SqlString, new { @ids = ids });
             }
         }
@@ -418,7 +434,7 @@ namespace MRODBL.Repositories
         #endregion
 
         #region Stored Procedures
-        public async Task<IEnumerable<dynamic>> EditFields(int ID, int nAdminUserID)
+        public async Task<IEnumerable<dynamic>> EditFields(int nFacilityID, int nFacilityLocationID, int nAdminUserID)
         {
             string SqlString = "spGetPatientFormBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -426,7 +442,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID , @nAdminUserID = nAdminUserID }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID= nFacilityLocationID, @nAdminUserID = nAdminUserID }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex) {
@@ -545,7 +561,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> EditDisclaimers(int ID)
+        public async Task<IEnumerable<dynamic>> EditDisclaimers(int nFacilityID, int nFacilityLocationID)
         {
             string SqlString = "spGetDisclaimerInfoBynFacilityID";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -553,7 +569,7 @@ namespace MRODBL.Repositories
                 try
                 {
                     db.Open();
-                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = ID }, commandType: CommandType.StoredProcedure);
+                    IEnumerable<dynamic> a = await db.QueryAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID }, commandType: CommandType.StoredProcedure);
                     return a;
                 }
                 catch (Exception ex)

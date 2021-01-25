@@ -12,11 +12,16 @@ namespace MRODBL.BaseClasses
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Id")]
+        public int nFacilitySensitiveInfoID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Sensitive Info Id")]
         public int nSensitiveInfoID { get; set; }
-        [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Sensitive Info Allowed")]
         [DisplayName("Name")]
         public string sSensitiveInfoName { get; set; }

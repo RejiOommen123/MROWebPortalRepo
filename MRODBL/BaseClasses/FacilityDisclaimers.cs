@@ -16,6 +16,9 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters Disclaimer Type Allowed")]
         [DisplayName("Type")]
         public string sWizardHelperType { get; set; }

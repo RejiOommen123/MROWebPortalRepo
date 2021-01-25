@@ -11,12 +11,17 @@ namespace MRODBL.BaseClasses
         #region Props
         [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Id")]
+        public int nFacilityRecordTypeID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
+        [DisplayName("Record Type Id")]
+        public int nRecordTypeID { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }
-        [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Id")]
-        public int nRecordTypeID { get; set; }
+        [DisplayName("Facility Location Id")]
+        public int nFacilityLocationID { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters Record Type Allowed")]
         [DisplayName("Name")]
         public string sRecordTypeName { get; set; }
