@@ -106,7 +106,7 @@ namespace MRODBL.Repositories
         /// <param name="PN3">column name 3</param>
         /// <param name="PV3">column value 3</param>
         /// <returns></returns>
-        Task<T> SelectThreeWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3)
+        Task<T> SelectThreeWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3);
 
         /// <summary>
         /// Select data where four conditions with AND
@@ -120,7 +120,7 @@ namespace MRODBL.Repositories
         /// <param name="PN4">column name 4</param>
         /// <param name="PV4">column value 4</param>
         /// <returns></returns>
-        Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4)
+        Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4);
 
         #endregion
 
