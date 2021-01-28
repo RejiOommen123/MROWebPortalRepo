@@ -1,11 +1,12 @@
 <template>
   <div class="center">
     <h1>Are you requesting records for yourself?</h1>
+    <button text @click="SwitchDevice">Switch Device</button>
     <v-row>
       <div style="width:100%">
         <v-col cols="12" offset-sm="1" sm="10">
           <button
-            :class="{active: sActiveBtn === 'Yes'}"
+            :class="{active: bAreYouPatient == true}"
             @click.prevent="setPatient"
             class="wizardSelectionButton"
           >Yes, I want my medical records.</button>
@@ -14,7 +15,7 @@
       <div style="width:100%">
         <v-col cols="12" offset-sm="1" sm="10">
           <button 
-            :class="{active: sActiveBtn === 'No'}"
+            :class="{active: bAreYouPatient == false}"
             @click.prevent="setNotPatient" class="wizardSelectionButton">
             No, I am requesting medical records for someone else (child, dependent, decedent, etc.).
           </button>
@@ -193,6 +194,17 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Dialog URL -->
+    <v-dialog light v-model="urlDialog" max-width="360" width="350">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text><b>URL for Session Transfer -</b> {{sessionTransferURL}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="urlDialog = false">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -220,23 +232,21 @@ export default {
   name: "WizardPage_03",
   data() {
     return {
-      sRelativeFirstName: '',
-      sRelativeLastName: '',
-      sOtherRelation: '',
-      files:[],
-      sRelativeFileNameArray:[],
-      sRelativeFileArray:[],
-      sSelectedRelation: '',
-      option:[],
-      bShowOtherRelation:false,
+      sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
+      sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
+      files: this.$store.state.requestermodule.sRelativeFileArray.length!=0 ? this.getFilesFromState(this.$store.state.requestermodule.sRelativeFileArray, this.$store.state.requestermodule.sRelativeFileNameArray) : [],
+      sRelativeFileNameArray: this.$store.state.requestermodule.sRelativeFileNameArray,
+      sRelativeFileArray: this.$store.state.requestermodule.sRelativeFileArray,
       dialog:false,
       unsupported:false,
       oPatientRepresentativeArray: this.$store.state.ConfigModule
         .apiResponseDataByLocation.oPatientRepresentatives,
-      bOther: false,
-      sSelectedPatientRepresentatives: [],
-      sOtherPatientRepresentatives: '',
-      sSelectedPatientRepresentativesName:'',
+      bOther: this.$store.state.requestermodule.sSelectedRelation=="MRORelationshipOther",
+      sSelectedPatientRepresentatives: this.$store.state.requestermodule.sSelectedRelation,
+      sOtherPatientRepresentatives: this.$store.state.requestermodule.sSelectedRelation=="MRORelationshipOther" ? this.$store.state.requestermodule.sSelectedRelationName : '',
+      sSelectedPatientRepresentativesName:this.$store.state.requestermodule.sSelectedRelationName,
+      urlDialog:false,
+      sessionTransferURL:'',
 
 
       disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
@@ -247,7 +257,6 @@ export default {
         .wizardHelper.Wizard_03_disclaimer03,
       disclaimer04: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer04,
-      sActiveBtn:'',
       //TODO: Fetch disclaimer03 for multiple dile upload
 
       MRORelationshipParentLegalGuardian: this.$store.state.ConfigModule
@@ -304,7 +313,6 @@ export default {
   methods: {
     // This will set bAreYouPatient status to true and empty realtives variables
     setPatient() {
-      this.sActiveBtn='Yes';
       this.$store.commit("requestermodule/bAreYouPatient", true);
       this.$store.commit("requestermodule/sRelativeFirstName", "");
       this.$store.commit("requestermodule/sRelativeLastName", "");
@@ -320,11 +328,10 @@ export default {
     },
     // This will set bAreYouPatient status to false and set realtives variables
     setNotPatient() {
-      this.sActiveBtn='No';
       this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
-      this.$store.commit("requestermodule/sSelectedRelation",this.sSelectedPatientRepresentatives);
+      //this.$store.commit("requestermodule/sSelectedRelation",this.sSelectedPatientRepresentatives);
         if (this.sSelectedPatientRepresentatives == "MRORelationshipOther") {
           this.sSelectedPatientRepresentativesName=this.sOtherPatientRepresentatives;
         }
@@ -396,6 +403,47 @@ export default {
           this.sOtherPatientRepresentatives='';
         }
           
+    },
+    SwitchDevice(){
+      var CombineState = {
+        requesterModule : this.$store.state.requestermodule,
+        configModule : this.$store.state.ConfigModule
+      };
+      var SessionTransfer = { 
+        CompleteState : JSON.stringify(CombineState),
+        nRequesterId : this.$store.state.requestermodule.nRequesterID,
+        nFacilityId : this.$store.state.requestermodule.nFacilityID,
+        nLocationId : this.$store.state.requestermodule.nLocationID
+      };
+      this.$http.post("requesters/SessionSwitch/",SessionTransfer)
+        .then(response => {
+          this.sessionTransferURL=response.body;
+          this.urlDialog=true;
+        });   
+    },
+    getFilesFromState(sRelativeFileArray,sRelativeFileNameArray){
+      var returnFiles = [];
+      sRelativeFileArray.forEach((element,index) => {
+        var fileName = sRelativeFileNameArray[index];
+        var mineType = this.base64MimeType(element);        
+        fetch(element)
+          .then(res => res.blob())
+          .then(blob => {
+            returnFiles.push(new File([blob], fileName,{ type: mineType }))
+          })
+      });
+      return returnFiles;
+    },
+    base64MimeType(encoded) {
+      var result = null;
+      if (typeof encoded !== 'string') {
+        return result;
+      }
+      var mime = encoded.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+      if (mime && mime.length) {
+        result = mime[1];
+      }
+      return result;
     }
   }
 };

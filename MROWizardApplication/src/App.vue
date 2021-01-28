@@ -171,6 +171,8 @@ export default {
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     let locationguid = urlParams.get("locationguid");
+    let nRequesterId = urlParams.get("nRequesterId");
+    if(nRequesterId==null){
      var guidParameters = {
         guid: guid,
         locationguid: locationguid 
@@ -290,6 +292,27 @@ export default {
           // }
         }
       });
+      }
+      else{
+        this.$http
+          .get("requesters/GetSwitchedSession/sFacilityGUID="+guid+"&nRequesterId="+nRequesterId)
+          .then(response => {
+            var requester = response.body.requesterModule;
+          this.$store.commit(
+            "requestermodule/completeState",
+            requester
+          );
+          var config = response.body.configModule;
+          this.$store.commit(
+            "ConfigModule/completeState",
+            config
+          );
+          this.dialogLoader = false;
+          this.dialog = true;
+          this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
+          this.disclaimer03 = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer03;
+          });
+      }
   },
   //Watcher and computed property are set to check for update logo and background in store
   watch: {

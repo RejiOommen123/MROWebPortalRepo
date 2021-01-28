@@ -66,9 +66,9 @@ export default {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
       dialogLoader: false,
-      sActiveBtn: "",
-      showOtherLoactionBox: false,
-      sSelectedLocationName: ""
+      sActiveBtn: this.$store.state.requestermodule.sSelectedLocation,
+      showOtherLoactionBox: this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther",
+      sSelectedLocationName: this.$store.state.requestermodule.sSelectedLocationName.includes("-")?this.$store.state.requestermodule.sSelectedLocationName.split("-").slice(1) : this.$store.state.requestermodule.sSelectedLocationName
     };
   },
   mixins: [validationMixin],

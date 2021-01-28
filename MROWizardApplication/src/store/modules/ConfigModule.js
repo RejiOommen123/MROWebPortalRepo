@@ -48,6 +48,33 @@ const state = {
 }
 const mutations = {
 
+    completeState(state, config) {
+        state.dialogMaxWidth = config.dialogMaxWidth;
+        state.dialogMinWidth = config.dialogMinWidth;
+        state.dialogMaxHeight = config.dialogMaxHeight ;
+        state.wizardLogo = config.wizardLogo;
+        state.wizardBackground = config.wizardBackground;
+        state.showBackBtn = config.showBackBtn;
+        state.wizardArrayIndex = config.wizardArrayIndex;
+        state.selectedWizard = config.selectedWizard;
+        state.apiResponseDataByFacilityGUID = config.apiResponseDataByFacilityGUID;
+        state.apiResponseDataByLocation = config.apiResponseDataByLocation;
+        state.oReleaseRequestTo = config.oReleaseRequestTo;
+        state.nAuthExpirationMonths = config.nAuthExpirationMonths;
+        state.bRTManualSelection = config.bRTManualSelection;
+        state.bDeadlineStatus = config.bDeadlineStatus;
+        state.bIdentitySkiped = config.bIdentitySkiped;
+        state.bShowRecipientPage = config.bShowRecipientPage;
+        state.nTotalWizardPages = config.nTotalWizardPages;
+        state.nProgressBar = config.nProgressBar;
+        state.nProgressBarIncrValue = config.nProgressBarIncrValue;
+        state.nPrimaryTimeout = config.nPrimaryTimeout;
+        state.nSecondaryTimeout = config.nSecondaryTimeout;
+        state.bReturnedForCompliance = config.bReturnedForCompliance;
+        state.bUnauthorized = config.bUnauthorized;
+        state.bForceCompliance = config.bForceCompliance;
+        state.bShowNeedHelp = config.bShowNeedHelp;
+    },
     wizardLogo(state, payload) {
         state.wizardLogo = payload;
     },

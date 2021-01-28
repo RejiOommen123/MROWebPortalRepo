@@ -21,7 +21,6 @@ export default {
         .wizardHelper.Wizard_01_disclaimer01,
       disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_01_disclaimer02,
-      wizard_config: null
     };
   },
   methods: {
