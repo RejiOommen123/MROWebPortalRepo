@@ -57,8 +57,8 @@ export default {
   name: "WizardPage_15",
   data() {
     return {
-      bRTManualSelection : false,
-      option:['abstract'],
+      bRTManualSelection : this.$store.state.requestermodule.bRTManualSelection,
+      option : this.$store.state.requestermodule.bRTManualSelection ? ['manual'] : ['abstract'],
 
       disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
       disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,

@@ -128,13 +128,12 @@ export default {
     return {
       emailValid: {
         sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
-        sConfirmEmailId: ""
+        sConfirmEmailId: this.$store.state.requestermodule.sRequesterEmailId
       },
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
       showVerifyInput: false,
       sVerify: "",
       sResponseKey: "",
-      isDisable: false,
       verified: false,
       showVerifyBlock: true,
       showSuccessBlock: false,
@@ -217,7 +216,6 @@ export default {
       );
       this.otpSentAlert=true;
       this.emailSent=true;
-      this.isDisable = true;
       this.showVerifyInput = true;
       var emailConfirm = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
