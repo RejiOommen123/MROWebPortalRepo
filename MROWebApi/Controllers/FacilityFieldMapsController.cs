@@ -60,9 +60,14 @@ namespace MROWebApi.Controllers
                 IEnumerable<dynamic> fields = await fieldsRepository.EditFields(nFacilityID, nFacilityLocationID, nAdminUserID);
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 Facilities facility = await rpFac.Select(nFacilityID);
+                FacilityLocations facilityLocation = null;
+                if (nFacilityLocationID != 0) { 
+                    FacilityLocationsRepository flFac = new FacilityLocationsRepository(_info);
+                    facilityLocation = await flFac.Select(nFacilityLocationID);
+                }
                 if (facility == null)
                     return NotFound();
-                var faciName = facility.sFacilityName;
+                var titleName = nFacilityLocationID == 0 ? facility.sFacilityName : facilityLocation.sLocationName;
                 #region Logging
                 if (facility.bFacilityLogging)
                 {
@@ -83,7 +88,7 @@ namespace MROWebApi.Controllers
                     adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
-                return Ok(new { fields, faciName });
+                return Ok(new { fields, titleName });
             }
             catch (Exception ex)
             {
@@ -186,7 +191,8 @@ namespace MROWebApi.Controllers
                             shipmentTypeList.Add(
                                 new FacilityShipmentTypes()
                                 {
-                                    nShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                    nFacilityShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                    nShipmentTypeID = shipmentType.nFieldID,
                                     nFacilityID = shipmentType.nFacilityID,
                                     sShipmentTypeName = shipmentType.sFieldName,
                                     nFieldOrder = shipmentType.nFieldOrder,
@@ -199,7 +205,7 @@ namespace MROWebApi.Controllers
                                     nFacilityLocationID = editFields.nFacilityLocationID
                                 }
                                 );
-                            idList.Add(shipmentType.nFacilityFieldMapID);
+                            idList.Add(shipmentType.nFieldID);
                         }
                         idArray = idList.ToArray();
                         var eShipmentlist = await shipmentTypeRepo.SelectListByInClause(idArray, "lnkFacilityShipmentTypes", "nShipmentTypeID", singleRecord.nFacilityID,editFields.nFacilityLocationID);
@@ -216,7 +222,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Edited Shipment Type for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Shipment Type for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Shipment Type",
                                 nFacilityID = singleRecord.nFacilityID
@@ -240,8 +246,9 @@ namespace MROWebApi.Controllers
                             primaryReasonsList.Add(
                                 new FacilityPrimaryReasons()
                                 {
+                                    nFacilityPrimaryReasonID = primaryReason.nFacilityFieldMapID,
                                     nFacilityID = primaryReason.nFacilityID,
-                                    nPrimaryReasonID = primaryReason.nFacilityFieldMapID,
+                                    nPrimaryReasonID = primaryReason.nFieldID,
                                     sPrimaryReasonName = primaryReason.sFieldName,
                                     nFieldOrder = primaryReason.nFieldOrder,
                                     nWizardID = primaryReason.nWizardID,
@@ -253,7 +260,7 @@ namespace MROWebApi.Controllers
                                     nFacilityLocationID = editFields.nFacilityLocationID
                                 }
                                 );
-                            idList.Add(primaryReason.nFacilityFieldMapID);
+                            idList.Add(primaryReason.nFieldID);
                         }
                         idArray = idList.ToArray();
                         var ePrimarylist = await primaryReasonRepo.SelectListByInClause(idArray, "lnkFacilityPrimaryReasons", "nPrimaryReasonID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
@@ -270,7 +277,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Edited Primary Reason for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Primary Reason for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Primary Reason",
                                 nFacilityID = singleRecord.nFacilityID
@@ -295,7 +302,8 @@ namespace MROWebApi.Controllers
                             sensitiveInfoList.Add(
                                 new FacilitySensitiveInfo()
                                 {
-                                    nSensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                    nFacilitySensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                    nSensitiveInfoID = sensitiveInfo.nFieldID,
                                     nFacilityID = sensitiveInfo.nFacilityID,
                                     sSensitiveInfoName = sensitiveInfo.sFieldName,
                                     nFieldOrder = sensitiveInfo.nFieldOrder,
@@ -308,7 +316,7 @@ namespace MROWebApi.Controllers
                                     nFacilityLocationID = editFields.nFacilityLocationID
                                 }
                                 );
-                            idList.Add(sensitiveInfo.nFacilityFieldMapID);
+                            idList.Add(sensitiveInfo.nFieldID);
                         }
                         idArray = idList.ToArray();
                         var eSensitivelist = await sensitiveInfoRepo.SelectListByInClause(idArray, "lnkFacilitySensitiveInfo", "nSensitiveInfoID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
@@ -325,7 +333,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Edited Sensitive Info for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Sensitive Info for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Sensitive Info",
                                 nFacilityID = singleRecord.nFacilityID
@@ -350,8 +358,9 @@ namespace MROWebApi.Controllers
                             recordTypeList.Add(
                                 new FacilityRecordTypes()
                                 {
+                                    nFacilityRecordTypeID = recordType.nFacilityFieldMapID,
                                     nFacilityID = recordType.nFacilityID,
-                                    nRecordTypeID = recordType.nFacilityFieldMapID,
+                                    nRecordTypeID = recordType.nFieldID,
                                     sRecordTypeName = recordType.sFieldName,
                                     nFieldOrder = recordType.nFieldOrder,
                                     nWizardID = recordType.nWizardID,
@@ -363,7 +372,7 @@ namespace MROWebApi.Controllers
                                     nFacilityLocationID = editFields.nFacilityLocationID
                                 }
                                 );
-                            idList.Add(recordType.nFacilityFieldMapID);
+                            idList.Add(recordType.nFieldID);
                         }
                         idArray = idList.ToArray();
                         var eRecordlist = await recordTypeRepo.SelectListByInClause(idArray, "lnkFacilityRecordTypes", "nRecordTypeID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
@@ -380,7 +389,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Edited Record Type for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Record Type for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Record Type",
                                 nFacilityID = singleRecord.nFacilityID
@@ -401,6 +410,7 @@ namespace MROWebApi.Controllers
                             fieldMapsList.Add(
                                 new FacilityFieldMaps()
                                 {
+                                    nFacilityFieldMapID = fieldMaps.nFacilityFieldMapID,
                                     nFacilityID = fieldMaps.nFacilityID,
                                     nFieldID = fieldMaps.nFieldID,
                                     nWizardID = fieldMaps.nWizardID,
@@ -430,7 +440,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Edited Field for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Field for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Field",
                                 nFacilityID = singleRecord.nFacilityID
@@ -455,7 +465,8 @@ namespace MROWebApi.Controllers
                             patientRepresentativeList.Add(
                                 new FacilityPatientRepresentatives()
                                 {
-                                    nPatientRepresentativeID = patientRepresentative.nFacilityFieldMapID,
+                                    nFacilityPatientRepresentativeID = patientRepresentative.nFacilityFieldMapID,
+                                    nPatientRepresentativeID = patientRepresentative.nFieldID,
                                     nFacilityID = patientRepresentative.nFacilityID,
                                     sPatientRepresentativeName = patientRepresentative.sFieldName,
                                     nFieldOrder = patientRepresentative.nFieldOrder,
@@ -468,7 +479,7 @@ namespace MROWebApi.Controllers
                                     nFacilityLocationID = editFields.nFacilityLocationID
                                 }
                                 );
-                            idList.Add(patientRepresentative.nFacilityFieldMapID);
+                            idList.Add(patientRepresentative.nFieldID);
                         }
                         idArray = idList.ToArray();
                         var ePatientReplist = await patientRepresentativeRepo.SelectListByInClause(idArray, "lnkFacilityPatientRepresentatives", "nPatientRepresentativeID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
@@ -485,7 +496,7 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Patient Representative for Facility ID: " + singleRecord.nFacilityID,
+                                sDescription = $"Edited Patient Representative for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
                                 sModuleName = "Edit Facility Fields",
                                 sEventName = "Edit Facility Patient Representative",
                                 nFacilityID = singleRecord.nFacilityID
@@ -514,7 +525,8 @@ namespace MROWebApi.Controllers
                                 shipmentTypeList.Add(
                                     new FacilityShipmentTypes()
                                     {
-                                        nShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                        nFacilityShipmentTypeID = shipmentType.nFacilityFieldMapID,
+                                        nShipmentTypeID = shipmentType.nFieldID,
                                         nFacilityID = shipmentType.nFacilityID,
                                         sShipmentTypeName = shipmentType.sFieldName,
                                         nFieldOrder = shipmentType.nFieldOrder,
@@ -535,7 +547,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Inserted Shipment Type for Location ID: " + singleRecord.nFacilityLocationID,
+                                    sDescription = "Edited Shipment Type for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Shipment Type",
                                     nFacilityID = singleRecord.nFacilityID
@@ -559,8 +571,9 @@ namespace MROWebApi.Controllers
                                 primaryReasonsList.Add(
                                     new FacilityPrimaryReasons()
                                     {
+                                        nFacilityPrimaryReasonID = primaryReason.nFacilityFieldMapID,
                                         nFacilityID = primaryReason.nFacilityID,
-                                        nPrimaryReasonID = primaryReason.nFacilityFieldMapID,
+                                        nPrimaryReasonID = primaryReason.nFieldID,
                                         sPrimaryReasonName = primaryReason.sFieldName,
                                         nFieldOrder = primaryReason.nFieldOrder,
                                         nWizardID = primaryReason.nWizardID,
@@ -580,7 +593,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Inserted Primary Reason for Location ID: " + singleRecord.nFacilityLocationID,
+                                    sDescription = "Edited Primary Reason for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Primary Reason",
                                     nFacilityID = singleRecord.nFacilityID
@@ -605,7 +618,8 @@ namespace MROWebApi.Controllers
                                 sensitiveInfoList.Add(
                                     new FacilitySensitiveInfo()
                                     {
-                                        nSensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                        nFacilitySensitiveInfoID = sensitiveInfo.nFacilityFieldMapID,
+                                        nSensitiveInfoID = sensitiveInfo.nFieldID,
                                         nFacilityID = sensitiveInfo.nFacilityID,
                                         sSensitiveInfoName = sensitiveInfo.sFieldName,
                                         nFieldOrder = sensitiveInfo.nFieldOrder,
@@ -627,7 +641,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Edited Sensitive Info for Location ID: " + singleRecord.nFacilityLocationID,
+                                    sDescription = "Edited Sensitive Info for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Sensitive Info",
                                     nFacilityID = singleRecord.nFacilityID
@@ -652,8 +666,9 @@ namespace MROWebApi.Controllers
                                 recordTypeList.Add(
                                     new FacilityRecordTypes()
                                     {
+                                        nFacilityRecordTypeID = recordType.nFacilityFieldMapID,
                                         nFacilityID = recordType.nFacilityID,
-                                        nRecordTypeID = recordType.nFacilityFieldMapID,
+                                        nRecordTypeID = recordType.nFieldID,
                                         sRecordTypeName = recordType.sFieldName,
                                         nFieldOrder = recordType.nFieldOrder,
                                         nWizardID = recordType.nWizardID,
@@ -673,7 +688,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Edited Record Type for Location ID: " + singleRecord.nFacilityLocationID,
+                                    sDescription = "Edited Record Type for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Record Type",
                                     nFacilityID = singleRecord.nFacilityID
@@ -694,6 +709,7 @@ namespace MROWebApi.Controllers
                                 fieldMapsList.Add(
                                     new FacilityFieldMaps()
                                     {
+                                        nFacilityFieldMapID = fieldMaps.nFacilityFieldMapID,
                                         nFacilityID = fieldMaps.nFacilityID,
                                         nFieldID = fieldMaps.nFieldID,
                                         nWizardID = fieldMaps.nWizardID,
@@ -714,7 +730,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Edited Field for Location ID: " + singleRecord.nFacilityLocationID,
+                                    sDescription = "Edited Field for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Field",
                                     nFacilityID = singleRecord.nFacilityID
@@ -739,7 +755,8 @@ namespace MROWebApi.Controllers
                                 patientRepresentativeList.Add(
                                     new FacilityPatientRepresentatives()
                                     {
-                                        nPatientRepresentativeID = patientRepresentative.nFacilityFieldMapID,
+                                        nFacilityPatientRepresentativeID = patientRepresentative.nFacilityFieldMapID,
+                                        nPatientRepresentativeID = patientRepresentative.nFieldID,
                                         nFacilityID = patientRepresentative.nFacilityID,
                                         sPatientRepresentativeName = patientRepresentative.sFieldName,
                                         nFieldOrder = patientRepresentative.nFieldOrder,
@@ -760,7 +777,7 @@ namespace MROWebApi.Controllers
                                 adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
-                                    sDescription = "Admin with ID: " + singleRecord.nUpdatedAdminUserID + " Edited Patient Representative for Location ID: " + singleRecord.nFacilityID,
+                                    sDescription = "Edited Patient Representative for Location ID : " + editFields.nFacilityLocationID,
                                     sModuleName = "Edit Location Fields",
                                     sEventName = "Edit Location Patient Representative",
                                     nFacilityID = singleRecord.nFacilityID
@@ -792,11 +809,11 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Reset To Deafult Facility Fields
+        #region Reset To Default Facility Fields
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> ResetToDeafult(FacilitiesFieldMapTable facilitiesFieldMapTable)
+        public async Task<IActionResult> ResetToDefault(FacilitiesFieldMapTable facilitiesFieldMapTable)
         {
             if (ModelState.IsValid)
             {
@@ -842,13 +859,29 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID                                
                             };
-                            FacilityPrimaryReasons newFacilityPrimaryReasons = await prFac.SelectThreeWhereClause("nFacilityPrimaryReasonID", facilitiesFieldMapTable.nFacilityFieldMapID,"nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilityPrimaryReasons newFacilityPrimaryReasons = await prFac.SelectThreeWhereClause("nPrimaryReasonID", facilitiesFieldMapTable.nFieldID,"nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = prFac.Delete(oldFacilityPrimaryReasons.nFacilityPrimaryReasonID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilityPrimaryReasons, newFacilityPrimaryReasons, adminModuleLogger);
-                                return Ok(newFacilityPrimaryReasons);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityPrimaryReasons.nFacilityPrimaryReasonID,
+                                    nFieldID = newFacilityPrimaryReasons.nPrimaryReasonID,
+                                    nFacilityID = newFacilityPrimaryReasons.nFacilityID,
+                                    nFacilityLocationID = newFacilityPrimaryReasons.nFacilityLocationID,
+                                    sFieldName = newFacilityPrimaryReasons.sPrimaryReasonName,
+                                    nFieldOrder = newFacilityPrimaryReasons.nFieldOrder,
+                                    bShow = newFacilityPrimaryReasons.bShow,
+                                    nWizardID = newFacilityPrimaryReasons.nWizardID,
+                                    sTableName = "lnkFacilityPrimaryReasons",
+                                    dtCreated = newFacilityPrimaryReasons.dtCreated,
+                                    nCreatedAdminUserID = newFacilityPrimaryReasons.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityPrimaryReasons.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityPrimaryReasons.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {
@@ -873,13 +906,29 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityRecordTypes newFacilityRecordTypes = await rtFac.SelectThreeWhereClause("nFacilityRecordTypeID", facilitiesFieldMapTable.nFacilityFieldMapID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilityRecordTypes newFacilityRecordTypes = await rtFac.SelectThreeWhereClause("nRecordTypeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = rtFac.Delete(oldFacilityRecordTypes.nFacilityRecordTypeID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilityRecordTypes, newFacilityRecordTypes, adminModuleLogger);
-                                return Ok(newFacilityRecordTypes);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityRecordTypes.nFacilityRecordTypeID,
+                                    nFieldID = newFacilityRecordTypes.nRecordTypeID,
+                                    nFacilityID = newFacilityRecordTypes.nFacilityID,
+                                    nFacilityLocationID = newFacilityRecordTypes.nFacilityLocationID,
+                                    sFieldName = newFacilityRecordTypes.sRecordTypeName,
+                                    nFieldOrder = newFacilityRecordTypes.nFieldOrder,
+                                    bShow = newFacilityRecordTypes.bShow,
+                                    nWizardID = newFacilityRecordTypes.nWizardID,
+                                    sTableName = "lnkFacilityRecordTypes",
+                                    dtCreated = newFacilityRecordTypes.dtCreated,
+                                    nCreatedAdminUserID = newFacilityRecordTypes.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityRecordTypes.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityRecordTypes.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {
@@ -904,13 +953,29 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilitySensitiveInfo newFacilitySensitiveInfo = await siFac.SelectThreeWhereClause("nFacilitySensitiveInfoID", facilitiesFieldMapTable.nFacilityFieldMapID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilitySensitiveInfo newFacilitySensitiveInfo = await siFac.SelectThreeWhereClause("nSensitiveInfoID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = siFac.Delete(oldFacilitySensitiveInfo.nFacilitySensitiveInfoID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilitySensitiveInfo, newFacilitySensitiveInfo, adminModuleLogger);
-                                return Ok(newFacilitySensitiveInfo);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilitySensitiveInfo.nFacilitySensitiveInfoID,
+                                    nFieldID = newFacilitySensitiveInfo.nSensitiveInfoID,
+                                    nFacilityID = newFacilitySensitiveInfo.nFacilityID,
+                                    nFacilityLocationID = newFacilitySensitiveInfo.nFacilityLocationID,
+                                    sFieldName = newFacilitySensitiveInfo.sSensitiveInfoName,
+                                    nFieldOrder = newFacilitySensitiveInfo.nFieldOrder,
+                                    bShow = newFacilitySensitiveInfo.bShow,
+                                    nWizardID = newFacilitySensitiveInfo.nWizardID,
+                                    sTableName = "lnkFacilitySensitiveInfo",
+                                    dtCreated = newFacilitySensitiveInfo.dtCreated,
+                                    nCreatedAdminUserID = newFacilitySensitiveInfo.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilitySensitiveInfo.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilitySensitiveInfo.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {
@@ -935,13 +1000,29 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityShipmentTypes newFacilityShipmentTypes = await stFac.SelectThreeWhereClause("nFacilityShipmentTypeID", facilitiesFieldMapTable.nFacilityFieldMapID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilityShipmentTypes newFacilityShipmentTypes = await stFac.SelectThreeWhereClause("nShipmentTypeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = stFac.Delete(oldFacilityShipmentTypes.nFacilityShipmentTypeID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilityShipmentTypes, newFacilityShipmentTypes, adminModuleLogger);
-                                return Ok(newFacilityShipmentTypes);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityShipmentTypes.nFacilityShipmentTypeID,
+                                    nFieldID = newFacilityShipmentTypes.nShipmentTypeID,
+                                    nFacilityID = newFacilityShipmentTypes.nFacilityID,
+                                    nFacilityLocationID = newFacilityShipmentTypes.nFacilityLocationID,
+                                    sFieldName = newFacilityShipmentTypes.sShipmentTypeName,
+                                    nFieldOrder = newFacilityShipmentTypes.nFieldOrder,
+                                    bShow = newFacilityShipmentTypes.bShow,
+                                    nWizardID = newFacilityShipmentTypes.nWizardID,
+                                    sTableName = "lnkFacilityShipmentTypes",
+                                    dtCreated = newFacilityShipmentTypes.dtCreated,
+                                    nCreatedAdminUserID = newFacilityShipmentTypes.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityShipmentTypes.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityShipmentTypes.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {
@@ -966,13 +1047,29 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityPatientRepresentatives newFacilityPatientRepresentatives = await prepFac.SelectThreeWhereClause("nFacilityPatientRepresentativeID", facilitiesFieldMapTable.nFacilityFieldMapID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilityPatientRepresentatives newFacilityPatientRepresentatives = await prepFac.SelectThreeWhereClause("nPatientRepresentativeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = prepFac.Delete(oldFacilityPatientRepresentatives.nFacilityPatientRepresentativeID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilityPatientRepresentatives, newFacilityPatientRepresentatives, adminModuleLogger);
-                                return Ok(newFacilityPatientRepresentatives);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityPatientRepresentatives.nFacilityPatientRepresentativeID,
+                                    nFieldID = newFacilityPatientRepresentatives.nPatientRepresentativeID,
+                                    nFacilityID = newFacilityPatientRepresentatives.nFacilityID,
+                                    nFacilityLocationID = newFacilityPatientRepresentatives.nFacilityLocationID,
+                                    sFieldName = newFacilityPatientRepresentatives.sPatientRepresentativeName,
+                                    nFieldOrder = newFacilityPatientRepresentatives.nFieldOrder,
+                                    bShow = newFacilityPatientRepresentatives.bShow,
+                                    nWizardID = newFacilityPatientRepresentatives.nWizardID,
+                                    sTableName = "lnkFacilityPatientRepresentatives",
+                                    dtCreated = newFacilityPatientRepresentatives.dtCreated,
+                                    nCreatedAdminUserID = newFacilityPatientRepresentatives.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityPatientRepresentatives.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityPatientRepresentatives.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {
@@ -996,13 +1093,27 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityFieldMaps newFacilityFieldMaps = await ffFac.SelectThreeWhereClause("nFacilityFieldMapID", facilitiesFieldMapTable.nFacilityFieldMapID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            FacilityFieldMaps newFacilityFieldMaps = await ffFac.SelectThreeWhereClause("nFieldID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
 
                             deleteResult = ffFac.Delete(oldFacilityFieldMaps.nFacilityFieldMapID);
                             if (deleteResult)
                             {
                                 logger.UpdateAuditSingle(oldFacilityFieldMaps, newFacilityFieldMaps, adminModuleLogger);
-                                return Ok(newFacilityFieldMaps);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityFieldMaps.nFacilityFieldMapID,
+                                    nFieldID = newFacilityFieldMaps.nFieldID,
+                                    nFacilityID = newFacilityFieldMaps.nFacilityID,
+                                    nFacilityLocationID = newFacilityFieldMaps.nFacilityLocationID,
+                                    bShow = newFacilityFieldMaps.bShow,
+                                    nWizardID = newFacilityFieldMaps.nWizardID,
+                                    sTableName = "lnkFacilityFieldMaps",
+                                    dtCreated = newFacilityFieldMaps.dtCreated,
+                                    nCreatedAdminUserID = newFacilityFieldMaps.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityFieldMaps.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityFieldMaps.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
                             }
                             else
                             {

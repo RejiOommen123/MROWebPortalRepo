@@ -59,6 +59,17 @@
           </v-tooltip>
         </template>
 
+        <template v-slot:item.Fields="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <router-link class="mrorouterlink" :to="'/EditLocationData/'+$route.params.id+'/'+item.nFacilityLocationID">
+                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
+              </router-link>
+            </template>
+            <span>Edit Form</span>
+          </v-tooltip>
+        </template>
+
         <!-- Location List Toggle location Active Status Template  -->
         <template v-slot:item.bLocationActiveStatus="{ item }">
           <v-switch
@@ -158,8 +169,14 @@ export default {
           value: "sLocationName",
           width: "20%"
         },
-        { text: "Address", value: "sLocationAddress", width: "45%" },
-        { text: "Code", value: "sLocationCode", width: "15%" },
+        { text: "Address", value: "sLocationAddress", width: "40%" },
+        { text: "Code", value: "sLocationCode", width: "10%" },
+        {
+          text: "Edit Fields/Disclaimers",
+          value: "Fields",
+          sortable: false,
+          align: "center"
+        },
         { text: "Active", value: "bLocationActiveStatus", sortable: false },
         { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
         { text: "Edit", value: "actions", sortable: false }
@@ -201,6 +218,7 @@ export default {
     },
     toggleIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
     {
+      //console.log("loc switch");
       this.editedItem.nFacilityLocationID = nFacilityLocationID;
       this.editedItem.sLocationName = sLocationName;
       this.dialogIncludeInFacilityLevel = true;

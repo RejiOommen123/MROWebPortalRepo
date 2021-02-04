@@ -5,7 +5,7 @@
         <v-col cols="12">
           <v-card>
             <v-card-title>
-              Edit Disclaimers For Facility - {{facilityName}}
+              Edit Disclaimers For Facility - {{titleName}}
               <v-spacer></v-spacer>
               <v-text-field
                 v-model="search"
@@ -82,7 +82,7 @@ export default {
       ],
       gridData: this.getGridData(),
       updatedArray: [],
-      facilityName: "",
+      titleName: "",
     };
   },
   mounted() {},
@@ -101,7 +101,7 @@ export default {
           (response) => {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["disclaimers"];
-            this.facilityName = JSON.parse(response.bodyText)["faciName"];
+            this.titleName = JSON.parse(response.bodyText)["titleName"];
             this.dialogLoader = false;
           },
           (error) => {

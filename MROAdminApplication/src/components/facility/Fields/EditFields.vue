@@ -7,7 +7,7 @@
             <v-card-title>
               <v-row>
                 <v-col cols="12" md="6">
-                  Edit Fields For Facility - {{facilityName}}
+                  Edit Fields For Facility - {{titleName}}
                 </v-col>
                 <v-col cols="12" md="2">
                   <v-select 
@@ -141,7 +141,7 @@ export default {
       ],
       gridData: this.getGridData(),
       updatedArray: [],
-      facilityName: "",
+      titleName: "",
       errorAlert:false,
       errorMessage:'',
       select: "--Select--",
@@ -176,6 +176,7 @@ export default {
         .get(
           "facilityfieldmaps/GetFieldsByFacilityID/nFacilityID=" +
             this.$route.params.id +
+            "&nFacilityLocationID=0" +
             "&nAdminUserID=" +
             this.$store.state.adminUserId
         )
@@ -183,7 +184,7 @@ export default {
           (response) => {
             // get body data
             this.gridData = JSON.parse(response.bodyText)["fields"];
-            this.facilityName = JSON.parse(response.bodyText)["faciName"];
+            this.titleName = JSON.parse(response.bodyText)["titleName"];
             this.dialogLoader = false;
           },
           (error) => {
@@ -219,8 +220,12 @@ export default {
         item["nUpdatedAdminUserID"] = nAdminUserID;
         return item;
       });
+      var editFields = {
+          fieldFacilityMapsTable : FacilityFieldMapsList,
+          nFacilityLocationID : 0
+      }
       this.$http
-        .post("facilityfieldmaps/EditFacilityFields/", FacilityFieldMapsList)
+        .post("facilityfieldmaps/EditFacilityFields/", editFields)
         .then((response) => {
           if (response.ok == true) {
             this.dialogLoader = false;
