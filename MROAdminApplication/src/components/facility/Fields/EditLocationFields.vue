@@ -272,7 +272,7 @@ export default {
         (element) => !(element.nFacilityFieldMapID == id && element.sTableName == tableName)
       );
       var itemToReset = this.gridData[index];
-      delete itemToReset.bIsLocationLevel;
+      itemToReset.nUpdatedAdminUserID = this.$store.state.adminUserId;
       console.log(itemToReset);
       this.dialogLoader = true;
       this.dialog = false;
@@ -295,7 +295,8 @@ export default {
             this.gridData[index].dtCreated = newObj.dtCreated;
             this.gridData[index].nCreatedAdminUserID = newObj.nCreatedAdminUserID;  
             this.gridData[index].dtLastUpdate = newObj.dtLastUpdate;
-            this.gridData[index].nUpdatedAdminUserID = newObj.nUpdatedAdminUserID;       
+            this.gridData[index].nUpdatedAdminUserID = newObj.nUpdatedAdminUserID;    
+            this.gridData[index].bIsLocationLevel = false;         
           }
         });
     },

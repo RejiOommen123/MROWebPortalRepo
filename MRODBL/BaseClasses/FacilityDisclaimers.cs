@@ -12,7 +12,6 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Id")]
         public int nFacilityWizardHelperID { get; set; }
-        [Dapper.Contrib.Extensions.Key]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Id")]
         public int nFacilityID { get; set; }

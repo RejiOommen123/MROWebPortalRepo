@@ -39,9 +39,15 @@ namespace MROWebApi.Controllers
                 IEnumerable<dynamic> disclaimers = await disclaimersRepository.EditDisclaimers(nFacilityID, nFacilityLocationID);
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 Facilities facility = await rpFac.Select(nFacilityID);
+                FacilityLocations facilityLocation = null;
+                if (nFacilityLocationID != 0)
+                {
+                    FacilityLocationsRepository flFac = new FacilityLocationsRepository(_info);
+                    facilityLocation = await flFac.Select(nFacilityLocationID);
+                }
                 if (facility == null)
                     return NotFound();
-                var faciName = facility.sFacilityName;
+                var titleName = nFacilityLocationID == 0 ? facility.sFacilityName : facilityLocation.sLocationName;
                 #region Logging
                 if (facility.bFacilityLogging)
                 {
@@ -62,7 +68,7 @@ namespace MROWebApi.Controllers
                     adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
-                return Ok(new { disclaimers, faciName });
+                return Ok(new { disclaimers, titleName });
             }
             catch (Exception ex)
             {
@@ -111,7 +117,6 @@ namespace MROWebApi.Controllers
                                 facilityDisclaimersList.Add(
                                     new FacilityDisclaimers()
                                     {
-                                        nFacilityWizardHelperID = disclaimer.nFacilityWizardHelperID,
                                         nFacilityID = disclaimer.nFacilityID,
                                         sWizardHelperType = disclaimer.sWizardHelperType,
                                         sWizardHelperValue = disclaimer.sWizardHelperValue,
@@ -210,11 +215,11 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Reset To Deafult Facility Disclaimers
+        #region Reset To Default Facility Disclaimers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> ResetToDeafult(FacilityDisclaimers facilityDisclaimer)
+        public async Task<IActionResult> ResetToDefault(FacilityDisclaimers facilityDisclaimer)
         {
             if (ModelState.IsValid)
             {
@@ -229,6 +234,19 @@ namespace MROWebApi.Controllers
                     bool deleteResult = fdFac.Delete(facilityDisclaimer.nFacilityWizardHelperID);
                     if (deleteResult)
                     {
+                        FacilityDisclaimers returnFacilityDisclaimers = new FacilityDisclaimers()
+                        {
+                            nFacilityWizardHelperID = dbFacilityDisclaimer.nFacilityWizardHelperID,
+                            nFacilityID = dbFacilityDisclaimer.nFacilityID,
+                            nFacilityLocationID = dbFacilityDisclaimer.nFacilityLocationID,
+                            sWizardHelperType = dbFacilityDisclaimer.sWizardHelperType,
+                            sWizardHelperValue = dbFacilityDisclaimer.sWizardHelperValue,
+                            nWizardID = dbFacilityDisclaimer.nWizardID,
+                            nCreatedAdminUserID = dbFacilityDisclaimer.nCreatedAdminUserID,
+                            dtCreated = dbFacilityDisclaimer.dtCreated,
+                            nUpdatedAdminUserID = dbFacilityDisclaimer.nUpdatedAdminUserID,
+                            dtLastUpdate = dbFacilityDisclaimer.dtLastUpdate
+                        };
                         #region Logging
                         if (facility.bFacilityLogging)
                         {
