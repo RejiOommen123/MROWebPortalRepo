@@ -21,7 +21,6 @@ namespace MROWebAPI.Controllers
     //[APIKeyAuth]
     public class FacilityController : ControllerBase
     {
-        //Test push
         #region Facility Constructor
         private readonly DBConnectionInfo _info;
         public FacilityController(DBConnectionInfo info)
