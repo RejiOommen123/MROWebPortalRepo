@@ -299,6 +299,13 @@ namespace MRODBL.Repositories
         /// <param name="sWizardName"></param>
         /// <returns></returns>
         Task<IEnumerable<dynamic>> GetFacilityConfigurationData(string sFacilityName, string sWizardName);
+        /// <summary>
+        /// Get Record Types And Sensitive Info for generate xml and pdf
+        /// </summary>
+        /// <param name="nFacilityID">Facility Id</param>
+        /// <param name="nFacilityLocationID">Location Id</param>
+        /// <returns></returns>
+        Task<RecordTypeAndSensitiveInfo> GetRecordTypeAndSensitiveInfo(int nFacilityID, int nFacilityLocationID);
         #endregion
     }
 }

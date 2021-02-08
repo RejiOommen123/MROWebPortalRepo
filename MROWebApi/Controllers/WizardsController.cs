@@ -156,6 +156,17 @@ namespace MROWebApi.Controllers
                         Facilities facility = await rpFac.Select(requester.nFacilityID);
                         FacilityLocationsRepository locaFac = new FacilityLocationsRepository(_info);
                         FacilityLocations location = await locaFac.Select(requester.nLocationID);
+                        List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
+                        try {
+                            RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
+                            var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(facility.nFacilityID, location.nFacilityLocationID);
+                            recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
+                            sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                        }
+                        catch (Exception ex) {
+                            MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML - GetRecordTypeAndSensitiveInfo. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                            throw;
+                        }
 
                         byte[] signedPDF = await GetSignedPDF(requester, facility, location);
 
@@ -206,10 +217,6 @@ namespace MROWebApi.Controllers
                             reqLogger.LogRequesterRecords(requester.nRequesterID, requester.nFacilityID, "Confirmation email not send because Sending email is switched of for this facility", requester.sWizardName);
                             //public void LogRequesterRecords(int nRequesterID, int nFacilityID, string sDescription, string sWizardName)
                         }
-                        //to get the Record Type for this facility
-                        SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
-                        IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
-
                         XmlWriterSettings xmlWriterSetting = new XmlWriterSettings();
                         //{
                         //    OmitXmlDeclaration = false,
@@ -267,7 +274,7 @@ namespace MROWebApi.Controllers
                         writer.WriteEndElement();
                         writer.WriteStartElement("sensitive");
                         //Sensational Info
-                        foreach (SensitiveInfo singleSensitiveInfo in facilitySensitiveInfo)
+                        foreach (SensitiveInfo singleSensitiveInfo in sensitiveInfos)
                         {
                             if (sSelectedSensitiveInfoForXML.Contains(singleSensitiveInfo.sNormalizedSensitiveInfoName))
                             {
@@ -358,11 +365,8 @@ namespace MROWebApi.Controllers
                             writer.WriteEndElement();
                         }
 
-                        //to get the Record Type for this facility
-                        RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                        IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
 
-                        foreach (RecordTypes singleRecordType in facilityRecordTypes)
+                        foreach (RecordTypes singleRecordType in recordTypes)
                         {
                             if (sSelectedRecordTypesForXML.Contains(singleRecordType.sNormalizedRecordTypeName))
                             {
@@ -779,10 +783,19 @@ namespace MROWebApi.Controllers
             try
             {
                 //to get the Record Type for this facility
-                RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                IEnumerable<RecordTypes> facilityRecordTypes = await rtFac.SelectRecordTypeBynFacilityID(requester.nFacilityID);
-                SensitiveInfoRepository SIFac = new SensitiveInfoRepository(_info);
-                IEnumerable<SensitiveInfo> facilitySensitiveInfo = await SIFac.SelectSensitiveInfoBynFacilityID(requester.nFacilityID);
+                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
+                try
+                {
+                    RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
+                    var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(dbFacility.nFacilityID, location.nFacilityLocationID);
+                    recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
+                    sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                }
+                catch (Exception ex)
+                {
+                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation - GetRecordTypeAndSensitiveInfo. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    throw;
+                }
 
                 Dictionary<string, string> allFields = new Dictionary<string, string>();
                 allFields.Add("MROFacilityName", dbFacility.sFacilityName);
@@ -883,7 +896,7 @@ namespace MROWebApi.Controllers
                         if (requester.sSelectedRecordTypes[counter] != "")
                         {
                             allFields.Add(requester.sSelectedRecordTypes[counter] + "=1", "On");
-                            RecordTypes recordType = facilityRecordTypes.FirstOrDefault(q => q.sNormalizedRecordTypeName == requester.sSelectedRecordTypes[counter]);
+                            RecordTypes recordType = recordTypes.FirstOrDefault(q => q.sNormalizedRecordTypeName == requester.sSelectedRecordTypes[counter]);
                             if (recordType != null && requester.sSelectedRecordTypes[counter] != "MROOtherRT") { 
                                 allFields.Add(requester.sSelectedRecordTypes[counter] + "Text", recordType.sRecordTypeName);
                             }
@@ -940,7 +953,7 @@ namespace MROWebApi.Controllers
                     if (requester.sSelectedSensitiveInfo[counter] != "")
                     {
                         allFields.Add(requester.sSelectedSensitiveInfo[counter] + "=1", "On");
-                        SensitiveInfo sensitiveInfo = facilitySensitiveInfo.FirstOrDefault(q => q.sNormalizedSensitiveInfoName == requester.sSelectedSensitiveInfo[counter]);
+                        SensitiveInfo sensitiveInfo = sensitiveInfos.FirstOrDefault(q => q.sNormalizedSensitiveInfoName == requester.sSelectedSensitiveInfo[counter]);
                         if (sensitiveInfo != null)
                         {
                             allFields.Add(requester.sSelectedSensitiveInfo[counter] + "Text", sensitiveInfo.sSensitiveInfoName);
