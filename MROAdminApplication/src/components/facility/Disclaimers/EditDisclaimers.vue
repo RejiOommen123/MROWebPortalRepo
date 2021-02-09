@@ -94,6 +94,7 @@ export default {
         .get(
           "facilitydisclaimers/GetDisclaimersByFacilityID/nFacilityID=" +
             this.$route.params.id +
+            "&nFacilityLocationID=0" +
             "&nAdminUserID=" +
             this.$store.state.adminUserId
         )
@@ -128,8 +129,12 @@ export default {
         item["nUpdatedAdminUserID"] = nAdminUserID;
         return item;
       });
+      var editDisclaimers = {
+        facilityDisclaimers : FacilityDisclaimersList,
+        nFacilityLocationID : this.$route.params.nFacilityLocationID
+      }
       this.$http
-        .post("facilitydisclaimers/EditFacilityDisclaimers/", FacilityDisclaimersList)
+        .post("facilitydisclaimers/EditFacilityDisclaimers/", editDisclaimers)
         .then((response) => {
           if (response.ok == true) {
             this.dialogLoader = false;

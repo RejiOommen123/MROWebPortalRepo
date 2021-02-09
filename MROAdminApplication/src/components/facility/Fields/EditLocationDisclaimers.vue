@@ -213,7 +213,7 @@ export default {
         .then((response) => {
           if (response.ok == true) {
             this.dialogLoader = false;
-            this.$router.push("/facility");
+            this.$router.push("/Locations/"+this.$route.params.nFacilityID);
           }
         });
     },

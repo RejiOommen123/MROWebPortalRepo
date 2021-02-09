@@ -135,7 +135,7 @@ namespace MROWebApi.Controllers
                             if (facility.bFacilityLogging)
                             {
                                 MROLogger logger = new MROLogger(_info);
-                                string sDescription = "Edit Disclaimers Location ID: " + editDisclaimers.nFacilityLocationID;
+                                string sDescription = "Edited Disclaimers for Location ID: " + editDisclaimers.nFacilityLocationID;       
                                 AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                                 {
                                     nAdminUserID = singleRecord.nUpdatedAdminUserID,
@@ -185,7 +185,7 @@ namespace MROWebApi.Controllers
                         if (facility.bFacilityLogging)
                         {
                             MROLogger logger = new MROLogger(_info);
-                            string sDescription = "Edit Disclaimers Location ID: " + editDisclaimers.nFacilityLocationID;
+                            string sDescription = $"Edited Disclaimers for {(editDisclaimers.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}";
                             AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                             {
                                 nAdminUserID = singleRecord.nUpdatedAdminUserID,
