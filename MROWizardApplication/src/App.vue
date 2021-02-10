@@ -171,6 +171,10 @@ export default {
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     let locationguid = urlParams.get("locationguid");
+    this.$store.commit(
+      "ConfigModule/sLocationGUID",
+      locationguid
+    );
      var guidParameters = {
         guid: guid,
         locationguid: locationguid 
@@ -242,11 +246,21 @@ export default {
                 "Wizards/GetWizardConfig/fID=" +
                   singleLocation.nFacilityID +
                   "&lID=" +
-                  singleLocation.nFacilityLocationID
+                  singleLocation.nFacilityLocationID +
+                  "&sLocationGUID=" +
+                  this.$store.state.ConfigModule.sLocationGUID
               )
               .then(response => {
                 var apiLocationResponse = response.body;
                 if (response.body) {
+                 
+                  this.$store.commit("ConfigModule/oWizards",apiLocationResponse.oWizards);
+                  this.$store.commit("ConfigModule/wizardsSave", apiLocationResponse.wizardsSave);
+                  this.$store.commit("ConfigModule/wizardHelper", apiLocationResponse.oWizardHelper);
+                  delete apiLocationResponse.oWizards;
+                  delete apiLocationResponse.wizardsSave;
+                  delete apiLocationResponse.oWizardHelper;
+
                   this.$store.commit(
                     "ConfigModule/apiResponseDataByLocation",
                     apiLocationResponse

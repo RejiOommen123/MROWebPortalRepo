@@ -412,13 +412,13 @@ namespace MRODBL.Repositories
                 }
             }
         }
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
         {
             string SqlString = "spGetWizardConfigBynFacilityIdAndnFacilityLocationId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sLocationGuid = sLocationGUID }, commandType: CommandType.StoredProcedure);
                 var oFields = wizardConfig.Read().ToDictionary(row => (string)row.sNormalizedFieldName, row => (bool)row.bShow);
                 var oPrimaryReason = wizardConfig.Read().ToList();
                 var oRecordTypes = wizardConfig.Read().ToList();
@@ -427,7 +427,17 @@ namespace MRODBL.Repositories
                 var oPatientRepresentatives = wizardConfig.Read().ToList();
                 var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var oLocations = wizardConfig.Read().ToList();
-                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWizardHelper, oLocations };
+                var sWizards = wizardConfig.Read().Select(d => new object[] { d.sWizardName });
+                List<string> soWizard = new List<string>();
+                soWizard.Add("Wizard_01");
+                foreach (var wiz in sWizards)
+                {
+                    soWizard.Add(wiz[0].ToString());
+                }
+                String[] oWizards = soWizard.ToArray();
+                //var wizardsSave = wizardConfig.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequester);
+                var wizardsSave = wizardConfig.Read().ToDictionary(row => (string)row.sWizardName, row => row.bSavetoRequester ? 1 : 0);
+                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWizardHelper, oLocations, oWizards, wizardsSave };
                 return newObject;
             }
         }
