@@ -116,7 +116,6 @@
                 v-model="files"
                 accept="image/*, application/pdf"
                 placeholder="Upload your documents"
-                label="File input"
                 counter="3"
                 show-size
                 prepend-icon="mdi-paperclip"
@@ -223,18 +222,18 @@ export default {
     if(this.sSelectedRelation == ''){
       this.sSelectedPatientRepresentatives = [];
       this.sSelectedPatientRepresentativesName = '';
+      this.bOther=false;
+      this.sOtherPatientRepresentatives='';
     }
   },
   data() {
     return {
       sRelativeFirstName: '',
       sRelativeLastName: '',
-      sOtherRelation: '',
       files:[],
       sRelativeFileNameArray:[],
       sRelativeFileArray:[],
       option:[],
-      bShowOtherRelation:false,
       dialog:false,
       unsupported:false,
       bOther: false,
