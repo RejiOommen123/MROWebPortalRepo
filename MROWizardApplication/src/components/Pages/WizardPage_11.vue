@@ -43,12 +43,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_09",
+  activated(){
+    if(this.sSelectedStateSensitiveInfo.length == 0){
+      this.sSelectedSensitiveInfo = [];
+    }
+  },
   data() {
     return {
-      oSensitiveInfoArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
-      sSelectedSensitiveInfo: []
+      sSelectedSensitiveInfo: [],
     };
   },
   methods: {
@@ -64,6 +69,12 @@ export default {
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      oSensitiveInfoArray : state => state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
+      sSelectedStateSensitiveInfo : state => state.requestermodule.sSelectedSensitiveInfo,
+    }),
   }
 };
 </script>

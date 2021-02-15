@@ -188,10 +188,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required, email, sameAs, numeric ,maxLength} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_15",
+  activated(){
+    if(this.sSelectedStateShipmentTypes.length == 0){
+      this.sSelectedShipmentTypes = [];
+      this.sSelectedShipmentTypesName = '';
+    }
+  },
   mounted(){
     this.sSTEmailAddress = this.$store.state.requestermodule.sRequesterEmailId;
     this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;
@@ -203,8 +210,6 @@ export default {
   },
   data() {
     return {
-      oShipmentTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
-      // oShipmentTypeArray: this.$store.state.ConfigModule.oShipmentTypes,
       sSelectedShipmentTypes: [],
       sSelectedShipmentTypesName:'',
       // combine previously entered data by requester
@@ -219,10 +224,6 @@ export default {
       sSTAddState: '',
       sSTAddStreetAddress: '',
       sSTAddApartment:'',
-      menu1: false,
-
-      // disclaimer:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
-      pickUpInstruction:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_pickUpInstruction,
     };
   },
   //Shipment type validations
@@ -316,6 +317,11 @@ export default {
         errors.push("Street Address is required.");
       return errors;
     },
+    ...mapState({
+      oShipmentTypeArray : state => state.ConfigModule.apiResponseDataByLocation.oShipmentTypes,
+      pickUpInstruction : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_15_pickUpInstruction,
+      sSelectedStateShipmentTypes : state => state.requestermodule.sSelectedShipmentTypes,
+    }),
   },
   methods: {
     sSTAddStateToUpper(val) {

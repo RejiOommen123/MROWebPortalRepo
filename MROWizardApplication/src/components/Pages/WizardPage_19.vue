@@ -31,16 +31,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_10",
   data() {
     return {
       sAdditionalData:'',
-      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
-      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer02,
-
-      //Show and Hide Fields Values
-      MROPatientAdditionalDetails : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
     };
   },
   methods: {
@@ -56,6 +52,14 @@ export default {
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      disclaimer01 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
+      disclaimer02 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer02,
+      //Show and Hide Fields Values
+      MROPatientAdditionalDetails : state => state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
+    }),
   }
 };
 </script>

@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
@@ -85,13 +86,6 @@ export default {
       showSendVerify: true,
       countryCode: ["+1", "+91"],
       selectedCountry: "+1",
-      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_20_disclaimer01,
-      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_20_disclaimer02,
-
-      MRORequesterPhoneNumber: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
 
       sPhoneNo: "",
       sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
@@ -99,8 +93,6 @@ export default {
       sVerify: "",
       service: "",
       subData: {},
-      facilityForceCompliance: this.$store.state.ConfigModule
-        .bForceCompliance,
     };
   },
   // OTP and phono validations
@@ -129,7 +121,18 @@ export default {
       !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
       !this.$v.sVerify.required && errors.push("Verification code required");
       return errors;
-    }
+    },
+    ...mapState({
+      disclaimer01: state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer01,
+      disclaimer02: state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer02,      
+      facilityForceCompliance: state => state.ConfigModule
+        .bForceCompliance,
+      // Show and Hide Fields Values
+      MRORequesterPhoneNumber: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
+    }),
   },
   methods: {
     //send otp on send verification no and resend button

@@ -29,19 +29,20 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     name: 'Unauthorized',
     data: function () {
         return {
             dialog:false,
-            disclaimer05: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-            .wizardHelper.Wizard_01_disclaimer05,
         }
     },
     computed: {
-       isaut() {
-        return this.$store.state.ConfigModule.bUnauthorized;
-      }
+      ...mapState({
+        disclaimer05 : state => state.ConfigModule
+          .apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer05,
+        isaut : state => state.ConfigModule.bUnauthorized
+      }),
     },
     methods: {
         logoutUser: function() {

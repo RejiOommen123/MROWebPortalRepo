@@ -12,15 +12,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_24",
-  data() {
-    return {
-        disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer01,
-        disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer02,
-        disclaimer03 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer03
-    };
-  },
   methods: {
     closeWizard() {  
       window.top.postMessage("hello", "*");
@@ -29,7 +23,12 @@ export default {
   computed: {
     bGivenFeedback(){
       return this.$store.state.requestermodule.nFeedbackRating > 0 ? true : false;
-    }
+    },
+    ...mapState({
+      disclaimer01 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer01,
+      disclaimer02 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer02,
+      disclaimer03 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_26_disclaimer03
+    }),
   }
 };
 </script>

@@ -34,18 +34,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_23",
   data() {
     return {
       nFeedbackRating: 4,
       sFeedbackComment: "",
-
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_25_disclaimer01,
-
-      //Show and Hide Fields Values
-      MROFeedbackRating : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackRating,
-      MROFeedbackComment : this.$store.state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackComment,
     };
   },
   methods: {
@@ -67,6 +62,15 @@ export default {
       //Partial Requester Data Save End
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_25_disclaimer01,
+
+      //Show and Hide Fields Values
+      MROFeedbackRating :state => state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackRating,
+      MROFeedbackComment : state => state.ConfigModule.apiResponseDataByLocation.oFields.MROFeedbackComment,
+    }),
   }
 };
 </script>

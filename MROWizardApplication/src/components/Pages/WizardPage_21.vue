@@ -52,14 +52,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_19",
   data() {
     return {
       nSelectedCheckBox:[],
-      facilityForceCompliance: this.$store.state.ConfigModule
-        .bForceCompliance,
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_21_disclaimer01,
     };
   },
   methods: {
@@ -101,6 +99,12 @@ export default {
         this.nSelectedCheckBox = [];
         this.nSelectedCheckBox.push(id);
     }
+  },
+  computed:{
+    ...mapState({
+      facilityForceCompliance : state => state.ConfigModule.bForceCompliance,
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_21_disclaimer01
+    }),
   }
 };
 </script>

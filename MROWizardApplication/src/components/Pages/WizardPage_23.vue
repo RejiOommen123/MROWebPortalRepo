@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import pdf from "vue-pdf";
 import ModalForceCompliance from "../ModalForceCompliance";
 export default {
@@ -110,7 +111,6 @@ export default {
       pdfURL: null,
       bFormSigned:false,
       dialogLoader:false,
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
       bShowCompliance:false,
       bShowAddSignature:false
     };
@@ -219,6 +219,11 @@ export default {
       )
        this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_23_disclaimer01,
+    }),
   }
 };
 </script>

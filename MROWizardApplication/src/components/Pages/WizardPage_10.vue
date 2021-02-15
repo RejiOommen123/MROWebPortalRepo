@@ -49,11 +49,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_10",
+  activated(){
+    if(this.sSelectedStateRecordTypes.length == 0){
+      this.sSelectedRecordTypes = [],
+      this.sOtherRTText = '',
+      this.otherExist = false
+    }
+  },
   data() {
     return {
-      RecordTypeArray: this.$store.state.ConfigModule.apiResponseDataByLocation.oRecordTypes,
       sSelectedRecordTypes: [],
       sOtherRTText:'',
       otherExist:false
@@ -78,6 +85,12 @@ export default {
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      RecordTypeArray : state => state.ConfigModule.apiResponseDataByLocation.oRecordTypes,
+      sSelectedStateRecordTypes : state => state.requestermodule.sSelectedRecordTypes,
+    }),
   }
 };
 </script>

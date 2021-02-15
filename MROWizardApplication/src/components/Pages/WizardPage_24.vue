@@ -16,13 +16,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_22",
-  data() {
-    return {
-       disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01
-    };
-  },
   created(){ 
     this.$vuetify.theme.dark = true
   },
@@ -38,5 +34,10 @@ export default {
             }
       }
     },
+  computed:{
+    ...mapState({
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_24_disclaimer01,
+    }),
+  }
 };
 </script>

@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -81,12 +82,6 @@ export default {
       sAddState: '',
       sAddStreetAddress: '',
       sAddApartment:'',
-
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
-
-      //Show and Hide Fields Values
-      MROAddApartment: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROAddApartment,
     };
   },
   //Requester address validations
@@ -129,7 +124,15 @@ export default {
       !this.$v.sAddStreetAddress.required &&
         errors.push("Street Address is required.");
       return errors;
-    }
+    },    
+    ...mapState({
+      //Show and Hide Fields Values
+      MROAddApartment: state => state.ConfigModule
+      .apiResponseDataByLocation.oFields.MROAddApartment,
+
+      disclaimer: state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01
+    }),
   },
   methods: {
     sAddStateToUpper(val) {

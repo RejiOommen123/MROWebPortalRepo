@@ -91,13 +91,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_12",
   data() {
     return {
-      nAuthMonths: this.$store.state.ConfigModule.nAuthExpirationMonths,
       nSelectedCheckBox: [],
       dSpecific: null,
       menu1: false,
@@ -105,14 +105,6 @@ export default {
       sAuthSpecificEvent: "",
       maxdate:'',
       mindate:'',
-
-      //Show and Hide Fields Values
-      MROAuthExpireDateAfterNMonths: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROAuthExpireDateAfterNMonths,
-      MROAuthExpireDateSpecificDate: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROAuthExpireDateSpecificDate,
-      MROAuthExpireDateEventOccurs: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROAuthExpireDateEventOccurs
     };
   },
    watch: {
@@ -205,7 +197,17 @@ export default {
       !this.$v.dSpecific.minValue && errors.push("Date should be one day ahed from today.");
       !this.$v.dSpecific.required && errors.push("Date is required");
       return errors;
-    }
+    },
+    ...mapState({
+      nAuthMonths : state => state.ConfigModule.nAuthExpirationMonths,
+      //Show and Hide Fields Values
+      MROAuthExpireDateAfterNMonths: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateAfterNMonths,
+      MROAuthExpireDateSpecificDate: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateSpecificDate,
+      MROAuthExpireDateEventOccurs: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROAuthExpireDateEventOccurs
+    }),
   }
 };
 </script>

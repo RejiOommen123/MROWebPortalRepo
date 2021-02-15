@@ -54,18 +54,23 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_08",
+  activated(){
+    if(this.sSelectedStatePrimaryReasons.length == 0){
+      this.bOther = false;
+      this.sSelectedPrimaryReasons = [];
+      this.sOtherPrimaryReasons = '';
+      this.sSelectedPrimaryReasonsName = '';
+    }
+  },
   data() {
     return {
-      oPrimaryReasonArray: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oPrimaryReason,
       bOther: false,
       sSelectedPrimaryReasons: [],
       sOtherPrimaryReasons: '',
       sSelectedPrimaryReasonsName:'',
-
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_12_disclaimer01
     };
   },
   methods: {
@@ -106,6 +111,13 @@ export default {
         }
           
     }
+  },
+  computed:{
+    ...mapState({
+      oPrimaryReasonArray : state => state.ConfigModule.apiResponseDataByLocation.oPrimaryReason,
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_12_disclaimer01,
+      sSelectedStatePrimaryReasons : state => state.requestermodule.sSelectedPrimaryReasons,
+    }),
   }
 };
 </script>

@@ -184,7 +184,9 @@ export default {
                   "ConfigModule/bForceCompliance",
                   apiLocationResponse.oLocations[0].bForceCompliance
                 );
+                this.resetStateOnLocationChange();
                 this.dialogLoader = false;
+                
                 //Partial Requester Data Save Start
                 this.$store.dispatch('requestermodule/partialAddReq');
                 this.$store.commit("ConfigModule/mutateNextIndex");
@@ -196,6 +198,26 @@ export default {
           this.$store.dispatch('requestermodule/partialAddReq');
           this.$store.commit("ConfigModule/mutateNextIndex");
         }
+      },
+      resetStateOnLocationChange(){
+        //Reset patient representative
+        this.$store.commit("requestermodule/sSelectedRelationName", "");
+        this.$store.commit("requestermodule/sSelectedRelation", "");
+
+        //Reset record type
+        this.$store.commit("requestermodule/sSelectedRecordTypes", []);
+        this.$store.commit("requestermodule/sOtherRTText", "");
+
+        //Reset sensitive info
+        this.$store.commit("requestermodule/sSelectedSensitiveInfo", []);
+
+        //Reset primary reason
+        this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);
+        this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", '');
+
+        //Reset shipment type
+        this.$store.commit("requestermodule/sSelectedShipmentTypes", []);       
+        this.$store.commit("requestermodule/sSelectedShipmentTypesName", '');     
       }
     }
   

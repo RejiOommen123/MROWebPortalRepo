@@ -114,6 +114,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -142,21 +143,6 @@ export default {
       emailSent:false,
       otpSentAlert:false,
       bReturnedForCompliance:false,
-      facilityForceCompliance: this.$store.state.ConfigModule
-        .bForceCompliance,
-
-      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_06_disclaimer01,
-      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_06_disclaimer02,
-
-      //Show and Hide Fields Values
-      MROPEmailId: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROPEmailId,
-      MROConfirmReport: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROConfirmReport,
-      bRequestorEmailVerify:this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .facilityLogoandBackground[0].bRequestorEmailVerify,
     };
   },
   //Email on verify OTP validations
@@ -207,7 +193,23 @@ export default {
       !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
       !this.$v.sVerify.required && errors.push("Verification Code required");
       return errors;
-    }
+    },    
+    ...mapState({
+      facilityForceCompliance: state => state.ConfigModule
+        .bForceCompliance,
+      disclaimer01: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_06_disclaimer01,
+      disclaimer02: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_06_disclaimer02,
+
+      //Show and Hide Fields Values
+      MROPEmailId: state => state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROPEmailId,
+      MROConfirmReport: state => state.ConfigModule.apiResponseDataByLocation
+        .oFields.MROConfirmReport,
+      bRequestorEmailVerify: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .facilityLogoandBackground[0].bRequestorEmailVerify,
+    }),
   },
   methods: {
      sendEmail() {

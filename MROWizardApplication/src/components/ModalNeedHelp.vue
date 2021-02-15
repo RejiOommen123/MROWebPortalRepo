@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required, maxLength, minLength, email, numeric } from "vuelidate/lib/validators";
 export default {
@@ -129,9 +130,7 @@ export default {
         sMessage:'',
         dialog:true,
         dialogLoader:false,
-        dialogSuccess:false,        
-        disclaimer04: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_01_disclaimer04,
+        dialogSuccess:false,
     };
   },
   computed: {
@@ -171,7 +170,11 @@ export default {
     },
     bShow() {
       return this.$store.state.ConfigModule.bShowNeedHelp;
-    }
+    },
+    ...mapState({
+      disclaimer04 : state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer04,
+    }),
   },
   methods: {
    closeShowNeedHelp(){

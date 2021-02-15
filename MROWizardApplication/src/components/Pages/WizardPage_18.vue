@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 export default {
@@ -60,12 +61,6 @@ export default {
       menu1: false,
       mindate:'',
       maxdate:'',
-      disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_18_disclaimer01,
-
-      //Show and Hide Fields Values
-      MRORequestDeadlineDate: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORequestDeadlineDate
     };
   },
   //Date Validation
@@ -114,7 +109,14 @@ export default {
       !this.$v.dtDeadline.minValue && errors.push("Deadline date must be greater than today's date.");
       !this.$v.dtDeadline.required && errors.push("Date is required");
       return errors;
-    }
+    },
+    ...mapState({
+      disclaimer : state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
+      //Show and Hide Fields Values
+      MRORequestDeadlineDate: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORequestDeadlineDate
+    }),
   }
 };
 </script>

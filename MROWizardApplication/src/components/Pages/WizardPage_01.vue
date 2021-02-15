@@ -13,22 +13,22 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_01",
-  data() {
-    return {
-      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_01_disclaimer01,
-      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_01_disclaimer02,
-      wizard_config: null
-    };
-  },
   methods: {
     nextPage() {
       this.$store.state.ConfigModule.showBackBtn = true;     
       this.$store.commit("ConfigModule/mutateNextIndex");
     },
+  },
+  computed:{
+    ...mapState({
+      disclaimer01: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer01,
+      disclaimer02: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_01_disclaimer02,
+    }),
   }
 };
 </script>

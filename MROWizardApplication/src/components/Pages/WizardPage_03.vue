@@ -197,6 +197,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 const maxThree = (value) => value.length <= 3;
@@ -218,6 +219,12 @@ const maxSize = (value) =>  {
 };
 export default {
   name: "WizardPage_03",
+  activated(){
+    if(this.sSelectedRelation == ''){
+      this.sSelectedPatientRepresentatives = [];
+      this.sSelectedPatientRepresentativesName = '';
+    }
+  },
   data() {
     return {
       sRelativeFirstName: '',
@@ -226,38 +233,15 @@ export default {
       files:[],
       sRelativeFileNameArray:[],
       sRelativeFileArray:[],
-      sSelectedRelation: '',
       option:[],
       bShowOtherRelation:false,
       dialog:false,
       unsupported:false,
-      oPatientRepresentativeArray: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oPatientRepresentatives,
       bOther: false,
       sSelectedPatientRepresentatives: [],
       sOtherPatientRepresentatives: '',
       sSelectedPatientRepresentativesName:'',
-
-
-      disclaimer01: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer01,
-      disclaimer02: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer02,
-      disclaimer03: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer03,
-      disclaimer04: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_03_disclaimer04,
       sActiveBtn:'',
-      //TODO: Fetch disclaimer03 for multiple dile upload
-
-      MRORelationshipParentLegalGuardian: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORelationshipParentLegalGuardian,
-       MRORelationshipLegalRepresentative: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORelationshipLegalRepresentative,
-      MRORelationshipOther: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORelationshipOther,
-      MRORelationMultipleDocument: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORelationMultipleDocument
     };
   },
   //Relative name and realtion validations
@@ -270,10 +254,6 @@ export default {
     // ,maxSize
   },
   computed: {
-    bAreYouPatient() {
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },
-    //Relative name and realtion validation error message setter
     sRelativeFirstNameErrors() {
       const errors = [];
       if (!this.$v.sRelativeFirstName.$dirty) return errors;
@@ -299,7 +279,28 @@ export default {
       !this.$v.files.maxThree && errors.push("You can upload only 3 files");
       !this.$v.files.maxSize && errors.push("One of the uploaded file is greater than 10 MB");
       return errors;
-    }
+    },    
+    ...mapState({
+      oPatientRepresentativeArray: state => state.ConfigModule.apiResponseDataByLocation.oPatientRepresentatives,
+      disclaimer01: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer01,
+      disclaimer02: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer02,
+      disclaimer03: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer03,
+      disclaimer04: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer04,
+      MRORelationshipParentLegalGuardian: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipParentLegalGuardian,
+       MRORelationshipLegalRepresentative: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipLegalRepresentative,
+      MRORelationshipOther: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationshipOther,
+      MRORelationMultipleDocument: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORelationMultipleDocument,
+      bAreYouPatient: state => state.requestermodule.bAreYouPatient,
+      sSelectedRelation: state => state.requestermodule.sSelectedRelation
+    }),
   },
   methods: {
     // This will set bAreYouPatient status to true and empty realtives variables

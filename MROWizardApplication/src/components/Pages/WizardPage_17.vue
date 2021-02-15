@@ -27,13 +27,13 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import moment from "moment";
 export default {
   name: "WizardPage_15",
   data() {
     return {
       sActiveBtn:'',
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer01
     };
   },
   methods: {
@@ -58,6 +58,11 @@ export default {
 
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  computed:{
+    ...mapState({
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_17_disclaimer01,
+    }),
   }
 };
 </script>

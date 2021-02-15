@@ -53,15 +53,13 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "WizardPage_15",
   data() {
     return {
       bRTManualSelection : false,
       option:['abstract'],
-
-      disclaimer01 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
-      disclaimer02 : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,
     };
   },
   methods: {
@@ -93,6 +91,12 @@ export default {
       this.option=[];
       this.option.push(status);
     }
+  },
+  computed:{
+    ...mapState({
+      disclaimer01 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer01,
+      disclaimer02 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_09_disclaimer02,
+    }),
   }
 };
 </script>

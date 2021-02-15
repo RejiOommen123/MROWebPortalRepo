@@ -204,8 +204,7 @@
 </template>
 
 <script>
-// import { validationMixin } from "vuelidate";
-// import { required } from "vuelidate/lib/validators";
+import { mapState } from 'vuex';
 import { WebCam } from "vue-web-cam";
 export default {
   name: "App",
@@ -224,9 +223,6 @@ export default {
       dialog:true,
       diableCamera:false,
       unsupported:false,
-      facilityForceCompliance: this.$store.state.ConfigModule
-        .bForceCompliance,
-      disclaimer : this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01,
       rules: [
          value => !value || value.size < 10485760 || 'Uploaded file is greater than 10 MB',
       ],
@@ -272,12 +268,10 @@ export default {
     device: function() {
       return this.devices.find(n => n.deviceId === this.deviceId);
     },
-    // fileInputErrors() {
-    //   const errors = [];
-    //   if (!this.$v.fileInput.$dirty) return errors;
-    //   !this.$v.fileInput.required && errors.push("File is required");
-    //   return errors;
-    // }
+    ...mapState({
+      facilityForceCompliance : state => state.ConfigModule.bForceCompliance,
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_22_disclaimer01
+    }),
   },
   watch: {
     camera: function(id) {

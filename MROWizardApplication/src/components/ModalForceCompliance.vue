@@ -48,12 +48,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "ForceCompliance",
   data: function () {
     return {
-        facilityForceCompliance: this.$store.state.ConfigModule.bForceCompliance,
-        bForceCompliance:this.$store.state.requestermodule.bForceCompliance,
         dialog: false,
         sActiveBtn:''
     };
@@ -61,17 +60,6 @@ export default {
   mounted(){
     this.checkShowCompliance();
   },
-//   watch: {
-//     forceCompliance(newforceCompliance) {
-//       this.bForceCompliance = newforceCompliance;
-//       this.checkShowCompliance();
-//     },
-//   },
-//   computed: {
-//     forceCompliance() {
-//       return this.$store.state.requestermodule.bForceCompliance;
-//     },
-//   },
   methods: {
     redirectForCompliance(option){
         this.sActiveBtn=option;
@@ -98,5 +86,11 @@ export default {
         }
     } 
   },
+  computed:{
+    ...mapState({
+      facilityForceCompliance: state => state.ConfigModule.bForceCompliance,
+      bForceCompliance: state => state.requestermodule.bForceCompliance,
+    }),
+  }
 };
 </script>

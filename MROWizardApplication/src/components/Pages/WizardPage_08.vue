@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import moment from "moment";
 import { required} from "vuelidate/lib/validators";
 export default {
@@ -127,13 +128,6 @@ export default {
       sSpecifyVisitText:'',
       menu1: false,
       menu2: false,
-
-      MRORecordsDateRange: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MRORecordsDateRange,
-      MRORecordsMostRecentVisit: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MRORecordsMostRecentVisit,
-      MROSpecifyVisit: this.$store.state.ConfigModule.apiResponseDataByLocation
-        .oFields.MROSpecifyVisit,
     };
   },
    watch: {
@@ -238,7 +232,16 @@ export default {
       if (!this.$v.sSpecifyVisitText.$dirty) return errors;
       !this.$v.sSpecifyVisitText.required && errors.push("Specify visit is required.");
       return errors;
-    }
+    },    
+    ...mapState({
+      //Show and Hide Fields Values
+      MRORecordsDateRange: state => state.ConfigModule
+      .apiResponseDataByLocation.oFields.MRORecordsDateRange,
+      MRORecordsMostRecentVisit: state => state.ConfigModule
+      .apiResponseDataByLocation.oFields.MRORecordsMostRecentVisit,
+      MROSpecifyVisit: state => state.ConfigModule
+      .apiResponseDataByLocation.oFields.MROSpecifyVisit,
+    }),
   }
 };
 </script>

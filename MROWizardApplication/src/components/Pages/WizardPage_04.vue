@@ -83,6 +83,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 export default {
@@ -97,14 +98,6 @@ export default {
       sPatientPreviousMiddleName: "",
       disclaimer02:"",
       bPatientNameChanged: false,
-
-      //Show and Hide Fields Values fetch from store
-      MROPatientMiddleName: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROPatientMiddleName,
-      MROPatientPreviousMiddleName: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROPatientPreviousMiddleName,
-      MROPatientNameChanged: this.$store.state.ConfigModule
-        .apiResponseDataByLocation.oFields.MROPatientNameChanged
     };
   },
   //Requester name validations
@@ -117,13 +110,6 @@ export default {
     // sPatientMiddleName: { maxLength: maxLength(1) }
   },
   computed: {
-    bAreYouPatient() {
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },
-    disclaimer() {
-      return this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_04_disclaimer01;
-    },
     //Requester name validations error message setter
     sPatientFirstNameError() {
       const errors = [];
@@ -160,7 +146,20 @@ export default {
       !this.$v.sPatientPreviousLastName.required &&
         errors.push("Last Name is required.");
       return errors;
-    }
+    },    
+    ...mapState({
+      //Show and Hide Fields Values
+      MROPatientMiddleName: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROPatientMiddleName,
+      MROPatientPreviousMiddleName: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROPatientPreviousMiddleName,
+      MROPatientNameChanged: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROPatientNameChanged,
+        
+      bAreYouPatient: state => state.requestermodule.bAreYouPatient,
+      disclaimer: state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01
+    }),
   },
   methods: {
     checked() {

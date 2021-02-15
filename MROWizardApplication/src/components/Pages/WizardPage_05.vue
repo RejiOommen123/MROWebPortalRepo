@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 export default {
@@ -56,8 +57,6 @@ export default {
     return {
       dtPatientDOB: this.$store.state.requestermodule.dtPatientDOB,
       menu1: false,
-      disclaimer: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID
-        .wizardHelper.Wizard_05_disclaimer01,
     };
   },
   // Date Validation
@@ -84,9 +83,6 @@ export default {
     }
   },
   computed: {
-    bAreYouPatient(){
-      return this.$store.state.requestermodule.bAreYouPatient;
-    },
      //Date validations error message setter
     dtPatientDOBFormatted() {
       return this.dtPatientDOB ? moment(this.dtPatientDOB).format("MM-DD-YYYY") : "";
@@ -97,7 +93,12 @@ export default {
       !this.$v.dtPatientDOB.required && errors.push("Date of birth is required");
       !this.$v.dtPatientDOB.minValue && errors.push("This date cannot be future date");      
       return errors;
-    }
+    },    
+    ...mapState({
+      bAreYouPatient: state => state.requestermodule.bAreYouPatient,
+      disclaimer: state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_05_disclaimer01
+    }),
   }
 };
 </script>
