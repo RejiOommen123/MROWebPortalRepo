@@ -140,6 +140,14 @@ export default {
                 this.$store.commit("ConfigModule/oWizards",apiLocationResponse.oWizards);
                 this.$store.commit("ConfigModule/wizardsSave", apiLocationResponse.wizardsSave);
                 this.$store.commit("ConfigModule/wizardHelper", apiLocationResponse.oWizardHelper);
+                this.$store.commit(
+                  "ConfigModule/Wizard_01_phoneFooter",
+                  apiLocationResponse.oWizardHelper.Wizard_01_phoneFooter
+                );
+                this.$store.commit(
+                  "ConfigModule/Wizard_01_disclaimer03",
+                  apiLocationResponse.oWizardHelper.Wizard_01_disclaimer03
+                );
                 delete apiLocationResponse.oWizards;
                 delete apiLocationResponse.wizardsSave;
                 delete apiLocationResponse.oWizardHelper;
@@ -155,7 +163,7 @@ export default {
                 this.$store.commit(
                   "ConfigModule/wizardBackground",
                   apiLocationResponse.oLocations[0].sConfigBackgroundData
-                );
+                );                
                 this.$store.commit(
                   "requestermodule/nFacilityID",
                   location.nFacilityID

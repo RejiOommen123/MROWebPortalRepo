@@ -159,10 +159,8 @@ export default {
       dialog: false,
       logoImg: this.$store.state.ConfigModule.wizardLogo,
       backgroundImg: this.$store.state.ConfigModule.wizardBackground,
-      phoneNo: 0,
       dialogLoader: false,
       dialogConfirm: false,
-      disclaimer03: ''
     };
   },
   created() {
@@ -226,8 +224,14 @@ export default {
             "requestermodule/nFacilityID",
             apiFacilityResponse.facilityLogoandBackground[0].nFacilityID
           );
-          this.phoneNo = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_phoneFooter;
-          this.disclaimer03 = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_01_disclaimer03;
+          this.$store.commit(
+            "ConfigModule/Wizard_01_phoneFooter",
+            apiFacilityResponse.wizardHelper.Wizard_01_phoneFooter
+          );
+          this.$store.commit(
+            "ConfigModule/Wizard_01_disclaimer03",
+            apiFacilityResponse.wizardHelper.Wizard_01_disclaimer03
+          );
           //Check for number of locations in facility
           let locationLength = this.$store.state.ConfigModule
             .apiResponseDataByFacilityGUID.locationDetails.length;
@@ -257,10 +261,18 @@ export default {
                   this.$store.commit("ConfigModule/oWizards",apiLocationResponse.oWizards);
                   this.$store.commit("ConfigModule/wizardsSave", apiLocationResponse.wizardsSave);
                   this.$store.commit("ConfigModule/wizardHelper", apiLocationResponse.oWizardHelper);
+                  this.$store.commit(
+                    "ConfigModule/Wizard_01_phoneFooter",
+                    apiLocationResponse.oWizardHelper.Wizard_01_phoneFooter
+                  );
+                  this.$store.commit(
+                    "ConfigModule/Wizard_01_disclaimer03",
+                    apiLocationResponse.oWizardHelper.Wizard_01_disclaimer03
+                  );
                   delete apiLocationResponse.oWizards;
                   delete apiLocationResponse.wizardsSave;
                   delete apiLocationResponse.oWizardHelper;
-
+                  
                   this.$store.commit(
                     "ConfigModule/apiResponseDataByLocation",
                     apiLocationResponse
@@ -320,6 +332,12 @@ export default {
     },
     background() {
       return this.$store.state.ConfigModule.wizardBackground;
+    },
+    phoneNo(){
+      return this.$store.state.ConfigModule.Wizard_01_phoneFooter;
+    },
+    disclaimer03(){
+      return this.$store.state.ConfigModule.Wizard_01_disclaimer03;
     },
     nProgressBar() {
       return this.$store.state.ConfigModule.nProgressBar;

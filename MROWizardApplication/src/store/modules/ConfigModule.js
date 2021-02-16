@@ -7,6 +7,8 @@ const state = {
     
     wizardLogo:'',
     wizardBackground:'',
+    Wizard_01_phoneFooter:'',
+    Wizard_01_disclaimer03:'',
     showBackBtn:false,
     wizardArrayIndex: 0,
     selectedWizard: "Wizard_01",
@@ -54,6 +56,12 @@ const mutations = {
     },
     wizardBackground(state, payload) {
         state.wizardBackground = payload;
+    },
+    Wizard_01_phoneFooter(state, payload) {
+        state.Wizard_01_phoneFooter = payload;
+    },
+    Wizard_01_disclaimer03(state, payload) {
+        state.Wizard_01_disclaimer03 = payload;
     },
     mutatedialogMinWidth(state, payload) {
         state.dialogMinWidth = payload;
