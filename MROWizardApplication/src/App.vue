@@ -105,7 +105,7 @@
           </v-card>
         </v-dialog>
         <!-- Confirm Close Wizard -->
-        <v-dialog v-model="dialogConfirm" light persistent max-width="280">
+        <v-dialog v-model="dialogConfirm" light persistent max-width="300">
           <v-card>
             <v-card-title class="headline">Are you sure you want to close this request?</v-card-title>
             <v-card-text v-if="(selectedWizard !='Wizard_24') && (selectedWizard != 'Wizard_25') && (selectedWizard !='Wizard_26') ">Closing this request will clear all previously entered data.</v-card-text>
