@@ -252,7 +252,7 @@ namespace MROWebApi.Services
                         nAdminUserID = adminModuleLogger.nAdminUserID,
                         sEventName = adminModuleLogger.sEventName,
                         sModuleName = adminModuleLogger.sModuleName,
-                        sDescription = adminModuleLogger.sDescription,
+                        sDescription = adminModuleLogger.sDescription + " & ID: " + oldObject.GetType().GetProperty(id).GetValue(oldObject, null),
                         sNewValue = combineNewData,
                         sOldValue = combineOldData,
                         dtLogTime = DateTime.Now,
