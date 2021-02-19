@@ -2,7 +2,7 @@
   <div class="center">
     <h1>What is the primary reason for requesting records?</h1>
     <!-- TODO:Check for subheading -->
-    <h6 v-if="disclaimer!=''">{{disclaimer}}</h6>
+    <h6 id="subHeading" v-if="disclaimer!=''">{{disclaimer}}</h6>
 
     <template>
       <!-- Get all Primary Reasons associated to facility and displayed as checkbox for selection-->
@@ -125,5 +125,8 @@ export default {
 .v-tooltip__content{
   color: black;
   background: white;
+}
+#subHeading{
+  margin-bottom:5%
 }
 </style>

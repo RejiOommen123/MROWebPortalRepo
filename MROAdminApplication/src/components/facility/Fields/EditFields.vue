@@ -228,8 +228,10 @@ export default {
         .post("facilityfieldmaps/EditFacilityFields/", editFields)
         .then((response) => {
           if (response.ok == true) {
+            this.gridData = [];
+            this.getGridData();
+            this.updatedArray = [];
             this.dialogLoader = false;
-            this.$router.push("/facility");
           }
         });
       }

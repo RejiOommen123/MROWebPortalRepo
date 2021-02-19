@@ -137,8 +137,10 @@ export default {
         .post("facilitydisclaimers/EditFacilityDisclaimers/", editDisclaimers)
         .then((response) => {
           if (response.ok == true) {
+            this.gridData = [];
+            this.getGridData();
+            this.updatedArray = [];
             this.dialogLoader = false;
-            this.$router.push("/facility");
           }
         });
     },

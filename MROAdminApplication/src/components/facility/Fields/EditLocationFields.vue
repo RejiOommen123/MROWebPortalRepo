@@ -114,7 +114,7 @@
           color="primary"
           >Save</v-btn
         >
-        <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
+        <v-btn type="button" :to="'/Locations/'+$route.params.nFacilityID" color="primary">Cancel</v-btn>
       </div>
       <br />
       <!-- Common Loader -->
@@ -339,8 +339,13 @@ export default {
           .post("facilityfieldmaps/EditFacilityFields/", editFields)
           .then((response) => {
             if (response.ok == true) {
+
+              this.gridData = [];
+              this.getGridData();
+              this.updatedArray = [];
+              this.resetItemId = 0;
+              this.resetItemTableName = "",
               this.dialogLoader = false;
-              this.$router.push("/Locations/"+this.$route.params.nFacilityID);
             }
           });
       }

@@ -61,7 +61,7 @@
       </v-row>
       <div class="submit">
         <v-btn type="submit" :disabled="updatedArray.length==0" color="primary">Save</v-btn>
-        <v-btn type="button" to="/facility" color="primary">Cancel</v-btn>
+        <v-btn type="button" :to="'/Locations/'+$route.params.nFacilityID" color="primary">Cancel</v-btn>
       </div>
       <br />
       <!-- Common Loader -->
@@ -212,8 +212,13 @@ export default {
         .post("facilitydisclaimers/EditFacilityDisclaimers/", editDisclaimers)
         .then((response) => {
           if (response.ok == true) {
+
+            this.gridData = [];
+            this.getGridData();
+            this.updatedArray = [];
+            this.resetItemId = 0;
+
             this.dialogLoader = false;
-            this.$router.push("/Locations/"+this.$route.params.nFacilityID);
           }
         });
     },
