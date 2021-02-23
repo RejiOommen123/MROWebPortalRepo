@@ -17,7 +17,7 @@
         </v-col>
         <v-col cols="6" sm="12" md="2" class="pl-4">
           <v-text-field 
-          label="Wizard Name"
+          label="Express Name"
           v-model="sWizardName"
           @input="$v.sWizardName.$touch()"
           @blur="$v.sWizardName.$touch()"
@@ -114,8 +114,8 @@ export default {
           value: "sFacilityName",
           width: "150px",
         },
-        { text: "Wizard Name", value: "sWizardName", width: "150px"},   
-        { text: "Wizard Description", value: "sWizardDescription", width: "175px" },
+        { text: "Express Name", value: "sWizardName", width: "150px"},   
+        { text: "Express Description", value: "sWizardDescription", width: "175px" },
         { text: "Value", value: "sFieldName", width: "300px" },       
         { text: "Type", value: "sType", width: "150px" },    
         { text: "Configurable in Admin Module", value: "bConfigurableAdmin", width: "250px" },
