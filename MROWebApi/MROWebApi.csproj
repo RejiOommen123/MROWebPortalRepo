@@ -84,5 +84,9 @@
 	  <None Include="web.config" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="Services\Utilities.cs" />
+	</ItemGroup>
+
 
 </Project>

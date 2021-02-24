@@ -1334,7 +1334,7 @@ namespace MROWebApi.Controllers
                     + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage
                     + "</td></tr><tr><td><b>Facility Name</b></td><td>" + helpInfo.sFacilityName
                     + "</td></tr><tr><td><b>Location Name</b></td><td>" + helpInfo.sLocationName
-                    + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + helpInfo.sWizardName
+                    + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + Utilities.ReplaceWizardWithExpress(helpInfo.sWizardName)
                     + "</td></tr><tr><td><b>OS</b></td><td>" + helpInfo.sOS
                     + "</td></tr><tr><td><b>Browser</b></td><td>" + helpInfo.sBrowser
                     + "</td></tr></table>";

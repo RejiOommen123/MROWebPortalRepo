@@ -111,7 +111,7 @@ export default {
           value: "sWizardHelperValue",
           width: "60%",
         },
-        { text: "Wizard Name", value: "sWizardDescription", width: "25%" },
+        { text: "Express Name", value: "sWizardDescription", width: "25%" },
         { text: "Configured at Location", value: "bIsLocationLevel", align: "center"},
       ],
       gridData: this.getGridData(),

@@ -78,7 +78,7 @@ export default {
           value: "sWizardHelperValue",
           width: "60%",
         },
-        { text: "Wizard Name", value: "sWizardDescription", width: "40%" }
+        { text: "Express Name", value: "sWizardDescription", width: "40%" }
       ],
       gridData: this.getGridData(),
       updatedArray: [],
