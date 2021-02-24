@@ -50,6 +50,8 @@ namespace MRODBL.BaseClasses
         public string sPatientPreviousMiddleName { get; set; }
         public bool bPatientNameChanged { get; set; }
 
+        public bool bPatientDeceased { get; set; }
+
         //[Required]
         public DateTime? dtPatientDOB { get; set; }
         //[Required]
