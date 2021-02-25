@@ -210,7 +210,7 @@ namespace MROWebApi.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-                                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                        MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                                     }
                                 }
                                 else
@@ -250,7 +250,7 @@ namespace MROWebApi.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-                                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                        MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Feedback - XML Generation in sFTP.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                                     }
                                 }
 
@@ -278,7 +278,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.(RequesterID - " + requester.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Exception in Add Requester Method.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
             }
             return nRequesterId;
         }
@@ -327,7 +327,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Update Support Doc Method.(RequesterID - " + supportDocs.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(supportDocs.nRequesterID, ExceptionStatus.Error.ToString(), "Exception in Update Support Doc Method.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
             }
             return nRequesterId;
         }
@@ -355,7 +355,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Exception in Update Identity Doc Method.(RequesterID - " + identityDoc.nRequesterID + ")", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(identityDoc.nRequesterID, ExceptionStatus.Error.ToString(), "Exception in Update Identity Doc Method.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
             }
             return nRequesterId;
         }

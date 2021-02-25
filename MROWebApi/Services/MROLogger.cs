@@ -70,13 +70,14 @@ namespace MROWebApi.Services
             patientModuleLoggerRepository.Insert(logRequesterDetails);
         }
 
-        public static void LogExceptionRecords(string sStatusName, string sModuleName, string sDescription, DBConnectionInfo _info)
+        public static void LogExceptionRecords(int? nRequesterID, string sStatusName, string sModuleName, string sDescription, DBConnectionInfo _info)
         {
             try
             {
                 ExceptionLoggerRepository exceptionLoggerRepository = new ExceptionLoggerRepository(_info);
                 ExceptionLogger exceptionLoggerDetails = new ExceptionLogger()
                 {
+                    nRequesterID = nRequesterID,
                     sStatusName = sStatusName,
                     sModuleName = sModuleName,
                     sDescription = sDescription,

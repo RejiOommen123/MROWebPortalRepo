@@ -66,7 +66,7 @@ namespace MROWebApi.Controllers
         public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
         {
             try
-            {
+            {    
                 sLocationGUID = sLocationGUID == "null" ? null : sLocationGUID;
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID);
@@ -74,7 +74,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }
@@ -94,7 +94,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID - "+ guidParameters.guid + " LocationGUID - "+ guidParameters.locationguid, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Wizard From GUID - By Facility GUID - "+ guidParameters.guid + " LocationGUID - "+ guidParameters.locationguid, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }
@@ -165,7 +165,7 @@ namespace MROWebApi.Controllers
                             sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
                         }
                         catch (Exception ex) {
-                            MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML - GetRecordTypeAndSensitiveInfo. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                            MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Generate XML - GetRecordTypeAndSensitiveInfo.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                             throw;
                         }
 
@@ -208,7 +208,7 @@ namespace MROWebApi.Controllers
                             }
                             else
                             {
-                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for RequesterID: " + requester.nRequesterID + "Requester Email ID: " + requester.sRequesterEmailId, _info);
+                                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Email Error: Email Not send", "Email Not send for" + "Requester Email ID: " + requester.sRequesterEmailId, _info);
                                 //return Content("Email Not Sent");
                             }
                         }
@@ -453,7 +453,7 @@ namespace MROWebApi.Controllers
                             }
                             catch (Exception ex)
                             {
-                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in ftp.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                             }
                         }
                         else
@@ -493,19 +493,19 @@ namespace MROWebApi.Controllers
                             }
                             catch (Exception ex)
                             {
-                                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Submit Form - XML Generation in sFTP.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                             }
                         }
                     }
                     else
                     {
-                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML. RequesterID - " + requester.nRequesterID, " Authorization failed when comparing the GUID", _info);
+                        MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Generate XML.", " Authorization failed when comparing the GUID", _info);
                         return Unauthorized();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Generate XML.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                     throw;
                 }
             //return Ok(xmlString.ToString());
@@ -596,7 +596,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Sending Email. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Submit Form - Sending Email.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                     return false;
                 }
                 client.Send(message);
@@ -605,7 +605,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Email. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Send Email.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 throw;
             }
             return true;
@@ -670,7 +670,7 @@ namespace MROWebApi.Controllers
                 //Make SSL true
                 try
                 {
-                    if (dbFacility.sSMTPUrl.Contains("protection"))
+                if (dbFacility.sSMTPUrl.Contains("protection"))
                     {
                         SmtpClient client = new SmtpClient();
                         client.Connect(dbFacility.sSMTPUrl, 25, false);
@@ -692,8 +692,8 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
-                    return Content(ex.Message);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                return Content(ex.Message);
                 }
                 return Ok(sOTP);
             //}
@@ -765,7 +765,7 @@ namespace MROWebApi.Controllers
                     }
                     else
                     {
-                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate Pdf. RequesterID - " + testPdf.oRequester.nRequesterID, " Authorization failed when comparing the GUID", _info);
+                        MROLogger.LogExceptionRecords(testPdf.oRequester.nRequesterID, ExceptionStatus.Error.ToString(), "Generate Pdf.", " Authorization failed when comparing the GUID", _info);
                         return Unauthorized();
                     }
                 }
@@ -794,7 +794,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation - GetRecordTypeAndSensitiveInfo. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "PDF Generation - GetRecordTypeAndSensitiveInfo.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                     throw;
                 }
 
@@ -1155,7 +1155,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "PDF Generation Error. RequesterID - " + requester.nRequesterID , ex.Message +" Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "PDF Generation Error.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return null;
             }
         }
@@ -1256,8 +1256,8 @@ namespace MROWebApi.Controllers
                     }
                     catch (Exception ex)
                     {
-                        MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
-                        return false;
+                    MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Submit Form - Send ROI Email.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    return false;
                     }
                 
                 return true;
@@ -1361,7 +1361,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Trigger Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    MROLogger.LogExceptionRecords(helpInfo.oRequester.nRequesterID, ExceptionStatus.Error.ToString(), "Send Help Email Trigger Failed.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                     return Content(ex.Message);
                 }
 
@@ -1392,14 +1392,14 @@ namespace MROWebApi.Controllers
                 }
                 catch(Exception ex)
                 {
-                    MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email ROI Data Input Logging Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    MROLogger.LogExceptionRecords(helpInfo.oRequester.nRequesterID, ExceptionStatus.Error.ToString(), "Send Help Email ROI Data Input Logging Failed.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 }
                 #endregion
                 return Ok("Success");
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Send Help Email Failed. Requester Id - " + helpInfo.oRequester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(helpInfo.oRequester.nRequesterID, ExceptionStatus.Error.ToString(), "Send Help Email Failed.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }

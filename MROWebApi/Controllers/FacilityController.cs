@@ -279,7 +279,7 @@ namespace MROWebAPI.Controllers
             bodyBuilder.HtmlBody = bodyText;
             message.Body = bodyBuilder.ToMessageBody();
             //GET Port number
-            //Make SSL true
+            //Make SSL true           
             try
             {
                 if (testSMTP.sSMTPUrl.Contains("protection"))
@@ -304,7 +304,7 @@ namespace MROWebAPI.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Test SMTP Failed", ex.Message, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Test SMTP Failed", ex.Message, _info);
                 return BadRequest(ex.Message);
             }
             return Ok();
