@@ -160,9 +160,9 @@ namespace MROWebApi.Controllers
                         List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
                         try {
                             RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
-                            var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(facility.nFacilityID, location.nFacilityLocationID);
-                            recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
-                            sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                            var pdfAndXMLData = await rtRepo.GetPDFAndXMLData(facility.nFacilityID, location.nFacilityLocationID);
+                            recordTypes = pdfAndXMLData.recordTypes;
+                            sensitiveInfos = pdfAndXMLData.sensitiveInfos;
                         }
                         catch (Exception ex) {
                             MROLogger.LogExceptionRecords(ExceptionStatus.Error.ToString(), "Generate XML - GetRecordTypeAndSensitiveInfo. RequesterID - " + requester.nRequesterID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
@@ -785,13 +785,14 @@ namespace MROWebApi.Controllers
             try
             {
                 //to get the Record Type for this facility
-                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
+                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos; List<Fields> fields;
                 try
                 {
                     RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
-                    var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(dbFacility.nFacilityID, location.nFacilityLocationID);
-                    recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
-                    sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                    var pdfAndXMLData = await rtRepo.GetPDFAndXMLData(dbFacility.nFacilityID, location.nFacilityLocationID);
+                    recordTypes = pdfAndXMLData.recordTypes;
+                    sensitiveInfos = pdfAndXMLData.sensitiveInfos;
+                    fields = pdfAndXMLData.fields;
                 }
                 catch (Exception ex)
                 {
@@ -883,7 +884,11 @@ namespace MROWebApi.Controllers
                 }
                 if (requester.bRecordMostRecentVisit)
                 {
-                    allFields.Add("MRORecordsMostRecentVisit=1", "On");
+                    Fields field = fields.FirstOrDefault(e => e.sNormalizedFieldName == "MRORecordsMostRecentVisit");
+                    if (field != null) {
+                        allFields.Add("MRORecordsMostRecentVisitText", field.sFieldName);
+                    }
+                    allFields.Add("MRORecordsMostRecentVisit=1", "On");                    
                 }
                 if (requester.bSpecifyVisit)
                 {
@@ -1082,6 +1087,11 @@ namespace MROWebApi.Controllers
                     else
                     {
                         allFields.Add("MROOtherGovIdentity=1", "On");
+                    }
+                    Fields field = fields.FirstOrDefault(e => e.sNormalizedFieldName == requester.sIdentityIdName);
+                    if (field != null)
+                    {
+                        allFields.Add(requester.sIdentityIdName+"Text", field.sFieldName);
                     }
                 }
                 //MROToday's Date

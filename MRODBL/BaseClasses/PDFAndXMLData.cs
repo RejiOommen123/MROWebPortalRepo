@@ -4,9 +4,10 @@ using System.Text;
 
 namespace MRODBL.BaseClasses
 {
-    public class RecordTypeAndSensitiveInfo
+    public class PDFAndXMLData
     {
         public List<RecordTypes> recordTypes { get; set; }
         public List<SensitiveInfo> sensitiveInfos { get; set; }
+        public List<Fields> fields { get; set; }
     }
 }

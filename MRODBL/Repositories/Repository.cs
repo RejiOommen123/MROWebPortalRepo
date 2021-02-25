@@ -604,20 +604,21 @@ namespace MRODBL.Repositories
                 }
             }
         }
-        public async Task<RecordTypeAndSensitiveInfo> GetRecordTypeAndSensitiveInfo(int nFacilityID, int nFacilityLocationID)
+        public async Task<PDFAndXMLData> GetPDFAndXMLData(int nFacilityID, int nFacilityLocationID)
         {
-            string SqlString = "spGetRecordTypeAndSensitiveInfo";
+            string SqlString = "spGetPDFAndXMLData";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 try
                 {
                     db.Open();
                     SqlMapper.GridReader returnObject =await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID }, commandType: CommandType.StoredProcedure);
-                    RecordTypeAndSensitiveInfo recordTypeAndSensitiveInfo= new RecordTypeAndSensitiveInfo();
-                    recordTypeAndSensitiveInfo.recordTypes = returnObject.Read<RecordTypes>().ToList();
-                    recordTypeAndSensitiveInfo.sensitiveInfos = returnObject.Read<SensitiveInfo>().ToList();
+                    PDFAndXMLData pdfAndXMLData = new PDFAndXMLData();
+                    pdfAndXMLData.recordTypes = returnObject.Read<RecordTypes>().ToList();
+                    pdfAndXMLData.sensitiveInfos = returnObject.Read<SensitiveInfo>().ToList();
+                    pdfAndXMLData.fields = returnObject.Read<Fields>().ToList();
 
-                    return recordTypeAndSensitiveInfo;
+                    return pdfAndXMLData;
                 }
                 catch (Exception ex)
                 {
