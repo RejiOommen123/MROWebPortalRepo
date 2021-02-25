@@ -41,6 +41,14 @@
             label="Please check here if name was different at the time of visit (examples: maiden name, minor's name, alias)"
           ></v-checkbox>
         </v-col>
+        <v-col v-if="MROPatientDeceased && !bAreYouPatient" style="padding-top:0px;padding-bottom:0px;" cols="12" offset-sm="1" sm="10">
+          <v-checkbox
+            hide-details
+            v-model="bPatientDeceased"
+            color="white"
+            label="Please check here if the information being requested is for a deceased individual"
+          ></v-checkbox>
+        </v-col>
         <!-- TODO:add show and hide for previous name after adding these fields in db -->
         <template v-if="bPatientNameChanged">
           <v-col style="padding-top:0px;padding-bottom:0px;" cols="12" sm="4" >
@@ -98,6 +106,7 @@ export default {
       sPatientPreviousMiddleName: "",
       disclaimer02:"",
       bPatientNameChanged: false,
+      bPatientDeceased:false
     };
   },
   //Requester name validations
@@ -158,7 +167,9 @@ export default {
         
       bAreYouPatient: state => state.requestermodule.bAreYouPatient,
       disclaimer: state => state.ConfigModule
-      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_04_disclaimer01,
+      MROPatientDeceased: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MROPatientDeceased,
     }),
   },
   methods: {
@@ -200,6 +211,10 @@ export default {
       this.$store.commit(
         "requestermodule/bPatientNameChanged",
         this.bPatientNameChanged
+      );
+      this.$store.commit(
+        "requestermodule/bPatientDeceased",
+        this.bPatientDeceased
       );
 
       //Partial Requester Data Save Start
