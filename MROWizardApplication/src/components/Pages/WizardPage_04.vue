@@ -96,6 +96,16 @@ import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_05",
+   activated(){
+    if(this.bAreYouPatient || !this.MROPatientDeceased){
+      this.bPatientDeceased = false;
+
+      this.$store.commit(
+        "requestermodule/bPatientDeceased",
+        this.bPatientDeceased
+      );
+    }
+  },
   data() {
     return {
       sPatientFirstName: "",

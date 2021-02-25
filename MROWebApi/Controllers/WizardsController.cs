@@ -299,7 +299,7 @@ namespace MROWebApi.Controllers
                         writer.WriteElementString("previouslastname", requester.sPatientPreviousLastName);
                         writer.WriteElementString("previousmiddlename", requester.sPatientPreviousMiddleName);
                         writer.WriteElementString("haspreviousname", requester.bPatientNameChanged.ToString());
-                        writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
+                    
                         writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
                         writer.WriteStartElement("address");
                         //For Appartment,Street,City,State,ZipCode
@@ -335,6 +335,7 @@ namespace MROWebApi.Controllers
                         writer.WriteEndElement();
                         writer.WriteElementString("phone_number", requester.sPhoneNo);
                         writer.WriteElementString("fax_number", requester.sSTFaxNumber);
+                        writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
                         writer.WriteEndElement();
 
                         //Requester Part Ends Here
