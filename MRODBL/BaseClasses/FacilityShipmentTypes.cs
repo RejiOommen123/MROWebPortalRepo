@@ -27,7 +27,7 @@ namespace MRODBL.BaseClasses
         public string sShipmentTypeName { get; set; }
         [DisplayName("Order")]
         public int? nFieldOrder { get; set; }
-        [DisplayName("Wizard Id")]
+        [DisplayName("Express Id")]
         public int nWizardID { get; set; }
         [DisplayName("Active Status")]
         public bool bShow { get; set; }

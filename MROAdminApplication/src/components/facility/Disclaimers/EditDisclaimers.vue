@@ -78,7 +78,7 @@ export default {
           value: "sWizardHelperValue",
           width: "60%",
         },
-        { text: "Wizard Name", value: "sWizardDescription", width: "40%" }
+        { text: "Express Name", value: "sWizardDescription", width: "40%" }
       ],
       gridData: this.getGridData(),
       updatedArray: [],
@@ -137,8 +137,10 @@ export default {
         .post("facilitydisclaimers/EditFacilityDisclaimers/", editDisclaimers)
         .then((response) => {
           if (response.ok == true) {
+            this.gridData = [];
+            this.getGridData();
+            this.updatedArray = [];
             this.dialogLoader = false;
-            this.$router.push("/facility");
           }
         });
     },

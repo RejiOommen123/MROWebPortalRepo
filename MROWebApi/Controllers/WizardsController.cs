@@ -160,9 +160,9 @@ namespace MROWebApi.Controllers
                         List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
                         try {
                             RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
-                            var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(facility.nFacilityID, location.nFacilityLocationID);
-                            recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
-                            sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                            var pdfAndXMLData = await rtRepo.GetPDFAndXMLData(facility.nFacilityID, location.nFacilityLocationID);
+                            recordTypes = pdfAndXMLData.recordTypes;
+                            sensitiveInfos = pdfAndXMLData.sensitiveInfos;
                         }
                         catch (Exception ex) {
                             MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Generate XML - GetRecordTypeAndSensitiveInfo.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
@@ -299,7 +299,7 @@ namespace MROWebApi.Controllers
                         writer.WriteElementString("previouslastname", requester.sPatientPreviousLastName);
                         writer.WriteElementString("previousmiddlename", requester.sPatientPreviousMiddleName);
                         writer.WriteElementString("haspreviousname", requester.bPatientNameChanged.ToString());
-
+                    
                         writer.WriteElementString("dob", requester.dtPatientDOB.Value.ToString("yyyy-MM-dd"));
                         writer.WriteStartElement("address");
                         //For Appartment,Street,City,State,ZipCode
@@ -335,6 +335,7 @@ namespace MROWebApi.Controllers
                         writer.WriteEndElement();
                         writer.WriteElementString("phone_number", requester.sPhoneNo);
                         writer.WriteElementString("fax_number", requester.sSTFaxNumber);
+                        writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
                         writer.WriteEndElement();
 
                         //Requester Part Ends Here
@@ -784,13 +785,14 @@ namespace MROWebApi.Controllers
             try
             {
                 //to get the Record Type for this facility
-                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos;
+                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos; List<Fields> fields;
                 try
                 {
                     RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
-                    var RecordTypeAndSensitiveInfo = await rtRepo.GetRecordTypeAndSensitiveInfo(dbFacility.nFacilityID, location.nFacilityLocationID);
-                    recordTypes = RecordTypeAndSensitiveInfo.recordTypes;
-                    sensitiveInfos = RecordTypeAndSensitiveInfo.sensitiveInfos;
+                    var pdfAndXMLData = await rtRepo.GetPDFAndXMLData(dbFacility.nFacilityID, location.nFacilityLocationID);
+                    recordTypes = pdfAndXMLData.recordTypes;
+                    sensitiveInfos = pdfAndXMLData.sensitiveInfos;
+                    fields = pdfAndXMLData.fields;
                 }
                 catch (Exception ex)
                 {
@@ -844,6 +846,11 @@ namespace MROWebApi.Controllers
                     allFields.Add("MROPatientNameChanged=1", "On");
                 }
 
+                if (requester.bPatientDeceased)
+                {
+                    allFields.Add("MROPatientDeceased=1", "On");
+                }
+
                 allFields.Add("MROAddZipCode", requester.sAddZipCode);
                 allFields.Add("MROAddCity", requester.sAddCity);
                 allFields.Add("MROAddState", requester.sAddState);
@@ -877,7 +884,11 @@ namespace MROWebApi.Controllers
                 }
                 if (requester.bRecordMostRecentVisit)
                 {
-                    allFields.Add("MRORecordsMostRecentVisit=1", "On");
+                    Fields field = fields.FirstOrDefault(e => e.sNormalizedFieldName == "MRORecordsMostRecentVisit");
+                    if (field != null) {
+                        allFields.Add("MRORecordsMostRecentVisitText", field.sFieldName);
+                    }
+                    allFields.Add("MRORecordsMostRecentVisit=1", "On");                    
                 }
                 if (requester.bSpecifyVisit)
                 {
@@ -1076,6 +1087,11 @@ namespace MROWebApi.Controllers
                     else
                     {
                         allFields.Add("MROOtherGovIdentity=1", "On");
+                    }
+                    Fields field = fields.FirstOrDefault(e => e.sNormalizedFieldName == requester.sIdentityIdName);
+                    if (field != null)
+                    {
+                        allFields.Add(requester.sIdentityIdName+"Text", field.sFieldName);
                     }
                 }
                 //MROToday's Date
@@ -1329,7 +1345,7 @@ namespace MROWebApi.Controllers
                     + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage
                     + "</td></tr><tr><td><b>Facility Name</b></td><td>" + helpInfo.sFacilityName
                     + "</td></tr><tr><td><b>Location Name</b></td><td>" + helpInfo.sLocationName
-                    + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + helpInfo.sWizardName
+                    + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + Utilities.ReplaceWizardWithExpress(helpInfo.sWizardName)
                     + "</td></tr><tr><td><b>OS</b></td><td>" + helpInfo.sOS
                     + "</td></tr><tr><td><b>Browser</b></td><td>" + helpInfo.sBrowser
                     + "</td></tr></table>";

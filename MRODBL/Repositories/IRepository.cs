@@ -305,7 +305,7 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityID">Facility Id</param>
         /// <param name="nFacilityLocationID">Location Id</param>
         /// <returns></returns>
-        Task<RecordTypeAndSensitiveInfo> GetRecordTypeAndSensitiveInfo(int nFacilityID, int nFacilityLocationID);
+        Task<PDFAndXMLData> GetPDFAndXMLData(int nFacilityID, int nFacilityLocationID);
         #endregion
     }
 }

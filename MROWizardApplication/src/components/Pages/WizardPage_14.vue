@@ -213,7 +213,7 @@ export default {
       return errors;
     },
     ...mapState({
-      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_07_disclaimer01,
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_14_disclaimer01,
      // Show and Hide Fields Values
       MRORecipientMiddleName: state => state.ConfigModule
       .apiResponseDataByLocation.oFields.MRORecipientMiddleName,

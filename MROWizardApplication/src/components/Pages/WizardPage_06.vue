@@ -49,6 +49,7 @@
           <form>
             <!-- if please email copy checkbox is check then below fields are visible -->
             <div v-show="(showVerifyBlock && bRequestorEmailVerify) || (showVerifyBlock && bReturnedForCompliance)">
+              <p v-if="emailSent==false">We would like to verify your email address. Please enter the code sent to the email address you provided.</p>
               <p v-if="emailSent==false">Click on "Send Email" for email verification.</p>
                <v-alert
                     v-if="otpSentAlert"

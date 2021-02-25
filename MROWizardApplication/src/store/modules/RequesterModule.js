@@ -21,6 +21,7 @@ const state = {
     sPatientPreviousLastName: '',
     sPatientPreviousMiddleName: '',
     bPatientNameChanged:false,
+    bPatientDeceased:false,
     dtPatientDOB: null,
     sRequesterEmailId: '',
     bConfirmReport: false,
@@ -139,6 +140,9 @@ const mutations = {
     },
     bPatientNameChanged(state, payload) {
         state.bPatientNameChanged = payload;
+    },
+    bPatientDeceased(state, payload) {
+        state.bPatientDeceased = payload;
     },
     dtPatientDOB(state, payload) {
         state.dtPatientDOB = payload;
@@ -328,6 +332,7 @@ const actions = {
             bEmailVerified: requester.bEmailVerified,
             bForceCompliance: requester.bForceCompliance,
             bPatientNameChanged: requester.bPatientNameChanged,
+            bPatientDeceased: requester.bPatientDeceased,
             bPhoneNoVerified: requester.bPhoneNoVerified,
             bRTManualSelection: requester.bRTManualSelection,
             bRecordMostRecentVisit: requester.bRecordMostRecentVisit,

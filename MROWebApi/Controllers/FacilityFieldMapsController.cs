@@ -227,7 +227,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Shipment Type",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nShipmentTypeID");
+                            logger.UpdateAuditMany(oldShipmentTypes, shipmentTypeList, adminModuleLogger, "nFacilityShipmentTypeID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
@@ -282,7 +282,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Primary Reason",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldPrimaryReasons, primaryReasonsList, adminModuleLogger, "nPrimaryReasonID");
+                            logger.UpdateAuditMany(oldPrimaryReasons, primaryReasonsList, adminModuleLogger, "nFacilityPrimaryReasonID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
@@ -338,7 +338,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Sensitive Info",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldSensitiveInfos, sensitiveInfoList, adminModuleLogger, "nSensitiveInfoID");
+                            logger.UpdateAuditMany(oldSensitiveInfos, sensitiveInfoList, adminModuleLogger, "nFacilitySensitiveInfoID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
@@ -394,7 +394,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Record Type",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldRecordsTypes, recordTypeList, adminModuleLogger, "nRecordTypeID");
+                            logger.UpdateAuditMany(oldRecordsTypes, recordTypeList, adminModuleLogger, "nFacilityRecordTypeID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
@@ -445,7 +445,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Field",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFieldID");
+                            logger.UpdateAuditMany(oldFieldMaps, fieldMapsList, adminModuleLogger, "nFacilityFieldMapID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
@@ -501,7 +501,7 @@ namespace MROWebApi.Controllers
                                 sEventName = "Edit Facility Patient Representative",
                                 nFacilityID = singleRecord.nFacilityID
                             };
-                            logger.UpdateAuditMany(oldPatientRepresentatives, patientRepresentativeList, adminModuleLogger, "nPatientRepresentativeID");
+                            logger.UpdateAuditMany(oldPatientRepresentatives, patientRepresentativeList, adminModuleLogger, "nFacilityPatientRepresentativeID");
                             idList.Clear();
                             idArray = Array.Empty<int>();
                             adminModuleLogger = null;
