@@ -1069,6 +1069,214 @@ namespace MROWebApi.Controllers
 
         #endregion
 
+        #region Master - Waiver - Methods
+
+        #region Get Waiver / Waiver
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetWaiver()
+        {
+            try
+            {
+                WaiverRepository rtFac = new WaiverRepository(_info);
+                IEnumerable<Waiver> waiver = await rtFac.GetAllASC(1000, "sWaiverName");
+                return Ok(waiver);
+            }
+            catch (Exception exp)
+            {
+                return BadRequest(exp.Message);
+            }
+        }
+
+        [HttpGet("GetWaiver/sWaiverID={sWaiverID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<Waiver>> GetWaiver(string sWaiverID, string sAdminUserID)
+        {
+            WaiverRepository rtFac = new WaiverRepository(_info);
+            bool resultWaiverID = int.TryParse(sWaiverID, out int nWaiverID);
+            bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
+            Waiver waiver = await rtFac.Select(nWaiverID);
+
+            #region Logging
+
+            MROLogger logger = new MROLogger(_info);
+            string sDescription = "Get Waiver Method was called for Waiver ID: " + sWaiverID;
+            logger.LogAdminRecords(nAdminUserID, sDescription, "Get Waiver By ID", "Master Entry - Waiver");
+
+            #endregion
+
+            if (waiver == null)
+                return NotFound();
+            return waiver;
+        }
+        #endregion
+
+        #region Add Waiver
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> AddWaiver(Waiver waiver)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check if there's a waiver with same name 
+                WaiverRepository rtFac = new WaiverRepository(_info);
+                IEnumerable<Waiver> dbWaiver = await rtFac.SelectWhere("sWaiverName", waiver.sWaiverName);
+                if (dbWaiver.Count() != 0)
+                {
+                    //Exit
+                    return BadRequest("Cannot add Waiver - \"" + waiver.sWaiverName + "\". Waiver with same name already exists.");
+                }
+                try
+                {
+                    #region Data Addition ! from UI
+                    waiver.nWizardID = 15;
+                    waiver.dtLastUpdate = DateTime.Now;
+                    waiver.dtCreated = DateTime.Now;
+                    //spaces remove
+                    string sNormalizedName = GetNormalizedName(waiver.sWaiverName);
+                    waiver.sNormalizedWaiverName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
+
+                    #endregion
+
+                    int GeneratedID = (int)rtFac.Insert(waiver);
+
+                    #region Logging
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Add Waiver Method was called & Created Waiver with ID: " + GeneratedID;
+                    waiver.nWaiverID = GeneratedID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = waiver.nCreatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Shipment Type",
+                        sEventName = "Add Shipment Type"
+                    };
+                    logger.InsertAuditSingle(waiver, adminModuleLogger);
+                    #endregion
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
+
+        #region Edit Waiver
+        [HttpPost("EditWaiver")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> EditWaiver(Waiver waiver)
+        {
+            if (ModelState.IsValid)
+            {
+                //Check if there's a facility with same name 
+                WaiverRepository rtFac = new WaiverRepository(_info);
+                IEnumerable<Waiver> dbWaiver = await rtFac.SelectWhere("sWaiverName", waiver.sWaiverName);
+                if (dbWaiver.Count() != 0)
+                {
+                    if (dbWaiver.First().nWaiverID != waiver.nWaiverID)
+                    {
+                        //Exit
+                        return BadRequest("Cannot edit Waiver - \"" + waiver.sWaiverName + "\". Waiver with same name already exists.");
+                    }
+                }
+                try
+                {
+                    waiver.dtLastUpdate = DateTime.Now;
+                    Waiver oldShipmentType = await rtFac.Select(waiver.nWaiverID);
+                    if (rtFac.Update(waiver))
+                    {
+                        #region Logging
+
+                        MROLogger logger = new MROLogger(_info);
+                        string sDescription = "Edit Waiver Method was called for Waiver ID: " + waiver.nWaiverID;
+                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                        {
+                            nAdminUserID = waiver.nUpdatedAdminUserID,
+                            sDescription = sDescription,
+                            sModuleName = "Master Entry - Shipment Type",
+                            sEventName = "Edit Shipment Type"
+                        };
+                        logger.UpdateAuditSingle(oldShipmentType, waiver, adminModuleLogger);
+
+                        #endregion
+                        return Ok();
+                    }
+                    else
+                    { return NotFound(); }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+                return BadRequest(errors);
+            }
+        }
+        #endregion
+
+        #region Delete ShipmentType      
+        [HttpGet("DeleteWaiver/sWaiverID={sWaiverID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> DeleteWaiver(string sWaiverID, string sAdminUserID)
+        {
+            WaiverRepository rtFac = new WaiverRepository(_info);
+            FacilityWaiverRepository rtFacilityFac = new FacilityWaiverRepository(_info);
+            bool resultWaiverID = int.TryParse(sWaiverID, out int nWaiverID);
+            bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
+            try
+            {
+                Waiver masterWaiver = await rtFac.Select(nWaiverID);
+                //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
+                //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
+                if (rtFac.DeleteOneToMany(nWaiverID, "lnkFacilityShipmentTypes"))
+                {
+                    #region Logging
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Delete Waiver Method was called for Waiver ID: " + sWaiverID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Master Entry - Waiver",
+                        sEventName = "Delete Waiver"
+                    };
+                    //logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
+                    logger.DeleteAuditSingle(masterWaiver, adminModuleLogger);
+                    #endregion
+                    return Ok();
+                }
+                else
+                { return BadRequest("Error occur while delete record"); }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        #endregion
+
+        #endregion
+
         #region Generic GetNormalizedName method
         private string GetNormalizedName(string normalizedString)
         {
