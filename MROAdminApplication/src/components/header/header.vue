@@ -38,6 +38,9 @@
               <v-list-item to="/Master/patientrepresentative"  @click="closeMenu=true">
                 <v-list-item-title>Patient Representative</v-list-item-title>
               </v-list-item>
+              <v-list-item to="/Master/waiver"  @click="closeMenu=true">
+                <v-list-item-title>Waiver</v-list-item-title>
+              </v-list-item>
             </v-list-group>
             <v-list-group>
               <template v-slot:activator>
@@ -113,6 +116,9 @@
               </v-list-item>
               <v-list-item to="/Master/patientrepresentative">
                 <v-list-item-title>Patient Representative</v-list-item-title>
+              </v-list-item>
+               <v-list-item to="/Master/waiver">
+                <v-list-item-title>Waiver</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
