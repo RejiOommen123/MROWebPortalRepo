@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div id="EditShipmentTypePageBox">
-      <form @submit.prevent="onSubmit" class="editShipmentType-form">
+    <div id="EditWaiverPageBox">
+      <form @submit.prevent="onSubmit" class="editWaiver-form">
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
-            <label class="required" for="sShipmentTypeName">Shipment Type Name:</label>
+            <label class="required" for="sWaiverName">Waiver Name:</label>
             <v-text-field
               type="text"
-              id="sShipmentTypeName"
-              placeholder="Shipment Type Name"
-              v-model="shipmentType.sShipmentTypeName"
-              @input="$v.shipmentType.sShipmentTypeName.$touch()"
-              @blur="$v.shipmentType.sShipmentTypeName.$touch()"
-              :error-messages="sShipmentTypeNameErrors"
+              id="sWaiverName"
+              placeholder="Waiver Name"
+              v-model="waiver.sWaiverName"
+              @input="$v.waiver.sWaivereName.$touch()"
+              @blur="$v.waiver.sWaiverName.$touch()"
+              :error-messages="sWaiverNameErrors"
               solo
               counter
               maxlength="100"
@@ -24,7 +24,7 @@
               type="text"
               id="sFieldToolTip"
               placeholder="Enter Tooltip"
-              v-model="shipmentType.sFieldToolTip"
+              v-model="waiver.sFieldToolTip"
               solo
               counter
               maxlength="500"
@@ -32,8 +32,8 @@
           </v-col>
         </v-row>
         <div class="submit">
-          <v-btn type="submit" color="primary" :disabled="$v.shipmentType.$invalid">Save</v-btn>
-          <v-btn to="/Master/ShipmentType" type="button" color="primary">Cancel</v-btn>
+          <v-btn type="submit" color="primary" :disabled="$v.waiver.$invalid">Save</v-btn>
+          <v-btn to="/Master/Waiver" type="button" color="primary">Cancel</v-btn>
         </div>
          <v-row>
           <v-col cols="12" offset-md="1" md="10">
@@ -42,7 +42,7 @@
         </v-row> 
       </form>
     </div>
-    <!-- Dialog Alert for errors Shipment Type -->
+    <!-- Dialog Alert for errors Waiver -->
     <v-dialog v-model="errorAlert" width="350px" max-width="360px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
@@ -71,8 +71,8 @@ import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   mixins: [validationMixin],
   validations: {
-    shipmentType: {
-      sShipmentTypeName: {
+    waiver: {
+      sWaiverName: {
         required,
         maxLength: maxLength(100),
         minLength: minLength(2),
@@ -80,28 +80,28 @@ export default {
     },
   },
   computed: {
-    sShipmentTypeNameErrors() {
+    sWaiverNameErrors() {
       const errors = [];
-      if (!this.$v.shipmentType.sShipmentTypeName.$dirty) return errors;
-      !this.$v.shipmentType.sShipmentTypeName.minLength &&
-        errors.push("Shipment Type Name must be at least 2 characters long");
-      !this.$v.shipmentType.sShipmentTypeName.maxLength &&
-        errors.push("Shipment Type Name must be at most 100 characters long");
-      !this.$v.shipmentType.sShipmentTypeName.required &&
-        errors.push("Shipment Type Name is required.");
+      if (!this.$v.waiver.sWaiverName.$dirty) return errors;
+      !this.$v.waiver.sWaiverName.minLength &&
+        errors.push("Waiver Name must be at least 2 characters long");
+      !this.$v.waiver.sWaiverName.maxLength &&
+        errors.push("Waiver Name must be at most 100 characters long");
+      !this.$v.waiver.sWaiverName.required &&
+        errors.push("Waiver Name is required.");
       return errors;
     },
   },
-  name: "AddShipmentType",
+  name: "AddWaiver",
   data() {
     return {
       dialogLoader: false,
       errorAlert: false,
       errorMessage: "",
-      shipmentType: {
-        nShipmentTypeID: 0,
-        sShipmentTypeName: "",
-        sNormalizedShipmentTypeName: "",
+      waiver: {
+        nWaiverID: 0,
+        sWaiverName: "",
+        sNormalizedWaiverName: "",
         sFieldToolTip: "",
         nWizardID: 0,
         nUpdatedAdminUserID: this.$store.state.adminUserId,
@@ -111,10 +111,10 @@ export default {
   },
   mounted() {
     this.dialogLoader = true;
-    // API call to get Shipment Type
+    // API call to get Waiver
     this.$http
       .get(
-        "Master/GetShipmentType/sShipmentTypeID=" +
+        "Master/GetWaiver/sWaiverID=" +
           this.$route.params.id +
           "&sAdminUserID=" +
           this.$store.state.adminUserId
@@ -123,7 +123,7 @@ export default {
         (response) => {
           // get body data
           this.dialogLoader = false;
-          this.shipmentType = JSON.parse(response.bodyText);
+          this.waiver = JSON.parse(response.bodyText);
         },
         (error) => {
           // Error Callback
@@ -137,15 +137,15 @@ export default {
   },
   methods: {
     onSubmit() {
-      // API Call to edit Shipment Type
-      this.shipmentType.nUpdatedAdminUserID = this.$store.state.adminUserId;
+      // API Call to edit Waiver
+      this.waiver.nUpdatedAdminUserID = this.$store.state.adminUserId;
       this.dialogLoader = true;
-      this.$http.post("Master/EditShipmentType", this.shipmentType).then(
+      this.$http.post("Master/EditWaiver", this.waiver).then(
         (response) => {
           if (response.ok == true) {
             this.dialogLoader = false;
-            //if reponse ok then redirect to Shipment Type List Page
-            this.$router.push("/Master/ShipmentType");
+            //if reponse ok then redirect to Waiver List Page
+            this.$router.push("/Master/Waiver");
           }
         },
         (error) => {
@@ -168,7 +168,7 @@ a {
   margin-right: 1.25em;
 }
 @media screen and (max-width: 500px) {
-  #EditShipmentTypePageBox {
+  #EditWaiverPageBox {
     margin: 0 0px;
   }
   h1 {
@@ -179,7 +179,7 @@ a {
   text-align: center;
 }
 
-.editShipmentType-form {
+.editWaiver-form {
   margin: 0.625em auto;
   border: 0.0625em solid #eee;
   padding: 1.25em;
