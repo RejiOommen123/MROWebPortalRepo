@@ -24,7 +24,7 @@ namespace MRODBL.BaseClasses
         public int nFacilityLocationID { get; set; }
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Express Id")]
+        [DisplayName("eXpress Id")]
         public int nWizardID { get; set; }
         [Required]
         [DisplayName("Active Status")]

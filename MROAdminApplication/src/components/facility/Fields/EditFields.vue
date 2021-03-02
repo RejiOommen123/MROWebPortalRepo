@@ -152,7 +152,8 @@ export default {
           'Primary Reason',
           'Record Type',
           'Sensitive Info',
-          'Shipment Type'
+          'Shipment Type',
+          'Waiver'
         ],
     };
   },

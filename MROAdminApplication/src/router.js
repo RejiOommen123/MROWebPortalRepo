@@ -29,6 +29,9 @@ import EditPatientRepresentative from './components/master/PatientRepresentative
 import AuditReport from './components/report/AuditReport.vue';
 import FacilityLocationReport from './components/report/FacilityLocationReport.vue';
 import FacilityConfigurationReport from './components/report/FacilityConfigurationReport.vue';
+import Waiver from './components/master/Waiver/Waiver.vue';
+import AddWaiver from './components/master/Waiver/AddWaiver.vue';
+import EditWaiver from './components/master/Waiver/EditWaiver.vue';
 import store from './store';
 
 Vue.use(VueRouter);
@@ -262,6 +265,30 @@ const routes = [{
         component: FacilityConfigurationReport,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Facility Configuration Report");
+            next()
+        }
+    },
+    {
+        path: '/Master/Waiver',
+        component: Waiver,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Waiver");
+            next()
+        }
+    },
+    {
+        path: '/Waiver/EditWaiver/:id',
+        component: EditWaiver,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Waiver");
+            next()
+        }
+    },
+    {
+        path: '/Waiver/AddWaiver',
+        component: AddWaiver,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Waiver");
             next()
         }
     }

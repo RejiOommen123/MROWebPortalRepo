@@ -23,7 +23,7 @@ namespace MRODBL.BaseClasses
         public string sWizardHelperType { get; set; }
         [DisplayName("Value")]
         public string sWizardHelperValue { get; set; }
-        [DisplayName("Express Id")]
+        [DisplayName("eXpress Id")]
         public int nWizardID { get; set; }
         #endregion
     }

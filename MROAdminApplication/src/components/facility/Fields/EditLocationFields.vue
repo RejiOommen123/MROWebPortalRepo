@@ -214,6 +214,7 @@ export default {
         "Record Type",
         "Sensitive Info",
         "Shipment Type",
+        "Waiver",
       ],
     };
   },
