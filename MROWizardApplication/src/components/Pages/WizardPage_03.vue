@@ -144,13 +144,13 @@
             <v-col cols="12" offset-sm="3" sm="6">
             <v-btn
               v-if="sSelectedPatientRepresentatives[0]=='MRORelationshipOther'"
-              @click.prevent="continueAhead"
+              @click.prevent="docReqCheck"
               :disabled="$v.$invalid"
               class="mr-4 next"
             >Continue</v-btn>
             <v-btn
               v-else
-              @click.prevent="continueAhead"
+              @click.prevent="docReqCheck"
               :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedPatientRepresentatives.length==0|| $v.files.$invalid "
               class="mr-4 next"
             >Continue</v-btn>
@@ -190,6 +190,22 @@
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="unsupported=false">Ok</v-btn>
         </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Document required dialog -->
+    <v-dialog v-model="DocReqDiaglog" persistent width="350px" light max-width="350px">
+      <v-card class="DocReqDiaglog">
+        <v-card-title class="justify-center" id="DocReqTitle">{{disclaimer05}}</v-card-title>
+        <v-card-text id="DocReqBody"><p id="DocReqBodyPre" v-html="disclaimer06"></p></v-card-text>
+
+          <v-row id="DocReqActionRow">
+            <v-col id="DocReqGoBackCol" cols="4" offset="4">
+          <v-btn id="DocReqGoBackBtn" @click="DocReqDiaglog=false">Go Back</v-btn><br/>
+          </v-col>
+          <v-col id="DocReqContinueCol" cols="6" offset="3">
+          <v-btn id="DocReqContinueBtn" color="#3f48cc" text @click="continueAhead">Continue to next step</v-btn>
+          </v-col>
+          </v-row>
       </v-card>
     </v-dialog>
   </div>
@@ -241,6 +257,7 @@ export default {
       sOtherPatientRepresentatives: '',
       sSelectedPatientRepresentativesName:'',
       sActiveBtn:'',
+      DocReqDiaglog:false
     };
   },
   //Relative name and realtion validations
@@ -289,6 +306,10 @@ export default {
         .wizardHelper.Wizard_03_disclaimer03,
       disclaimer04: state => state.ConfigModule.apiResponseDataByFacilityGUID
         .wizardHelper.Wizard_03_disclaimer04,
+      disclaimer05: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer05,
+      disclaimer06: state => state.ConfigModule.apiResponseDataByFacilityGUID
+        .wizardHelper.Wizard_03_disclaimer06,
       MRORelationshipParentLegalGuardian: state => state.ConfigModule
         .apiResponseDataByLocation.oFields.MRORelationshipParentLegalGuardian,
        MRORelationshipLegalRepresentative: state => state.ConfigModule
@@ -324,22 +345,22 @@ export default {
       this.$store.commit("requestermodule/bAreYouPatient", false);
     },
     continueAhead() {
-      this.$store.commit("requestermodule/sSelectedRelation",this.sSelectedPatientRepresentatives);
-        if (this.sSelectedPatientRepresentatives == "MRORelationshipOther") {
-          this.sSelectedPatientRepresentativesName=this.sOtherPatientRepresentatives;
-        }
-      this.$store.commit("requestermodule/sSelectedRelationName", this.sSelectedPatientRepresentativesName);
+        this.$store.commit("requestermodule/sSelectedRelation",this.sSelectedPatientRepresentatives);
+          if (this.sSelectedPatientRepresentatives == "MRORelationshipOther") {
+            this.sSelectedPatientRepresentativesName=this.sOtherPatientRepresentatives;
+          }
+        this.$store.commit("requestermodule/sSelectedRelationName", this.sSelectedPatientRepresentativesName);
 
-      this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
-      this.$store.commit("requestermodule/sRelativeFileNameArray", this.sRelativeFileNameArray);
-      this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
-      this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
-      this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedPatientRepresentatives[0]);
+        this.$store.commit("requestermodule/sRelativeFileArray", this.sRelativeFileArray);
+        this.$store.commit("requestermodule/sRelativeFileNameArray", this.sRelativeFileNameArray);
+        this.$store.commit("requestermodule/sRelativeFirstName", this.sRelativeFirstName);
+        this.$store.commit("requestermodule/sRelativeLastName", this.sRelativeLastName);
+        this.$store.commit("requestermodule/sSelectedRelation", this.sSelectedPatientRepresentatives[0]);
 
-      //Partial Requester Data Save Start
-      this.$store.dispatch('requestermodule/partialAddReq');
+        //Partial Requester Data Save Start
+        this.$store.dispatch('requestermodule/partialAddReq');
 
-      this.$store.commit("ConfigModule/mutateNextIndex");
+        this.$store.commit("ConfigModule/mutateNextIndex");
     },
     filesChange(files){
       this.sRelativeFileArray=[];
@@ -396,7 +417,59 @@ export default {
           this.sOtherPatientRepresentatives='';
         }
           
+    },
+    docReqCheck(){
+      if(this.sRelativeFileArray.length==0){
+        this.DocReqDiaglog = true;
+      }
+      else{
+        this.continueAhead();
+      }
     }
   }
 };
 </script>
+<style scoped>
+.DocReqDiaglog{
+  border : 2px solid #3f48cc;
+}
+#DocReqTitle {
+  text-decoration: underline;  
+  font-size: 24px;
+  color: #3f48cc;
+}
+#DocReqBody {
+  padding-bottom: 0;
+}
+#DocReqBodyPre {
+  color: #3f48cc;
+}
+#DocReqActionRow{
+  width: 100% ; 
+  margin:0;
+}
+#DocReqGoBackBtn {
+  background-color:#3f48cc;
+  color:white;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-transform: none;
+}
+#DocReqContinueBtn {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-transform: none;
+  padding: 0;
+  text-decoration: underline;  
+} 
+#DocReqGoBackCol {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+#DocReqContinueCol {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+} 
+</style>
