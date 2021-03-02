@@ -27,7 +27,7 @@ namespace MRODBL.BaseClasses
         public string sRecordTypeName { get; set; }
         [DisplayName("Order")]
         public int? nFieldOrder { get; set; }
-        [DisplayName("Express Id")]
+        [DisplayName("eXpress Id")]
         public int nWizardID { get; set; }
         [DisplayName("Active Status")]
         public bool bShow { get; set; }

@@ -20,7 +20,7 @@ namespace MRODBL.BaseClasses
         [IgnorePropertyCompare]
         public DateTime dtLastUpdate { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Express Id")]
+        [DisplayName("eXpress Id")]
         public int nWizardID { get; set; }
         #endregion
     }

@@ -21,7 +21,7 @@ namespace MRODBL.BaseClasses
         [DisplayName("Tooptip")]
         public string sFieldToolTip { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
-        [DisplayName("Express Id")]
+        [DisplayName("eXpress Id")]
         public int nWizardID { get; set; }
         #endregion
     }

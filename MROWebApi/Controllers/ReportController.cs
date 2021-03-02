@@ -111,7 +111,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    auditFilterParameter.sWizardName = Utilities.ReplaceExpressWithWizard(auditFilterParameter.sWizardName);
+                    auditFilterParameter.sWizardName = Utilities.ReplaceeXpressWithWizard(auditFilterParameter.sWizardName);
                     FacilitiesRepository faciFac = new FacilitiesRepository(_info);
                     IEnumerable<dynamic> records = await faciFac.GetFacilityConfigurationData((String.IsNullOrWhiteSpace(auditFilterParameter.sFacilityName) ? null : auditFilterParameter.sFacilityName), (String.IsNullOrWhiteSpace(auditFilterParameter.sWizardName) ? null : auditFilterParameter.sWizardName));
                     #endregion

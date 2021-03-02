@@ -7,13 +7,13 @@ namespace MROWebApi.Services
 {
     public static class Utilities
     {
-        public static string ReplaceWizardWithExpress(string input)
+        public static string ReplaceWizardWitheXpress(string input)
         {
-            return input.Replace("Wizard", "Express");
+            return input.Replace("Wizard", "eXpress");
         }
-        public static string ReplaceExpressWithWizard(string input)
+        public static string ReplaceeXpressWithWizard(string input)
         {
-            return input.Replace("Express", "Wizard");
+            return input.Replace("eXpress", "Wizard");
         }
     }
 }
