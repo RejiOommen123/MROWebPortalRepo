@@ -47,7 +47,7 @@
         </v-checkbox>
       </v-col>
       <v-col cols="12" offset-sm="5" sm="2">
-        <v-btn :disabled="option[0]==null"  class="next" @click="next">Next</v-btn>
+        <v-btn :disabled="option[0]==null"  class="next" @click.once="next" :key="buttonKey">Next</v-btn>
       </v-col>
     </v-row>
   </div>
@@ -56,10 +56,14 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_15",
+   activated(){
+    this.buttonKey++;
+   },
   data() {
     return {
       bRTManualSelection : false,
       option:['abstract'],
+      buttonKey:1,
     };
   },
   methods: {

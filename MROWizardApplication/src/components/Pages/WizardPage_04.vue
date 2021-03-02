@@ -78,10 +78,10 @@
           </v-col>
         </template>
         <v-col v-if="bPatientNameChanged" cols="12" offset-sm="3" sm="6">
-          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.$invalid">Next</v-btn>
+          <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey" :disabled="$v.$invalid">Next</v-btn>
         </v-col>
         <v-col v-else cols="12" offset-sm="3" sm="6">
-          <v-btn class="mr-4 next" @click.prevent="nextPage" :disabled="$v.sPatientFirstName.$invalid  || $v.sPatientLastName.$invalid ">Next</v-btn>
+          <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey" :disabled="$v.sPatientFirstName.$invalid  || $v.sPatientLastName.$invalid ">Next</v-btn>
         </v-col>
         <v-col v-if="disclaimer!='' && bPatientNameChanged==true" cols="12" sm="12">
         <div class="disclaimer">{{bAreYouPatient ? disclaimer : disclaimer02}}</div>
@@ -97,6 +97,7 @@ import { required, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_05",
    activated(){
+    this.buttonKey++;
     if(this.bAreYouPatient || !this.MROPatientDeceased){
       this.bPatientDeceased = false;
 
@@ -116,7 +117,8 @@ export default {
       sPatientPreviousMiddleName: "",
       disclaimer02:"",
       bPatientNameChanged: false,
-      bPatientDeceased:false
+      bPatientDeceased:false,
+      buttonKey:1
     };
   },
   //Requester name validations

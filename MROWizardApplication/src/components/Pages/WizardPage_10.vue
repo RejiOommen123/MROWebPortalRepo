@@ -43,7 +43,7 @@
       </v-layout>
     </template>
     <div>
-      <v-btn @click.prevent="nextPage" :disabled="otherExist==true && sOtherRTText==''" class="next">Next</v-btn>
+      <v-btn @click.once="nextPage" :disabled="otherExist==true && sOtherRTText==''" class="next"  :key="buttonKey">Next</v-btn>
     </div>
   </div>
 </template>
@@ -53,6 +53,7 @@ import { mapState } from 'vuex';
 export default {
   name: "WizardPage_10",
   activated(){
+    this.buttonKey++;
     if(this.sSelectedStateRecordTypes.length == 0){
       this.sSelectedRecordTypes = [],
       this.sOtherRTText = '',
@@ -63,7 +64,8 @@ export default {
     return {
       sSelectedRecordTypes: [],
       sOtherRTText:'',
-      otherExist:false
+      otherExist:false,
+       buttonKey:1,
     };
   },
   methods: {

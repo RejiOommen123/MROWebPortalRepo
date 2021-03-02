@@ -8,16 +8,16 @@
        <div style="width:100%">
         <v-col name="Yes" cols="12" offset-sm="2" sm="8">
           <button
-            :class="{active: sActiveBtn === 'true'}"
-            @click.prevent="setDeadlineStatus($event)"
+            :class="{active: sActiveBtn === 'true'}" :key="buttonKey"
+            @click.once="setDeadlineStatus($event)"
             class="wizardSelectionButton"
             value=true
           >Yes, I have a deadline.</button>
         </v-col>
         <v-col name="No" cols="12" offset-sm="2" sm="8">
           <button
-            :class="{active: sActiveBtn === 'false'}"
-            @click.prevent="setDeadlineStatus($event)"
+            :class="{active: sActiveBtn === 'false'}" :key="buttonKey"
+            @click.once="setDeadlineStatus($event)"
             class="wizardSelectionButton"
             value=false
           >No, just as soon as possible.</button>
@@ -31,9 +31,13 @@ import { mapState } from 'vuex';
 import moment from "moment";
 export default {
   name: "WizardPage_15",
+   activated(){
+    this.buttonKey++;
+    },
   data() {
     return {
       sActiveBtn:'',
+       buttonKey:1,
     };
   },
   methods: {

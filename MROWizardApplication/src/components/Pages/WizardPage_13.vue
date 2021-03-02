@@ -10,7 +10,7 @@
           <v-col cols="12" offset-sm="2" sm="10" style="padding-bottom:0px">
             <button
             :class="{active: sActiveBtn === releaseTo.sNormalizedReleaseTo}" 
-            @click.prevent="releaseRequestTo(releaseTo)" class="wizardSelectionButton"  :value="releaseTo"
+            @click.once="releaseRequestTo(releaseTo)" :key="buttonKey" class="wizardSelectionButton"  :value="releaseTo"
             >{{releaseTo.sReleaseTo}}</button>
           </v-col>
         </div>
@@ -21,10 +21,14 @@
 <script>
 export default {
   name: "WizardPage_11",
+    activated(){
+    this.buttonKey++;
+    },
   data() {
     return {
       oReleaseToArray: this.$store.state.ConfigModule.oReleaseRequestTo,
-      sActiveBtn:''
+      sActiveBtn:'',
+       buttonKey:1,
     };
   },
   methods: {

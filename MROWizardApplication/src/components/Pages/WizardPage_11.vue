@@ -33,10 +33,10 @@
     </div> -->
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sSelectedSensitiveInfo[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
+      <v-btn :disabled="sSelectedSensitiveInfo[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+      <v-btn @click.once="skipPage" class="next" :key="buttonKey">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -47,6 +47,7 @@ import { mapState } from 'vuex';
 export default {
   name: "WizardPage_09",
   activated(){
+    this.buttonKey++;
     if(this.sSelectedStateSensitiveInfo.length == 0){
       this.sSelectedSensitiveInfo = [];
     }
@@ -54,6 +55,7 @@ export default {
   data() {
     return {
       sSelectedSensitiveInfo: [],
+       buttonKey:1,
     };
   },
   methods: {

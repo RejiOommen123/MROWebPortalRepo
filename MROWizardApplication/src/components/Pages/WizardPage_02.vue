@@ -17,7 +17,7 @@
           <v-col cols="12" offset-sm="2" sm="8">
             <button
               :class="{active: sActiveBtn === location.sNormalizedLocationName}"
-              @click.prevent="locationRequest(location)"
+              @click.once="locationRequest(location)" :key="buttonKey"
               class="wizardSelectionButton"
               :value="location.sNormalizedLocationName"
             >{{location.sLocationName}}</button>
@@ -36,7 +36,7 @@
               ></v-text-field>
               <v-btn
                 :disabled="$v.sSelectedLocationName.$invalid"
-                @click.prevent="next(location)"
+                @click.once="next(location)" :key="buttonKey"
                 class="next"
               >Next</v-btn>
             </v-col>
@@ -61,14 +61,18 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_02",
-  data() {
+   activated(){
+    this.buttonKey++;
+   },
+   data() {
     return {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
       dialogLoader: false,
       sActiveBtn: "",
       showOtherLoactionBox: false,
-      sSelectedLocationName: ""
+      sSelectedLocationName: "",
+       buttonKey:1,
     };
   },
   mixins: [validationMixin],

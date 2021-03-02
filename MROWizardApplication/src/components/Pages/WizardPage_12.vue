@@ -44,10 +44,10 @@
     </template>
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sSelectedPrimaryReasons[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
+      <v-btn :disabled="sSelectedPrimaryReasons[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+      <v-btn @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -58,6 +58,7 @@ import { mapState } from 'vuex';
 export default {
   name: "WizardPage_08",
   activated(){
+    this.buttonKey++;
     if(this.sSelectedStatePrimaryReasons.length == 0){
       this.bOther = false;
       this.sSelectedPrimaryReasons = [];
@@ -71,6 +72,7 @@ export default {
       sSelectedPrimaryReasons: [],
       sOtherPrimaryReasons: '',
       sSelectedPrimaryReasonsName:'',
+        buttonKey:1,
     };
   },
   methods: {

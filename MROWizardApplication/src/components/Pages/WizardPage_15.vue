@@ -168,19 +168,19 @@
           </v-col>
         </v-layout>      
         <div v-if="sSelectedShipmentTypes[0]=='MROSTEmail'">
-          <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>
         <div v-if="sSelectedShipmentTypes[0]=='MROSTMail' && $store.state.requestermodule.sReleaseTo=='MROReleaseToMyself' ">
-          <v-btn :disabled="$v.sSTAddStreetAddress.$invalid || $v.sSTAddCity.$invalid || $v.sSTAddState.$invalid || $v.sSTAddZipCode.$invalid " @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="$v.sSTAddStreetAddress.$invalid || $v.sSTAddCity.$invalid || $v.sSTAddState.$invalid || $v.sSTAddZipCode.$invalid " @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>   
         <div v-if="sSelectedShipmentTypes[0]=='MROSTMail' && $store.state.requestermodule.sReleaseTo!='MROReleaseToMyself'">
-          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>        
         <div v-if="sSelectedShipmentTypes[0]=='MROSTFax'">
-          <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.sSTConfirmFaxNumber.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="$v.sSTFaxNumber.$invalid || $v.sSTConfirmFaxNumber.$invalid" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>
         <div v-if="sSelectedShipmentTypes[0]!='MROSTEmail' && sSelectedShipmentTypes[0]!='MROSTMail' && sSelectedShipmentTypes[0]!='MROSTFax'">
-          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.prevent="nextPage" class="next">Next</v-btn>
+          <v-btn :disabled="sSelectedShipmentTypes.length==0"  @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>
       </form>
     </template>
@@ -194,6 +194,7 @@ import { required, email, sameAs, numeric ,maxLength} from "vuelidate/lib/valida
 export default {
   name: "WizardPage_15",
   activated(){
+    this.buttonKey++;
     if(this.sSelectedStateShipmentTypes.length == 0){
       this.sSelectedShipmentTypes = [];
       this.sSelectedShipmentTypesName = '';
@@ -224,6 +225,7 @@ export default {
       sSTAddState: '',
       sSTAddStreetAddress: '',
       sSTAddApartment:'',
+      buttonKey:1,
     };
   },
   //Shipment type validations

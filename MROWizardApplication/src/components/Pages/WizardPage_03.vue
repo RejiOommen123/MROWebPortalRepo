@@ -6,7 +6,7 @@
         <v-col cols="12" offset-sm="1" sm="10">
           <button
             :class="{active: sActiveBtn === 'Yes'}"
-            @click.prevent="setPatient"
+            @click.once="setPatient" :key="buttonKey"
             class="wizardSelectionButton"
           >Yes, I want my medical records.</button>
         </v-col>
@@ -15,7 +15,7 @@
         <v-col cols="12" offset-sm="1" sm="10">
           <button 
             :class="{active: sActiveBtn === 'No'}"
-            @click.prevent="setNotPatient" class="wizardSelectionButton">
+            @click.once="setNotPatient" :key="buttonKey" class="wizardSelectionButton">
             No, I am requesting medical records for someone else (child, dependent, decedent, etc.).
           </button>
         </v-col>
@@ -144,13 +144,13 @@
             <v-col cols="12" offset-sm="3" sm="6">
             <v-btn
               v-if="sSelectedPatientRepresentatives[0]=='MRORelationshipOther'"
-              @click.prevent="continueAhead"
+              @click.once="continueAhead" :key="buttonKey"
               :disabled="$v.$invalid"
               class="mr-4 next"
             >Continue</v-btn>
             <v-btn
               v-else
-              @click.prevent="continueAhead"
+              @click.once="continueAhead" :key="buttonKey"
               :disabled="$v.sRelativeFirstName.$invalid || $v.sRelativeLastName.$invalid || sSelectedPatientRepresentatives.length==0|| $v.files.$invalid "
               class="mr-4 next"
             >Continue</v-btn>
@@ -219,6 +219,7 @@ const maxSize = (value) =>  {
 export default {
   name: "WizardPage_03",
   activated(){
+    this.buttonKey++;
     if(this.sSelectedRelation == ''){
       this.sSelectedPatientRepresentatives = [];
       this.sSelectedPatientRepresentativesName = '';
@@ -241,6 +242,7 @@ export default {
       sOtherPatientRepresentatives: '',
       sSelectedPatientRepresentativesName:'',
       sActiveBtn:'',
+        buttonKey:1,
     };
   },
   //Relative name and realtion validations

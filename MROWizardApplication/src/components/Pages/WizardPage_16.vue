@@ -77,13 +77,13 @@
           </div>
         </v-col>
         <v-col v-if="nSelectedCheckBox[0]==1 || nSelectedCheckBox[0]==3 || nSelectedCheckBox[0]==null" cols="6" offset-sm="4" sm="2">
-           <v-btn :disabled="nSelectedCheckBox[0]==null" @click.prevent="nextPage" class="next">Next</v-btn>
+           <v-btn :disabled="nSelectedCheckBox[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </v-col>
         <v-col v-if="nSelectedCheckBox[0]==2" cols="6" offset-sm="4" sm="2">
-           <v-btn :disabled="$v.dSpecific.$invalid" @click.prevent="nextPage" class="next">Next</v-btn>
+           <v-btn :disabled="$v.dSpecific.$invalid" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </v-col>
         <v-col cols="6" sm="2">
-          <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+          <v-btn @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
         </v-col>
       </v-layout>
     </template>
@@ -105,6 +105,7 @@ export default {
       sAuthSpecificEvent: "",
       maxdate:'',
       mindate:'',
+      buttonKey:1,
     };
   },
    watch: {
@@ -113,6 +114,7 @@ export default {
       },
     },
     activated(){
+      this.buttonKey++;
       // var dt = new Date();
       // dt.setMonth(dt.getMonth() + 60);
       // this.maxdate = dt.toISOString();

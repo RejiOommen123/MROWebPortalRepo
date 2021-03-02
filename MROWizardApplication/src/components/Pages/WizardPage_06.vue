@@ -61,13 +61,13 @@
                   </v-alert>
               <v-btn
                 v-if="emailSent==false"
-                @click="sendEmail"
+                @click.once="sendEmail" :key="buttonKey"
                 :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
               >Send Email Verification</v-btn>
               <v-btn
                 v-if="emailSent==false"
-                @click.prevent="nextPage"
+                @click.once="nextPage" :key="buttonKey"
                 :disabled="$v.emailValid.$invalid"
                 style="margin-left:10px"
                 class="next"
@@ -95,7 +95,7 @@
                 >Verify</v-btn>                
                 </v-col>
                 <v-btn
-                  @click.prevent="nextPage"
+                  @click.once="nextPage" :key="buttonKey"
                   :disabled="$v.emailValid.$invalid"
                   style="margin-left:10px"
                   class="next"
@@ -107,7 +107,7 @@
             </div>
             <div v-if="showSuccessBlock">
               <p class="disclaimer">Email Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
+              <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey">Next</v-btn>
             </div>
           </form>
         </v-col>
@@ -144,6 +144,7 @@ export default {
       emailSent:false,
       otpSentAlert:false,
       bReturnedForCompliance:false,
+      buttonKey:1,
     };
   },
   //Email on verify OTP validations
@@ -163,6 +164,7 @@ export default {
     sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) }
   },
   activated(){
+    this.buttonKey++;
     this.bReturnedForCompliance=this.$store.state.ConfigModule.bReturnedForCompliance;
   },
   computed: {

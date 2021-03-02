@@ -39,7 +39,7 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6">
         <div>
-          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+          <v-btn @click.once="nextPage" :key="buttonKey" :disabled="$v.$invalid" class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -53,10 +53,14 @@ import moment from "moment";
 import { required } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_05",
+  activated(){
+    this.buttonKey++;
+  },
   data() {
     return {
       dtPatientDOB: this.$store.state.requestermodule.dtPatientDOB,
       menu1: false,
+       buttonKey:1,
     };
   },
   // Date Validation

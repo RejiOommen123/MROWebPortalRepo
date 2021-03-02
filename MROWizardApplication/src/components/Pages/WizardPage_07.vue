@@ -59,7 +59,7 @@
           <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
         </v-col>
         <v-col cols="12" offset-sm="3" sm="6">
-          <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+          <v-btn @click.once="nextPage" :key="buttonKey" :disabled="$v.$invalid" class="next">Next</v-btn>
         </v-col>
       </v-row>
     </form>
@@ -75,6 +75,9 @@ import {
 } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_06",
+   activated(){
+    this.buttonKey++;
+   },
   data() {
     return {
       sAddZipCode: '',
@@ -82,6 +85,7 @@ export default {
       sAddState: '',
       sAddStreetAddress: '',
       sAddApartment:'',
+      buttonKey:1,
     };
   },
   //Requester address validations

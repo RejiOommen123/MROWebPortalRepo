@@ -102,9 +102,9 @@
       <br />
       <v-col cols="12" offset-sm="3" sm="6" style="padding-top:0">
         <div>
-          <v-btn v-if="bRecordMostRecentVisit"  @click.prevent="nextPage"  class="next">Next</v-btn>
-          <v-btn v-if="bSpecifyVisit" :disabled="sSpecifyVisitText==''" @click.prevent="nextPage"  class="next">Next</v-btn>
-          <v-btn v-if="!bRecordMostRecentVisit && !bSpecifyVisit" :disabled="$v.dtRecordRangeStart.$invalid || $v.dtRecordRangeEnd.$invalid" @click.prevent="nextPage"  class="next">Next</v-btn>
+          <v-btn v-if="bRecordMostRecentVisit"  @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
+          <v-btn v-if="bSpecifyVisit" :disabled="sSpecifyVisitText==''" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
+          <v-btn v-if="!bRecordMostRecentVisit && !bSpecifyVisit" :disabled="$v.dtRecordRangeStart.$invalid || $v.dtRecordRangeEnd.$invalid" @click.once="nextPage" :key="buttonKey"  class="next">Next</v-btn>
         </div>
       </v-col>
     </v-row>
@@ -119,6 +119,9 @@ import moment from "moment";
 import { required} from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_08",
+   activated(){
+    this.buttonKey++;
+   },
   data() {
     return {
       dtRecordRangeStart: '',
@@ -128,6 +131,7 @@ export default {
       sSpecifyVisitText:'',
       menu1: false,
       menu2: false,
+      buttonKey:1,
     };
   },
    watch: {
