@@ -39,7 +39,7 @@
 
         <v-col cols="12" offset-sm="3" sm="6">
           <div>
-            <v-btn @click.prevent="nextPage" :disabled="$v.$invalid" class="next">Next</v-btn>
+            <v-btn @click.once="nextPage" :disabled="$v.$invalid" :key="buttonKey" class="next">Next</v-btn>
           </div>
         </v-col>
     </v-row>
@@ -61,6 +61,7 @@ export default {
       menu1: false,
       mindate:'',
       maxdate:'',
+      buttonKey:1,
     };
   },
   //Date Validation
@@ -76,6 +77,7 @@ export default {
       },
     },
    activated(){
+    this.buttonKey++;
     this.mindate=moment()
           .add(1, "days")
           .toISOString()

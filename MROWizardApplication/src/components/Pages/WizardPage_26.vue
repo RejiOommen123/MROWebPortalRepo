@@ -6,7 +6,7 @@
         <div class="disclaimer">{{disclaimer02}}</div>
         <div class="disclaimer">{{disclaimer03}}</div>
     <div>
-      <v-btn @click.prevent="closeWizard" class="next">Close</v-btn>
+      <v-btn @click.once="closeWizard" :key="buttonKey" class="next">Close</v-btn>
     </div>
   </div>
 </template>
@@ -15,6 +15,14 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_24",
+   activated(){
+    this.buttonKey++;
+   },
+  data() {
+    return {
+    buttonKey:1,
+    };
+  },
   methods: {
     closeWizard() {  
       window.top.postMessage("hello", "*");

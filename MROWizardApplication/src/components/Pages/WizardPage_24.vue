@@ -9,7 +9,7 @@
     <div class="form-group">     
       <v-col cols="12" offset-sm="2" sm="8">
     <button @click.prevent="requestAnotherRecord($event)"  class="wizardSelectionButton" value=true>Request another record</button>
-    <button @click.prevent="requestAnotherRecord($event)"  class="wizardSelectionButton" value=false>I'm done</button>
+    <button @click.once="requestAnotherRecord($event)"  :key="buttonKey" class="wizardSelectionButton" value=false>I'm done</button>
     </v-col>
     </div>
   </div>
@@ -19,6 +19,14 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_22",
+   activated(){
+    this.buttonKey++;
+   },
+  data() {
+    return {
+    buttonKey:1,
+    };
+  },
   created(){ 
     this.$vuetify.theme.dark = true
   },

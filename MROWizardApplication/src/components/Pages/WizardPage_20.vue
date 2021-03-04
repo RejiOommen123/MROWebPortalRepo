@@ -59,10 +59,10 @@
                 >Verify</v-btn>
               </div>
             </div>
-            <v-btn v-if="showSuccessBlock==false" @click.prevent="skipPage" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
+            <v-btn v-if="showSuccessBlock==false" @click.once="skipPage" :key="buttonKey" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
             <div v-if="showSuccessBlock">
               <p class="disclaimer">Mobile Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.prevent="nextPage">Next</v-btn>
+              <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey">Next</v-btn>
             </div>
           </v-col>
         </v-row>
@@ -77,6 +77,9 @@ import { validationMixin } from "vuelidate";
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
   name: "WizardPage_18",
+   activated(){
+    this.buttonKey++;
+    },
   data() {
     return {
       isDisable: false,
@@ -93,6 +96,7 @@ export default {
       sVerify: "",
       service: "",
       subData: {},
+      buttonKey:1,
     };
   },
   // OTP and phono validations

@@ -50,7 +50,7 @@
         <v-btn id="signHere" @click="showDialog" color="white">Sign request</v-btn>
       </div>
       <div v-else>
-        <v-btn id="submitRequest" @click="next" class="next">Submit Request</v-btn>
+        <v-btn id="submitRequest" @click.once="next" :key="buttonKey" class="next">Submit Request</v-btn>
     </div>
     <!-- Loader dialog -->
     <v-dialog v-model="dialogLoader" persistent width="300">
@@ -112,10 +112,12 @@ export default {
       bFormSigned:false,
       dialogLoader:false,
       bShowCompliance:false,
-      bShowAddSignature:false
+      bShowAddSignature:false,
+      buttonKey:1,
     };
   },
   activated(){
+    this.buttonKey++;
     this.$store.commit("ConfigModule/mutatedialogMinWidth", "100%");
     this.$store.commit("ConfigModule/mutatedialogMaxWidth", "100%");
     this.$store.commit("ConfigModule/mutatedialogMaxHeight", "100%");

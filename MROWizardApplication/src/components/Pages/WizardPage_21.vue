@@ -42,10 +42,10 @@
     </div> -->
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="nSelectedCheckBox==''" @click.prevent="nextPage" class="next">Next</v-btn>
+      <v-btn :disabled="nSelectedCheckBox==''" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn  @click.prevent="skipPage" class="next">Skip</v-btn>
+      <v-btn  @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -55,9 +55,13 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_19",
+   activated(){
+    this.buttonKey++;
+    },
   data() {
     return {
       nSelectedCheckBox:[],
+      buttonKey:1,
     };
   },
   methods: {

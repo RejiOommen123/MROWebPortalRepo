@@ -24,10 +24,10 @@
     </div>
      <v-row>
     <v-col cols="6" offset-sm="3" sm="3">
-      <v-btn @click.prevent="nextPage" class="next">Rate Us</v-btn>
+      <v-btn @click.once="nextPage" :key="buttonKey" class="next">Rate Us</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn @click.prevent="skipPage" class="next">Skip</v-btn>
+      <v-btn @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -37,10 +37,14 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_23",
+    activated(){
+    this.buttonKey++;
+   },
   data() {
     return {
       nFeedbackRating: 4,
       sFeedbackComment: "",
+      buttonKey:1,
     };
   },
   methods: {

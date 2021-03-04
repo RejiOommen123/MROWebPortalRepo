@@ -21,10 +21,10 @@
     </div> -->
      <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sAdditionalData==''" @click.prevent="nextPage" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
+      <v-btn :disabled="sAdditionalData==''" @click.once="nextPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn @click.prevent="skipPage" style="margin-top:0px; margin-bottom:0px;" class="next">Skip</v-btn>
+      <v-btn @click.once="skipPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -34,9 +34,13 @@
 import { mapState } from 'vuex';
 export default {
   name: "WizardPage_10",
+  activated(){
+   this.buttonKey++;
+  },
   data() {
     return {
       sAdditionalData:'',
+      buttonKey:1,
     };
   },
   methods: {
