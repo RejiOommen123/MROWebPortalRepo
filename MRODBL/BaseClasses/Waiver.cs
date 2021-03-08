@@ -12,7 +12,7 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Id")]
         public int nWaiverID { get; set; }        
-        [StringLength(100, ErrorMessage = "Maximum 100 characters Waiver allowed")]
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Waiver allowed")]
         [DisplayName("Name")]
         public string sWaiverName { get; set; }
         [DisplayName("Normalized Name")]

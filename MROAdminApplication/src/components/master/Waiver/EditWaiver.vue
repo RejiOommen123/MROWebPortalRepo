@@ -15,7 +15,7 @@
               :error-messages="sWaiverNameErrors"
               solo
               counter
-              maxlength="100"
+              maxlength="500"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
@@ -74,7 +74,7 @@ export default {
     waiver: {
       sWaiverName: {
         required,
-        maxLength: maxLength(100),
+        maxLength: maxLength(500),
         minLength: minLength(2),
       },
     },
@@ -86,7 +86,7 @@ export default {
       !this.$v.waiver.sWaiverName.minLength &&
         errors.push("Waiver Name must be at least 2 characters long");
       !this.$v.waiver.sWaiverName.maxLength &&
-        errors.push("Waiver Name must be at most 100 characters long");
+        errors.push("Waiver Name must be at most 500 characters long");
       !this.$v.waiver.sWaiverName.required &&
         errors.push("Waiver Name is required.");
       return errors;

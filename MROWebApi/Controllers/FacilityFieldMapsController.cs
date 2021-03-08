@@ -103,8 +103,8 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         public async Task<IActionResult> EditFacilityFields(EditFields editFields)
         {
-            IEnumerable<FacilitiesFieldMapTable> InsertPRList = null, InsertRTList = null, InsertSIList = null, InsertSTList = null, InsertFMList = null, InsertPRepList = null,
-                UpdatePRList = null, UpdateRTList = null, UpdateSIList = null, UpdateSTList = null, UpdateFMList = null, UpdatePRepList = null;
+            IEnumerable<FacilitiesFieldMapTable> InsertPRList = null, InsertRTList = null, InsertSIList = null, InsertSTList = null, InsertFMList = null, InsertPRepList = null, InsertWList = null,
+                UpdatePRList = null, UpdateRTList = null, UpdateSIList = null, UpdateSTList = null, UpdateFMList = null, UpdatePRepList = null, UpdateWList = null;
             if (ModelState.IsValid)
             {
                 try
@@ -117,6 +117,7 @@ namespace MROWebApi.Controllers
                         InsertSTList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes" && map.nFacilityLocationID == 0);
                         InsertFMList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps" && map.nFacilityLocationID == 0);
                         InsertPRepList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPatientRepresentatives" && map.nFacilityLocationID == 0);
+                        InsertWList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityWaiver" && map.nFacilityLocationID == 0);
 
                         UpdatePRList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPrimaryReasons" && map.nFacilityLocationID != 0);
                         UpdateRTList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityRecordTypes" && map.nFacilityLocationID != 0);
@@ -124,6 +125,7 @@ namespace MROWebApi.Controllers
                         UpdateSTList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes" && map.nFacilityLocationID != 0);
                         UpdateFMList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps" && map.nFacilityLocationID != 0);
                         UpdatePRepList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPatientRepresentatives" && map.nFacilityLocationID != 0);
+                        UpdateWList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityWaiver" && map.nFacilityLocationID != 0);
                     }
                     else
                     {
@@ -133,6 +135,7 @@ namespace MROWebApi.Controllers
                         UpdateSTList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
                         UpdateFMList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
                         UpdatePRepList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPatientRepresentatives");
+                        UpdateWList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityWaiver");
                     }
                     //Repos Created
                     FacilityFieldMapsRepository facilityFieldMapsRepository = new FacilityFieldMapsRepository(_info);
@@ -141,6 +144,7 @@ namespace MROWebApi.Controllers
                     FacilitySensitiveInfoRepository sensitiveInfoRepo = new FacilitySensitiveInfoRepository(_info);
                     FacilityRecordTypesRepository recordTypeRepo = new FacilityRecordTypesRepository(_info);
                     FacilityPatientRepresentativesRepository patientRepresentativeRepo = new FacilityPatientRepresentativesRepository(_info);
+                    FacilityWaiverRepository waiverRepo = new FacilityWaiverRepository(_info);
 
 
                     //foreach (FacilitiesFieldMapTable row in fieldFacilityMapsTable)
@@ -158,6 +162,7 @@ namespace MROWebApi.Controllers
                     //var STList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityShipmentTypes");
                     //var FMList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityFieldMaps");
                     //var PRepList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityPatientRepresentatives");
+                    //var WList = editFields.fieldFacilityMapsTable.Where(map => map.sTableName == "lnkFacilityWaiver");
 
                     var singleRecord = editFields.fieldFacilityMapsTable.FirstOrDefault();
                     List<int> idList = new List<int>();
@@ -169,6 +174,7 @@ namespace MROWebApi.Controllers
                     List<FacilitySensitiveInfo> oldSensitiveInfos = new List<FacilitySensitiveInfo>();
                     List<FacilityFieldMaps> oldFieldMaps = new List<FacilityFieldMaps>();
                     List<FacilityPatientRepresentatives> oldPatientRepresentatives = new List<FacilityPatientRepresentatives>();
+                    List<FacilityWaiver> oldWaiver = new List<FacilityWaiver>();
 
                     MROLogger logger = new MROLogger(_info);
                     int nAdminUserID = singleRecord.nUpdatedAdminUserID;
@@ -507,6 +513,62 @@ namespace MROWebApi.Controllers
                             adminModuleLogger = null;
                         }
                     }
+
+                    //Facility Waiver 
+                    if (UpdateWList.Count() != 0)
+                    {
+                        List<FacilityWaiver> waiverList = new List<FacilityWaiver>();
+                        foreach (var waiver in UpdateWList)
+                        {
+                            if (waiver.nFieldOrder == null)
+                            {
+                                waiver.nFieldOrder = 1;
+                            }
+                            waiverList.Add(
+                                new FacilityWaiver()
+                                {
+                                    nFacilityWaiverID = waiver.nFacilityFieldMapID,
+                                    nWaiverID = waiver.nFieldID,
+                                    nFacilityID = waiver.nFacilityID,
+                                    sWaiverName = waiver.sFieldName,
+                                    nFieldOrder = waiver.nFieldOrder,
+                                    nWizardID = waiver.nWizardID,
+                                    bShow = waiver.bShow,
+                                    dtLastUpdate = DateTime.Now,
+                                    nUpdatedAdminUserID = waiver.nUpdatedAdminUserID,
+                                    dtCreated = waiver.dtCreated,
+                                    nCreatedAdminUserID = waiver.nCreatedAdminUserID,
+                                    nFacilityLocationID = editFields.nFacilityLocationID
+                                }
+                                );
+                            idList.Add(waiver.nFieldID);
+                        }
+                        idArray = idList.ToArray();
+                        var eWaiverlist = await waiverRepo.SelectListByInClause(idArray, "lnkFacilityWaiver", "nWaiverID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+
+                        foreach (var item in eWaiverlist)
+                        {
+                            oldWaiver.Add(item);
+                        }
+
+                        waiverRepo.UpdateMany(waiverList);
+
+                        if (facility.bFacilityLogging)
+                        {
+                            adminModuleLogger = new AdminModuleLogger()
+                            {
+                                nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                sDescription = $"Edited Waiver for {(editFields.nFacilityLocationID != 0 ? "Location ID : " + singleRecord.nFacilityLocationID : "Facility ID : " + singleRecord.nFacilityID)}",
+                                sModuleName = "Edit Facility Fields",
+                                sEventName = "Edit Facility Waiver",
+                                nFacilityID = singleRecord.nFacilityID
+                            };
+                            logger.UpdateAuditMany(oldWaiver, waiverList, adminModuleLogger, "nFacilityWaiverID");
+                            idList.Clear();
+                            idArray = Array.Empty<int>();
+                            adminModuleLogger = null;
+                        }
+                    }
                     #endregion
 
                     #region Insert facility fields data
@@ -553,6 +615,52 @@ namespace MROWebApi.Controllers
                                     nFacilityID = singleRecord.nFacilityID
                                 };
                                 logger.InsertAuditMany(shipmentTypeList, adminModuleLogger);
+                                idList.Clear();
+                                idArray = Array.Empty<int>();
+                                adminModuleLogger = null;
+                            }
+                        }
+                        //Facility Waiver 
+                        if (InsertWList.Count() != 0)
+                        {
+                            List<FacilityWaiver> waiverList = new List<FacilityWaiver>();
+                            foreach (var waiver in InsertWList)
+                            {
+                                if (waiver.nFieldOrder == null)
+                                {
+                                    waiver.nFieldOrder = 1;
+                                }
+                                waiverList.Add(
+                                    new FacilityWaiver()
+                                    {
+                                        nFacilityWaiverID = waiver.nFacilityFieldMapID,
+                                        nWaiverID = waiver.nFieldID,
+                                        nFacilityID = waiver.nFacilityID,
+                                        sWaiverName = waiver.sFieldName,
+                                        nFieldOrder = waiver.nFieldOrder,
+                                        nWizardID = waiver.nWizardID,
+                                        bShow = waiver.bShow,
+                                        dtLastUpdate = DateTime.Now,
+                                        nUpdatedAdminUserID = waiver.nUpdatedAdminUserID,
+                                        dtCreated = DateTime.Now,
+                                        nCreatedAdminUserID = waiver.nUpdatedAdminUserID,
+                                        nFacilityLocationID = editFields.nFacilityLocationID
+                                    }
+                                    );
+                            }
+                            waiverRepo.InsertMany(waiverList);
+
+                            if (facility.bFacilityLogging)
+                            {
+                                adminModuleLogger = new AdminModuleLogger()
+                                {
+                                    nAdminUserID = singleRecord.nUpdatedAdminUserID,
+                                    sDescription = "Edited Waiver for Location ID : " + editFields.nFacilityLocationID,
+                                    sModuleName = "Edit Location Fields",
+                                    sEventName = "Edit Location Waiver",
+                                    nFacilityID = singleRecord.nFacilityID
+                                };
+                                logger.InsertAuditMany(waiverList, adminModuleLogger);
                                 idList.Clear();
                                 idArray = Array.Empty<int>();
                                 adminModuleLogger = null;
@@ -1112,6 +1220,53 @@ namespace MROWebApi.Controllers
                                     nCreatedAdminUserID = newFacilityFieldMaps.nCreatedAdminUserID,
                                     dtLastUpdate = newFacilityFieldMaps.dtLastUpdate,
                                     nUpdatedAdminUserID = newFacilityFieldMaps.nUpdatedAdminUserID
+                                };
+                                return Ok(returnfacilitiesFieldMap);
+                            }
+                            else
+                            {
+                                return BadRequest("Record not deleted");
+                            }
+
+                        case "lnkFacilityWaiver":
+                            FacilityWaiverRepository wFac = new FacilityWaiverRepository(_info);
+
+                            FacilityWaiver oldFacilityWaiver = new FacilityWaiver
+                            {
+                                nFacilityWaiverID = facilitiesFieldMapTable.nFacilityFieldMapID,
+                                nWaiverID = facilitiesFieldMapTable.nFieldID,
+                                nFacilityID = facilitiesFieldMapTable.nFacilityID,
+                                nFacilityLocationID = facilitiesFieldMapTable.nFacilityLocationID,
+                                sWaiverName = facilitiesFieldMapTable.sFieldName,
+                                nFieldOrder = facilitiesFieldMapTable.nFieldOrder,
+                                nWizardID = facilitiesFieldMapTable.nWizardID,
+                                bShow = facilitiesFieldMapTable.bShow,
+                                dtLastUpdate = facilitiesFieldMapTable.dtLastUpdate,
+                                nUpdatedAdminUserID = facilitiesFieldMapTable.nUpdatedAdminUserID,
+                                dtCreated = facilitiesFieldMapTable.dtCreated,
+                                nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
+                            };
+                            FacilityWaiver newFacilityWaiver = await wFac.SelectThreeWhereClause("nWaiverID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            deleteResult = wFac.Delete(oldFacilityWaiver.nFacilityWaiverID);
+                            if (deleteResult)
+                            {
+                                logger.UpdateAuditSingle(oldFacilityWaiver, newFacilityWaiver, adminModuleLogger);
+                                FacilitiesFieldMapTable returnfacilitiesFieldMap = new FacilitiesFieldMapTable()
+                                {
+                                    nFacilityFieldMapID = newFacilityWaiver.nFacilityWaiverID,
+                                    nFieldID = newFacilityWaiver.nWaiverID,
+                                    nFacilityID = newFacilityWaiver.nFacilityID,
+                                    nFacilityLocationID = newFacilityWaiver.nFacilityLocationID,
+                                    sFieldName = newFacilityWaiver.sWaiverName,
+                                    nFieldOrder = newFacilityWaiver.nFieldOrder,
+                                    bShow = newFacilityWaiver.bShow,
+                                    nWizardID = newFacilityWaiver.nWizardID,
+                                    sTableName = "lnkFacilityWaiver",
+                                    dtCreated = newFacilityWaiver.dtCreated,
+                                    nCreatedAdminUserID = newFacilityWaiver.nCreatedAdminUserID,
+                                    dtLastUpdate = newFacilityWaiver.dtLastUpdate,
+                                    nUpdatedAdminUserID = newFacilityWaiver.nUpdatedAdminUserID
                                 };
                                 return Ok(returnfacilitiesFieldMap);
                             }

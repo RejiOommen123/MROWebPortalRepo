@@ -1132,11 +1132,11 @@ namespace MROWebApi.Controllers
                 try
                 {
                     #region Data Addition ! from UI
-                    waiver.nWizardID = 15;
+                    waiver.nWizardID = 11; // Need to change when Wizard part is done.
                     waiver.dtLastUpdate = DateTime.Now;
                     waiver.dtCreated = DateTime.Now;
                     //spaces remove
-                    string sNormalizedName = GetNormalizedName(waiver.sWaiverName);
+                    string sNormalizedName = GetNormalizedNameWithWords(waiver.sWaiverName);
                     waiver.sNormalizedWaiverName = await rtFac.GetNormalizedNameByMasterName(sNormalizedName);
 
                     #endregion
@@ -1151,8 +1151,8 @@ namespace MROWebApi.Controllers
                     {
                         nAdminUserID = waiver.nCreatedAdminUserID,
                         sDescription = sDescription,
-                        sModuleName = "Master Entry - Shipment Type",
-                        sEventName = "Add Shipment Type"
+                        sModuleName = "Master Entry - Waiver",
+                        sEventName = "Add Waiver"
                     };
                     logger.InsertAuditSingle(waiver, adminModuleLogger);
                     #endregion
@@ -1196,7 +1196,7 @@ namespace MROWebApi.Controllers
                 try
                 {
                     waiver.dtLastUpdate = DateTime.Now;
-                    Waiver oldShipmentType = await rtFac.Select(waiver.nWaiverID);
+                    Waiver oldWaiver = await rtFac.Select(waiver.nWaiverID);
                     if (rtFac.Update(waiver))
                     {
                         #region Logging
@@ -1207,10 +1207,10 @@ namespace MROWebApi.Controllers
                         {
                             nAdminUserID = waiver.nUpdatedAdminUserID,
                             sDescription = sDescription,
-                            sModuleName = "Master Entry - Shipment Type",
-                            sEventName = "Edit Shipment Type"
+                            sModuleName = "Master Entry - Waiver",
+                            sEventName = "Edit Waiver"
                         };
-                        logger.UpdateAuditSingle(oldShipmentType, waiver, adminModuleLogger);
+                        logger.UpdateAuditSingle(oldWaiver, waiver, adminModuleLogger);
 
                         #endregion
                         return Ok();
@@ -1233,7 +1233,7 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Delete ShipmentType      
+        #region Delete Waiver     
         [HttpGet("DeleteWaiver/sWaiverID={sWaiverID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
@@ -1246,9 +1246,7 @@ namespace MROWebApi.Controllers
             try
             {
                 Waiver masterWaiver = await rtFac.Select(nWaiverID);
-                //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
-                //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
-                if (rtFac.DeleteOneToMany(nWaiverID, "lnkFacilityShipmentTypes"))
+                if (rtFac.DeleteOneToMany(nWaiverID, "lnkFacilityWaiver"))
                 {
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
@@ -1260,7 +1258,6 @@ namespace MROWebApi.Controllers
                         sModuleName = "Master Entry - Waiver",
                         sEventName = "Delete Waiver"
                     };
-                    //logger.DeleteAuditMany(facilityShipmentTypeList, adminModuleLogger);
                     logger.DeleteAuditSingle(masterWaiver, adminModuleLogger);
                     #endregion
                     return Ok();
@@ -1281,6 +1278,25 @@ namespace MROWebApi.Controllers
         private string GetNormalizedName(string normalizedString)
         {
             string removedSpecialChar = Regex.Replace(normalizedString, @"[^0-9a-zA-Z]+", "");
+            string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
+            finalString = "MRO" + finalString;
+            return finalString;
+        }
+        #endregion
+
+        #region Generic GetNormalizedName For Wordsmethod
+        private string GetNormalizedNameWithWords(string normalizedString)
+        {
+            string firstFourOrLessWords = normalizedString;
+            try
+            {
+                firstFourOrLessWords = normalizedString.Split().Length >= 4 ? string.Join(" ", ((normalizedString.Split()).Take(4))) : normalizedString;
+            }
+            catch
+            {
+
+            }
+            string removedSpecialChar = Regex.Replace(firstFourOrLessWords, @"[^0-9a-zA-Z]+", "");
             string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
             finalString = "MRO" + finalString;
             return finalString;

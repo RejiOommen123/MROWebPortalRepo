@@ -22,7 +22,7 @@ namespace MRODBL.BaseClasses
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("Facility Location Id")]
         public int nFacilityLocationID { get; set; }
-        [StringLength(500, ErrorMessage = "Maximum 500 characters Sensitive Info Allowed")]
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Waiver Allowed")]
         [DisplayName("Name")]
         public string sWaiverName { get; set; }
         [DisplayName("Order")]
