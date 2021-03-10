@@ -61,13 +61,13 @@
                   </v-alert>
               <v-btn
                 v-if="emailSent==false"
-                @click.once="sendEmail" :key="buttonKey"
+                @click.once="sendEmail" :key="'btn01'+buttonKey"
                 :disabled="$v.emailValid.$invalid || emailSent==true"
                 class="next"
               >Send Email Verification</v-btn>
               <v-btn
                 v-if="emailSent==false"
-                @click.once="nextPage" :key="buttonKey"
+                @click.once="nextPage" :key="'btn02'+buttonKey"
                 :disabled="$v.emailValid.$invalid"
                 style="margin-left:10px"
                 class="next"
@@ -95,7 +95,7 @@
                 >Verify</v-btn>                
                 </v-col>
                 <v-btn
-                  @click.once="nextPage" :key="buttonKey"
+                  @click.once="nextPage" :key="'btn03'+buttonKey"
                   :disabled="$v.emailValid.$invalid"
                   style="margin-left:10px"
                   class="next"
@@ -107,7 +107,7 @@
             </div>
             <div v-if="showSuccessBlock">
               <p class="disclaimer">Email Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey">Next</v-btn>
+              <v-btn class="mr-4 next" @click.once="nextPage" :key="'btn04'+buttonKey">Next</v-btn>
             </div>
           </form>
         </v-col>

@@ -423,6 +423,7 @@ export default {
     docReqCheck(){
       if(this.sRelativeFileArray.length==0){
         this.DocReqDiaglog = true;
+        this.buttonKey++;
       }
       else{
         this.continueAhead();

@@ -70,7 +70,7 @@
                 :disabled="$v.$invalid"
                 style=" text-transform: none;"
                 color="#30c4b0"
-                @click="onSubmit()"
+                @click.once="onSubmit()" :key="buttonKey"
               >Send Message</v-btn>    
             </v-col>
           </v-row>
@@ -131,6 +131,7 @@ export default {
         dialog:true,
         dialogLoader:false,
         dialogSuccess:false,
+        buttonKey:1,
     };
   },
   computed: {
@@ -194,7 +195,8 @@ export default {
         response => {
           if (response.ok == true) {
             this.dialogLoader = false;
-            this.dialogSuccess=true;
+            this.dialogSuccess=true;            
+            this.buttonKey++;
           }
         },
         error => {
