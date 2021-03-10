@@ -85,7 +85,7 @@ const mutations = {
     mutateNextIndex(state) {
         state.nProgressBar+=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_17') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_09') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_21'))
+        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_18') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_09') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_22'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex + 2;
             state.nProgressBar+=state.nProgressBarIncrValue * 2;
@@ -94,14 +94,14 @@ const mutations = {
             state.wizardArrayIndex = state.wizardArrayIndex + 1;
         }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
-        if (state.selectedWizard == 'Wizard_01' || state.selectedWizard == 'Wizard_23' || state.selectedWizard == 'Wizard_24' || state.selectedWizard == 'Wizard_25' || state.selectedWizard == 'Wizard_26') {
+        if (state.selectedWizard == 'Wizard_01' || state.selectedWizard == 'Wizard_24' || state.selectedWizard == 'Wizard_25' || state.selectedWizard == 'Wizard_26' || state.selectedWizard == 'Wizard_27') {
             state.showBackBtn = false;
         }
     },
     mutatePreviousIndex(state) {
         state.nProgressBar-=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_19') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_11') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_23'))
+        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_20') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_11') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_24'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex - 2;
             state.nProgressBar-=state.nProgressBarIncrValue * 2;

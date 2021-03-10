@@ -1,95 +1,66 @@
 <template>
   <div class="center">
-    <h1>What date do you need your record(s) by?</h1>
+    <div>
+      <h1>Is there a deadline for this request?</h1>
+    </div>
+    <p v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</p>
     <v-row>
-        <!-- Date picker input to set deadline -->
-        <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
-          <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
-          <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                transition="scale-transition"
-                offset-y
-                :value="dateFormatted"
-                placeholder="MM-DD-YYYY"
-                :error-messages="dateErrors"
-                clearable
-                label="SELECT DATE"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                @click:clear="dtDeadline  = null"
-                @input="$v.dtDeadline .$touch()"
-                @blur="$v.dtDeadline .$touch()"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              ref="picker"
-              :min="mindate"
-              :max="maxdate"
-              v-model="dtDeadline"
-              color="green lighten-1"
-              header-color="primary"
-              light
-              @change="menu1 = false"
-            ></v-date-picker>
-          </v-menu>
+       <div style="width:100%">
+        <v-col name="Yes" cols="12" offset-sm="2" sm="8">
+          <button
+            :class="{active: sActiveBtn === 'true'}" :key="buttonKey"
+            @click.once="setDeadlineStatus($event)"
+            class="wizardSelectionButton"
+            value=true
+          >Yes, I have a deadline.</button>
         </v-col>
-        <v-spacer></v-spacer>
-
-        <v-col cols="12" offset-sm="3" sm="6">
-          <div>
-            <v-btn @click.once="nextPage" :disabled="$v.$invalid" :key="buttonKey" class="next">Next</v-btn>
-          </div>
+        <v-col name="No" cols="12" offset-sm="2" sm="8">
+          <button
+            :class="{active: sActiveBtn === 'false'}" :key="buttonKey"
+            @click.once="setDeadlineStatus($event)"
+            class="wizardSelectionButton"
+            value=false
+          >No, just as soon as possible.</button>
         </v-col>
+      </div>
     </v-row>
   </div>
 </template>
-
 <script>
 import { mapState } from 'vuex';
 import moment from "moment";
-import { required } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_16",
-  data() {
-    return {
-      dtDeadline: moment()
-        .add(1, "days")
-        .toISOString()
-        .substr(0, 10),
-      menu1: false,
-      mindate:'',
-      maxdate:'',
-      buttonKey:1,
-    };
-  },
-  //Date Validation
-  validations: {
-    dtDeadline: {
-      required,
-      minValue: value => value > new Date().toISOString()
-    }
-  },
-  watch: {
-      menu1 (val) {
-        val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-      },
-    },
+  name: "WizardPage_18",
    activated(){
     this.buttonKey++;
-    this.mindate=moment()
-          .add(1, "days")
-          .toISOString()
-          .substr(0, 10);
-    this.maxdate=moment()
-          .add(5, "years")
-          .toISOString()
-          .substr(0, 10);
+    },
+  computed:{
+    ...mapState({
+      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
+    }),
+  },
+  data() {
+    return {
+      sActiveBtn:'',
+       buttonKey:1,
+    };
   },
   methods: {
-    nextPage() {          
-      this.$store.commit("requestermodule/dtDeadline", this.dtDeadline);
+    setDeadlineStatus($event) {
+      this.sActiveBtn= $event.target.value;
+      this.$store.commit(
+        "requestermodule/bDeadlineStatus",
+        $event.target.value
+      );
+      // set deadline to tomorrow date
+      this.$store.commit(
+        "requestermodule/dtDeadline",
+        moment()
+          .add(30, "days")
+          .toISOString()
+          .substr(0, 10)
+      );
+      this.$store.commit("ConfigModule/bDeadlineStatus", $event.target.value);
 
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
@@ -97,28 +68,5 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
-  computed: {
-    //Date Format setter
-    dateFormatted() {
-      return this.dtDeadline
-        ? moment(this.dtDeadline).format("MM-DD-YYYY")
-        : "";
-    },
-    //Date validation error message setter
-    dateErrors() {
-      const errors = [];
-      if (!this.$v.dtDeadline.$dirty) return errors;
-      !this.$v.dtDeadline.minValue && errors.push("Deadline date must be greater than today's date.");
-      !this.$v.dtDeadline.required && errors.push("Date is required");
-      return errors;
-    },
-    ...mapState({
-      disclaimer : state => state.ConfigModule
-      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_18_disclaimer01,
-      //Show and Hide Fields Values
-      MRORequestDeadlineDate: state => state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORequestDeadlineDate
-    }),
-  }
 };
 </script>

@@ -1,53 +1,42 @@
 <template>
   <div class="center">
-    <h1>What is the primary reason for requesting records?</h1>
-    <!-- TODO:Check for subheading -->
-    <h6 id="subHeading" v-if="disclaimer!=''">{{disclaimer}}</h6>
-
+    <h1>Is there any sensitive information<br/>you would also like included?</h1>
     <template>
-      <!-- Get all Primary Reasons associated to facility and displayed as checkbox for selection-->
-      <v-layout
-        v-for="primaryReason in oPrimaryReasonArray"
-        :key="primaryReason.sNormalizedPrimaryReasonName"
-        row
-        wrap
-      >
-        <v-col cols="12" offset-sm="1" sm="10">
+      <!-- Get all Sensitive Information associated to facility and displayed as checkbox for selection-->
+      <v-layout v-for="sensitiveInfo in oSensitiveInfoArray" :key="sensitiveInfo.sNormalizedSensitiveInfoName" row wrap>
+        <v-col cols="12" offset-sm="2" sm="8">
           <v-checkbox
             hide-details
             dark
+            v-model="sSelectedSensitiveInfo"
             class="checkboxBorder"
-            :label="primaryReason.sPrimaryReasonName"
+            :label="sensitiveInfo.sSensitiveInfoName"
             color="white"
-            :value="primaryReason.sNormalizedPrimaryReasonName"
-            v-model="sSelectedPrimaryReasons"
-            @change="check(primaryReason)"
+            :value="sensitiveInfo.sNormalizedSensitiveInfoName"
           >
           <!-- This for 'i' button to give disclaimers/info about option -->
-            <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" left>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" color="white" top>mdi-information</v-icon>
-              </template>
-              <v-col cols="12" sm="12">
-                <p style="width:200px; background-color:white;color:black">{{primaryReason.sFieldToolTip}}</p>
-              </v-col>
+          <!-- display info only if it exist else no i button -->
+            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" left>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="white" top>mdi-information</v-icon>
+                </template>
+                <v-col cols="12" sm="12">
+                  <p style="width:200px; background-color:white;color:black">{{sensitiveInfo.sFieldToolTip}}</p>
+                </v-col>
             </v-tooltip>
           </v-checkbox>
         </v-col>
       </v-layout>
-      <!-- If requester selects other reason then free text box will appear to enter data -->
-      <v-col cols="12" offset-sm="3" sm="6">
-        <div v-if="this.bOther==true">
-          <v-textarea class="TextAreaBg"  v-model="sOtherPrimaryReasons" maxlength="100" rows="3" counter label="Other Reason"></v-textarea>
-        </div>
-      </v-col>
     </template>
+    <!-- <div>
+      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
+    </div> -->
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sSelectedPrimaryReasons[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
+      <v-btn :disabled="sSelectedSensitiveInfo[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
     </v-col>
     <v-col cols="6" sm="2">
-      <v-btn @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
+      <v-btn @click.once="skipPage" class="next" :key="buttonKey">Skip</v-btn>
     </v-col>
     </v-row>
   </div>
@@ -56,79 +45,44 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  name: "WizardPage_08",
+  name: "WizardPage_12",
   activated(){
     this.buttonKey++;
-    if(this.sSelectedStatePrimaryReasons.length == 0){
-      this.bOther = false;
-      this.sSelectedPrimaryReasons = [];
-      this.sOtherPrimaryReasons = '';
-      this.sSelectedPrimaryReasonsName = '';
+    if(this.sSelectedStateSensitiveInfo.length == 0){
+      this.sSelectedSensitiveInfo = [];
     }
+  },
+  computed:{
+    ...mapState({
+      oSensitiveInfoArray : state => state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
+      sSelectedStateSensitiveInfo : state => state.requestermodule.sSelectedSensitiveInfo,
+    }),
   },
   data() {
     return {
-      bOther: false,
-      sSelectedPrimaryReasons: [],
-      sOtherPrimaryReasons: '',
-      sSelectedPrimaryReasonsName:'',
-        buttonKey:1,
+      sSelectedSensitiveInfo: [],
+       buttonKey:1,
     };
   },
   methods: {
+    skipPage(){
+      this.sSelectedSensitiveInfo=[];
+      this.nextPage();
+    },
     nextPage() {
-      this.$store.commit(
-        "requestermodule/sSelectedPrimaryReasons",
-        this.sSelectedPrimaryReasons
-      );
-        if (this.sSelectedPrimaryReasons == "MROOtherPrimaryReason") {
-          this.sSelectedPrimaryReasonsName=this.sOtherPrimaryReasons;
-        }
-      this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", this.sSelectedPrimaryReasonsName);
+      this.$store.commit("requestermodule/sSelectedSensitiveInfo", this.sSelectedSensitiveInfo);
 
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
 
       this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    skipPage(){
-      this.sSelectedPrimaryReasons = [];
-      this.bOther=false;
-      this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);
-      this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", '');
-      this.$store.commit("ConfigModule/mutateNextIndex");
-    },
-    // to check if selected checkbox is other reason
-    check(primaryReason) {
-        this.sSelectedPrimaryReasons = [];
-        this.sSelectedPrimaryReasons.push(primaryReason.sNormalizedPrimaryReasonName);
-        this.sSelectedPrimaryReasonsName=primaryReason.sPrimaryReasonName;
-        if (this.sSelectedPrimaryReasons == "MROOtherPrimaryReason") {
-          this.bOther = true;
-          this.sSelectedPrimaryReasonsName=this.sOtherPrimaryReasons;
-        }
-        else{
-          this.bOther=false;
-          this.sOtherPrimaryReasons='';
-        }
-          
     }
   },
-  computed:{
-    ...mapState({
-      oPrimaryReasonArray : state => state.ConfigModule.apiResponseDataByLocation.oPrimaryReason,
-      disclaimer : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_12_disclaimer01,
-      sSelectedStatePrimaryReasons : state => state.requestermodule.sSelectedPrimaryReasons,
-    }),
-  }
 };
 </script>
 <style scoped>
 .v-tooltip__content{
   color: black;
   background: white;
-}
-#subHeading{
-  margin-bottom:5%
 }
 </style>

@@ -95,7 +95,7 @@ import { mapState } from 'vuex';
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_05",
+  name: "WizardPage_04",
    activated(){
     this.buttonKey++;
     if(this.bAreYouPatient || !this.MROPatientDeceased){

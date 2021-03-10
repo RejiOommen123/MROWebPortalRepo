@@ -1,43 +1,43 @@
 <template>
   <div class="center">
-    <h1>Is there any sensitive information<br/>you would also like included?</h1>
+    <h1>By signing this request for medical records, I understand that:</h1>
     <template>
-      <!-- Get all Sensitive Information associated to facility and displayed as checkbox for selection-->
-      <v-layout v-for="sensitiveInfo in oSensitiveInfoArray" :key="sensitiveInfo.sNormalizedSensitiveInfoName" row wrap>
-        <v-col cols="12" offset-sm="2" sm="8">
+      <!-- Get all Waiver associated to facility and displayed as checkbox for selection-->
+      <v-layout class="checkboxBorder waivers label" v-for="waiver in oWaiverArray" :key="waiver.sNormalizedWaiverName" row wrap>
+        <v-col cols="1" sm="1">
           <v-checkbox
+            class="vertical_center"
             hide-details
             dark
-            v-model="sSelectedSensitiveInfo"
-            class="checkboxBorder"
-            :label="sensitiveInfo.sSensitiveInfoName"
+            v-model="sSelectedWaiver"            
             color="white"
-            :value="sensitiveInfo.sNormalizedSensitiveInfoName"
-          >
-          <!-- This for 'i' button to give disclaimers/info about option -->
-          <!-- display info only if it exist else no i button -->
-            <v-tooltip  v-if="sensitiveInfo.sFieldToolTip" slot="append" left>
+            :value="waiver.sNormalizedWaiverName"
+            :id="waiver.sNormalizedWaiverName"
+          >                    
+          </v-checkbox>
+          </v-col>
+          <v-col class="align_left" cols="10" sm="10">
+            <label :for="waiver.sNormalizedWaiverName" class="vertical_center" v-html="waiver.sWaiverName"></label>
+          </v-col>
+          <v-col cols="1" sm="1">
+           <v-tooltip class="vertical_center"  v-if="waiver.sFieldToolTip" slot="append" left>
                 <template v-slot:activator="{ on }">
                   <v-icon v-on="on" color="white" top>mdi-information</v-icon>
                 </template>
                 <v-col cols="12" sm="12">
-                  <p style="width:200px; background-color:white;color:black">{{sensitiveInfo.sFieldToolTip}}</p>
+                  <p class="tooltip-text">{{waiver.sFieldToolTip}}</p>
                 </v-col>
             </v-tooltip>
-          </v-checkbox>
-        </v-col>
+          </v-col>
       </v-layout>
     </template>
-    <!-- <div>
-      <v-btn @click.prevent="nextPage" class="next">Next</v-btn>
-    </div> -->
     <v-row>
-    <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sSelectedSensitiveInfo[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
+    <v-col cols="4" offset="4" offset-sm="5" sm="2">
+      <v-btn :disabled="!(sSelectedWaiver.length==oWaiverArray.length)" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
     </v-col>
-    <v-col cols="6" sm="2">
+    <!-- <v-col cols="6" sm="2">
       <v-btn @click.once="skipPage" class="next" :key="buttonKey">Skip</v-btn>
-    </v-col>
+    </v-col> -->
     </v-row>
   </div>
 </template>
@@ -45,26 +45,32 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  name: "WizardPage_09",
+  name: "WizardPage_11",
   activated(){
     this.buttonKey++;
-    if(this.sSelectedStateSensitiveInfo.length == 0){
-      this.sSelectedSensitiveInfo = [];
+    if(this.sSelectedStateWaiver.length == 0){
+      this.sSelectedWaiver = [];
     }
+  },
+  computed:{
+    ...mapState({
+      oWaiverArray : state => state.ConfigModule.apiResponseDataByLocation.oWaivers,
+      sSelectedStateWaiver : state => state.requestermodule.sSelectedWaiver,
+    }),
   },
   data() {
     return {
-      sSelectedSensitiveInfo: [],
+      sSelectedWaiver: [],
        buttonKey:1,
     };
   },
   methods: {
     skipPage(){
-      this.sSelectedSensitiveInfo=[];
+      this.sSelectedWaiver=[];
       this.nextPage();
     },
     nextPage() {
-      this.$store.commit("requestermodule/sSelectedSensitiveInfo", this.sSelectedSensitiveInfo);
+      this.$store.commit("requestermodule/sSelectedWaiver", this.sSelectedWaiver);
 
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
@@ -72,17 +78,32 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
-  computed:{
-    ...mapState({
-      oSensitiveInfoArray : state => state.ConfigModule.apiResponseDataByLocation.oSensitiveInfo,
-      sSelectedStateSensitiveInfo : state => state.requestermodule.sSelectedSensitiveInfo,
-    }),
-  }
 };
 </script>
 <style scoped>
 .v-tooltip__content{
   color: black;
   background: white;
+}
+.vertical_center{
+  margin-top:auto;
+  margin-top:bottom;
+}
+.align_left{
+  text-align: left;
+}
+.tooltip-text{
+  width:200px; 
+  background-color:white;
+  color:black;
+}
+.waivers{
+    padding-top: 0; 
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    line-height: 1.375rem;
+}
+.label{
+  font-size: 16px;
 }
 </style>

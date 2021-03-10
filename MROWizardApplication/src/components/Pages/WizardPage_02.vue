@@ -222,6 +222,9 @@ export default {
 
         //Reset sensitive info
         this.$store.commit("requestermodule/sSelectedSensitiveInfo", []);
+        
+        //Reset waivers
+        this.$store.commit("requestermodule/sSelectedWaiver", []);
 
         //Reset primary reason
         this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);

@@ -74,7 +74,7 @@ import {
   numeric
 } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_06",
+  name: "WizardPage_07",
    activated(){
     this.buttonKey++;
    },

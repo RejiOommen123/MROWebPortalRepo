@@ -69,10 +69,10 @@ export default {
             wizard='Wizard_06';           
         }
         if(option==='phone'){      
-            wizard='Wizard_20';      
+            wizard='Wizard_21';      
         }
         if(option==='photo'){
-            wizard='Wizard_21';  
+            wizard='Wizard_22';  
         }
         this.$store.commit("ConfigModule/bReturnedForCompliance",true);
         index = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oWizards.indexOf(wizard);

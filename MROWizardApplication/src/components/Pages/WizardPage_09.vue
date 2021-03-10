@@ -55,7 +55,7 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  name: "WizardPage_15",
+  name: "WizardPage_09",
    activated(){
     this.buttonKey++;
    },

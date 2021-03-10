@@ -1,55 +1,106 @@
 <template>
   <div class="center">
-    <h1>You’re almost done!</h1>
+    <h1>What date do you need your record(s) by?</h1>
     <v-row>
-    
-    <v-col cols="12" offset-sm="1" sm="10">
-    <div v-if="disclaimer01!=''" ><h6 style="color:white; padding-top:0">{{disclaimer01}}</h6></div>
-    <div v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</div>
-    </v-col>
-    <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
-        <v-textarea    
-          class="TextAreaBg"     
-          rows="3"
-          row-height="30"
-          maxlength="250"
-          counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
-    </v-col>
-    </v-row>
-    <!-- <div>
-      <v-btn @click.prevent="nextPage" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
-    </div> -->
-     <v-row>
-    <v-col cols="6" offset-sm="4" sm="2">
-      <v-btn :disabled="sAdditionalData==''" @click.once="nextPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
-    </v-col>
-    <v-col cols="6" sm="2">
-      <v-btn @click.once="skipPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Skip</v-btn>
-    </v-col>
+        <!-- Date picker input to set deadline -->
+        <v-col v-if="MRORequestDeadlineDate" cols="12" offset-sm="2" sm="6" md="8">
+          <div v-if="disclaimer!=''" class="disclaimer">{{disclaimer}}</div>
+          <v-menu v-model="menu1" :close-on-content-click="false" max-width="290">
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                transition="scale-transition"
+                offset-y
+                :value="dateFormatted"
+                placeholder="MM-DD-YYYY"
+                :error-messages="dateErrors"
+                clearable
+                label="SELECT DATE"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+                @click:clear="dtDeadline  = null"
+                @input="$v.dtDeadline .$touch()"
+                @blur="$v.dtDeadline .$touch()"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              ref="picker"
+              :min="mindate"
+              :max="maxdate"
+              v-model="dtDeadline"
+              color="green lighten-1"
+              header-color="primary"
+              light
+              @change="menu1 = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-spacer></v-spacer>
+
+        <v-col cols="12" offset-sm="3" sm="6">
+          <div>
+            <v-btn @click.once="nextPage" :disabled="$v.$invalid" :key="buttonKey" class="next">Next</v-btn>
+          </div>
+        </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import moment from "moment";
+import { required } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_10",
+  name: "WizardPage_19",  
   activated(){
-   this.buttonKey++;
+    this.buttonKey++;
+    this.mindate=moment()
+          .add(1, "days")
+          .toISOString()
+          .substr(0, 10);
+    this.maxdate=moment()
+          .add(5, "years")
+          .toISOString()
+          .substr(0, 10);
+  },
+  computed: {
+    //Date Format setter
+    dateFormatted() {
+      return this.dtDeadline
+        ? moment(this.dtDeadline).format("MM-DD-YYYY")
+        : "";
+    },
+    //Date validation error message setter
+    dateErrors() {
+      const errors = [];
+      if (!this.$v.dtDeadline.$dirty) return errors;
+      !this.$v.dtDeadline.minValue && errors.push("Deadline date must be greater than today's date.");
+      !this.$v.dtDeadline.required && errors.push("Date is required");
+      return errors;
+    },
+    ...mapState({
+      disclaimer : state => state.ConfigModule
+      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
+      //Show and Hide Fields Values
+      MRORequestDeadlineDate: state => state.ConfigModule
+        .apiResponseDataByLocation.oFields.MRORequestDeadlineDate
+    }),
   },
   data() {
     return {
-      sAdditionalData:'',
+      dtDeadline: moment()
+        .add(1, "days")
+        .toISOString()
+        .substr(0, 10),
+      menu1: false,
+      mindate:'',
+      maxdate:'',
       buttonKey:1,
     };
   },
   methods: {
-    skipPage(){
-      this.sAdditionalData='';
-      this.nextPage();
-    },
-    nextPage() {
-      this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
+    nextPage() {          
+      this.$store.commit("requestermodule/dtDeadline", this.dtDeadline);
 
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
@@ -57,13 +108,17 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
-  computed:{
-    ...mapState({
-      disclaimer01 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer01,
-      disclaimer02 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_19_disclaimer02,
-      //Show and Hide Fields Values
-      MROPatientAdditionalDetails : state => state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
-    }),
-  }
+  //Date Validation
+  validations: {
+    dtDeadline: {
+      required,
+      minValue: value => value > new Date().toISOString()
+    }
+  },
+  watch: {
+      menu1 (val) {
+        val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+    },
 };
 </script>

@@ -39,6 +39,7 @@ const state = {
     bRTManualSelection:false,
     sSelectedRecordTypes: [],
     sOtherRTText:'',
+    sSelectedWaiver:[],
     sSelectedPrimaryReasons: [],
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
@@ -194,6 +195,9 @@ const mutations = {
     },
     sOtherRTText(state, payload) {
         state.sOtherRTText = payload;
+    },
+    sSelectedWaiver(state, payload) {
+        state.sSelectedWaiver = payload;
     },
     sSelectedPrimaryReasons(state, payload) {
         state.sSelectedPrimaryReasons = payload;

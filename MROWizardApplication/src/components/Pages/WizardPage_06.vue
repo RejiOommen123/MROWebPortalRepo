@@ -284,7 +284,7 @@ export default {
       this.$store.dispatch('requestermodule/partialAddReq');
       if(this.bReturnedForCompliance && this.verified)
       {
-        var index,wizard='Wizard_23';
+        var index,wizard='Wizard_24';
         this.$store.commit("ConfigModule/bReturnedForCompliance",false);
         index = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oWizards.indexOf(wizard);
         this.$store.commit("ConfigModule/mutatewizardArrayIndex",index);

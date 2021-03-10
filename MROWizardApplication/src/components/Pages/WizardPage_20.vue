@@ -1,227 +1,69 @@
 <template>
   <div class="center">
-    <div class="form-group">
-      <h1>Let us send you a text to verify your phone number.</h1>
-      <p v-if="disclaimer01!=''">{{disclaimer01}}</p>
-      <form v-if="MRORequesterPhoneNumber">
-        <v-row>
-          <!-- Phone no input box -->
-          <v-col cols="4" offset-sm="3" sm="2">
-            <v-select :disabled="disableInput" id="phoneExt" v-model="selectedCountry" :items="countryCode"></v-select>
-          </v-col>
-          <!-- <v-col cols="1" style="margin-top:20px;" offset-sm="3" sm="1">
-            <label class="input-group-addon">+91</label>
-          </v-col>-->
-          <v-col id="phoneNo" cols="7" sm="5">
-            <v-text-field
-              type="tel"
-              maxlength="10"
-              placeholder="(XXX) XXX-XXXX"
-              v-model="sPhoneNo"
-              label="ENTER MOBILE NO"
-              required
-              :disabled="disableInput"
-              :error-messages="sPhoneNoError"
-              @input="$v.sPhoneNo.$touch()"
-              @blur="$v.sPhoneNo.$touch()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" offset-sm="1" sm="10">
-            <p v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</p>
-          </v-col>
-          <v-col cols="12" offset-sm="3" sm="6">
-            <div v-show="showSendVerify">
-              <v-btn
-                @click.prevent="submit"
-                :disabled="$v.sPhoneNo.$invalid"
-                class="ma-2 next"
-              >Send Verification Code</v-btn>
-            </div>            
-            <!-- Below fields will shown only after requester click on "Send Verification Code" button -->
-            <div v-show="bOtpSend">
-              <div>
-                <v-text-field
-                  :error-messages="sVerifyError"
-                  @input="$v.sVerify.$touch()"
-                  @blur="$v.sVerify.$touch()"
-                  v-model="sVerify"
-                  label="ENTER CODE"
-                  required
-                ></v-text-field>
-
-                <v-btn @click.prevent="submit" :disabled="$v.sPhoneNo.$invalid" class="next">Resend Code</v-btn>
-
-                <v-btn
-                  @click.prevent="verifyCode"
-                  :disabled="$v.sVerify.$invalid || $v.sPhoneNo.$invalid"
-                  style="margin-left:10px"
-                  class="next"
-                >Verify</v-btn>
-              </div>
-            </div>
-            <v-btn v-if="showSuccessBlock==false" @click.once="skipPage" :key="buttonKey" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
-            <div v-if="showSuccessBlock">
-              <p class="disclaimer">Mobile Verification Successful.</p>
-              <v-btn class="mr-4 next" @click.once="nextPage" :key="buttonKey">Next</v-btn>
-            </div>
-          </v-col>
-        </v-row>
-      </form>
-    </div>
+    <h1>You’re almost done!</h1>
+    <v-row>
+    
+    <v-col cols="12" offset-sm="1" sm="10">
+    <div v-if="disclaimer01!=''" ><h6 style="color:white; padding-top:0">{{disclaimer01}}</h6></div>
+    <div v-if="disclaimer02!=''" class="disclaimer">{{disclaimer02}}</div>
+    </v-col>
+    <v-col cols="12" offset-sm="2" sm="8" v-if="MROPatientAdditionalDetails">             
+        <v-textarea    
+          class="TextAreaBg"     
+          rows="3"
+          row-height="30"
+          maxlength="250"
+          counter v-model="sAdditionalData" label="ADDITIONAL DETAILS"></v-textarea>    
+    </v-col>
+    </v-row>
+    <!-- <div>
+      <v-btn @click.prevent="nextPage" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
+    </div> -->
+     <v-row>
+    <v-col cols="6" offset-sm="4" sm="2">
+      <v-btn :disabled="sAdditionalData==''" @click.once="nextPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Next</v-btn>
+    </v-col>
+    <v-col cols="6" sm="2">
+      <v-btn @click.once="skipPage" :key="buttonKey" style="margin-top:0px; margin-bottom:0px;" class="next">Skip</v-btn>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, minLength } from "vuelidate/lib/validators";
 export default {
-  name: "WizardPage_18",
-   activated(){
-    this.buttonKey++;
-    },
+  name: "WizardPage_20",
+  activated(){
+   this.buttonKey++;
+  },
+  computed:{
+    ...mapState({
+      disclaimer01 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer01,
+      disclaimer02 : state => state.ConfigModule.apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer02,
+      //Show and Hide Fields Values
+      MROPatientAdditionalDetails : state => state.ConfigModule.apiResponseDataByLocation.oFields.MROPatientAdditionalDetails,
+    }),
+  },
   data() {
     return {
-      isDisable: false,
-      bOtpSend: false,
-      showSuccessBlock: false,
-      disableInput: false,
-      showSendVerify: true,
-      countryCode: ["+1", "+91"],
-      selectedCountry: "+1",
-
-      sPhoneNo: "",
-      sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
-      sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
-      sVerify: "",
-      service: "",
-      subData: {},
+      sAdditionalData:'',
       buttonKey:1,
     };
   },
-  // OTP and phono validations
-  mixins: [validationMixin],
-  validations: {
-    sVerify: { required, maxLength: maxLength(4), minLength: minLength(4) },
-    sPhoneNo: { required, maxLength: maxLength(10), minLength: minLength(10) }
-  },
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
-  computed: {
-    //OTP and Phone no Validation message setter
-    sPhoneNoError() {
-      const errors = [];
-      if (!this.$v.sPhoneNo.$dirty) return errors;
-      !this.$v.sPhoneNo.maxLength && errors.push("Enter 10 digit mobile no.");
-      !this.$v.sPhoneNo.minLength && errors.push("Enter 10 digit mobile no.");
-      !this.$v.sPhoneNo.required && errors.push("Mobile No Required");
-      return errors;
-    },
-    sVerifyError() {
-      const errors = [];
-      if (!this.$v.sVerify.$dirty) return errors;
-      !this.$v.sVerify.maxLength && errors.push("Enter 4 digit Code");
-      !this.$v.sVerify.minLength && errors.push("Enter 4 digit Code");
-      !this.$v.sVerify.required && errors.push("Verification code required");
-      return errors;
-    },
-    ...mapState({
-      disclaimer01: state => state.ConfigModule
-      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer01,
-      disclaimer02: state => state.ConfigModule
-      .apiResponseDataByFacilityGUID.wizardHelper.Wizard_20_disclaimer02,      
-      facilityForceCompliance: state => state.ConfigModule
-        .bForceCompliance,
-      // Show and Hide Fields Values
-      MRORequesterPhoneNumber: state => state.ConfigModule
-        .apiResponseDataByLocation.oFields.MRORequesterPhoneNumber,
-    }),
-  },
   methods: {
-    //send otp on send verification no and resend button
-    submit() {
-      this.isDisable = true;
-      this.bOtpSend = true;
-      this.showSendVerify = false;
-      var obj = {};
-      obj["phone"] = this.selectedCountry + this.sPhoneNo;
-      obj["api_key"] = this.sApi_Key;
-      var formData = new FormData();
-      formData.append("phone", this.selectedCountry + this.sPhoneNo);
-      formData.append("api_key", this.sApi_Key);
-      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/code/SMS";
-
-      var self = this;
-      this.$http
-        .post(url, formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-          }
-        })
-        .then(response => {
-          self.subData = response;
-          // console.log(response.body);
-        });
-    },
-    //Verify OPT entered by requester
-    verifyCode() {
-      var obj = {};
-      obj["phone"] = this.selectedCountry + this.sPhoneNo;
-      obj["code"] = this.sVerify;
-      var formData = new FormData();
-      formData.append("phone", this.selectedCountry + this.sPhoneNo);
-      formData.append("code", this.sVerify);
-      formData.append("api_key", this.sApi_Key);
-      var url = "https://api.ringcaptcha.com/" + this.sApp_Key + "/verify";
-
-      this.$http
-        .post(url, formData, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-          }
-        })
-        .then(response => {
-          if (response.data.status == "SUCCESS") {
-            this.bOtpSend = false;
-            this.showSuccessBlock = true;
-            this.disableInput = true;
-            if(this.facilityForceCompliance)
-            {
-              this.$store.commit("requestermodule/bForceCompliance", true);
-            }
-          }
-          if (response.data.status == "ERROR") {
-            alert("Invalid verification code");
-          }
-        });
+    skipPage(){
+      this.sAdditionalData='';
+      this.nextPage();
     },
     nextPage() {
-      this.$store.commit("requestermodule/sPhoneNo", this.sPhoneNo);
-      this.$store.commit(
-        "requestermodule/bPhoneNoVerified",
-        this.showSuccessBlock
-      );
+      this.$store.commit("requestermodule/sAdditionalData", this.sAdditionalData);
 
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
-      if(this.$store.state.ConfigModule.bReturnedForCompliance && this.showSuccessBlock)
-      {
-        var index,wizard='Wizard_23';
-        this.$store.commit("ConfigModule/bReturnedForCompliance",false);
-        index = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.oWizards.indexOf(wizard);
-        this.$store.commit("ConfigModule/mutatewizardArrayIndex",index);
-        this.$store.commit("ConfigModule/mutateselectedWizard",wizard);
-      }
-      else{
-        this.$store.commit("ConfigModule/mutateNextIndex");
-      }
-    },
-    skipPage() {
-      this.nextPage();
+
+      this.$store.commit("ConfigModule/mutateNextIndex");
     }
-  }
+  },
 };
 </script>
