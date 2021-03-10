@@ -425,6 +425,7 @@ namespace MRODBL.Repositories
                 var oSensitiveInfo = wizardConfig.Read().ToList();
                 var oShipmentTypes = wizardConfig.Read().ToList();
                 var oPatientRepresentatives = wizardConfig.Read().ToList();
+                var oWaivers = wizardConfig.Read().ToList();
                 var oWizardHelper = wizardConfig.Read().ToDictionary(row => (string)row.sWizardHelperName, row => (string)row.sWizardHelperValue);
                 var oLocations = wizardConfig.Read().ToList();
                 var sWizards = wizardConfig.Read().Select(d => new object[] { d.sWizardName });
@@ -437,7 +438,7 @@ namespace MRODBL.Repositories
                 String[] oWizards = soWizard.ToArray();
                 //var wizardsSave = wizardConfig.Read().ToDictionary(row => (string)row.sWizardName, row => (int)row.bSavetoRequester);
                 var wizardsSave = wizardConfig.Read().ToDictionary(row => (string)row.sWizardName, row => row.bSavetoRequester ? 1 : 0);
-                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWizardHelper, oLocations, oWizards, wizardsSave };
+                object newObject = new { oFields, oPrimaryReason, oRecordTypes, oSensitiveInfo, oShipmentTypes, oPatientRepresentatives, oWaivers, oWizardHelper, oLocations, oWizards, wizardsSave };
                 return newObject;
             }
         }
