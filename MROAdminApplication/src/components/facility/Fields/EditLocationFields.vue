@@ -53,6 +53,7 @@
                       counter
                       maxlength="100"
                     ></v-text-field>
+                    <v-text-field v-model="props.item.sFieldName" label="Edit" counter :maxlength="props.item.sTableName!='lnkFacilityWaiver' ? 100 : 500"></v-text-field>
                   </template>
                 </v-edit-dialog>
                 <label v-else>{{ props.item.sFieldName }}</label>
