@@ -49,7 +49,7 @@
                   required
                 ></v-text-field>
 
-                <v-btn @click.prevent="submit" :disabled="$v.sPhoneNo.$invalid" class="next">Resend Code</v-btn>
+                <v-btn @click.prevent="submit" :disabled="$v.sPhoneNo.$invalid || disableResend" class="next">Resend Code</v-btn>
 
                 <v-btn
                   @click.prevent="verifyCode"
@@ -58,6 +58,7 @@
                   class="next"
                 >Verify</v-btn>
               </div>
+              <div v-if="timeStatement" id="hide">Wait for {{displayTime}} seconds to resend code.</div>
             </div>
             <v-btn v-if="showSuccessBlock==false" @click.once="skipPage" :key="buttonKey" :disabled="$v.sPhoneNo.$invalid" class="next">Skip</v-btn>
             <div v-if="showSuccessBlock">
@@ -130,11 +131,17 @@ export default {
       service: "",
       subData: {},
       buttonKey:1,
+      time:60,
+      disableResend: true,
+      timeStatement: true,
+      displayTime: ""
     };
   },
   methods: {
     //send otp on send verification no and resend button
     submit() {
+       this.disableResend = true;
+       this.timeStatement = false;
       this.isDisable = true;
       this.bOtpSend = true;
       this.showSendVerify = false;
@@ -155,8 +162,32 @@ export default {
           }
         })
         .then(response => {
+          if (response.body) {
           self.subData = response;
-          // console.log(response.body);
+       this.time=response.body.retry_in; 
+             if(response.body.status == "SUCCESS"){
+            let timerId = setInterval(() => {
+               this.timeStatement = true;   
+                this.time -= 1;  
+                var m = Math.floor(this.time % 3600 / 60);
+                var s = Math.floor(this.time % 3600 % 60);
+                this.displayTime = ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);                       
+                if (this.time == 0 ) {
+                  clearInterval(timerId);
+                  this.timeStatement = false;
+                  this.disableResend = false;                  
+                }
+              }, 1000);
+             }
+             else{
+               this.timeStatement =false;
+               this.disableResend = false;  
+               if(response.body.message == "ERROR_INVALID_NUMBER")
+               {
+               alert("Invalid Mobile Number");
+               }
+             }
+          }
         });
     },
     //Verify OPT entered by requester

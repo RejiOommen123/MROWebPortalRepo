@@ -85,7 +85,7 @@
                 ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="12">
-                <v-btn @click.prevent="sendEmail" :disabled="$v.emailValid.$invalid" class="next">Resend Code</v-btn>
+                <v-btn @click.prevent="sendEmail" :disabled="$v.emailValid.$invalid || disableResend" class="next">Resend Code</v-btn>
 
                 <v-btn
                   @click.prevent="verifyCode"
@@ -94,6 +94,7 @@
                   class="next"
                 >Verify</v-btn>                
                 </v-col>
+                <div v-if="timeStatement" id="hide" >Wait for {{ displayTime }} seconds to resend code.</div>
                 <v-btn
                   @click.once="nextPage" :key="'btn03'+buttonKey"
                   :disabled="$v.emailValid.$invalid"
@@ -145,6 +146,10 @@ export default {
       otpSentAlert:false,
       bReturnedForCompliance:false,
       buttonKey:1,
+      time: 60,
+      disableResend: true,
+      timeStatement: true,
+       displayTime: ""
     };
   },
   //Email on verify OTP validations
@@ -216,6 +221,20 @@ export default {
   },
   methods: {
      sendEmail() {
+       this.disableResend = true;   
+        this.time = 60;      
+            let timerId = setInterval(() => {   
+              this.timeStatement = true;        
+                this.time -= 1;
+                var m = Math.floor(this.time % 3600 / 60);
+                var s = Math.floor(this.time % 3600 % 60);
+                this.displayTime = ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);               
+                if (this.time == 0) {
+                  clearInterval(timerId);
+                  this.timeStatement = false;
+                  this.disableResend = false;             
+                }             
+              }, 1000);
       this.$store.commit(
         "requestermodule/sRequesterEmailId",
         this.sRequesterEmailId
