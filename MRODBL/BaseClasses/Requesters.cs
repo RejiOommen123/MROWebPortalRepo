@@ -75,8 +75,9 @@ namespace MRODBL.BaseClasses
         public string sSpecifyVisitText { get; set; }        
         public string[] sSelectedRecordTypes { get; set; }
         [StringLength(100, ErrorMessage = "Maximum 100 characters Other RT Text allowed")]
-        public string sOtherRTText { get; set; }        
+        public string sOtherRTText { get; set; }
         public bool bRTManualSelection { get; set; }
+        public bool bWaiverAccepted { get; set; }
         public string[] sSelectedPrimaryReasons { get; set; }
         public string sSelectedPrimaryReasonsName { get; set; }
 

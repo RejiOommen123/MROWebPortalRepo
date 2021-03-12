@@ -225,6 +225,7 @@ export default {
         
         //Reset waivers
         this.$store.commit("requestermodule/sSelectedWaiver", []);
+        this.$store.commit("requestermodule/bWaiverAccepted", false);
 
         //Reset primary reason
         this.$store.commit("requestermodule/sSelectedPrimaryReasons",[]);

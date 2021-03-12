@@ -40,6 +40,7 @@ const state = {
     sSelectedRecordTypes: [],
     sOtherRTText:'',
     sSelectedWaiver:[],
+    bWaiverAccepted:false,
     sSelectedPrimaryReasons: [],
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
@@ -198,6 +199,9 @@ const mutations = {
     },
     sSelectedWaiver(state, payload) {
         state.sSelectedWaiver = payload;
+    },
+    bWaiverAccepted(state, payload) {
+        state.bWaiverAccepted = payload;
     },
     sSelectedPrimaryReasons(state, payload) {
         state.sSelectedPrimaryReasons = payload;
@@ -364,6 +368,7 @@ const actions = {
             sIdentityIdName: requester.sIdentityIdName,
             sIdentityImage: '',
             sOtherRTText: requester.sOtherRTText,
+            bWaiverAccepted:requester.bWaiverAccepted,
             sPatientFirstName: requester.sPatientFirstName,
             sPatientLastName: requester.sPatientLastName,
             sPatientMiddleName: requester.sPatientMiddleName,

@@ -71,7 +71,8 @@ export default {
     },
     nextPage() {
       this.$store.commit("requestermodule/sSelectedWaiver", this.sSelectedWaiver);
-
+      this.$store.commit("requestermodule/bWaiverAccepted", true);
+      
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
 
