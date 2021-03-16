@@ -1433,5 +1433,50 @@ namespace MROWebApi.Controllers
             }
         }
 
+        #region Email Session Transfer
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<bool>> SessionTransferEmail(EmailConfirmation emailConfirmation)
+        {
+            try
+            {
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(emailConfirmation.nFacilityID);
+                FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
+                FacilityLocations dbLocation = await lRep.Select(emailConfirmation.nLocationID);
+                SendEmail sendEmail = new SendEmail();
+                //To
+                string firstLastName, firstName;
+                if (emailConfirmation.bAreYouPatient)
+                {
+                    firstLastName = emailConfirmation.sPatientFirstName + " " + emailConfirmation.sPatientLastName;
+                    firstName = emailConfirmation.sPatientFirstName;
+                }
+                else
+                {
+                    firstLastName = emailConfirmation.sRelativeFirstName + " " + emailConfirmation.sRelativeLastName;
+                    firstName = emailConfirmation.sRelativeFirstName;
+                }
+
+                sendEmail.info = _info;
+                sendEmail.nFacilityID = emailConfirmation.nFacilityID;
+                sendEmail.nLocationID = emailConfirmation.nLocationID;
+                sendEmail.sToMailName = firstLastName;
+                sendEmail.sToMailAddress = emailConfirmation.sRequesterEmailId;
+                sendEmail.sSubject = "Session Transfer Email";
+                sendEmail.sBody = $"<p>Your session is successfully transfered</p> <p>To request records from ({dbFacility.sFacilityName} – {dbLocation.sLocationName}), please follow this link: <a href='http://www.google.com' target='_blank'>Google</a></p>";
+
+                await Utilities.SendEmail(sendEmail);
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Session Transfer Email", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                return false;
+            }
+            return true;
+        }
+        #endregion
+
     }
 }

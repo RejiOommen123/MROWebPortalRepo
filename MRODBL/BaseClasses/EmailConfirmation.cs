@@ -10,6 +10,7 @@ namespace MRODBL.BaseClasses
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int nFacilityID { get; set; }
+        public int nLocationID { get; set; }
         [Required]
         [StringLength(30, ErrorMessage = "Maximum 30 characters Email ID allowed")]
         public string sRequesterEmailId { get; set; }
