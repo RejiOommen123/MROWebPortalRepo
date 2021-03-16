@@ -336,6 +336,7 @@ namespace MROWebApi.Controllers
                         writer.WriteElementString("phone_number", requester.sPhoneNo);
                         writer.WriteElementString("fax_number", requester.sSTFaxNumber);
                         writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
+                        writer.WriteElementString("waiveraccepted", requester.bWaiverAccepted.ToString());
                         writer.WriteEndElement();
 
                         //Requester Part Ends Here
@@ -785,7 +786,7 @@ namespace MROWebApi.Controllers
             try
             {
                 //to get the Record Type for this facility
-                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos; List<Fields> fields;
+                List<RecordTypes> recordTypes; List<SensitiveInfo> sensitiveInfos; List<Fields> fields; List<Waiver> waivers;
                 try
                 {
                     RecordTypesRepository rtRepo = new RecordTypesRepository(_info);
@@ -793,6 +794,7 @@ namespace MROWebApi.Controllers
                     recordTypes = pdfAndXMLData.recordTypes;
                     sensitiveInfos = pdfAndXMLData.sensitiveInfos;
                     fields = pdfAndXMLData.fields;
+                    waivers = pdfAndXMLData.waiver;
                 }
                 catch (Exception ex)
                 {
@@ -928,6 +930,17 @@ namespace MROWebApi.Controllers
                     allFields.Add("MROOtherRTText", "");
                 }
 
+                //waiver
+                if (requester.bWaiverAccepted )
+                {
+                    allFields.Add("MROWaiverAccepted=1", "On");
+
+                    foreach (var waiver in waivers)
+                    {
+                        allFields.Add(waiver.sNormalizedWaiverName + "=1", "On");
+                        allFields.Add(waiver.sNormalizedWaiverName + "Text", waiver.sWaiverName);
+                    }
+                }
 
                 //Primary Reasons
                 if (requester.sSelectedPrimaryReasons.Length == 0)
@@ -956,11 +969,11 @@ namespace MROWebApi.Controllers
                     }
                 }
 
+                
+                
 
-
-
-                //Sensitive Info
-                for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
+                    //Sensitive Info
+                    for (int counter = 0; counter < requester.sSelectedSensitiveInfo.Length; counter++)
                 {
                     if (requester.sSelectedSensitiveInfo[counter] != "")
                     {

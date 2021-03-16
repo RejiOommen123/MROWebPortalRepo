@@ -618,7 +618,7 @@ namespace MRODBL.Repositories
                     pdfAndXMLData.recordTypes = returnObject.Read<RecordTypes>().ToList();
                     pdfAndXMLData.sensitiveInfos = returnObject.Read<SensitiveInfo>().ToList();
                     pdfAndXMLData.fields = returnObject.Read<Fields>().ToList();
-
+                    pdfAndXMLData.waiver = returnObject.Read<Waiver>().ToList();
                     return pdfAndXMLData;
                 }
                 catch (Exception ex)
