@@ -243,19 +243,16 @@ export default {
       this.emailSent=true;
       this.isDisable = true;
       this.showVerifyInput = true;
-      var emailConfirm = {
+      var emailInputObject = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        sRequesterEmailId: this.emailValid.sRequesterEmailId,
-        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-        sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
-        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
-        sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
-        sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
+        sEmailId: this.emailValid.sRequesterEmailId,
+        sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
+        sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
       };
       // api to send mail and get opt in response
       this.$http
         // TODO: check requestor/requester
-        .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
+        .post("Wizards/VerfiyRequestorEmail/", emailInputObject)
         .then(response => {
           if (response.body) {
             this.sResponseKey = response.body;

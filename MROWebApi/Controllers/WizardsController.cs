@@ -629,10 +629,10 @@ namespace MROWebApi.Controllers
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailInputObject emailInputObject)
         {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
-            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            Facilities dbFacility = await fRep.Select(emailInputObject.nFacilityID);
 
             //if (dbFacility.bRequestorEmailVerify)
             //{
@@ -650,16 +650,9 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                string firstLastName, firstName;
-                if (requester.bAreYouPatient) {
-                    firstLastName = requester.sPatientFirstName + " " + requester.sPatientLastName;
-                    firstName = requester.sPatientFirstName;
-                }
-                else {
-                    firstLastName = requester.sRelativeFirstName + " " + requester.sRelativeLastName;
-                    firstName = requester.sRelativeFirstName;
-                }
-                MailboxAddress to = new MailboxAddress(firstLastName, requester.sRequesterEmailId);
+                string firstLastName = emailInputObject.sFirstName + " " + emailInputObject.sLastName;
+                string firstName = emailInputObject.sFirstName;
+                MailboxAddress to = new MailboxAddress(firstLastName, emailInputObject.sEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -694,7 +687,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + emailInputObject.sEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
                 }
                 return Ok(sOTP);
@@ -1437,33 +1430,21 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<bool>> SessionTransferEmail(EmailConfirmation emailConfirmation)
+        public async Task<ActionResult<bool>> SessionTransferEmail(EmailInputObject emailInputObject)
         {
             try
             {
                 FacilitiesRepository fRep = new FacilitiesRepository(_info);
-                Facilities dbFacility = await fRep.Select(emailConfirmation.nFacilityID);
+                Facilities dbFacility = await fRep.Select(emailInputObject.nFacilityID);
                 FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
-                FacilityLocations dbLocation = await lRep.Select(emailConfirmation.nLocationID);
+                FacilityLocations dbLocation = await lRep.Select(emailInputObject.nLocationID);
                 SendEmail sendEmail = new SendEmail();
-                //To
-                string firstLastName, firstName;
-                if (emailConfirmation.bAreYouPatient)
-                {
-                    firstLastName = emailConfirmation.sPatientFirstName + " " + emailConfirmation.sPatientLastName;
-                    firstName = emailConfirmation.sPatientFirstName;
-                }
-                else
-                {
-                    firstLastName = emailConfirmation.sRelativeFirstName + " " + emailConfirmation.sRelativeLastName;
-                    firstName = emailConfirmation.sRelativeFirstName;
-                }
 
                 sendEmail.info = _info;
-                sendEmail.nFacilityID = emailConfirmation.nFacilityID;
-                sendEmail.nLocationID = emailConfirmation.nLocationID;
-                sendEmail.sToMailName = firstLastName;
-                sendEmail.sToMailAddress = emailConfirmation.sRequesterEmailId;
+                sendEmail.nFacilityID = emailInputObject.nFacilityID;
+                sendEmail.nLocationID = emailInputObject.nLocationID;
+                sendEmail.sToMailName = emailInputObject.sFirstName + " " + emailInputObject.sLastName;
+                sendEmail.sToMailAddress = emailInputObject.sEmailId;
                 sendEmail.sSubject = "Session Transfer Email";
                 sendEmail.sBody = $"<p>Your session is successfully transfered</p> <p>To request records from ({dbFacility.sFacilityName} – {dbLocation.sLocationName}), please follow this link: <a href='http://www.google.com' target='_blank'>Google</a></p>";
 

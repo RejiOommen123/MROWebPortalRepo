@@ -170,6 +170,8 @@ export default {
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     let locationguid = urlParams.get("locationguid");
+    let stguid = urlParams.get("st");
+    if(stguid==null){
     this.$store.commit(
       "ConfigModule/sLocationGUID",
       locationguid
@@ -310,13 +312,30 @@ export default {
                   this.dialog = true;
                 }
               });
-          }
+          }          
           // else{
           // this.dialogLoader = false;
           //   alert("Request Wizard not working contact administrator.");
           // }
         }
       });
+    }
+    else{
+        this.$http
+          .get("requesters/GetSwitchedSession/st="+stguid)
+          .then(response => {
+          this.$store.commit(
+            "requestermodule/completeState",
+            response.body.requesterModule
+          );
+          this.$store.commit(
+            "ConfigModule/completeState",
+            response.body.configModule
+          );
+          this.dialogLoader = false;
+          this.dialog = true;
+          });
+      }
   },
   //Watcher and computed property are set to check for update logo and background in store
   watch: {

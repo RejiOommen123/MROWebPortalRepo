@@ -5,6 +5,7 @@ using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
 using MROWebApi.Services;
+using Newtonsoft.Json.Linq;
 using Renci.SshNet;
 using System;
 using System.Collections;
@@ -13,6 +14,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using UAParser;
@@ -358,6 +361,280 @@ namespace MROWebApi.Controllers
                 MROLogger.LogExceptionRecords(identityDoc.nRequesterID, ExceptionStatus.Error.ToString(), "Exception in Update Identity Doc Method.", ex.Message + " Stack Trace " + ex.StackTrace, _info);
             }
             return nRequesterId;
+        }
+        #endregion
+
+        #region Session transfer
+        [HttpPost]
+        [Route("[action]")]
+        [SessionAuth]
+        [RequestSizeLimit(78643200)]
+        public async Task<ActionResult> SessionSwitch(SessionTransferObject sessionTransferObject)
+        {
+            string returnURL = "";
+            try
+            {
+                //JObject CompleteStateJson = JObject.Parse(sessionTransferObject.CompleteState);
+                bool fileSaved = false;
+                var options = new JsonSerializerOptions()
+                {
+                    WriteIndented = true
+                };
+                var jsonElement = JsonSerializer.Deserialize<JsonElement>(sessionTransferObject.CompleteState);
+                sessionTransferObject.CompleteState = JsonSerializer.Serialize(jsonElement, options);
+
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                Facilities facility = await rpFac.Select(sessionTransferObject.nFacilityId);
+                FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
+                FacilityLocations location = await lRep.Select(sessionTransferObject.nLocationId);
+                SessionTransferRepository stRep = new SessionTransferRepository(_info);
+
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
+                string pattern = @"\bMROSTGuid\b";
+                string replaceGUID = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+                returnURL = Regex.Replace(helper.sSessionTransferURL, pattern, replaceGUID);
+
+
+                #region Decrypt FTP Password
+                MROLogger password = new MROLogger(_info);
+                facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
+                #endregion
+
+                //Json File Genration 
+                //File Name
+                string sJsonFileName = "CompleteState_" + replaceGUID + ".json";
+
+                if ((facility.sFTPUrl.ToLower().Contains("ftp://")
+                    && !facility.sFTPUrl.ToLower().Contains("sftp://"))
+                    || facility.sFTPUrl.ToLower().Contains("ftps://"))
+                {
+                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + "SessionTransferFiles/" + sJsonFileName);
+
+                    #region Request Params
+                    request.Method = WebRequestMethods.Ftp.UploadFile;
+                    request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
+                    request.UsePassive = true;
+                    request.UseBinary = true;
+                    request.KeepAlive = false;
+                    request.EnableSsl = true;
+                    #endregion
+
+                    byte[] buffer = Encoding.ASCII.GetBytes(sessionTransferObject.CompleteState);
+
+                    //Upload file
+                    try
+                    {
+                        Stream reqStream = request.GetRequestStream();
+                        reqStream.Write(buffer, 0, buffer.Length);
+                        fileSaved = true;
+                        reqStream.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(sessionTransferObject.nRequesterId, ExceptionStatus.Error.ToString(), "Set Switch Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        string sFTPURL = facility.sFTPUrl.ToLower() + "SessionTransferFiles/";
+                        if (sFTPURL.Contains("sftp://"))
+                        {
+                            sFTPURL = sFTPURL.Replace("sftp://", "");
+                        }
+                        string sDomanName, sFolderPath = string.Empty;
+                        string[] sFtpFolderPath = sFTPURL.Split(".com");
+                        if (sFtpFolderPath.Length == 2)
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = sFtpFolderPath[1];
+                        }
+                        else
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = "/";
+                        }
+
+                        byte[] buffer = Encoding.ASCII.GetBytes(sessionTransferObject.CompleteState);
+                        Stream stream = new MemoryStream(buffer);
+
+                        ////Passing the sftp host without the "sftp://"
+                        var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
+                        client.Connect();
+                        if (client.IsConnected)
+                        {
+                            client.UploadFile(stream, sFolderPath + sJsonFileName, null);
+                            fileSaved = client.Exists(sFolderPath + sJsonFileName);
+                            client.Disconnect();
+                            client.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(sessionTransferObject.nRequesterId, ExceptionStatus.Error.ToString(), "Set Switch Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    }
+                }
+
+                if (fileSaved)
+                {
+                    IEnumerable<SessionTransfer> sessionTransfers = await stRep.SelectWhere("nRequesterID", sessionTransferObject.nRequesterId);
+                    SessionTransfer sessionTransfer = sessionTransfers.FirstOrDefault();
+                    if (sessionTransfer == null)
+                    {
+                        sessionTransfer = new SessionTransfer()
+                        {
+                            sSessionTranferGUID = replaceGUID,
+                            nFacilityID = sessionTransferObject.nFacilityId,
+                            nFacilityLocationID = sessionTransferObject.nLocationId,
+                            nRequesterID = sessionTransferObject.nRequesterId,
+                            dtCreated = DateTime.Now,
+                            dtExpired = DateTime.Now.AddHours(1),
+                        };
+                        stRep.Insert(sessionTransfer);
+                    }
+                    else
+                    {
+                        sessionTransfer.sSessionTranferGUID = replaceGUID;
+                        sessionTransfer.dtExpired = DateTime.Now.AddHours(1);
+                        stRep.Update(sessionTransfer);
+                    }
+                }
+                if (sessionTransferObject.bSendEmail) { 
+                    SendEmail sendEmail = new SendEmail()
+                    {
+                        info = _info,
+                        nFacilityID = sessionTransferObject.nFacilityId,
+                        nLocationID = sessionTransferObject.nLocationId,
+                        sToMailName = sessionTransferObject.sFirstName + " " + sessionTransferObject.sLastName,
+                        sToMailAddress = sessionTransferObject.sEmailId,
+                        sSubject = "Session Transfer Email",
+                        sBody = $"<p>Your session is successfully transfered</p> <p>To request records from ({facility.sFacilityName} – {location.sLocationName}), please follow this link: <a href='{returnURL}' target='_blank'>Link</a></p>"
+                    };
+                    await Utilities.SendEmail(sendEmail);
+                }
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(sessionTransferObject.nRequesterId, ExceptionStatus.Error.ToString(), "Set Switch Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+            }
+            return Ok(returnURL);
+        }
+        #endregion
+
+        #region Get transfered Session
+        [HttpGet("GetSwitchedSession/st={st}")]
+        [Route("[action]")]
+        [AllowAnonymous]
+        [RequestSizeLimit(78643200)]
+        public async Task<ActionResult> GetSwitchedSession(string st)
+        {
+            string returnString = "";
+            SessionTransfer sessionTransfer = null;
+            try
+            {
+                SessionTransferRepository sessionTransferRepository = new SessionTransferRepository(_info);
+                IEnumerable<SessionTransfer> sessionTransfers = await sessionTransferRepository.SelectWhere("sSessionTranferGUID", st);
+                sessionTransfer = sessionTransfers.FirstOrDefault();
+                FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+                Facilities facility = await rpFac.Select(sessionTransfer.nFacilityID);
+
+                #region Decrypt FTP Password
+                MROLogger password = new MROLogger(_info);
+                facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
+                #endregion
+                //Json File Genration 
+                //File Name
+                string sJsonFileName = "CompleteState_"+sessionTransfer.sSessionTranferGUID+".json";
+
+                if ((facility.sFTPUrl.ToLower().Contains("ftp://")
+                    && !facility.sFTPUrl.ToLower().Contains("sftp://"))
+                    || facility.sFTPUrl.ToLower().Contains("ftps://"))
+                {
+                    FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + "SessionTransferFiles/" + sJsonFileName);
+
+                    #region Request Params
+                    request.Method = WebRequestMethods.Ftp.DownloadFile;
+                    request.Credentials = new NetworkCredential(facility.sFTPUsername, facility.sFTPPassword);
+                    request.UsePassive = true;
+                    request.UseBinary = true;
+                    request.KeepAlive = false;
+                    request.EnableSsl = true;
+                    #endregion
+
+                    FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+
+
+                    //Upload file
+                    try
+                    {
+                        Stream responseStream = response.GetResponseStream();
+                        StreamReader reader = new StreamReader(responseStream);
+                        returnString = reader.ReadToEnd();
+                        request.Method = WebRequestMethods.Ftp.DeleteFile;
+                        response = (FtpWebResponse)request.GetResponse();
+                        responseStream.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(sessionTransfer.nRequesterID, ExceptionStatus.Error.ToString(), "Get Switched Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        string sFTPURL = facility.sFTPUrl.ToLower() + "SessionTransferFiles/";
+                        if (sFTPURL.Contains("sftp://"))
+                        {
+                            sFTPURL = sFTPURL.Replace("sftp://", "");
+                        }
+                        string sDomanName, sFolderPath = string.Empty;
+                        string[] sFtpFolderPath = sFTPURL.Split(".com");
+                        if (sFtpFolderPath.Length == 2)
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = sFtpFolderPath[1];
+                        }
+                        else
+                        {
+                            sDomanName = sFtpFolderPath[0] + ".com";
+                            sFolderPath = "/";
+                        }
+
+
+                        ////Passing the sftp host without the "sftp://"
+                        var client = new SftpClient(sDomanName, 22, facility.sFTPUsername, facility.sFTPPassword);
+                        client.Connect();
+                        if (client.IsConnected)
+                        {
+                            //returnString = client.ReadAllText(sFolderPath + sJsonFileName);
+
+                            Stream responseStream = new MemoryStream();
+                            client.DownloadFile(sFolderPath + sJsonFileName, responseStream);
+                            responseStream.Seek(0, SeekOrigin.Begin);
+                            StreamReader reader = new StreamReader(responseStream);
+                            returnString = reader.ReadToEnd();
+                            client.Delete(sFolderPath + sJsonFileName);
+
+                            client.Disconnect();
+                            client.Dispose();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MROLogger.LogExceptionRecords(sessionTransfer.nRequesterID, ExceptionStatus.Error.ToString(), "Get Switched Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(sessionTransfer.nRequesterID, ExceptionStatus.Error.ToString(), "Get Switched Session", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+            }
+            return Ok(returnString);
         }
         #endregion
         #endregion

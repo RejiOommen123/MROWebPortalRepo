@@ -86,6 +86,9 @@ const state = {
     sGUID:''
 }
 const mutations = {
+    completeState(state,requester){
+        Object.assign(state, requester);
+    },
     nRequesterID(state, payload) {
         state.nRequesterID = payload;
     },

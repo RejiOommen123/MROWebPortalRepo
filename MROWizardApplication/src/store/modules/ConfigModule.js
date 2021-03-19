@@ -50,7 +50,9 @@ const state = {
  
 }
 const mutations = {
-
+    completeState(state, config) {
+        Object.assign(state, config);
+    },
     wizardLogo(state, payload) {
         state.wizardLogo = payload;
     },
