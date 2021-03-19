@@ -121,13 +121,13 @@ export default {
           text: "Name",
           align: "start",
           value: "sWaiverName",
-          width: "20%",
+          width: "35%",
         },
-        { text: "Tooltip", value: "sFieldToolTip", width: "40%" },
+        { text: "Tooltip", value: "sFieldToolTip", width: "35%" },
         {
           text: "Normalized Name",
           value: "sNormalizedWaiverName",
-          width: "30%",
+          width: "20%",
         },
         {
           text: "Edit/Delete",

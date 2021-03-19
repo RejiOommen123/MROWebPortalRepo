@@ -941,7 +941,7 @@ namespace MROWebApi.Controllers
                         {
                             nAdminUserID = facilitiesFieldMapTable.nUpdatedAdminUserID,
                             sDescription = sDescription,
-                            sModuleName = "Edit Facility Fields/Disclaimers",
+                            sModuleName = "Edit Location Fields/Disclaimers",
                             sEventName = "Reset to Default Field",
                             nFacilityID = facilitiesFieldMapTable.nFacilityID
                         };
