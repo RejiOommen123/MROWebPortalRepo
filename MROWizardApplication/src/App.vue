@@ -324,13 +324,14 @@ export default {
         this.$http
           .get("requesters/GetSwitchedSession/st="+stguid)
           .then(response => {
+            var data = JSON.parse(response.body.data);
           this.$store.commit(
             "requestermodule/completeState",
-            response.body.requesterModule
+            data.requesterModule
           );
           this.$store.commit(
             "ConfigModule/completeState",
-            response.body.configModule
+            data.configModule
           );
           this.dialogLoader = false;
           this.dialog = true;
