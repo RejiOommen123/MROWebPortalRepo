@@ -252,9 +252,11 @@ export default {
                   singleLocation.nFacilityID +
                   "&lID=" +
                   singleLocation.nFacilityLocationID +
+                  "&rID=" +
+                  this.$store.state.requestermodule.nRequesterID +
                   "&sLocationGUID=" +
                   this.$store.state.ConfigModule.sLocationGUID
-              )
+              )              
               .then(response => {
                 var apiLocationResponse = response.body;
                 if (response.body) {

@@ -59,14 +59,14 @@ namespace MROWebApi.Controllers
         #endregion  
 
         #region Get Wizard Config
-        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&sLocationGUID={sLocationGUID}")]
+        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&rID={nRequesterID:int}&sLocationGUID={sLocationGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID,int nRequesterID, string sLocationGUID)
         {
             try
-            {    
+            {
                 sLocationGUID = sLocationGUID == "null" ? null : sLocationGUID;
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID);
@@ -74,7 +74,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(nRequesterID, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }
@@ -630,7 +630,7 @@ namespace MROWebApi.Controllers
         [Route("[action]")]
         [SessionAuth]
         public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
-        {
+        {         
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
             Facilities dbFacility = await fRep.Select(requester.nFacilityID);
 
@@ -694,7 +694,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
                 }
                 return Ok(sOTP);

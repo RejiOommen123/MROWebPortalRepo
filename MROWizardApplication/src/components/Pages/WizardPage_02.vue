@@ -134,6 +134,8 @@ export default {
                 location.nFacilityID +
                 "&lID=" +
                 location.nFacilityLocationID+
+                "&rID=" +
+                this.$store.state.requestermodule.nRequesterID +
                 "&sLocationGUID=" +
                 this.$store.state.ConfigModule.sLocationGUID
             )

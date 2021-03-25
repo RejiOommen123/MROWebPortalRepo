@@ -245,6 +245,7 @@ export default {
       this.showVerifyInput = true;
       var emailConfirm = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
+        nRequesterID: this.$store.state.requestermodule.nRequesterID,
         sRequesterEmailId: this.emailValid.sRequesterEmailId,
         sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
         sPatientLastName: this.$store.state.requestermodule.sPatientLastName,

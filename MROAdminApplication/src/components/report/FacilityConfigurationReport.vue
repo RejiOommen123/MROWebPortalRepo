@@ -125,8 +125,8 @@ export default {
       gridData: undefined,
        gridHeaders :{
         'Facility' : 'sFacilityName',
-        'Wizard Name':'sWizardName',
-        'Wizard Description': 'sWizardDescription',
+        'eXpress Name':'sWizardName',
+        'eXpress Description': 'sWizardDescription',
         'Value':'sFieldName',
         'Type': 'sType',
         'Configurable in Admin Module':'bConfigurableAdmin',
