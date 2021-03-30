@@ -560,6 +560,7 @@ export default {
     },
 
       SwitchDevice(){
+        this.$store.commit("ConfigModule/bShowSessionTransfer",false);
       var CombineState = {
         requesterModule : this.$store.state.requestermodule,
         configModule : this.$store.state.ConfigModule
@@ -576,7 +577,7 @@ export default {
       };
       this.$http.post("requesters/SessionSwitch/",SessionTransfer)
         .then(response => {
-          console.log(response.body);
+          console.log(response.body);          
         });  
     },
   },
