@@ -48,6 +48,13 @@
       <v-btn  @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
     </v-col>
     </v-row>
+    <div>                    
+                <p>If you'd like to switch to a different device, please<a href="#"
+                      id="SessionTransferLinkBtn" 
+                      @click="bShowSessionTransfer()"
+                    > Click Here</a> to receive a link to this session.
+                  </p>
+       </div>
   </div>
 </template>
 
@@ -108,6 +115,9 @@ export default {
     check(id) {
         this.nSelectedCheckBox = [];
         this.nSelectedCheckBox.push(id);
+    },
+         bShowSessionTransfer(){
+       this.$store.commit("ConfigModule/bShowSessionTransfer",true);
     }
   },
 };

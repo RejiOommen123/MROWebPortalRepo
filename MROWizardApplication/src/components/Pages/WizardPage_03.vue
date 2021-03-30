@@ -208,6 +208,13 @@
           </v-row>
       </v-card>
     </v-dialog>
+          <div>                    
+                <p>If you'd like to switch to a different device, please<a href="#"
+                      id="SessionTransferLinkBtn" 
+                      @click="bShowSessionTransfer()"
+                    > Click Here</a> to receive a link to this session.
+                  </p>
+       </div>
   </div>
 </template>
 
@@ -428,8 +435,11 @@ export default {
       else{
         this.continueAhead();
       }
+    },
+        bShowSessionTransfer(){
+       this.$store.commit("ConfigModule/bShowSessionTransfer",true);
     }
-  }
+  },
 };
 </script>
 <style scoped>

@@ -68,6 +68,7 @@
                   <ModalIdle/>
                   <ModalUnauthorized/>
                   <ModalNeedHelp/>
+                  <SessionTransfer v-if="bShowSessionTransfer" />
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -126,6 +127,7 @@
 import ModalIdle from "./components/ModalIdle";
 import ModalUnauthorized from "./components/ModalUnauthorized";
 import ModalNeedHelp from "./components/ModalNeedHelp";
+import SessionTransfer from "./components/SessionTransfer";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -377,7 +379,10 @@ export default {
     },
     dialogMaxHeight() {
       return this.$store.state.ConfigModule.dialogMaxHeight;
-    }
+    },
+    bShowSessionTransfer() {    
+      return this.$store.state.ConfigModule.bShowSessionTransfer;
+   }
   },
   methods: {
     previousPage() {
@@ -397,6 +402,7 @@ export default {
     ModalIdle,
     ModalUnauthorized,
     ModalNeedHelp,
+    SessionTransfer,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

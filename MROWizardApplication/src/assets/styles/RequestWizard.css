@@ -400,3 +400,20 @@ button.wizardSelectionButton:hover {
   position: fixed;
   width: 100%;
 }
+.sessionTransfer{
+  width: 550px;
+}
+.sessionTransfer .col-12{
+  width: 30%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.sessionTransfer .v-input input {
+  background-color: white !important;
+}
+#SessionTransferLinkBtn
+{
+    text-transform: none !important;
+  text-decoration: underline;
+  color: white;
+}
