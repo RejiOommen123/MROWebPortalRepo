@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      sSelectedSensitiveInfo: [],
+      sSelectedSensitiveInfo: this.$store.state.requestermodule.sSelectedSensitiveInfo,
        buttonKey:1,
     };
   },
