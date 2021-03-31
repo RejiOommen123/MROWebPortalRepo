@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       oReleaseToArray: this.$store.state.ConfigModule.oReleaseRequestTo,
-      sActiveBtn:'',
+      sActiveBtn:this.$store.state.requestermodule.sReleaseTo,
        buttonKey:1,
     };
   },
