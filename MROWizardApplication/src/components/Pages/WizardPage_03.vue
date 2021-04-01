@@ -5,7 +5,7 @@
       <div style="width:100%">
         <v-col cols="12" offset-sm="1" sm="10">
           <button
-            :class="{active: sActiveBtn === 'Yes'}"
+            :class="{active: bAreYouPatient == true}"
             @click.once="setPatient" :key="buttonKey"
             class="wizardSelectionButton"
           >Yes, I want my medical records.</button>

@@ -88,10 +88,10 @@ export default {
   },
   data() {
     return {
-      dtDeadline: moment()
+      dtDeadline: this.$store.state.requestermodule.dtDeadline == "" ? moment()
         .add(1, "days")
         .toISOString()
-        .substr(0, 10),
+        .substr(0, 10) : this.$store.state.requestermodule.dtDeadline,
       menu1: false,
       mindate:'',
       maxdate:'',

@@ -41,8 +41,8 @@ export default {
   },
   data() {
     return {
-      sActiveBtn:'',
-       buttonKey:1,
+      sActiveBtn: this.$store.state.requestermodule.bDeadlineStatus,
+      buttonKey:1,
     };
   },
   methods: {

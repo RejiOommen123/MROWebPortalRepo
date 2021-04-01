@@ -109,15 +109,15 @@ export default {
   },
   data() {
     return {
-      sPatientFirstName: "",
-      sPatientLastName: "",
-      sPatientMiddleName: "",
-      sPatientPreviousFirstName: "",
-      sPatientPreviousLastName: "",
-      sPatientPreviousMiddleName: "",
+      sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
+      sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
+      sPatientMiddleName: this.$store.state.requestermodule.sPatientMiddleName,
+      sPatientPreviousFirstName: this.$store.state.requestermodule.sPatientPreviousFirstName,
+      sPatientPreviousLastName: this.$store.state.requestermodule.sPatientPreviousLastName,
+      sPatientPreviousMiddleName: this.$store.state.requestermodule.sPatientPreviousMiddleName,
       disclaimer02:"",
-      bPatientNameChanged: false,
-      bPatientDeceased:false,
+      bPatientNameChanged: this.$store.state.requestermodule.bPatientNameChanged,
+      bPatientDeceased: this.$store.state.requestermodule.bPatientDeceased,
       buttonKey:1
     };
   },
@@ -186,9 +186,6 @@ export default {
   },
   methods: {
     checked() {
-      if(this.disclaimer02==""){
-        this.disclaimer02 = this.disclaimer.replace("your", "patient's")
-      }
       if (!this.bPatientNameChanged) {
         this.sPatientPreviousFirstName = "";
         this.sPatientPreviousLastName = "";
@@ -234,6 +231,9 @@ export default {
         
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
+  },
+  mounted(){
+    this.disclaimer02 = this.disclaimer.replace("your", "patient's");
   }
 };
 </script>

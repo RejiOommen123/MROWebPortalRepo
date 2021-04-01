@@ -62,10 +62,10 @@ export default {
   },
   data() {
     return {
-      sSelectedRecordTypes: [],
-      sOtherRTText:'',
-      otherExist:false,
-       buttonKey:1,
+      sSelectedRecordTypes: this.$store.state.requestermodule.sSelectedRecordTypes,
+      sOtherRTText: this.$store.state.requestermodule.sOtherRTText,
+      otherExist: this.$store.state.requestermodule.sOtherRTText != "",
+      buttonKey:1,
     };
   },
   methods: {
