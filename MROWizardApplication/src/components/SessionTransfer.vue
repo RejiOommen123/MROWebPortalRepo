@@ -244,7 +244,7 @@
                 <v-row>
                   <v-col cols="6" sm="4" offset-sm="2">
                     <a>
-                      <v-btn block style="background-color: yellow" :disabled ="false"
+                      <v-btn block style="background-color: yellow" :disabled ="!bPhoneVerified && !bEmailVerified"
                        @click= SendLink() >Send Link
                       </v-btn></a
                     >
@@ -594,11 +594,12 @@ export default {
         sEmailId: this.emailValid.sRequesterEmailId,
         sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
         sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
-        bSendEmail:false
+        bSendEmail: this.bEmailVerified
       };
       return SessionTransfer;
       },
       SendLink(){
+        this.$store.commit("requestermodule/bSessionTransferred", true);
         this.$store.dispatch('requestermodule/partialAddReq',true);
         var LoaderDialog = {
           visible : false,
@@ -626,6 +627,7 @@ export default {
         });  
       },
       GenerateQR(){
+      this.$store.commit("requestermodule/bSessionTransferred", true);
       this.$store.dispatch('requestermodule/partialAddReq',true);
       var LoaderDialog = {
           visible : false,

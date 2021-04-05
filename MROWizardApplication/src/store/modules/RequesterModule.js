@@ -83,7 +83,8 @@ const state = {
     sFeedbackComment:'',   
     sWizardName:'',
     bForceCompliance:false,
-    sGUID:''
+    sGUID:'',
+    bSessionTransferred: false
 }
 const mutations = {
     completeState(state,requester){
@@ -330,7 +331,10 @@ const mutations = {
     },
     sGUID(state, payload) {
         state.sGUID = payload;
-    }
+    },
+    bSessionTransferred(state, payload) {
+        state.bSessionTransferred = payload;
+    },
 }
 const actions = {
     async partialAddReq({ commit,rootState}, isFromSessionTransfer = false) {
@@ -415,6 +419,7 @@ const actions = {
             sSignatureData: requester.sSignatureData,
             sSpecifyVisitText: requester.sSpecifyVisitText,
             sWizardName: requester.sWizardName,
+            bSessionTransferred: requester.bSessionTransferred
         }
         if(isFromSessionTransfer)
         {
