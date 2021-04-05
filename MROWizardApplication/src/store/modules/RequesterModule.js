@@ -333,7 +333,7 @@ const mutations = {
     }
 }
 const actions = {
-    async partialAddReq({ commit,rootState}) {
+    async partialAddReq({ commit,rootState}, isFromSessionTransfer = false) {
         commit("requestermodule/sWizardName", rootState.ConfigModule.selectedWizard,{ root: true });
         let requester=rootState.requestermodule;
         var requesterObj={
@@ -416,12 +416,21 @@ const actions = {
             sSpecifyVisitText: requester.sSpecifyVisitText,
             sWizardName: requester.sWizardName,
         }
-        if(rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1)
+        if(isFromSessionTransfer)
         {
-           Vue.http.post("requesters/AddRequester/",requesterObj)
-          .then(response => {
-           commit("requestermodule/nRequesterID", response.body,{ root: true });
-          });
+            Vue.http.post("requesters/AddRequester/",requesterObj)
+            .then(response => {
+            commit("requestermodule/nRequesterID", response.body,{ root: true });
+            });
+        }
+        else{
+            if(rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1)
+            {
+                Vue.http.post("requesters/AddRequester/",requesterObj)
+                .then(response => {
+                commit("requestermodule/nRequesterID", response.body,{ root: true });
+                });
+            }
         }
     }
 }

@@ -68,7 +68,7 @@
                   <ModalIdle/>
                   <ModalUnauthorized/>
                   <ModalNeedHelp/>
-                  <SessionTransfer v-if="bShowSessionTransfer" />
+                  <SessionTransfer v-if="bShowSessionTransfer" />                  
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -96,6 +96,8 @@
             </v-footer>
           </v-card>
         </v-dialog>
+        <ErrorDialog/>
+        <LoaderDialog/>
         <!-- Loader to indicate wizard is getting ready -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="primary" dark>
@@ -128,6 +130,8 @@ import ModalIdle from "./components/ModalIdle";
 import ModalUnauthorized from "./components/ModalUnauthorized";
 import ModalNeedHelp from "./components/ModalNeedHelp";
 import SessionTransfer from "./components/SessionTransfer";
+import ErrorDialog from "./components/ErrorDialog";
+import LoaderDialog from "./components/LoaderDialog";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -335,8 +339,40 @@ export default {
             "ConfigModule/completeState",
             data.configModule
           );
+          this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+          var LoaderDialog = {
+          visible : false,
+          title : 'Please stand by'
+          };
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
           this.dialogLoader = false;
           this.dialog = true;
+          },
+          (err) => {            
+          if(err.status == 400){
+            var ErrorDialog = {
+              visible : true,
+              title : 'Error',
+              body : ''
+            }
+            this.dialogLoader = false;
+
+            if(err.body.statusCode == "File_Not_Found" || err.body.statusCode == "Link_Expired")
+            {
+              ErrorDialog.body = 'Session has expired';     
+            }
+            else if(err.body.statusCode == "Invalid_Url")
+            {
+              ErrorDialog.body = 'Invalid URL';  
+            }
+            else{
+              ErrorDialog.body = 'Something went wrong. Please try again or contact us.';  
+            }
+            this.$store.commit(
+                "ConfigModule/ErrorDialog",
+                ErrorDialog
+              );
+          } 
           });
       }
   },
@@ -403,6 +439,8 @@ export default {
     ModalUnauthorized,
     ModalNeedHelp,
     SessionTransfer,
+    ErrorDialog,
+    LoaderDialog,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

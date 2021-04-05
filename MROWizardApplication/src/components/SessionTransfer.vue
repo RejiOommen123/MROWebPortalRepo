@@ -20,7 +20,7 @@
           />
           <div class="center">
             <v-row>
-              <v-col cols="10" sm="12">
+              <v-col cols="12" sm="12">
                 <b>
                   <p>
                     To Complete this request on a different device, please enter
@@ -240,18 +240,28 @@
                   </v-row>
                 </div>
               </div>
-              <div style="padding-top: 5%" class="center">
+              <div style="padding-top: 5%">
                 <v-row>
-                  <v-col>
+                  <v-col cols="6" sm="4" offset-sm="2">
                     <a>
-                      <v-btn style="background-color: yellow" :disabled ="!bPhoneVerified && !bEmailVerified"
-                       @click= SwitchDevice() >Click Here to Send Link
+                      <v-btn block style="background-color: yellow" :disabled ="false"
+                       @click= SendLink() >Send Link
+                      </v-btn></a
+                    >
+                  </v-col>
+                  <v-col cols="6" sm="4">
+                    <a>
+                      <v-btn block style="background-color: yellow"
+                       @click= GenerateQR() >Generate QR
                       </v-btn></a
                     >
                   </v-col>
                 </v-row>
               </div>
-              
+              <v-col v-if="returnURL!=''" align="center" cols="8" offset="2">
+              <vue-qrcode :value="returnURL" />
+              <div v-if="timeStatement" id="hide">This session will expire in {{QRDisplayTime}} seconds.</div>
+              </v-col>
             </v-col>
           </v-row>
         </v-card-text>
@@ -269,6 +279,7 @@ import {
   email,
   numeric,
 } from "vuelidate/lib/validators";
+import VueQrcode from 'vue-qrcode'
 export default {
   mixins: [validationMixin],
   validations: {
@@ -279,24 +290,27 @@ export default {
        sRequesterEmailId: { required, email },
      },
   },
+  components: {
+    VueQrcode,
+  },
   data: function () {
     return {
       emailValid: {
-        sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
+        sRequesterEmailId: this.$store.state.ConfigModule.SessionTransferForm.sEmail != '' ? this.$store.state.ConfigModule.SessionTransferForm.sEmail : this.$store.state.requestermodule.sRequesterEmailId,
       },   
-      sPhoneNo: this.$store.state.requestermodule.sPhoneNo,
-      bEmailVerified:this.$store.state.requestermodule.bEmailVerified,
+      sPhoneNo: this.$store.state.ConfigModule.SessionTransferForm.sPhone != '' ? this.$store.state.ConfigModule.SessionTransferForm.sPhone : this.$store.state.requestermodule.sPhoneNo,
+      bEmailVerified: this.$store.state.ConfigModule.SessionTransferForm.sEmail != '' ? this.$store.state.ConfigModule.SessionTransferForm.bEmailVerified : this.$store.state.requestermodule.bEmailVerified,
       logoImg: this.$store.state.ConfigModule.wizardLogo,
      // sPhoneNo: "",
       countryCode: ["+1", "+91"],
-      selectedCountry: "+1",
+      selectedCountry: this.$store.state.ConfigModule.SessionTransferForm.sPhoneExt != '' ? this.$store.state.ConfigModule.SessionTransferForm.sPhoneExt : "+1",
       showSendVerify: true,
       bOtpSend: false,
       time: 60,
       disableResend: true,
       timeStatement: true,
       displayTime: "",
-      bPhoneVerified: this.$store.state.requestermodule.bPhoneNoVerified,
+      bPhoneVerified: this.$store.state.ConfigModule.SessionTransferForm.sPhone != '' ? this.$store.state.ConfigModule.SessionTransferForm.bPhoneVerified : this.$store.state.requestermodule.bPhoneNoVerified,
       disableInput: false,
       sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
       sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
@@ -311,8 +325,10 @@ export default {
       EmaildisableResend: true,
       EmailtimeStatement: true,
       EmaildisplayTime: "",
-      X: "ABC",
-      Y: "XYZ",
+      returnURL: "",
+      QRTimeStatement: true,
+      QRDisplayTime: "",
+      QRtime:10
     };
   },
   watch: {
@@ -411,6 +427,7 @@ export default {
 
     closeShowSessionTransfer() {
       this.$store.commit("ConfigModule/bShowSessionTransfer", false);
+      this.SetSessionTransferForm();
     },
     //Verify OPT entered by requester
 
@@ -559,8 +576,12 @@ export default {
       this.emailValid.sRequesterEmailId = val.toLowerCase();
     },
 
-      SwitchDevice(){
-        this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+      GenerateSTData(){        
+        var LoaderDialog = {
+          visible : true,
+          title : 'Please stand by'
+        };
+        this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
       var CombineState = {
         requesterModule : this.$store.state.requestermodule,
         configModule : this.$store.state.ConfigModule
@@ -573,13 +594,88 @@ export default {
         sEmailId: this.emailValid.sRequesterEmailId,
         sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
         sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
-        bSendEmail:true
+        bSendEmail:false
       };
+      return SessionTransfer;
+      },
+      SendLink(){
+        this.$store.dispatch('requestermodule/partialAddReq',true);
+        var LoaderDialog = {
+          visible : false,
+        };
+        var SessionTransfer = this.GenerateSTData();
+        this.SetSessionTransferForm();
       this.$http.post("requesters/SessionSwitch/",SessionTransfer)
-        .then(response => {
-          console.log(response.body);          
+        .then(() => {
+          this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
+          window.top.postMessage("hello", "*");      
+        },
+        () => {            
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
+          var ErrorDialog = {
+            visible : true,
+            title : 'Error',
+            body : 'Something went wrong. Please try again or contact us.'
+          }
+          this.$store.commit(
+              "ConfigModule/ErrorDialog",
+              ErrorDialog
+            );
+        
         });  
-    },
+      },
+      GenerateQR(){
+      this.$store.dispatch('requestermodule/partialAddReq',true);
+      var LoaderDialog = {
+          visible : false,
+        };
+      var SessionTransfer = this.GenerateSTData();
+      this.SetSessionTransferForm();
+      SessionTransfer.bSendEmail = false;
+      this.$http.post("requesters/SessionSwitch/",SessionTransfer)
+        .then((response) => {
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
+          this.returnURL = response.body.data;
+          let timerId = setInterval(() => {
+               this.QRTimeStatement = true;   
+                this.QRtime -= 1;  
+                var m = Math.floor(this.QRtime % 3600 / 60);
+                var s = Math.floor(this.QRtime % 3600 % 60);
+                this.QRDisplayTime = ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);                       
+                if (this.QRtime == 0 ) {
+                  clearInterval(timerId);
+                  this.QRTimeStatement = false;
+                  this.QRDisplayTime = false;       
+                  this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+                  //window.top.postMessage("hello", "*");                 
+                }
+              }, 1000);
+        },
+        () => {            
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
+          var ErrorDialog = {
+            visible : true,
+            title : 'Error',
+            body : 'Something went wrong. Please try again or contact us.'
+          }
+          this.$store.commit(
+              "ConfigModule/ErrorDialog",
+              ErrorDialog
+            );
+        
+        });  
+      },
+      SetSessionTransferForm(){
+        var SessionTransferForm = {
+        sEmail: this.emailValid.sRequesterEmailId,
+        bEmailVerified: this.bEmailVerified,
+        sPhone: this.sPhoneNo,
+        bPhoneVerified: this.bPhoneVerified,
+        sPhoneExt: this.selectedCountry
+      }
+      this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
+      }
   },
 };
 </script>

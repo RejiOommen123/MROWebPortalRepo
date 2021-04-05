@@ -47,7 +47,23 @@ const state = {
     bShowNeedHelp:false,
     sLocationGUID:'',
     bShowSessionTransfer:false,
-    nSelectedAuthExpire: []
+    nSelectedAuthExpire: [],
+    ErrorDialog:{
+        visible:false,
+        title:'',
+        body:''
+    },
+    LoaderDialog:{
+        visible:false,
+        title:''
+    },
+    SessionTransferForm:{
+        sEmail:'',
+        bEmailVerified:false,
+        sPhone:'',
+        bPhoneVerified:false,
+        sPhoneExt:''
+    },
     // oShipmentTypes:[{"sNormalizedShipmentTypeName":"MROPatientPortal","sShipmentTypeName":"Patient Portal","sFieldToolTip":"Please contact your healthcare provider to setup a patient portal if you do not have one already setup for guidance on how to do so."},{"sNormalizedShipmentTypeName":"MROEmail","sShipmentTypeName":"Email","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROMailShipment","sShipmentTypeName":"Mail","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROIn-Person","sShipmentTypeName":"In-Person","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROFax","sShipmentTypeName":"Fax","sFieldToolTip":"Over certain number of pages will be sent by mail – paper or CD or specify only fax to providers, etc."}]
  
 }
@@ -174,7 +190,16 @@ const mutations = {
     },
     wizardHelper(state, payload) {
         state.apiResponseDataByFacilityGUID.wizardHelper = payload;
-    },    
+    },
+    ErrorDialog(state, payload) {
+        state.ErrorDialog = payload;
+    },
+    LoaderDialog(state, payload) {
+        state.LoaderDialog = payload;
+    },
+    SessionTransferForm(state, payload) {
+        state.SessionTransferForm = payload;
+    },
 }
 const actions = {}
 const getter = {}
