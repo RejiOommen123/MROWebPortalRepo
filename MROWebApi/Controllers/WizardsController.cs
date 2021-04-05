@@ -337,6 +337,7 @@ namespace MROWebApi.Controllers
                         writer.WriteElementString("fax_number", requester.sSTFaxNumber);
                         writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
                         writer.WriteElementString("waiveraccepted", requester.bWaiverAccepted.ToString());
+                        writer.WriteElementString("sessiontransferred", requester.bSessionTransferred.ToString());
                         writer.WriteEndElement();
 
                         //Requester Part Ends Here

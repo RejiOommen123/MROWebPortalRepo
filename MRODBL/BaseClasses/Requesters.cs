@@ -52,6 +52,8 @@ namespace MRODBL.BaseClasses
 
         public bool bPatientDeceased { get; set; }
 
+        public bool bSessionTransferred { get; set; }
+
         //[Required]
         public DateTime? dtPatientDOB { get; set; }
         //[Required]
