@@ -421,21 +421,12 @@ const actions = {
             sWizardName: requester.sWizardName,
             bSessionTransferred: requester.bSessionTransferred
         }
-        if(isFromSessionTransfer)
+        if((rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1) || isFromSessionTransfer)
         {
             Vue.http.post("requesters/AddRequester/",requesterObj)
             .then(response => {
             commit("requestermodule/nRequesterID", response.body,{ root: true });
             });
-        }
-        else{
-            if(rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1)
-            {
-                Vue.http.post("requesters/AddRequester/",requesterObj)
-                .then(response => {
-                commit("requestermodule/nRequesterID", response.body,{ root: true });
-                });
-            }
         }
     }
 }
