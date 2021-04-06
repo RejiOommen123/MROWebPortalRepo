@@ -607,7 +607,10 @@ export default {
         var SessionTransfer = this.GenerateSTData();
         this.SetSessionTransferForm();
       this.$http.post("requesters/SessionSwitch/",SessionTransfer)
-        .then(() => {
+        .then((response) => {
+          if(this.bPhoneVerified){
+            this.sendURLSMS(response.body.data);
+          }
           this.$store.commit("ConfigModule/bShowSessionTransfer",false);
           this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
           window.top.postMessage("hello", "*");      
@@ -677,7 +680,33 @@ export default {
         sPhoneExt: this.selectedCountry
       }
       this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
-      }
+      },
+      sendURLSMS(url) {
+      var appKey = process.env.VUE_APP_RINGCAPTCHA_APP;
+      var apiKey = process.env.VUE_APP_RINGCAPTCHA_API;
+      var facName = this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].sFacilityName;
+      var locName = this.$store.state.requestermodule.sSelectedLocationName;
+        var formData = new FormData();
+        var phoneNo = this.selectedCountry + this.sPhoneNo;
+        formData.append("phone", phoneNo);
+        formData.append("api_key", apiKey);
+        formData.append("message", "To request records from (" + facName + " – " + locName + "), please follow this link: "+ url);
+        var apiURL = "https://api.ringcaptcha.com/" + appKey + "/sms";
+        var self = this;
+        this.$http
+          .post(apiURL, formData, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            }
+          })
+          .then(response => {
+            if (response.body) {
+              console.log(response.body);
+            self.subData = response;
+            }
+          });
+      },
   },
 };
 </script>
