@@ -131,17 +131,17 @@ export default {
     return {
       emailValid: {
         sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
-        sConfirmEmailId: ""
+        sConfirmEmailId: this.$store.state.requestermodule.sRequesterEmailId
       },
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
       showVerifyInput: false,
       sVerify: "",
       sResponseKey: "",
       isDisable: false,
-      verified: false,
-      showVerifyBlock: true,
-      showSuccessBlock: false,
-      inputDisabled: false,
+      verified: this.$store.state.requestermodule.bEmailVerified,
+      showVerifyBlock: !this.$store.state.requestermodule.bEmailVerified,
+      showSuccessBlock: this.$store.state.requestermodule.bEmailVerified,
+      inputDisabled: this.$store.state.requestermodule.bEmailVerified,
       emailSent:false,
       otpSentAlert:false,
       bReturnedForCompliance:false,

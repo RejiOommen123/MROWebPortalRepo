@@ -124,11 +124,11 @@ export default {
    },
   data() {
     return {
-      dtRecordRangeStart: '',
-      dtRecordRangeEnd: '',
-      bRecordMostRecentVisit:false,
-      bSpecifyVisit:false,
-      sSpecifyVisitText:'',
+      dtRecordRangeStart: this.$store.state.requestermodule.dtRecordRangeStart,
+      dtRecordRangeEnd: this.$store.state.requestermodule.dtRecordRangeEnd,
+      bRecordMostRecentVisit: this.$store.state.requestermodule.bRecordMostRecentVisit,
+      bSpecifyVisit: this.$store.state.requestermodule.bSpecifyVisit,
+      sSpecifyVisitText: this.$store.state.requestermodule.sSpecifyVisitText,
       menu1: false,
       menu2: false,
       buttonKey:1,

@@ -124,10 +124,10 @@ export default {
   },
   data: function () {
     return {
-        sName:'',
-        sPhoneNo:'',
-        sEmail:'',
-        sMessage:'',
+        sName: this.$store.state.ConfigModule.NeedHelp.sName,
+        sPhoneNo: this.$store.state.ConfigModule.NeedHelp.sPhoneNo,
+        sEmail: this.$store.state.ConfigModule.NeedHelp.sEmail,
+        sMessage:this.$store.state.ConfigModule.NeedHelp.sMessage,
         dialog:true,
         dialogLoader:false,
         dialogSuccess:false,
@@ -179,6 +179,13 @@ export default {
   },
   methods: {
    closeShowNeedHelp(){
+     var NeedHelp = {
+        sName : this.sName,
+        sPhoneNo : this.sPhoneNo,
+        sEmail : this.sEmail,
+        sMessage : this.sMessage,
+     }
+     this.$store.commit("ConfigModule/NeedHelp", NeedHelp);
      this.$store.commit("ConfigModule/bShowNeedHelp",false);
    },
    onSubmit(){
@@ -189,8 +196,16 @@ export default {
         sName: this.sName,
         sPhoneNo: this.sPhoneNo,
         sEmail: this.sEmail,
-        sMessage: this.sMessage
+        sMessage: this.sMessage,
       };
+      var NeedHelp = {
+          sName : this.sName,
+          sPhoneNo : this.sPhoneNo,
+          sEmail : this.sEmail,
+          sMessage : this.sMessage,
+      }
+      this.$store.commit("ConfigModule/NeedHelp", NeedHelp);
+
       this.$http.post("wizards/SendNeedHelpEmail", combinedObj).then(
         response => {
           if (response.ok == true) {

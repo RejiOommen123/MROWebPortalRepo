@@ -73,7 +73,7 @@ export default {
   },
   data() {
     return {
-      nSelectedCheckBox:[],
+      nSelectedCheckBox: this.$store.state.requestermodule.sIdentityIdName,
       buttonKey:1,
     };
   },
@@ -115,6 +115,7 @@ export default {
     check(id) {
         this.nSelectedCheckBox = [];
         this.nSelectedCheckBox.push(id);
+        this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
     },
          bShowSessionTransfer(){
        this.$store.commit("ConfigModule/bShowSessionTransfer",true);

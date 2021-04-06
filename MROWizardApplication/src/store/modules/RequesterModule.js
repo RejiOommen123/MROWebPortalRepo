@@ -75,7 +75,7 @@ const state = {
     sPhoneNo:'',
     bPhoneNoVerified:false,
     sIdentityIdName:'',
-    sIdentityImage:'',
+    sIdentityImage: null,
     sSignatureData:'',
     bRequestorFormSubmitted:false,
     bRequestAnotherRecord:false,
