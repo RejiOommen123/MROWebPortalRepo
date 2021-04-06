@@ -267,6 +267,17 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+       <!-- Session Transfer success pop up -->
+    <v-dialog v-model="successDialog" width="350px" persistent light max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>The session has successfully transfered and current session has expired.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="closeSession()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -328,7 +339,8 @@ export default {
       returnURL: "",
       QRTimeStatement: true,
       QRDisplayTime: "",
-      QRtime:10
+      QRtime:300,
+      successDialog: false
     };
   },
   watch: {
@@ -387,6 +399,9 @@ export default {
     bShow() {
       return this.$store.state.ConfigModule.bShowSessionTransfer;
     },
+    bSessionTransferred() {
+      return this.$store.state.requestermodule.bSessionTransferred;
+    },
     ...mapState({
       // Show and Hide Fields Values
       // MRORequesterPhoneNumber: (state) =>
@@ -426,8 +441,13 @@ export default {
   },
 
     closeShowSessionTransfer() {
-      this.$store.commit("ConfigModule/bShowSessionTransfer", false);
-      this.SetSessionTransferForm();
+      this.SetSessionTransferForm();     
+      if(this.bSessionTransferred){
+        this.successDialog = true;
+      }
+      else{
+        this.$store.commit("ConfigModule/bShowSessionTransfer", false);
+      }       
     },
     //Verify OPT entered by requester
 
@@ -604,16 +624,15 @@ export default {
         var LoaderDialog = {
           visible : false,
         };
-        var SessionTransfer = this.GenerateSTData();
         this.SetSessionTransferForm();
+        var SessionTransfer = this.GenerateSTData();        
       this.$http.post("requesters/SessionSwitch/",SessionTransfer)
         .then((response) => {
           if(this.bPhoneVerified){
             this.sendURLSMS(response.body.data);
           }
-          this.$store.commit("ConfigModule/bShowSessionTransfer",false);
           this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
-          window.top.postMessage("hello", "*");      
+          this.successDialog = true;
         },
         () => {            
           this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
@@ -635,8 +654,8 @@ export default {
       var LoaderDialog = {
           visible : false,
         };
-      var SessionTransfer = this.GenerateSTData();
       this.SetSessionTransferForm();
+      var SessionTransfer = this.GenerateSTData();      
       SessionTransfer.bSendEmail = false;
       this.$http.post("requesters/SessionSwitch/",SessionTransfer)
         .then((response) => {
@@ -651,9 +670,8 @@ export default {
                 if (this.QRtime == 0 ) {
                   clearInterval(timerId);
                   this.QRTimeStatement = false;
-                  this.QRDisplayTime = false;       
-                  this.$store.commit("ConfigModule/bShowSessionTransfer",false);
-                  //window.top.postMessage("hello", "*");                 
+                  this.QRDisplayTime = false;    
+                  this.successDialog = true;
                 }
               }, 1000);
         },
@@ -707,6 +725,12 @@ export default {
             }
           });
       },
+      closeSession(){
+        this.successDialog = false;
+        this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+        window.top.postMessage("hello", "*");                 
+        window.location.reload();
+      }
   },
 };
 </script>

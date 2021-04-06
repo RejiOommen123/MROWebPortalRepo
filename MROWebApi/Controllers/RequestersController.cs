@@ -394,18 +394,22 @@ namespace MROWebApi.Controllers
                 MROHelperRepository helperRepo = new MROHelperRepository(_info);
                 MROHelper helper = await helperRepo.Select(1);
                 string pattern = @"\bMROSTGuid\b";
-                string replaceGUID = sessionTransfer == null ? Guid.NewGuid().ToString() : sessionTransfer.sSessionTranferGUID;
+                string replaceGUID = Guid.NewGuid().ToString();
                 returnURL = Regex.Replace(helper.sSessionTransferURL, pattern, replaceGUID);
-
+                //File Name
+                string sJsonFileName = "CompleteState_" + replaceGUID + ".json";
+                string oldGUID = "", oldJsonFileName ="";
+                if (sessionTransfer != null) {
+                    oldGUID = sessionTransfer.sSessionTranferGUID;
+                    oldJsonFileName = "CompleteState_" + oldGUID + ".json";
+                }
 
                 #region Decrypt FTP Password
                 MROLogger password = new MROLogger(_info);
                 facility.sFTPPassword = password.DecryptString(facility.sFTPPassword);
                 #endregion
 
-                //Json File Genration 
-                //File Name
-                string sJsonFileName = "CompleteState_" + replaceGUID + ".json";
+                //Json File Genration                 
 
                 if ((facility.sFTPUrl.ToLower().Contains("ftp://")
                     && !facility.sFTPUrl.ToLower().Contains("sftp://"))
@@ -416,6 +420,15 @@ namespace MROWebApi.Controllers
                     {
                         createDir(facility.sFTPUrl + "SessionTransferFiles/", facility.sFTPUsername, facility.sFTPPassword, sessionTransferObject.nRequesterId);
                     }
+
+                    if (sessionTransfer != null) {
+                        bool fileExist = IsDirExist(facility.sFTPUrl + "SessionTransferFiles/" + oldJsonFileName, facility.sFTPUsername, facility.sFTPPassword, sessionTransferObject.nRequesterId);
+                        if (fileExist)
+                        {
+                            deleteFile(facility.sFTPUrl + "SessionTransferFiles/" + oldJsonFileName, facility.sFTPUsername, facility.sFTPPassword, sessionTransferObject.nRequesterId);
+                        }
+                    }
+
                     FtpWebRequest request = (FtpWebRequest)WebRequest.Create(facility.sFTPUrl + "SessionTransferFiles/" + sJsonFileName);
                     #region Request Params
                     request.Method = WebRequestMethods.Ftp.UploadFile;
@@ -476,6 +489,14 @@ namespace MROWebApi.Controllers
                             if (!dirExist)
                             {
                                 client.CreateDirectory(sFolderPath);
+                            }
+                            if (sessionTransfer != null)
+                            {
+                                bool fileExist = client.Exists(sFolderPath + oldJsonFileName);
+                                if (fileExist)
+                                {
+                                    client.Delete(sFolderPath + oldJsonFileName);
+                                }
                             }
                             client.UploadFile(stream, sFolderPath + sJsonFileName, null);
                             fileSaved = client.Exists(sFolderPath + sJsonFileName);
@@ -759,6 +780,33 @@ namespace MROWebApi.Controllers
             {
                 MROLogger.LogExceptionRecords(nRequesterID, ExceptionStatus.Error.ToString(), "Get Switched Session", ex.Message    +"StackTrace"+ex.StackTrace,_info);
                 return false;                
+            }
+        }
+        #endregion
+
+        #region Delete FTP File.
+        private bool deleteFile(string directory, string username, string password, int nRequesterID)
+        {
+            try
+            {
+                FtpWebRequest requestDelFile = (FtpWebRequest)WebRequest.Create(directory);
+                #region Request Params
+                requestDelFile.Method = WebRequestMethods.Ftp.DeleteFile;
+                requestDelFile.Credentials = new NetworkCredential(username, password);
+                requestDelFile.UsePassive = true;
+                requestDelFile.UseBinary = true;
+                requestDelFile.KeepAlive = false;
+                requestDelFile.EnableSsl = true;
+                #endregion
+                FtpWebResponse responseDelFile = (FtpWebResponse)requestDelFile.GetResponse();
+                responseDelFile.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(nRequesterID, ExceptionStatus.Error.ToString(), "Get Switched Session", ex.Message + "StackTrace" + ex.StackTrace, _info);
+                return false;
             }
         }
         #endregion
