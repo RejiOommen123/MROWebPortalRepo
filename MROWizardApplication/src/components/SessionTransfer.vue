@@ -271,7 +271,7 @@
     <v-dialog v-model="successDialog" width="350px" persistent light max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>The session has successfully transfered and current session has expired.</v-card-text>
+        <v-card-text>The session has successfully transferred and current session has expired.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="closeSession()">Ok</v-btn>
@@ -340,7 +340,8 @@ export default {
       QRTimeStatement: true,
       QRDisplayTime: "",
       QRtime:300,
-      successDialog: false
+      successDialog: false,
+      bSessionTransferred: false
     };
   },
   watch: {
@@ -398,9 +399,6 @@ export default {
 
     bShow() {
       return this.$store.state.ConfigModule.bShowSessionTransfer;
-    },
-    bSessionTransferred() {
-      return this.$store.state.requestermodule.bSessionTransferred;
     },
     ...mapState({
       // Show and Hide Fields Values
@@ -620,6 +618,7 @@ export default {
       },
       SendLink(){
         this.$store.commit("requestermodule/bSessionTransferred", true);
+        this.bSessionTransferred = true;
         this.$store.dispatch('requestermodule/partialAddReq',true);
         var LoaderDialog = {
           visible : false,
@@ -650,6 +649,7 @@ export default {
       },
       GenerateQR(){
       this.$store.commit("requestermodule/bSessionTransferred", true);
+      this.bSessionTransferred = true;
       this.$store.dispatch('requestermodule/partialAddReq',true);
       var LoaderDialog = {
           visible : false,

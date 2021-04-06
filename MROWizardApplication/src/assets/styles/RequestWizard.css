@@ -368,6 +368,9 @@ button.wizardSelectionButton:hover {
   .needHelp{
     width: 90%;
   }
+  .sessionTransfer{
+    height: 100% !important;
+  }
 }
 .input-group-addon {
   margin-top: 20px;
@@ -402,6 +405,7 @@ button.wizardSelectionButton:hover {
 }
 .sessionTransfer{
   width: 550px;
+  height: 60%;
 }
 .sessionTransfer .col-12{
   width: 30%;
