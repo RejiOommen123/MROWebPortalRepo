@@ -215,6 +215,10 @@ export default {
             {
               this.$store.commit("requestermodule/bForceCompliance", true);
             }
+            var SessionTransferForm = {
+              sPhoneExt: this.selectedCountry
+            }
+            this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
           }
           if (response.data.status == "ERROR") {
             alert("Invalid verification code");

@@ -110,8 +110,8 @@
         <!-- Confirm Close Wizard -->
         <v-dialog v-model="dialogConfirm" light persistent max-width="300">
           <v-card>
-            <v-card-title class="headline">Are you sure you want to close this request?</v-card-title>
-            <v-card-text v-if="(selectedWizard !='Wizard_25') && (selectedWizard != 'Wizard_26') && (selectedWizard !='Wizard_27') ">Closing this request will clear all previously entered data.</v-card-text>
+            <v-card-title class="headline wordBreakNormal">Are you sure you want to close this request?</v-card-title>
+            <v-card-text class="wordBreakNormal" v-if="(selectedWizard !='Wizard_25') && (selectedWizard != 'Wizard_26') && (selectedWizard !='Wizard_27') ">Closing this request will clear all previously entered data.</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
@@ -359,11 +359,11 @@ export default {
 
             if(err.body.statusCode == "File_Not_Found" || err.body.statusCode == "Link_Expired")
             {
-              ErrorDialog.body = 'Session has expired';     
+              ErrorDialog.body = 'Your current session is expired';     
             }
             else if(err.body.statusCode == "Invalid_Url")
             {
-              ErrorDialog.body = 'Invalid URL';  
+              ErrorDialog.body = 'Your session link is expired. Please initiate new request.';  
             }
             else{
               ErrorDialog.body = 'Something went wrong. Please try again or contact us.';  

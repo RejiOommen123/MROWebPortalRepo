@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title class="headline">{{ ErrorDialog.title }}</v-card-title>
 
-        <v-card-text>
+        <v-card-text class="wordBreakNormal">
           <p>{{ ErrorDialog.body }}</p>
         </v-card-text>
 

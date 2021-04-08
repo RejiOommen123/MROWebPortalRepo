@@ -407,6 +407,9 @@ button.wizardSelectionButton:hover {
   width: 550px;
   height: 60%;
 }
+.wordBreakNormal{
+  word-break: normal;
+}
 .sessionTransfer .col-12{
   width: 30%;
   padding-top: 0;

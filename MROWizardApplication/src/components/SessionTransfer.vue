@@ -18,12 +18,12 @@
             style="align: center; padding-top: 2%"
             id="logoImg"
           />
-          <div class="center">
+          <div class="center wordBreakNormal">
             <v-row>
               <v-col cols="12" sm="12">
                 <b>
                   <p>
-                    To Complete this request on a different device, please enter
+                    To complete this request on a different device, please enter
                  your phone number or email address below:
                   </p></b
                 >
@@ -271,7 +271,7 @@
     <v-dialog v-model="successDialog" width="350px" persistent light max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>The session has successfully transferred and current session has expired.</v-card-text>
+        <v-card-text class="wordBreakNormal">Your current session is expired. A new session link should have been received on verified email / phone or by scanning QR code. Kindly click on the link to continue session on same request.</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="closeSession()">Ok</v-btn>
