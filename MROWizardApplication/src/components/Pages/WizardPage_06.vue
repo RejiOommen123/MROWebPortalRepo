@@ -246,6 +246,7 @@ export default {
       var emailInputObject = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
         sEmailId: this.emailValid.sRequesterEmailId,
+        nRequesterID: this.$store.state.requestermodule.nRequesterID,
         sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
         sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
       };

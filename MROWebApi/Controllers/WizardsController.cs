@@ -59,11 +59,11 @@ namespace MROWebApi.Controllers
         #endregion  
 
         #region Get Wizard Config
-        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&sLocationGUID={sLocationGUID}")]
+        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&rID={nRequesterID:int}&sLocationGUID={sLocationGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, int nRequesterID, string sLocationGUID)
         {
             try
             {    
@@ -74,7 +74,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(nRequesterID, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }
@@ -688,7 +688,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + emailInputObject.sEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(emailInputObject.nRequesterID, ExceptionStatus.Error.ToString(), "Email Verification. Requester EmailId - " + emailInputObject.sEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
                 }
                 return Ok(sOTP);
