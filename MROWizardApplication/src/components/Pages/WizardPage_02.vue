@@ -69,8 +69,8 @@ export default {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
       dialogLoader: false,
-      sActiveBtn: "",
-      showOtherLoactionBox: false,
+      sActiveBtn: this.$store.state.requestermodule.sSelectedLocation,
+      showOtherLoactionBox: this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther",
       sSelectedLocationName: "",
        buttonKey:1,
     };
@@ -237,7 +237,14 @@ export default {
         this.$store.commit("requestermodule/sSelectedShipmentTypes", []);       
         this.$store.commit("requestermodule/sSelectedShipmentTypesName", '');     
       }
+    },
+  mounted(){
+    if(this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther"){
+      var otherLocationName = this.locationArray.find(x => x.sNormalizedLocationName == "MROLocationOther").sLocationName;
+      var replaceString = otherLocationName + '-';
+      this.sSelectedLocationName = this.$store.state.requestermodule.sSelectedLocationName.replace(replaceString, "");
     }
+  }
   
 };
 </script>

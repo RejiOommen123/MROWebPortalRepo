@@ -50,6 +50,7 @@ export default {
     this.buttonKey++;
     if(this.sSelectedStateWaiver.length == 0){
       this.sSelectedWaiver = [];
+      this.$store.commit("requestermodule/bWaiverAccepted", false);
     }
   },
   computed:{
@@ -60,8 +61,8 @@ export default {
   },
   data() {
     return {
-      sSelectedWaiver: [],
-       buttonKey:1,
+      sSelectedWaiver: this.$store.state.requestermodule.sSelectedWaiver,
+      buttonKey:1,
     };
   },
   methods: {

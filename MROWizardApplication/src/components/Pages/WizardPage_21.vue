@@ -116,15 +116,14 @@ export default {
   },
   data() {
     return {
-      isDisable: false,
       bOtpSend: false,
-      showSuccessBlock: false,
-      disableInput: false,
-      showSendVerify: true,
+      showSuccessBlock: this.$store.state.requestermodule.bPhoneNoVerified,
+      disableInput: this.$store.state.requestermodule.bPhoneNoVerified,
+      showSendVerify: !this.$store.state.requestermodule.bPhoneNoVerified,
       countryCode: ["+1", "+91"],
       selectedCountry: "+1",
 
-      sPhoneNo: "",
+      sPhoneNo: this.$store.state.requestermodule.sPhoneNo,
       sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
       sApi_Key: process.env.VUE_APP_RINGCAPTCHA_API,
       sVerify: "",
@@ -142,7 +141,6 @@ export default {
     submit() {
        this.disableResend = true;
        this.timeStatement = false;
-      this.isDisable = true;
       this.bOtpSend = true;
       this.showSendVerify = false;
       var obj = {};
@@ -217,6 +215,10 @@ export default {
             {
               this.$store.commit("requestermodule/bForceCompliance", true);
             }
+            var SessionTransferForm = {
+              sPhoneExt: this.selectedCountry
+            }
+            this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
           }
           if (response.data.status == "ERROR") {
             alert("Invalid verification code");

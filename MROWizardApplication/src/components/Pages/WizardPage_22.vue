@@ -48,6 +48,13 @@
       <v-btn  @click.once="skipPage" :key="buttonKey" class="next">Skip</v-btn>
     </v-col>
     </v-row>
+    <div>                    
+                <p>If you'd like to switch to a different device, please<a href="#"
+                      id="SessionTransferLinkBtn" 
+                      @click="bShowSessionTransfer()"
+                    > Click Here</a> to receive a link to this session.
+                  </p>
+       </div>
   </div>
 </template>
 
@@ -66,7 +73,7 @@ export default {
   },
   data() {
     return {
-      nSelectedCheckBox:[],
+      nSelectedCheckBox: this.$store.state.requestermodule.sIdentityIdName,
       buttonKey:1,
     };
   },
@@ -108,6 +115,10 @@ export default {
     check(id) {
         this.nSelectedCheckBox = [];
         this.nSelectedCheckBox.push(id);
+        this.$store.commit("requestermodule/sIdentityIdName", this.nSelectedCheckBox[0]);
+    },
+         bShowSessionTransfer(){
+       this.$store.commit("ConfigModule/bShowSessionTransfer",true);
     }
   },
 };

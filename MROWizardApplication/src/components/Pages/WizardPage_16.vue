@@ -269,8 +269,8 @@ export default {
   },
   data() {
     return {
-      sSelectedShipmentTypes: [],
-      sSelectedShipmentTypesName:'',
+      sSelectedShipmentTypes: this.$store.state.requestermodule.sSelectedShipmentTypes,
+      sSelectedShipmentTypesName: this.$store.state.requestermodule.sSelectedShipmentTypesName,
       // combine previously entered data by requester
 
       sSTFaxNumber: '',
@@ -296,20 +296,9 @@ export default {
       //Switch based on selection and set state data
       switch (this.sSelectedShipmentTypes[0]) {
         case "MROSTEmail":
-          // if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",true);
-          // }
-          // else{
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          // }
           this.$store.commit("requestermodule/sSTEmailAddress", this.sSTEmailAddress);          
           break;
         case "MROSTMail":
-          // if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",true);
-          // }
-          // else{
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",false);
             this.$store.commit("requestermodule/sSTAddApartment", this.sSTAddApartment);
             this.$store.commit("requestermodule/sSTAddZipCode", this.sSTAddZipCode);
             this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
@@ -318,23 +307,12 @@ export default {
           //}   
           break;
         case "MROSTFax":
-          // if(this.$store.state.requestermodule.sReleaseTo!="MROReleaseToMyself"){
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",true);
-          // }
-          // else{
-          //   this.$store.commit("ConfigModule/bShowRecipientPage",false);
-          // }
           this.$store.commit("requestermodule/sSTFaxNumber",this.sSTFaxNumber);         
           break;
-        // default:
-        //     this.$store.commit("ConfigModule/bShowRecipientPage",false);
-        //   break;
       }
 
       this.$store.commit("requestermodule/sSelectedShipmentTypes", this.sSelectedShipmentTypes);       
       this.$store.commit("requestermodule/sSelectedShipmentTypesName", this.sSelectedShipmentTypesName);     
-      
-
       
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
@@ -358,13 +336,27 @@ export default {
     }
   },
   mounted(){
-    this.sSTEmailAddress = this.$store.state.requestermodule.sRequesterEmailId;
-    this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;
-    this.sSTAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
-    this.sSTAddCity= this.$store.state.requestermodule.sRecipientAddCity;
-    this.sSTAddState =this.$store.state.requestermodule.sRecipientAddState;
-    this.sSTAddStreetAddress= this.$store.state.requestermodule.sRecipientAddStreetAddress;
-    this.sSTAddApartment=this.$store.state.requestermodule.sRecipientAddApartment;
+    if (this.$store.state.requestermodule.sSTEmailAddress != "" || this.$store.state.requestermodule.sSTAddStreetAddress != "" || this.$store.state.requestermodule.sSTFaxNumber != ""){
+      this.sSTEmailAddress = this.$store.state.requestermodule.sSTEmailAddress;
+      this.sSTConfirmEmailId =this.$store.state.requestermodule.sSTEmailAddress;
+      this.sSTAddZipCode = this.$store.state.requestermodule.sSTAddZipCode;
+      this.sSTAddCity= this.$store.state.requestermodule.sSTAddCity;
+      this.sSTAddState =this.$store.state.requestermodule.sSTAddState;
+      this.sSTAddStreetAddress= this.$store.state.requestermodule.sSTAddStreetAddress;
+      this.sSTAddApartment=this.$store.state.requestermodule.sSTAddApartment;
+      this.sSTFaxNumber= this.$store.state.requestermodule.sSTFaxNumber;
+      this.sSTConfirmFaxNumber=this.$store.state.requestermodule.sSTFaxNumber;
+    }
+    else{
+      this.sSTEmailAddress = this.$store.state.requestermodule.sRequesterEmailId;
+      this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;
+      this.sSTAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
+      this.sSTAddCity= this.$store.state.requestermodule.sRecipientAddCity;
+      this.sSTAddState =this.$store.state.requestermodule.sRecipientAddState;
+      this.sSTAddStreetAddress= this.$store.state.requestermodule.sRecipientAddStreetAddress;
+      this.sSTAddApartment=this.$store.state.requestermodule.sRecipientAddApartment;
+    }
+    
   },
   //Shipment type validations
   mixins: [validationMixin],

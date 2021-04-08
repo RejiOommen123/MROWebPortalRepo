@@ -29,6 +29,9 @@ namespace MRODBL.BaseClasses
         public string sFacilityLocationURL { get; set; }
         [MaxLength]
         public string sSupportEmail { get; set; }
+        [StringLength(1000, ErrorMessage = "Maximum 1000 characters Session Transfer URL Allowed")]
+        public string sSessionTransferURL { get; set; }
+        
         #endregion
     }
 }

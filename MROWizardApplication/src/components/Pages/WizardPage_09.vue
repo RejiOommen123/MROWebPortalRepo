@@ -61,8 +61,8 @@ export default {
    },
   data() {
     return {
-      bRTManualSelection : false,
-      option:['abstract'],
+      bRTManualSelection : this.$store.state.requestermodule.bRTManualSelection,
+      option : this.$store.state.requestermodule.bRTManualSelection ? ['manual'] : ['abstract'],
       buttonKey:1,
     };
   },

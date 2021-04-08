@@ -131,17 +131,17 @@ export default {
     return {
       emailValid: {
         sRequesterEmailId: this.$store.state.requestermodule.sRequesterEmailId,
-        sConfirmEmailId: ""
+        sConfirmEmailId: this.$store.state.requestermodule.sRequesterEmailId
       },
       bConfirmReport: this.$store.state.requestermodule.bConfirmReport,
       showVerifyInput: false,
       sVerify: "",
       sResponseKey: "",
       isDisable: false,
-      verified: false,
-      showVerifyBlock: true,
-      showSuccessBlock: false,
-      inputDisabled: false,
+      verified: this.$store.state.requestermodule.bEmailVerified,
+      showVerifyBlock: !this.$store.state.requestermodule.bEmailVerified,
+      showSuccessBlock: this.$store.state.requestermodule.bEmailVerified,
+      inputDisabled: this.$store.state.requestermodule.bEmailVerified,
       emailSent:false,
       otpSentAlert:false,
       bReturnedForCompliance:false,
@@ -243,20 +243,16 @@ export default {
       this.emailSent=true;
       this.isDisable = true;
       this.showVerifyInput = true;
-      var emailConfirm = {
+      var emailInputObject = {
         nFacilityID: this.$store.state.requestermodule.nFacilityID,
-        nRequesterID: this.$store.state.requestermodule.nRequesterID,
-        sRequesterEmailId: this.emailValid.sRequesterEmailId,
-        sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
-        sPatientLastName: this.$store.state.requestermodule.sPatientLastName,
-        bAreYouPatient: this.$store.state.requestermodule.bAreYouPatient,
-        sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
-        sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
+        sEmailId: this.emailValid.sRequesterEmailId,
+        sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
+        sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
       };
       // api to send mail and get opt in response
       this.$http
         // TODO: check requestor/requester
-        .post("Wizards/VerfiyRequestorEmail/", emailConfirm)
+        .post("Wizards/VerfiyRequestorEmail/", emailInputObject)
         .then(response => {
           if (response.body) {
             this.sResponseKey = response.body;

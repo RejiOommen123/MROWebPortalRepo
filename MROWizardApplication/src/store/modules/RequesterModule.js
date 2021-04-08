@@ -75,7 +75,7 @@ const state = {
     sPhoneNo:'',
     bPhoneNoVerified:false,
     sIdentityIdName:'',
-    sIdentityImage:'',
+    sIdentityImage: null,
     sSignatureData:'',
     bRequestorFormSubmitted:false,
     bRequestAnotherRecord:false,
@@ -83,9 +83,13 @@ const state = {
     sFeedbackComment:'',   
     sWizardName:'',
     bForceCompliance:false,
-    sGUID:''
+    sGUID:'',
+    bSessionTransferred: false
 }
 const mutations = {
+    completeState(state,requester){
+        Object.assign(state, requester);
+    },
     nRequesterID(state, payload) {
         state.nRequesterID = payload;
     },
@@ -327,10 +331,13 @@ const mutations = {
     },
     sGUID(state, payload) {
         state.sGUID = payload;
-    }
+    },
+    bSessionTransferred(state, payload) {
+        state.bSessionTransferred = payload;
+    },
 }
 const actions = {
-    async partialAddReq({ commit,rootState}) {
+    async partialAddReq({ commit,rootState}, isFromSessionTransfer = false) {
         commit("requestermodule/sWizardName", rootState.ConfigModule.selectedWizard,{ root: true });
         let requester=rootState.requestermodule;
         var requesterObj={
@@ -412,13 +419,14 @@ const actions = {
             sSignatureData: requester.sSignatureData,
             sSpecifyVisitText: requester.sSpecifyVisitText,
             sWizardName: requester.sWizardName,
+            bSessionTransferred: requester.bSessionTransferred
         }
-        if(rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1)
+        if((rootState.ConfigModule.apiResponseDataByFacilityGUID.wizardsSave[rootState.ConfigModule.selectedWizard]==1) || isFromSessionTransfer)
         {
-           Vue.http.post("requesters/AddRequester/",requesterObj)
-          .then(response => {
-           commit("requestermodule/nRequesterID", response.body,{ root: true });
-          });
+            Vue.http.post("requesters/AddRequester/",requesterObj)
+            .then(response => {
+            commit("requestermodule/nRequesterID", response.body,{ root: true });
+            });
         }
     }
 }

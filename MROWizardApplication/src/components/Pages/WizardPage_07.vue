@@ -80,11 +80,11 @@ export default {
    },
   data() {
     return {
-      sAddZipCode: '',
-      sAddCity:'',
-      sAddState: '',
-      sAddStreetAddress: '',
-      sAddApartment:'',
+      sAddZipCode: this.$store.state.requestermodule.sAddZipCode,
+      sAddCity: this.$store.state.requestermodule.sAddCity,
+      sAddState: this.$store.state.requestermodule.sAddState,
+      sAddStreetAddress: this.$store.state.requestermodule.sAddStreetAddress,
+      sAddApartment: this.$store.state.requestermodule.sAddApartment,
       buttonKey:1,
     };
   },

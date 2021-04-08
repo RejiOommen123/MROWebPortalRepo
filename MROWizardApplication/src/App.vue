@@ -68,6 +68,7 @@
                   <ModalIdle/>
                   <ModalUnauthorized/>
                   <ModalNeedHelp/>
+                  <SessionTransfer v-if="bShowSessionTransfer" />                  
                   <transition
                     appear
                     enter-active-class="animated fadeIn"
@@ -95,6 +96,8 @@
             </v-footer>
           </v-card>
         </v-dialog>
+        <ErrorDialog/>
+        <LoaderDialog/>
         <!-- Loader to indicate wizard is getting ready -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="primary" dark>
@@ -107,8 +110,8 @@
         <!-- Confirm Close Wizard -->
         <v-dialog v-model="dialogConfirm" light persistent max-width="300">
           <v-card>
-            <v-card-title class="headline">Are you sure you want to close this request?</v-card-title>
-            <v-card-text v-if="(selectedWizard !='Wizard_25') && (selectedWizard != 'Wizard_26') && (selectedWizard !='Wizard_27') ">Closing this request will clear all previously entered data.</v-card-text>
+            <v-card-title class="headline wordBreakNormal">Are you sure you want to close this request?</v-card-title>
+            <v-card-text class="wordBreakNormal" v-if="(selectedWizard !='Wizard_25') && (selectedWizard != 'Wizard_26') && (selectedWizard !='Wizard_27') ">Closing this request will clear all previously entered data.</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="green darken-1" text @click="dialogConfirm = false">Cancel</v-btn>
@@ -126,6 +129,9 @@
 import ModalIdle from "./components/ModalIdle";
 import ModalUnauthorized from "./components/ModalUnauthorized";
 import ModalNeedHelp from "./components/ModalNeedHelp";
+import SessionTransfer from "./components/SessionTransfer";
+import ErrorDialog from "./components/ErrorDialog";
+import LoaderDialog from "./components/LoaderDialog";
 import Wizard_01 from "./components/Pages/WizardPage_01";
 import Wizard_02 from "./components/Pages/WizardPage_02";
 import Wizard_03 from "./components/Pages/WizardPage_03";
@@ -170,6 +176,8 @@ export default {
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     let locationguid = urlParams.get("locationguid");
+    let stguid = urlParams.get("st");
+    if(stguid==null){
     this.$store.commit(
       "ConfigModule/sLocationGUID",
       locationguid
@@ -312,13 +320,63 @@ export default {
                   this.dialog = true;
                 }
               });
-          }
+          }          
           // else{
           // this.dialogLoader = false;
           //   alert("Request Wizard not working contact administrator.");
           // }
         }
       });
+    }
+    else{
+        this.$http
+          .get("requesters/GetSwitchedSession/st="+stguid)
+          .then(response => {
+            var data = JSON.parse(response.body.data);
+          this.$store.commit(
+            "requestermodule/completeState",
+            data.requesterModule
+          );
+          this.$store.commit(
+            "ConfigModule/completeState",
+            data.configModule
+          );
+          this.$store.commit("ConfigModule/bShowSessionTransfer",false);
+          var LoaderDialog = {
+          visible : false,
+          title : 'Please stand by'
+          };
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
+          this.dialogLoader = false;
+          this.dialog = true;
+          },
+          (err) => {            
+          if(err.status == 400){
+            var ErrorDialog = {
+              visible : true,
+              title : 'Error',
+              body : ''
+            }
+            this.dialogLoader = false;
+
+            if(err.body.statusCode == "File_Not_Found" || err.body.statusCode == "Link_Expired")
+            {
+              ErrorDialog.body = 'Your current session is expired';     
+            }
+            else if(err.body.statusCode == "Invalid_Url")
+            {
+              ErrorDialog.body = 'Your session link is expired. Please initiate new request.';  
+            }
+            else{
+              ErrorDialog.body = 'Something went wrong. Please try again or contact us.';  
+            }
+            this.$store.commit(
+                "ConfigModule/ErrorDialog",
+                ErrorDialog
+              );
+          } 
+          });
+      }
   },
   //Watcher and computed property are set to check for update logo and background in store
   watch: {
@@ -359,7 +417,10 @@ export default {
     },
     dialogMaxHeight() {
       return this.$store.state.ConfigModule.dialogMaxHeight;
-    }
+    },
+    bShowSessionTransfer() {    
+      return this.$store.state.ConfigModule.bShowSessionTransfer;
+   }
   },
   methods: {
     previousPage() {
@@ -379,6 +440,9 @@ export default {
     ModalIdle,
     ModalUnauthorized,
     ModalNeedHelp,
+    SessionTransfer,
+    ErrorDialog,
+    LoaderDialog,
     Wizard_01: Wizard_01,
     Wizard_02: Wizard_02,
     Wizard_03: Wizard_03,

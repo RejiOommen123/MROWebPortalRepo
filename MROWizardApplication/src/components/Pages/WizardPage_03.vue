@@ -5,7 +5,7 @@
       <div style="width:100%">
         <v-col cols="12" offset-sm="1" sm="10">
           <button
-            :class="{active: sActiveBtn === 'Yes'}"
+            :class="{active: bAreYouPatient == true}"
             @click.once="setPatient" :key="buttonKey"
             class="wizardSelectionButton"
           >Yes, I want my medical records.</button>
@@ -14,7 +14,7 @@
       <div style="width:100%">
         <v-col cols="12" offset-sm="1" sm="10">
           <button 
-            :class="{active: sActiveBtn === 'No'}"
+            :class="{active: bAreYouPatient == false}"
             @click.once="setNotPatient" :key="buttonKey" class="wizardSelectionButton">
             No, I am requesting medical records for someone else (child, dependent, decedent, etc.).
           </button>
@@ -208,6 +208,13 @@
           </v-row>
       </v-card>
     </v-dialog>
+          <div>                    
+                <p>If you'd like to switch to a different device, please<a href="#"
+                      id="SessionTransferLinkBtn" 
+                      @click="bShowSessionTransfer()"
+                    > Click Here</a> to receive a link to this session.
+                  </p>
+       </div>
   </div>
 </template>
 
@@ -245,21 +252,19 @@ export default {
   },
   data() {
     return {
-      sRelativeFirstName: '',
-      sRelativeLastName: '',
-      files:[],
-      sRelativeFileNameArray:[],
-      sRelativeFileArray:[],
-      option:[],
+      sRelativeFirstName: this.$store.state.requestermodule.sRelativeFirstName,
+      sRelativeLastName: this.$store.state.requestermodule.sRelativeLastName,
+      files: this.$store.state.requestermodule.sRelativeFileArray.length!=0 ? this.getFilesFromState(this.$store.state.requestermodule.sRelativeFileArray, this.$store.state.requestermodule.sRelativeFileNameArray) : [],
+      sRelativeFileNameArray: this.$store.state.requestermodule.sRelativeFileNameArray,
+      sRelativeFileArray: this.$store.state.requestermodule.sRelativeFileArray,
       dialog:false,
       unsupported:false,
-      bOther: false,
-      sSelectedPatientRepresentatives: [],
-      sOtherPatientRepresentatives: '',
-      sSelectedPatientRepresentativesName:'',
-      sActiveBtn:'',
+      bOther: this.$store.state.requestermodule.sSelectedRelation=="MRORelationshipOther",
+      sSelectedPatientRepresentatives: this.$store.state.requestermodule.sSelectedRelation,
+      sOtherPatientRepresentatives: this.$store.state.requestermodule.sSelectedRelation=="MRORelationshipOther" ? this.$store.state.requestermodule.sSelectedRelationName : '',
+      sSelectedPatientRepresentativesName:this.$store.state.requestermodule.sSelectedRelationName,
       buttonKey:1,
-      DocReqDiaglog:false
+      DocReqDiaglog:false,
     };
   },
   //Relative name and realtion validations
@@ -428,8 +433,35 @@ export default {
       else{
         this.continueAhead();
       }
+    },
+    bShowSessionTransfer(){
+       this.$store.commit("ConfigModule/bShowSessionTransfer",true);
+    },
+    getFilesFromState(sRelativeFileArray,sRelativeFileNameArray){
+      var returnFiles = [];
+      sRelativeFileArray.forEach((element,index) => {
+        var fileName = sRelativeFileNameArray[index];
+        var mineType = this.base64MimeType(element);        
+        fetch(element)
+          .then(res => res.blob())
+          .then(blob => {
+            returnFiles.push(new File([blob], fileName,{ type: mineType }))
+          })
+      });
+      return returnFiles;
+    },
+    base64MimeType(encoded) {
+      var result = null;
+      if (typeof encoded !== 'string') {
+        return result;
+      }
+      var mime = encoded.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+      if (mime && mime.length) {
+        result = mime[1];
+      }
+      return result;
     }
-  }
+  },
 };
 </script>
 <style scoped>

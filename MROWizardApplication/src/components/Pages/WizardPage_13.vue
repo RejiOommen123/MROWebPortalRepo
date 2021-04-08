@@ -75,10 +75,10 @@ export default {
   },
   data() {
     return {
-      bOther: false,
-      sSelectedPrimaryReasons: [],
-      sOtherPrimaryReasons: '',
-      sSelectedPrimaryReasonsName:'',
+      bOther: this.$store.state.requestermodule.sSelectedPrimaryReasons=="MROOtherPrimaryReason" ? true : false,
+      sSelectedPrimaryReasons: this.$store.state.requestermodule.sSelectedPrimaryReasons,
+      sOtherPrimaryReasons: this.$store.state.requestermodule.sSelectedPrimaryReasons=="MROOtherPrimaryReason" ? this.$store.state.requestermodule.sSelectedPrimaryReasonsName : '',
+      sSelectedPrimaryReasonsName:this.$store.state.requestermodule.sSelectedPrimaryReasonsName,
         buttonKey:1,
     };
   },

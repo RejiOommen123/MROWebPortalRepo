@@ -47,7 +47,7 @@ export default {
   },
   data() {
     return {
-      sAdditionalData:'',
+      sAdditionalData: this.$store.state.requestermodule.sAdditionalData,
       buttonKey:1,
     };
   },

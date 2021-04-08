@@ -59,14 +59,14 @@ namespace MROWebApi.Controllers
         #endregion  
 
         #region Get Wizard Config
-        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&rID={nRequesterID:int}&sLocationGUID={sLocationGUID}")]
+        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&sLocationGUID={sLocationGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID,int nRequesterID, string sLocationGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
         {
             try
-            {
+            {    
                 sLocationGUID = sLocationGUID == "null" ? null : sLocationGUID;
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID);
@@ -74,7 +74,7 @@ namespace MROWebApi.Controllers
             }
             catch (Exception ex)
             {
-                MROLogger.LogExceptionRecords(nRequesterID, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Wizard Location Details - By FacilityID - "+nFacilityID+" and LocationID - "+nFacilityLocationID, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
             }
         }
@@ -337,6 +337,7 @@ namespace MROWebApi.Controllers
                         writer.WriteElementString("fax_number", requester.sSTFaxNumber);
                         writer.WriteElementString("patientdeceased", requester.bPatientDeceased.ToString());
                         writer.WriteElementString("waiveraccepted", requester.bWaiverAccepted.ToString());
+                        writer.WriteElementString("sessiontransferred", requester.bSessionTransferred.ToString());
                         writer.WriteEndElement();
 
                         //Requester Part Ends Here
@@ -629,10 +630,10 @@ namespace MROWebApi.Controllers
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailConfirmation requester)
-        {         
+        public async Task<ActionResult<string>> VerfiyRequestorEmail(EmailInputObject emailInputObject)
+        {
             FacilitiesRepository fRep = new FacilitiesRepository(_info);
-            Facilities dbFacility = await fRep.Select(requester.nFacilityID);
+            Facilities dbFacility = await fRep.Select(emailInputObject.nFacilityID);
 
             //if (dbFacility.bRequestorEmailVerify)
             //{
@@ -650,16 +651,9 @@ namespace MROWebApi.Controllers
                 message.From.Add(from);
 
                 //To
-                string firstLastName, firstName;
-                if (requester.bAreYouPatient) {
-                    firstLastName = requester.sPatientFirstName + " " + requester.sPatientLastName;
-                    firstName = requester.sPatientFirstName;
-                }
-                else {
-                    firstLastName = requester.sRelativeFirstName + " " + requester.sRelativeLastName;
-                    firstName = requester.sRelativeFirstName;
-                }
-                MailboxAddress to = new MailboxAddress(firstLastName, requester.sRequesterEmailId);
+                string firstLastName = emailInputObject.sFirstName + " " + emailInputObject.sLastName;
+                string firstName = emailInputObject.sFirstName;
+                MailboxAddress to = new MailboxAddress(firstLastName, emailInputObject.sEmailId);
                 message.To.Add(to);
 
                 //Subject
@@ -694,7 +688,7 @@ namespace MROWebApi.Controllers
                 }
                 catch (Exception ex)
                 {
-                MROLogger.LogExceptionRecords(requester.nRequesterID, ExceptionStatus.Error.ToString(), "Email Verification. Requester EmailId - " + requester.sRequesterEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Submit Form - Email Verification. Requester EmailId - " + emailInputObject.sEmailId, ex.Message + " Stack Trace " + ex.StackTrace, _info);
                 return Content(ex.Message);
                 }
                 return Ok(sOTP);
@@ -1432,6 +1426,39 @@ namespace MROWebApi.Controllers
                 return Content(ex.Message);
             }
         }
+
+        #region Email Session Transfer
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<ActionResult<bool>> SessionTransferEmail(EmailInputObject emailInputObject)
+        {
+            try
+            {
+                FacilitiesRepository fRep = new FacilitiesRepository(_info);
+                Facilities dbFacility = await fRep.Select(emailInputObject.nFacilityID);
+                FacilityLocationsRepository lRep = new FacilityLocationsRepository(_info);
+                FacilityLocations dbLocation = await lRep.Select(emailInputObject.nLocationID);
+                SendEmail sendEmail = new SendEmail();
+
+                sendEmail.info = _info;
+                sendEmail.nFacilityID = emailInputObject.nFacilityID;
+                sendEmail.nLocationID = emailInputObject.nLocationID;
+                sendEmail.sToMailName = emailInputObject.sFirstName + " " + emailInputObject.sLastName;
+                sendEmail.sToMailAddress = emailInputObject.sEmailId;
+                sendEmail.sSubject = "Session Transfer Email";
+                sendEmail.sBody = $"<p>Your session is successfully transfered</p> <p>To request records from ({dbFacility.sFacilityName} – {dbLocation.sLocationName}), please follow this link: <a href='http://www.google.com' target='_blank'>Google</a></p>";
+
+                await Utilities.SendEmail(sendEmail);
+            }
+            catch (Exception ex)
+            {
+                MROLogger.LogExceptionRecords(null, ExceptionStatus.Error.ToString(), "Session Transfer Email", ex.Message + " Stack Trace " + ex.StackTrace, _info);
+                return false;
+            }
+            return true;
+        }
+        #endregion
 
     }
 }

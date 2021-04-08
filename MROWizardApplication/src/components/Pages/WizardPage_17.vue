@@ -141,11 +141,11 @@ export default {
   },
   data() {
     return {
-      nSelectedCheckBox: [],
-      dSpecific: null,
+      nSelectedCheckBox: this.$store.state.ConfigModule.nSelectedAuthExpire,
+      dSpecific: this.$store.state.ConfigModule.nSelectedAuthExpire[0] == 2 ? this.$store.state.requestermodule.dtAuthExpire : null,
       menu1: false,
-      dtAuthExpire: "",
-      sAuthSpecificEvent: "",
+      dtAuthExpire: this.$store.state.requestermodule.dtAuthExpire,
+      sAuthSpecificEvent: this.$store.state.requestermodule.sAuthSpecificEvent,
       maxdate:'',
       mindate:'',
       buttonKey:1,
@@ -178,7 +178,7 @@ export default {
         "requestermodule/sAuthSpecificEvent",
         this.sAuthSpecificEvent
       );
-
+      this.$store.commit("ConfigModule/nSelectedAuthExpire",this.nSelectedCheckBox);
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
 
@@ -193,6 +193,7 @@ export default {
       var dt = new Date();
       dt.setMonth(dt.getMonth() + this.nAuthMonths);
       this.dtAuthExpire = dt.toISOString();
+      this.$store.commit("ConfigModule/nSelectedAuthExpire",[]);
       this.$store.commit("requestermodule/dtAuthExpire", this.dtAuthExpire);
       this.$store.commit("requestermodule/sAuthSpecificEvent",'');
       this.nSelectedCheckBox = [];

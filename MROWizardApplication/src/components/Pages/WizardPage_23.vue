@@ -107,7 +107,7 @@
       <v-col cols="12" sm="12" v-if="sStatus=='UploadImg'">
         <h2 style="color:white">Upload Identity Document Image</h2>
         <form>
-          <div v-show="bShowImage!=''">
+          <div v-show="bShowImage">
             <v-img
               class="identityUpload"
               width="50%"
@@ -133,10 +133,6 @@
             accept="image/png, image/jpeg, image/jpg, image/bmp"  
             :rules="rules"   
           >
-              <!-- :error-messages="fileInputErrors"
-            required
-            @input="$v.fileInput.$touch()"
-            @blur="$v.fileInput.$touch()" -->
             <template v-slot:selection="{ text }">
                   <v-chip
                     small
@@ -244,13 +240,13 @@ export default {
   },
   data() {
     return {
-      sIdentityImage: null,
+      sIdentityImage: this.$store.state.requestermodule.sIdentityImage,
       camera: null,
       deviceId: null,
       devices: [],
-      sStatus: "CapturingImg",
+      sStatus:  this.$store.state.ConfigModule.sIdentityImageStatus,
       fileInput: null,
-      bShowImage: "",
+      bShowImage: false,
       dialog:true,
       diableCamera:false,
       unsupported:false,
@@ -259,6 +255,7 @@ export default {
       ],
       cameraStarted:false,
       buttonKey:1,
+      sIdentityImageName: this.$store.state.ConfigModule.sIdentityImageName
     };
   },
   deactivated(){
@@ -269,18 +266,7 @@ export default {
       }
     }
   },
-  // mixins: [validationMixin],
-  // validations: {
-  //   fileInput: {
-  //     required
-  //   }
-  // },
   methods: {
-    // onCapture() {
-    //   var self = this;
-    //   this.$refs.webcam.capture().then(function(defs) {
-    //     self.sIdentityImage = defs;
-    //   });
     isEmpty(val){
       return (val === undefined || val == null) ? '' : val;
     },
@@ -291,15 +277,12 @@ export default {
         index = index % this.devices.length; // if we've gone too high, start from `0` again
         this.onCameraChange(this.devices[index].deviceId);
         }
-      // console.log("List of devices");
-      // console.log(this.devices[0]);
-      // console.log("Device Length");
-      // console.log(this.devices.length);
     },
     async onCapture () {
       this.sIdentityImage = await this.$refs.webcam.capture();
       this.sStatus = "ImgCaptured";
       this.camera=null;
+      this.$store.commit("ConfigModule/sIdentityImageStatus", this.sStatus);
     },
     onStarted(stream) {
       this.cameraStarted=true;
@@ -321,6 +304,7 @@ export default {
       if (error.name == "NotFoundError") {
         alert("Camera Not Found. Redirecting to upload file page.");
         this.sStatus = "UploadImg";
+        this.$store.commit("ConfigModule/sIdentityImageStatus", this.sStatus);
       }
       var camErrObj={
         Error:this.isEmpty(error?.name),    
@@ -351,6 +335,7 @@ export default {
       this.sIdentityImage='';
       this.fileInput=null;
       this.sStatus="CapturingImg";
+      this.$store.commit("ConfigModule/sIdentityImageStatus", this.sStatus);
       if(!this.$store.state.requestermodule.bPhoneNoVerified && !this.$store.state.requestermodule.bEmailVerified){
         if(this.facilityForceCompliance)
         {
@@ -391,17 +376,19 @@ export default {
             this.sIdentityImage = reader.result; //base64encoded string
           });
           reader.readAsDataURL(file);
-          this.bShowImage = file.name;
+          this.bShowImage = true;
+          this.$store.commit("ConfigModule/sIdentityImageName", file.name);
+          this.$store.commit("ConfigModule/sIdentityImageStatus", this.sStatus);
         }
         else{
           this.fileInput = null;
-          this.bShowImage = "";
+          this.bShowImage = false;
           this.$refs.clearInput.clearableCallback();
           this.unsupported=true;
         }
       } else {
         this.fileInput = null;
-        this.bShowImage = "";
+        this.bShowImage = false;
       }
     },
     UploadIdentityImage(){
@@ -415,8 +402,40 @@ export default {
         .then(response => {
           this.$store.commit("requestermodule/nRequesterID", response.body);
       });  
+    },
+    getFilesFromState(data,name){
+        var mineType = this.base64MimeType(data);        
+        // return await (fetch(data)
+        //   .then(res => res.blob())
+        //   .then(blob => {
+        //     new File([blob], name,{ type: mineType })
+        //   }));
+        return (fetch(data)
+            .then(function(res){return res.arrayBuffer();})
+            .then(function(buf){return new File([buf], name,{type:mineType});})
+        );
+    },
+    base64MimeType(encoded) {
+      var result = null;
+      if (typeof encoded !== 'string') {
+        return result;
+      }
+      var mime = encoded.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+      if (mime && mime.length) {
+        result = mime[1];
+      }
+      return result;
     }
-  },  
+  },
+  mounted(){
+    if(this.$store.state.requestermodule.sIdentityImage != null){
+      if(this.sStatus == 'UploadImg'){
+        this.bShowImage = true;
+        var self = this;
+        this.getFilesFromState(this.$store.state.requestermodule.sIdentityImage, this.$store.state.ConfigModule.sIdentityImageName).then(function(file){ self.fileInput = file;});
+      }
+    }
+  }, 
   watch: {
     camera: function(id) {
       this.deviceId = id;
