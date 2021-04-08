@@ -214,11 +214,7 @@ export default {
             if(this.facilityForceCompliance)
             {
               this.$store.commit("requestermodule/bForceCompliance", true);
-            }
-            var SessionTransferForm = {
-              sPhoneExt: this.selectedCountry
-            }
-            this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
+            }            
           }
           if (response.data.status == "ERROR") {
             alert("Invalid verification code");
@@ -231,7 +227,9 @@ export default {
         "requestermodule/bPhoneNoVerified",
         this.showSuccessBlock
       );
-
+      var SessionTransferForm = this.$store.state.ConfigModule.SessionTransferForm;
+      SessionTransferForm.sPhoneExt = this.selectedCountry;
+      this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);
       //Partial Requester Data Save Start
       this.$store.dispatch('requestermodule/partialAddReq');
       if(this.$store.state.ConfigModule.bReturnedForCompliance && this.showSuccessBlock)
