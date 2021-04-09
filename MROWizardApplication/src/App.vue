@@ -359,13 +359,9 @@ export default {
             }
             this.dialogLoader = false;
 
-            if(err.body.statusCode == "File_Not_Found" || err.body.statusCode == "Link_Expired")
+            if(err.body.statusCode == "File_Not_Found" || err.body.statusCode == "Link_Expired" || err.body.statusCode == "Invalid_Url")
             {
               ErrorDialog.body = 'Your current session is expired';     
-            }
-            else if(err.body.statusCode == "Invalid_Url")
-            {
-              ErrorDialog.body = 'Your session link is expired. Please initiate new request.';  
             }
             else{
               ErrorDialog.body = 'Something went wrong. Please try again or contact us.';  
