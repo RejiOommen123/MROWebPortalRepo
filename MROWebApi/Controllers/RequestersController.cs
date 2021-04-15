@@ -543,7 +543,7 @@ namespace MROWebApi.Controllers
                             sToMailName = sessionTransferObject.sFirstName + " " + sessionTransferObject.sLastName,
                             sToMailAddress = sessionTransferObject.sEmailId,
                             sSubject = "Session Transfer Email",
-                            sBody = $"<p>Your session is successfully transfered</p> <p>To request records from ({facility.sFacilityName} – {location.sLocationName}), please follow this link: <a href='{returnURL}' target='_blank'>Click here</a></p>"
+                            sBody = $"<p>Your session is successfully transferred</p> <p>To request records from ({facility.sFacilityName} – {location.sLocationName}), please follow this link: <a href='{returnURL}' target='_blank'>Click here</a></p>"
                         };
                         await Utilities.SendEmail(sendEmail);
                     }
