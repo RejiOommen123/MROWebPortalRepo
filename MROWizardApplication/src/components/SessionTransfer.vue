@@ -612,7 +612,8 @@ export default {
         sEmailId: this.emailValid.sRequesterEmailId,
         sFirstName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientFirstName : this.$store.state.requestermodule.sRelativeFirstName,
         sLastName: this.$store.state.requestermodule.bAreYouPatient ? this.$store.state.requestermodule.sPatientLastName : this.$store.state.requestermodule.sRelativeLastName,
-        bSendEmail: this.bEmailVerified
+        bSendEmail: this.bEmailVerified,
+        sLocationName: this.$store.state.requestermodule.sSelectedLocationName
       };
       return SessionTransfer;
       },

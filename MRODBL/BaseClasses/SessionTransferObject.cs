@@ -11,6 +11,7 @@ namespace MRODBL.BaseClasses
         public int nRequesterId { get; set; }
         public int nFacilityId { get; set; }
         public int nLocationId { get; set; }
+        public string sLocationName { get; set; }
         public string sEmailId { get; set; }
         public string sFirstName { get; set; }
         public string sLastName { get; set; }
