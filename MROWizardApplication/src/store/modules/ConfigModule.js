@@ -72,6 +72,7 @@ const state = {
         sEmail : '',
         sMessage : '',
     },
+    localPhoneExt:'+1',
     // oShipmentTypes:[{"sNormalizedShipmentTypeName":"MROPatientPortal","sShipmentTypeName":"Patient Portal","sFieldToolTip":"Please contact your healthcare provider to setup a patient portal if you do not have one already setup for guidance on how to do so."},{"sNormalizedShipmentTypeName":"MROEmail","sShipmentTypeName":"Email","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROMailShipment","sShipmentTypeName":"Mail","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROIn-Person","sShipmentTypeName":"In-Person","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROFax","sShipmentTypeName":"Fax","sFieldToolTip":"Over certain number of pages will be sent by mail – paper or CD or specify only fax to providers, etc."}]
  
 }
@@ -112,7 +113,7 @@ const mutations = {
     },
     mutateNextIndex(state) {
         state.nProgressBar+=state.nProgressBarIncrValue;
-        state.showBackBtn = true;
+        state.showBackBtn = true;        
         if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_18') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_09') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_22'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex + 2;
@@ -129,14 +130,14 @@ const mutations = {
     mutatePreviousIndex(state) {
         state.nProgressBar-=state.nProgressBarIncrValue;
         state.showBackBtn = true;
-        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_20') || (state.bRTManualSelection==false && state.selectedWizard == 'Wizard_11') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_24'))
+        if((state.bDeadlineStatus=="false" && state.selectedWizard == 'Wizard_20') || (state.bRTManualSelection==false && state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex - 1] == 'Wizard_10') || (state.bIdentitySkiped==true && state.selectedWizard == 'Wizard_24'))
         {
             state.wizardArrayIndex = state.wizardArrayIndex - 2;
             state.nProgressBar-=state.nProgressBarIncrValue * 2;
         }
         else{
             state.wizardArrayIndex = state.wizardArrayIndex - 1;
-        }        
+        }
         state.selectedWizard = state.apiResponseDataByFacilityGUID.oWizards[state.wizardArrayIndex];
         if (state.selectedWizard == 'Wizard_01') {
             state.showBackBtn = false;
@@ -216,6 +217,9 @@ const mutations = {
     },
     NeedHelp(state, payload) {
         state.NeedHelp = payload;
+    },
+    localPhoneExt(state, payload) {
+        state.localPhoneExt = payload;
     },
 }
 const actions = {}

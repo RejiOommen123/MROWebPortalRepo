@@ -1143,6 +1143,7 @@ namespace MROWebApi.Controllers
 
                         XImage theImg = new XImage();
                         theImg.SetStream(mssignaturewithbg);
+                        theDoc.PageNumber = theDoc.Form["MROSignature01"].Page.PageNumber;
                         theDoc.Rect.String = theDoc.Form["MROSignature01"].Rect.String;
                         theDoc.Rect.Magnify(1, 1);
                         theDoc.Rect.Position(theDoc.Form["MROSignature01"].Rect.Left, theDoc.Form["MROSignature01"].Rect.Bottom);
@@ -1150,6 +1151,7 @@ namespace MROWebApi.Controllers
 
                         if (theDoc.Form["MROSignature02"] != null)
                         {
+                            theDoc.PageNumber = theDoc.Form["MROSignature02"].Page.PageNumber;
                             theDoc.Rect.String = theDoc.Form["MROSignature02"].Rect.String;
                             theDoc.Rect.Magnify(1, 1);
                             theDoc.Rect.Position(theDoc.Form["MROSignature02"].Rect.Left, theDoc.Form["MROSignature02"].Rect.Bottom);
@@ -1158,6 +1160,7 @@ namespace MROWebApi.Controllers
 
                         if (theDoc.Form["MROSignature03"] != null)
                         {
+                            theDoc.PageNumber = theDoc.Form["MROSignature03"].Page.PageNumber;
                             theDoc.Rect.String = theDoc.Form["MROSignature03"].Rect.String;
                             theDoc.Rect.Magnify(1, 1);
                             theDoc.Rect.Position(theDoc.Form["MROSignature03"].Rect.Left, theDoc.Form["MROSignature03"].Rect.Bottom);

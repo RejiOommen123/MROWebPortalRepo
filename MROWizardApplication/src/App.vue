@@ -253,6 +253,9 @@ export default {
           if (locationLength == 1) {
             let singleLocation = this.$store.state.ConfigModule
               .apiResponseDataByFacilityGUID.locationDetails[0];
+            this.$store.commit(
+            "requestermodule/sSelectedLocationName",singleLocation.sLocationName
+            );
               
             this.$http
               .get(

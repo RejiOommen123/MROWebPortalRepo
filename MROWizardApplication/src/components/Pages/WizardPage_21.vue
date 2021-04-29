@@ -121,7 +121,7 @@ export default {
       disableInput: this.$store.state.requestermodule.bPhoneNoVerified,
       showSendVerify: !this.$store.state.requestermodule.bPhoneNoVerified,
       countryCode: ["+1", "+91"],
-      selectedCountry: "+1",
+      selectedCountry: this.$store.state.ConfigModule.localPhoneExt,
 
       sPhoneNo: this.$store.state.requestermodule.sPhoneNo,
       sApp_Key: process.env.VUE_APP_RINGCAPTCHA_APP,
@@ -227,6 +227,7 @@ export default {
         "requestermodule/bPhoneNoVerified",
         this.showSuccessBlock
       );
+      this.$store.commit("ConfigModule/localPhoneExt", this.selectedCountry);
       var SessionTransferForm = this.$store.state.ConfigModule.SessionTransferForm;
       SessionTransferForm.sPhoneExt = this.selectedCountry;
       this.$store.commit("ConfigModule/SessionTransferForm", SessionTransferForm);

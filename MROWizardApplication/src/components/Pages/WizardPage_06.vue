@@ -40,7 +40,7 @@
               v-if="!showVerifyBlock || !(bRequestorEmailVerify || bReturnedForCompliance)"
               :disabled="$v.emailValid.$invalid"
               class="mr-4 next"
-              @click.prevent="nextPage"
+              @click.once="nextPage" :key="'btn05'+buttonKey"
             >Next</v-btn>
             </div>
             </div>
