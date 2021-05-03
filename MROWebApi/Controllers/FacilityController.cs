@@ -46,7 +46,7 @@ namespace MROWebAPI.Controllers
                     FacilitiesList list = new FacilitiesList();
                     list.Facilities = fac;
                     list.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
-
+                    list.nFacOrgCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
                     facilitiesList.Add(list);
                 }
                 return Ok(facilitiesList);
