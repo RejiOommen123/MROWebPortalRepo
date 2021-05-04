@@ -88,5 +88,9 @@
 	  <NativeLibs Remove="Services\Utilities.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="Controllers\FacilityOrganizationsController.cs" />
+	</ItemGroup>
+
 
 </Project>

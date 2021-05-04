@@ -1,29 +1,29 @@
 <template>
-  <div id="LocationsPageBox">
-    <!-- Add Location Button which will redirect to Add Location Page -->
+  <div id="OrganizationsPageBox">
+    <!-- Add Organization Button which will redirect to Add Organization Page -->
     <v-row no-gutters>
       <v-col cols="12" sm="2" md="6">
         <div class="my-2">
           <v-btn
             depressed
             color="rgb(0, 91, 168)"
-            id="addlocation"
+            id="addorganization"
             small
             class="mx-2"
             fab
             dark
-            :to="'/AddLocation/'+this.$route.params.id"
+            :to="'/AddOrganization/'+this.$route.params.id"
           >
             <v-icon box-shadow:none>mdi-plus</v-icon>
           </v-btn>
-          <span id="AddLoc">Add Location</span>
+          <span id="AddOrg">Add Organization</span>
         </div>
       </v-col>
     </v-row>
-    <!-- Vuetify Card with Location List Title and Search Text Box  -->
+    <!-- Vuetify Card with Organization List Title and Search Text Box  -->
     <v-card>
       <v-card-title>
-        Locations List For Facility - {{facilityName}}
+        Organizations List For Facility - {{facilityName}}
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -34,7 +34,7 @@
         ></v-text-field>
       </v-card-title>
 
-      <!-- Location List DataTable  -->
+      <!-- Organization List DataTable  -->
       <v-data-table
         :headers="headers"
         :items="gridData"
@@ -47,100 +47,20 @@
         fixed-header
         height="60vh"
       >
-        <!-- Location List Edit Location Template  -->
+        <!-- Organization List Edit Organization Template  -->
         <template v-slot:item.actions="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditLocation/'+item.nFacilityLocationID">
+              <router-link class="mrorouterlink" :to="'/EditOrganization/'+item.nFacilityOrgID">
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>mdi-pencil</v-icon>
               </router-link>
             </template>
-            <span>Edit Location</span>
+            <span>Edit Organization</span>
           </v-tooltip>
-        </template>
-
-        <template v-slot:item.Fields="{ item }">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditLocationData/'+$route.params.id+'/'+item.nFacilityLocationID">
-                <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
-              </router-link>
-            </template>
-            <span>Edit Form</span>
-          </v-tooltip>
-        </template>
-
-        <!-- Location List Toggle location Active Status Template  -->
-        <template v-slot:item.bLocationActiveStatus="{ item }">
-          <v-switch
-            v-model="item.bLocationActiveStatus"
-            color="#1AA260"
-            @click="deleteItem(item.nFacilityLocationID,item.sLocationName)"
-          ></v-switch>
-        </template>
-
-         <!-- Location List Toggle location Include in Facility Status Template  -->
-        <template v-slot:item.bIncludeInFacilityLevel="{ item }">
-          <div class="d-flex justify-center">
-            <v-switch
-              v-model="item.bIncludeInFacilityLevel"
-              color="#1AA260"
-              @click="toggleIncludeInFacilityLevel(item.nFacilityLocationID,item.sLocationName)"
-              :disabled="!item.bLocationActiveStatus"
-            ></v-switch>
-          </div>
         </template>
       </v-data-table>
-      <!-- End Location List DataTable  -->
+      <!-- End Organization List DataTable  -->
     </v-card>
-
-    <!-- Dialog box for Toggle Location  -->
-    <v-dialog v-model="dialog" max-width="360">
-      <v-card>
-        <v-card-title class="headline">
-          Are you sure you want to
-          <br />change the active status?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="deleteLocation(editedItem.nFacilityLocationID)"
-          >Yes</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-       <!-- Dialog box for Toggle Include In Facility Level  -->
-    <v-dialog v-model="dialogIncludeInFacilityLevel" max-width="360">
-      <v-card>
-        <v-card-title class="headline">
-          Are you sure you want to
-          <br />change the include in facility status?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialogIncludeInFacilityLevel = false">No</v-btn>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="toggleIncludeInFacility(editedItem.nFacilityLocationID)"
-          >Yes</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- Dialog box for Auth Doc (PDF) Validation  -->
-    <v-dialog v-model="locationAlert" max-width="360px" width="350px">
-      <v-card>
-        <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Provide Valid Authorization Document to Activate Location</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="locationAlert = false">Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <!-- Common Loader -->
         <v-dialog v-model="dialogLoader" persistent width="300">
           <v-card color="rgb(0, 91, 168)" dark>
@@ -159,34 +79,19 @@ export default {
     return {
       dialogLoader:false,
       dialog: false,
-      locationAlert: false,
       search: "",
-      dialogIncludeInFacilityLevel: false,
       headers: [
         {
           text: "Name",
           align: "start",
-          value: "sLocationName",
-          width: "20%"
+          value: "sOrgName",
+          width: "40%"
         },
-        { text: "Address", value: "sLocationAddress", width: "40%" },
-        { text: "Code", value: "sLocationCode", width: "10%" },
-        {
-          text: "Edit Fields/Disclaimers",
-          value: "Fields",
-          sortable: false,
-          align: "center"
-        },
-        { text: "Active", value: "bLocationActiveStatus", sortable: false },
-        { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
+        { text: "Code", value: "sLocationCode", width: "40%" },
         { text: "Edit", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
       facilityName: "",
-      editedItem: {
-        nFacilityLocationID: 0,
-        sLocationName: ""
-      }
     };
   },
   methods: {
@@ -195,12 +100,12 @@ export default {
       this.dialogLoader = true;
       this.$http
         .get(
-          "FacilityLocations/GetFacilityLocationByFacilityID/sFacilityID=" 
+          "FacilityOrganizations/GetFacilityOrganizationsByFacilityID/sFacilityID=" 
             + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
         )
         .then(
           response => {
-            this.gridData = JSON.parse(response.bodyText)["locations"];
+            this.gridData = JSON.parse(response.bodyText)["organizations"];
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
             this.dialogLoader = false;
           },
@@ -209,73 +114,6 @@ export default {
             this.gridData = response.body;
           }
         );
-    },
-    //Method to pass nFacilityLocationID & sLocationName to dialog box
-    deleteItem(nFacilityLocationID, sLocationName) {
-      this.editedItem.nFacilityLocationID = nFacilityLocationID;
-      this.editedItem.sLocationName = sLocationName;
-      this.dialog = true;
-    },
-    toggleIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
-    {
-      //console.log("loc switch");
-      this.editedItem.nFacilityLocationID = nFacilityLocationID;
-      this.editedItem.sLocationName = sLocationName;
-      this.dialogIncludeInFacilityLevel = true;
-    },
-    //On Agree in dialog box API call to Toggle Active status for Location
-    deleteLocation(id) {
-      this.dialogLoader =true;
-      var combinedObj = {
-        nfacilityLocationID: id,
-        nAdminUserID: this.$store.state.adminUserId 
-      };
-      this.dialog = false;
-      this.$http
-        .post("FacilityLocations/ToggleFacilityLocation/",combinedObj )
-        .then(response => {
-          if (response.ok == true) 
-          {
-            this.dialogLoader =false;
-            if (response.body == "Provide Valid Authorization PDF") 
-            {
-              this.dialogLoader =false;
-              this.locationAlert = true;
-            } 
-            else
-            { 
-              this.dialogLoader =false;
-              this.$router.go();
-            }
-          }
-        });
-    },
-    //On Agree in dialog box API call to Toggle Include in Facility status for Location
-    toggleIncludeInFacility(id) {
-      this.dialogLoader =true;
-      var combinedObj = {
-        nfacilityLocationID: id,
-        nAdminUserID: this.$store.state.adminUserId 
-      };
-      this.dialog = false;
-      this.$http
-        .post("FacilityLocations/ToggleFacilityLocationIncludeInFacility/",combinedObj )
-        .then(response => {
-          if (response.ok == true) 
-          {
-            this.dialogLoader =false;
-            if (response.body == "Provide Valid Authorization PDF") 
-            {
-              this.dialogLoader =false;
-              this.locationAlert = true;
-            } 
-            else
-            { 
-              this.dialogLoader =false;
-              this.$router.go();
-            }
-          }
-        });
     }
   }
 };
@@ -283,7 +121,7 @@ export default {
 
 <style scoped>
 @media screen and (max-width: 500px) {
-  #LocationsPageBox {
+  #OrganizationsPageBox {
     margin: 0 0em;
   }
   h1 {

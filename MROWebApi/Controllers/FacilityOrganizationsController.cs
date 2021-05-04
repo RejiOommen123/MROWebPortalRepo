@@ -18,11 +18,11 @@ namespace MROWebApi.Controllers
     [ApiController]
     [EnableCors("AllowOrigin")]
     //[APIKeyAuth]
-    public class FacilityLocationsController : ControllerBase
+    public class FacilityOrganizationsController : ControllerBase
     {
-        #region Facility Locations Constructor
+        #region Facility Organizations Constructor
         private readonly DBConnectionInfo _info;
-        public FacilityLocationsController(DBConnectionInfo info)
+        public FacilityOrganizationsController(DBConnectionInfo info)
         {
             _info = info;
         }
@@ -77,17 +77,17 @@ namespace MROWebApi.Controllers
             return facilityLocations;
         }
 
-        [HttpGet("GetFacilityLocationByFacilityID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
+        [HttpGet("GetFacilityOrganizationsByFacilityID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityID(string sFacilityID,string sAdminUserID)
+        public async Task<IActionResult> GetFacilityOrganizationsByFacilityID(string sFacilityID,string sAdminUserID)
         {
             try
             {
                 bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
                 bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetOrganizationsList(nFacilityID);
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                IEnumerable<dynamic> organizations = await facilityOrganizationsRepository.GetOrganizationsList(nFacilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
                 Facilities facility = await facilityRepo.Select(nFacilityID);
                 if (facility == null)
@@ -101,20 +101,20 @@ namespace MROWebApi.Controllers
                     //string sDescription = "Get Facility Locations Method was called for Facility ID: " + sFacilityID;
                     //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
                     AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
-                    string sDescription = "Get Facility Locations Method was called for Facility ID: " + nFacilityID;
+                    string sDescription = "Get Organizations Method was called for Facility ID: " + nFacilityID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
                         nAdminUserID = nAdminUserID,
                         sDescription = sDescription,
-                        sModuleName = "Manage Facilities",
-                        sEventName = "Get Facility Locations By Facility ID",
+                        sModuleName = "Manage Organizations",
+                        sEventName = "Get Facility Organizations By Facility ID",
                         nFacilityID = facility.nFacilityID,
                         dtLogTime = DateTime.Now,
                     };
                     adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
-                return Ok(new { locations, faciName });
+                return Ok(new { organizations, faciName });
             }
             catch (Exception ex)
             {

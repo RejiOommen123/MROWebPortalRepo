@@ -122,6 +122,13 @@ namespace MRODBL.Repositories
         /// <returns></returns>
         Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4);
 
+        /// <summary>
+        /// Get Organizations for a Facility based on Facility ID
+        /// </summary>
+        /// <param name="nFacilityID">Unique Facility ID</param>
+        /// <returns>List of Organizations for Provided Facility ID</returns>
+        Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID);
+
         #endregion
 
         #region INSERT Queries

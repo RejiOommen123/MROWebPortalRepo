@@ -187,6 +187,28 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
             }
         }
+
+        public async Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityOrgID, " +
+                      "sOrgName, " +
+                      "sLocationCode " +
+                      "FROM " +
+                      "tblFacilityOrganizations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityOrganizations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+        }
         public async Task<IEnumerable<dynamic>> InnerJoin(string colA, string colB, string tblA, string tblB)
         {
             string SqlString = "SELECT * FROM " + tblA + " INNER JOIN " + tblB + " ON " + tblA + "." + colA + " = " + tblB + "." + colB;
