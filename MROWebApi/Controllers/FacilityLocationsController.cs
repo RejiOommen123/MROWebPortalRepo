@@ -87,7 +87,7 @@ namespace MROWebApi.Controllers
                 bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
                 bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetOrganizationsList(nFacilityID);
+                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(nFacilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
                 Facilities facility = await facilityRepo.Select(nFacilityID);
                 if (facility == null)
