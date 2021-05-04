@@ -124,7 +124,7 @@ html {
 
 /* EditLocation.vue */
 
-#EditLocationsPageBox {
+#EditLocationsPageBox, #EditOrganizationsPageBox {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;

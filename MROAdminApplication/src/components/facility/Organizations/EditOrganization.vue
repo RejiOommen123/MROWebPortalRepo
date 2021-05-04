@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div id="EditLocationsPageBox">
-      <form @submit.prevent="onSubmit" class="editlocation-form">
+    <div id="EditOrganizationsPageBox">
+      <form @submit.prevent="onSubmit" class="editorganization-form">
         <v-row>
           <v-col cols="12" offset-md="1" md="5">
-            <label class="required" for="sLocationName">Location Name:</label>
+            <label class="required" for="sOrgName">Organization Name:</label>
             <v-text-field
               type="text"
-              id="sLocationName"
-              placeholder="Enter Location Name"
-              v-model="location.sLocationName"
-              @input="$v.location.sLocationName.$touch()"
-              @blur="$v.location.sLocationName.$touch()"
-              :error-messages="sLocationNameErrors"
+              id="sOrgName"
+              placeholder="Enter Organization Name"
+              v-model="organization.sOrgName"
+              @input="$v.organization.sOrgName.$touch()"
+              @blur="$v.organization.sOrgName.$touch()"
+              :error-messages="sOrgNameErrors"
               solo
             ></v-text-field>
             <label class="required" for="nROILocationID">ROI Location Id:</label>
@@ -20,9 +20,9 @@
               type="number"
               id="nROILocationID"
               placeholder="Enter Location Id"
-              v-model="location.nROILocationID"
-              @input="$v.location.nROILocationID.$touch()"
-              @blur="$v.location.nROILocationID.$touch()"
+              v-model="organization.nROILocationID"
+              @input="$v.organization.nROILocationID.$touch()"
+              @blur="$v.organization.nROILocationID.$touch()"
               :error-messages="nROILocationIDErrors"
               solo
               min="1"
@@ -32,43 +32,10 @@
               type="text"
               id="sLocationCode"
               placeholder="Enter Location Code"
-              v-model="location.sLocationCode"
-              @input="$v.location.sLocationCode.$touch()"
-              @blur="$v.location.sLocationCode.$touch()"
+              v-model="organization.sLocationCode"
+              @input="$v.organization.sLocationCode.$touch()"
+              @blur="$v.organization.sLocationCode.$touch()"
               :error-messages="sLocationCodeErrors"
-              solo
-            ></v-text-field>
-            <label class="required" for="sLocationAddress">Location Address:</label>
-            <v-text-field
-              type="text"
-              id="sLocationAddress"
-              placeholder="Enter Address"
-              v-model="location.sLocationAddress"
-              @input="$v.location.sLocationAddress.$touch()"
-              @blur="$v.location.sLocationAddress.$touch()"
-              :error-messages="sLocationAddressErrors"
-              solo
-            ></v-text-field>
-            <label class="required" for="sPhoneNo">Phone No:</label>
-            <v-text-field
-              type="text"
-              id="nPhoneNo"
-              placeholder="Enter Phone No"
-              v-model="location.sPhoneNo"
-              @input="$v.location.sPhoneNo.$touch()"
-              @blur="$v.location.sPhoneNo.$touch()"
-              :error-messages="sPhoneNoErrors"
-              solo
-            ></v-text-field>
-            <label for="sFaxNo">Fax No:</label>
-            <v-text-field
-              type="text"
-              id="nFaxNo"
-              placeholder="Enter Fax No"
-              v-model="location.sFaxNo"
-              @input="$v.location.sFaxNo.$touch()"
-              @blur="$v.location.sFaxNo.$touch()"
-              :error-messages="sFaxNoErrors"
               solo
             ></v-text-field>
             <!-- Show GUID & -->
@@ -110,62 +77,16 @@
               type="text"
               id="sSupportEmail"
               placeholder="Enter Support Email"
-              v-model="location.sSupportEmail"
-              @input="$v.location.sSupportEmail.$touch()"
-              @blur="$v.location.sSupportEmail.$touch()"
+              v-model="organization.sSupportEmail"
+              @input="$v.organization.sSupportEmail.$touch()"
+              @blur="$v.organization.sSupportEmail.$touch()"
               :error-messages="sSupportEmailErrors"
               solo
             ></v-text-field>
-            <label for="bForceCompliance">Apply Force Compliance?</label>
-            <v-btn-toggle
-                v-model="location.bForceCompliance"
-                mandatory
-                class="btnGrp"
-              >
-                <v-btn :color="location.bForceCompliance==='true' ? 'green' : 'none'" value="true">
-                  Yes
-                </v-btn>
-                <v-btn :color="location.bForceCompliance==='null' ? 'primary' : 'none'" value="null">
-                  Default
-                </v-btn>
-                <v-btn :color="location.bForceCompliance==='false' ? 'red' : 'none'" value="false">
-                  NO
-                </v-btn>
-            </v-btn-toggle>
           </v-col>
           <v-col cols="12" md="5">
-            <label for="sAuthTemplate">Authorization Template:
-               <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon :disabled="location.sAuthTemplate=='' || location.sAuthTemplate==null" v-bind="attrs" v-on="on" class="ma-0 pa-0">
-                    <v-icon
-                      @click="previewPDF(0)"
-                      small
-                      color="rgb(0,91,168)"
-                      v-bind="attrs"
-                      v-on="on"
-                    >mdi-file</v-icon>
-                  </v-btn>
-                </template>
-                <span>Preview PDF</span>
-              </v-tooltip>
-            </label>
-            <v-file-input
-            ref="sPDFFile"
-              chips
-              show-size
-              dense
-              hint="Upload Authorization Document"
-              rounded
-              label="Upload PDF"
-              filled
-              prepend-icon="mdi-file-pdf"
-              accept=".pdf"
-              @change="onPDFFileChanged"
-              :placeholder="location.sAuthTemplateName"
-            ></v-file-input>
             <label for="sConfigFacilityLogo">Logo Image:</label>
-            <v-img :src="location.sConfigLogoData" width="20%"></v-img>
+            <v-img :src="organization.sConfigLogoData" width="20%"></v-img>
             <br />
             <v-file-input
             ref="sLogoImage"
@@ -179,7 +100,7 @@
               filled
               prepend-icon="mdi-camera"
               @change="onLogoFileChanged"
-              :placeholder="location.sConfigLogoName"
+              :placeholder="organization.sConfigLogoName"
               accept="image/png, image/jpeg, image/bmp"
             >
               <v-tooltip slot="append" top>
@@ -190,7 +111,7 @@
               </v-tooltip>
             </v-file-input>
             <label for="sConfigBackgroundImg">Background Image:</label>
-            <v-img :src="location.sConfigBackgroundData" width="20%"></v-img>
+            <v-img :src="organization.sConfigBackgroundData" width="20%"></v-img>
             <br />
             <v-file-input
             ref="sBGImage"
@@ -204,7 +125,7 @@
               filled
               prepend-icon="mdi-camera"
               @change="onBackgroundFileChanged"
-              :placeholder="location.sConfigBackgroundName"
+              :placeholder="organization.sConfigBackgroundName"
               accept="image/png, image/jpeg, image/bmp"
             >
               <v-tooltip slot="append" top>
@@ -221,9 +142,9 @@
                   type="number"
                   id="nPrimaryTimeout"
                   placeholder="Primary Timeout (In Seconds)"
-                  v-model="location.nPrimaryTimeout"
-                  @input="$v.location.nPrimaryTimeout.$touch()"
-                  @blur="$v.location.nPrimaryTimeout.$touch()"
+                  v-model="organization.nPrimaryTimeout"
+                  @input="$v.organization.nPrimaryTimeout.$touch()"
+                  @blur="$v.organization.nPrimaryTimeout.$touch()"
                   :error-messages="nPrimaryTimeoutErrors"
                   solo
                 ></v-text-field>
@@ -234,9 +155,9 @@
                   type="number"
                   id="nSecondaryTimeout"
                   placeholder="Secondary Timeout (In Seconds)"
-                  v-model="location.nSecondaryTimeout"
-                  @input="$v.location.nSecondaryTimeout.$touch()"
-                  @blur="$v.location.nSecondaryTimeout.$touch()"
+                  v-model="organization.nSecondaryTimeout"
+                  @input="$v.organization.nSecondaryTimeout.$touch()"
+                  @blur="$v.organization.nSecondaryTimeout.$touch()"
                   :error-messages="nSecondaryTimeoutErrors"
                   solo
                 ></v-text-field>
@@ -246,29 +167,18 @@
         </v-row>
         <div class="submit">
           <v-btn type="submit" color="primary" :disabled="this.$v.$invalid">Save</v-btn>
-          <v-btn :to="'/locations/'+this.location.nFacilityID" type="button" color="primary">Cancel</v-btn>
+          <v-btn :to="'/organizations/'+this.organization.nFacilityID" type="button" color="primary">Cancel</v-btn>
         </div>
         <br />
       </form>
     </div>
-    <v-dialog v-model="sameLocNameAlert" width="360px" max-width="350px">
+    <v-dialog v-model="sameOrgNameAlert" width="360px" max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
         <v-card-text>{{sameNameText}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="sameLocNameAlert = false">Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- Dialog Alert for Auth Doc errors -->
-    <v-dialog v-model="authDocErrors" width="425px" max-width="425px">
-      <v-card>
-        <v-card-title class="headline">PDF missing following fields</v-card-title>
-        <v-card-text v-html="this.authDocErrorsText"></v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="authDocErrorsContinue()">Ok</v-btn>
+          <v-btn color="green darken-1" text @click="sameOrgNameAlert = false">Ok</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -281,17 +191,6 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-         <!-- PDF Clearer -->
-    <v-dialog v-model="PDFClearer" width="360px" max-width="350px">
-      <v-card>
-        <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Select PDF File Only</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="clearPDFField()">Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <!-- Logo Clearer -->
     <v-dialog v-model="LogoClearer" width="360px" max-width="350px">
       <v-card>
@@ -325,64 +224,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- PDF Preview Dialog -->
-    <v-dialog
-      v-model="previewPDFDialog"
-      max-width="80%"
-      content-class="pdfPreviewScroll"
-    >
-      <v-card>      
-          
-        <v-card-title class="headline justify-center">
-          <v-btn
-            color="green darken-1"
-            text
-            @click="previousPage()"
-            :disabled="previewPDFPage==0"
-          >
-            Previous
-          </v-btn>
-          <v-spacer></v-spacer>
-          <h3>Requester Sample Data</h3>
-           <v-spacer></v-spacer>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="nextPage()"
-            :disabled="previewPDFPage==4"
-          >
-            Next
-          </v-btn>          
-            <v-btn style="font-size:36px;color:black"  icon  @click="previewPDFDialog=false">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn> 
-          </v-card-title>       
-
-        <v-card-text class="scroll">
-        <pdf          
-          v-for="i in numPages"
-          :key="i"
-          :src="src"
-          :page="i"
-          class="pdfViewer"
-        ></pdf>
-        </v-card-text>
-
-        <v-card-actions>        
-          <v-spacer></v-spacer>
-          Requester Sample Data - {{previewPDFPage+1}}/5
-        
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-
   </div>
 </template>
 
 <script>
 import MY_JSON from '../../../assets/json/data.json'
-import pdf from "vue-pdf";
 import { validationMixin } from "vuelidate";
 import {
   required,
@@ -394,13 +240,10 @@ import {
 export default {
     //custom option named myJson
   myJson: MY_JSON,
-  components:{
-    pdf
-  },
   mixins: [validationMixin],
   validations: {
-    location: {
-      sLocationName: {
+    organization: {
+      sOrgName: {
         required,
         maxLength: maxLength(100),
         minLength: minLength(2)
@@ -410,115 +253,73 @@ export default {
         required,
         maxLength: maxLength(8),
         minLength: minLength(2)
-      },
-      sLocationAddress: { required, maxLength: maxLength(1000) },
-      sPhoneNo: {
-        required,
-        maxLength: maxLength(10),
-        minLength: minLength(10),
-        numeric
-      },
-      sFaxNo: { maxLength: maxLength(10), minLength: minLength(10), numeric },      
+      },  
       nPrimaryTimeout: { numeric },
       nSecondaryTimeout: { numeric },
       sSupportEmail: { email, maxLength: maxLength(150) },
     }
   },
   computed: {
-    sLocationNameErrors() {
+    sOrgNameErrors() {
       const errors = [];
-      if (!this.$v.location.sLocationName.$dirty) return errors;
-      !this.$v.location.sLocationName.minLength &&
-        errors.push("Location Name must be at least 2 characters long");
-      !this.$v.location.sLocationName.maxLength &&
-        errors.push("Location Name must be at most 100 characters long");
-      !this.$v.location.sLocationName.required &&
-        errors.push("Location Name is required.");
+      if (!this.$v.organization.sOrgName.$dirty) return errors;
+      !this.$v.organization.sOrgName.minLength &&
+        errors.push("Organization Name must be at least 2 characters long");
+      !this.$v.organization.sOrgName.maxLength &&
+        errors.push("Organization Name must be at most 100 characters long");
+      !this.$v.organization.sOrgName.required &&
+        errors.push("Organization Name is required.");
       return errors;
     },
     nROILocationIDErrors() {
       const errors = [];
-      if (!this.$v.location.nROILocationID.$dirty) return errors;
-      !this.$v.location.nROILocationID.numeric &&
+      if (!this.$v.organization.nROILocationID.$dirty) return errors;
+      !this.$v.organization.nROILocationID.numeric &&
         errors.push("Location Id Must be Numeric");
-      !this.$v.location.nROILocationID.required &&
+      !this.$v.organization.nROILocationID.required &&
         errors.push("Location Id is required.");
       return errors;
     },
     sLocationCodeErrors() {
       const errors = [];
-      if (!this.$v.location.sLocationCode.$dirty) return errors;
-      !this.$v.location.sLocationCode.minLength &&
+      if (!this.$v.organization.sLocationCode.$dirty) return errors;
+      !this.$v.organization.sLocationCode.minLength &&
         errors.push("Location Code must be at least 2 characters long");
-      !this.$v.location.sLocationCode.maxLength &&
+      !this.$v.organization.sLocationCode.maxLength &&
         errors.push("Location Code must be at most 8 characters long");
-      !this.$v.location.sLocationCode.required &&
+      !this.$v.organization.sLocationCode.required &&
         errors.push("Location Code is required.");
-      return errors;
-    },
-    sLocationAddressErrors() {
-      const errors = [];
-      if (!this.$v.location.sLocationAddress.$dirty) return errors;
-      !this.$v.location.sLocationAddress.maxLength &&
-        errors.push("Location Address must be at most 1000 characters long");
-      !this.$v.location.sLocationAddress.required &&
-        errors.push("Location Address is required.");
-      return errors;
-    },
-    sPhoneNoErrors() {
-      const errors = [];
-
-      if (!this.$v.location.sPhoneNo.$dirty) return errors;
-      !this.$v.location.sPhoneNo.numeric &&
-        errors.push("Phone Number can only have numbers");
-      !this.$v.location.sPhoneNo.minLength &&
-        errors.push("Phone Number cannot be less than 10 character");
-      !this.$v.location.sPhoneNo.maxLength &&
-        errors.push("Phone Number cannot be greater than 10 character");
-      !this.$v.location.sPhoneNo.required &&
-        errors.push("Phone Number is required.");
-      return errors;
-    },
-    sFaxNoErrors() {
-      const errors = [];
-      if (!this.$v.location.sFaxNo.$dirty) return errors;
-      !this.$v.location.sFaxNo.numeric &&	
-        errors.push("Fax Number can only have numbers");
-      !this.$v.location.sFaxNo.minLength &&
-        errors.push("Fax Number must be at least 10 characters long");
-      !this.$v.location.sFaxNo.maxLength &&
-        errors.push("Fax Number must be at most 10 characters long");
       return errors;
     },
     nPrimaryTimeoutErrors() {
       const errors = [];
-      if (!this.$v.location.nPrimaryTimeout.$dirty) return errors;
-      !this.$v.location.nPrimaryTimeout.numeric &&
+      if (!this.$v.organization.nPrimaryTimeout.$dirty) return errors;
+      !this.$v.organization.nPrimaryTimeout.numeric &&
         errors.push("Primary Timeout Must be Numeric");
       return errors;
     },
     nSecondaryTimeoutErrors() {
       const errors = [];
-      if (!this.$v.location.nSecondaryTimeout.$dirty) return errors;
-      !this.$v.location.nSecondaryTimeout.numeric &&
+      if (!this.$v.organization.nSecondaryTimeout.$dirty) return errors;
+      !this.$v.organization.nSecondaryTimeout.numeric &&
         errors.push("Secondary Timeout Must be Numeric");
       return errors;
     },
     sSupportEmailErrors() {
       const errors = [];
-      if (!this.$v.location.sSupportEmail.$dirty) return errors;
-       !this.$v.location.sSupportEmail.maxLength &&
+      if (!this.$v.organization.sSupportEmail.$dirty) return errors;
+       !this.$v.organization.sSupportEmail.maxLength &&
         errors.push("Support Email must be at most 150 characters long");
-      !this.$v.location.sSupportEmail.email &&
+      !this.$v.organization.sSupportEmail.email &&
         errors.push("Please provide a proper Email ID");
       return errors;
     },
   },
-  name: "EditLocation",
+  name: "EditOrganization",
   data() {
     return {
       sameNameText:'',
-      sameLocNameAlert: false,
+      sameOrgNameAlert: false,
       BGClearer:false,
       LogoClearer:false,
       PDFClearer: false,
@@ -534,25 +335,18 @@ export default {
       sGUID: '',
       errorAlert:false,
       errorMessage:'',
-      location: {
-        nROIFacilityID: null,
+      organization: {
         nFacilityID: null,
-        nFacilityLocationID: null,
+        nFacilityOrgID: null,
         sLocationCode: "",
-        sLocationName: "",
-        sLocationAddress: "",
-        sPhoneNo: null,
-        sFaxNo: null,
+        sOrgName: "",
         sConfigLogoName: "",
         sConfigLogoData: "",
         sConfigBackgroundName: "",
         sConfigBackgroundData: "",
-        sAuthTemplate: "",
         nROILocationID: "",
-        sAuthTemplateName: "",
         nPrimaryTimeout:"",
         nSecondaryTimeout:"",
-        bForceCompliance:"null",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
       }
@@ -563,24 +357,13 @@ export default {
     this.dialogLoader =true;
     this.$http
       .get(
-        "FacilityLocations/GetFacilityLocationSingle/sFacilitylocationID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
+        "FacilityOrganizations/GetFacilityOrganizationSingle/sFacilityOrgID=" + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
       )
       .then(
         response => {
           // get body data
-          this.location = JSON.parse(response.bodyText);
+          this.organization = JSON.parse(response.bodyText);
           this.dialogLoader =false;    
-          switch(this.location.bForceCompliance){
-          case true:
-            this.location.bForceCompliance="true";
-            break;
-          case false:
-            this.location.bForceCompliance="false";
-            break;
-          case null:
-            this.location.bForceCompliance="null";
-            break;
-        }
         },
         response => {
           // error callback
@@ -588,13 +371,13 @@ export default {
         }
       ); 
       
-    //Get btn code for location and guid
-    this.$http.get("FacilityLocations/GetBtnCodeAndGUID/"+this.$route.params.id)
+    //Get btn code for organization and guid
+    this.$http.get("FacilityOrganizations/GetBtnCodeAndGUID/"+this.$route.params.id)
     .then(
       response=>{
         if(response.ok==true){        
-        this.sGUID = response.body.sFacilityLocationURL;
-        this.sBtnCode = response.body.sFacilityLocationButtonHTMLCode;
+        this.sGUID = response.body.sFacilityOrgURL;
+        this.sBtnCode = response.body.sFacilityOrgButtonHTMLCode;
       }},
       error=>{        
         if (error.status == 400) {
@@ -609,25 +392,15 @@ export default {
   methods: {
     clearBGField() {
       this.BGClearer = false;
-      this.location.sConfigBackgroundName = "";
-      this.location.sConfigBackgroundData = "";
+      this.organization.sConfigBackgroundName = "";
+      this.organization.sConfigBackgroundData = "";
       this.$refs.sBGImage.clearableCallback();
     },
     clearLogoField() {
       this.LogoClearer = false;
-      this.location.sConfigLogoName = "";
-      this.location.sConfigLogoData = "";
+      this.organization.sConfigLogoName = "";
+      this.organization.sConfigLogoData = "";
       this.$refs.sLogoImage.clearableCallback();
-    },
-    clearPDFField() {
-      this.PDFClearer = false;
-      this.location.sAuthTemplate = "";
-      this.location.sAuthTemplateName = "";
-      this.$refs.sPDFFile.clearableCallback();
-    },
-    authDocErrorsContinue() {
-      this.authDocErrors = false;
-      this.$router.push("/locations/" + parseInt(this.location.nFacilityID));
     },
     onLogoFileChanged(file) {
       if (file) {
@@ -636,36 +409,17 @@ export default {
         if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
           const reader = new FileReader();
         reader.addEventListener("load", () => {
-          this.location.sConfigLogoData = reader.result;
+          this.organization.sConfigLogoData = reader.result;
         });
         reader.readAsDataURL(file);
-        this.location.sConfigLogoName = file.name;
+        this.organization.sConfigLogoName = file.name;
         }
         else {
           this.LogoClearer = true;
         }
       } else {
-        this.location.sConfigLogoName = "";
-        this.location.sConfigLogoData = "";
-      }
-    },
-    onPDFFileChanged(file) {
-      if (file) {
-        var file_name_array = file.name.split(".");
-        var file_extension = file_name_array[file_name_array.length - 1];
-        if (file_extension == "pdf") {
-          const reader = new FileReader();
-          reader.addEventListener("load", () => {
-            this.location.sAuthTemplate = reader.result;
-          });
-          reader.readAsDataURL(file);
-          this.location.sAuthTemplateName = file.name;
-        } else {
-          this.PDFClearer = true;
-        }
-      } else {
-        this.location.sAuthTemplate = "";
-        this.location.sAuthTemplateName = "";
+        this.organization.sConfigLogoName = "";
+        this.organization.sConfigLogoData = "";
       }
     },
     onBackgroundFileChanged(file) {
@@ -675,53 +429,18 @@ export default {
         if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
         const reader = new FileReader();
         reader.addEventListener("load", () => {
-          this.location.sConfigBackgroundData = reader.result;
+          this.organization.sConfigBackgroundData = reader.result;
         });
         reader.readAsDataURL(file);
-        this.location.sConfigBackgroundName = file.name;
+        this.organization.sConfigBackgroundName = file.name;
         }
         else{
           this.BGClearer=true;
         }
       } else {
-        this.location.sConfigBackgroundName = "";
-        this.location.sConfigBackgroundData = "";
+        this.organization.sConfigBackgroundName = "";
+        this.organization.sConfigBackgroundData = "";
       }
-    },
-     previousPage(){
-      this.previewPDFPage=this.previewPDFPage-1;
-      this.previewPDF(this.previewPDFPage);
-    },
-    nextPage(){
-      this.previewPDFPage=this.previewPDFPage+1;
-      this.previewPDF(this.previewPDFPage);
-    },
-    previewPDF(pageNo){
-      this.previewPDFPage=pageNo;
-      this.dialogLoader=true;
-      var combinedObj = {
-        oRequester: this.$options.myJson[pageNo],
-        bIsTestRequest: true,
-        sAuthTemplate: this.location.sAuthTemplate,
-      };           
-      this.$http
-        .post("wizards/GeneratePDF/", 
-        combinedObj,
-        {
-          responseType: "arraybuffer"
-        })
-        .then(response => {
-          let blobFile = new Blob([response.data], { type: "application/pdf" });
-          var fileURL = URL.createObjectURL(blobFile);
-          // this.pdfURL = fileURL;
-          this.src = pdf.createLoadingTask(fileURL);
-          this.src.promise.then(pdf => {
-
-              this.numPages = pdf.numPages;
-              this.dialogLoader=false;
-              this.previewPDFDialog=true;   
-            });          
-        });
     },
     copyGUID() {
       if(navigator.clipboard != undefined){//Chrome
@@ -732,32 +451,21 @@ export default {
           navigator.clipboard.writeText(this.sBtnCode);
        }
     },
-    // API to Update location
+    // API to Update organization
     onSubmit() {
-      this.location.nUpdatedAdminUserID=this.$store.state.adminUserId;
+      this.organization.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader =true;
-      this.location.nROILocationID = parseInt(this.location.nROILocationID);
-      this.location.nFacilityLocationID = parseInt(
-        this.location.nFacilityLocationID
+      this.organization.nROILocationID = parseInt(this.organization.nROILocationID);
+      this.organization.nFacilityOrgID = parseInt(
+        this.organization.nFacilityOrgID
       );
-      this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
-      this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
-      switch(this.location.bForceCompliance){
-        case "true":
-          this.location.bForceCompliance=true;
-          break;
-        case "false":
-          this.location.bForceCompliance=false;
-          break;
-        case "null":
-          this.location.bForceCompliance=null;
-          break;
-      }
+      this.organization.nPrimaryTimeout= this.organization.nPrimaryTimeout==''? 0 :this.organization.nPrimaryTimeout;
+      this.organization.nSecondaryTimeout= this.organization.nSecondaryTimeout==''? 0 :this.organization.nSecondaryTimeout; 
       this.$http
         .post(
-          "FacilityLocations/EditFacilityLocation/" +
-            this.location.nFacilityLocationID,
-          this.location
+          "FacilityOrganizations/EditFacilityOrganization/" +
+            this.organization.nFacilityOrgID,
+          this.organization
         )
         .then(
           response => {
@@ -770,7 +478,7 @@ export default {
               } else {
                 this.dialogLoader = false;
                 this.$router.push(
-                  "/locations/" + parseInt(this.location.nFacilityID)
+                  "/organizations/" + parseInt(this.organization.nFacilityID)
                 );
               }
           }
@@ -782,7 +490,7 @@ export default {
             ) {
               this.sameNameText =error.bodyText;
               this.dialogLoader = false;
-               this.sameLocNameAlert = true;
+               this.sameOrgNameAlert = true;
             }
           }
         );
@@ -795,7 +503,7 @@ export default {
 
 <style scoped>
 @media screen and (max-width: 500px) {
-  #EditLocationsPageBox {
+  #EditOrganizationsPageBox {
     margin: 0 0em;
   }
   h1 {
@@ -806,7 +514,7 @@ export default {
   text-align: center;
 }
 
-.editlocation-form {
+.editorganization-form {
   border: 0.1875em solid #eee;
   box-shadow: 0 0.25em 0.375em #ccc;
 }
