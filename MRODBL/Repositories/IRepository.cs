@@ -216,6 +216,12 @@ namespace MRODBL.Repositories
         /// <returns></returns>
         Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids);
         /// <summary>
+        /// To reset location Org ID
+        /// </summary>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> ResetLocationOrgID(int[] ids);
+        /// <summary>
         /// Update requester supporting docs
         /// </summary>
         /// <param name="nRequesterID">Requester Id</param>

@@ -242,7 +242,7 @@ namespace MROWebApi.Controllers
         [HttpPost("EditFacilityOrganization/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityOrganization(int id, FacilityOrganizations facilityOrganization)
+        public async Task<IActionResult> EditFacilityOrganization(int id, EditOrganization editOrganization)
         {
             if (ModelState.IsValid)
             {
@@ -250,6 +250,7 @@ namespace MROWebApi.Controllers
                 {
 
                     #region Server Validation for Duplication check
+                    FacilityOrganizations facilityOrganization = editOrganization.cOrganization;
                     string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
                     string sStatusMessage = await ValidationForFacilityOrganization(facilityOrganization);
                     if (sStatusMessage != string.Empty)
@@ -295,6 +296,22 @@ namespace MROWebApi.Controllers
                         nFacilityID = facilityOrganization.nFacilityID
                     };
                     logger.UpdateAuditSingle(oldFacilityOrganization, facilityOrganization, adminModuleLogger);
+                    #endregion
+
+                    #region Updating Locations with New Org ID
+                    if (editOrganization.addedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(facilityOrganization.nFacilityOrgID, editOrganization.addedlocationIds.ToArray());
+                    }
+                    #endregion
+
+                    #region Updating Locations with Null Org ID
+                    if (editOrganization.removedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.ResetLocationOrgID(editOrganization.removedlocationIds.ToArray());
+                    }
                     #endregion
                     return Ok(sValidationTextGlobal);
 

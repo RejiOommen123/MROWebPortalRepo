@@ -522,11 +522,16 @@ export default {
       );
       this.organization.nPrimaryTimeout= this.organization.nPrimaryTimeout==''? 0 :this.organization.nPrimaryTimeout;
       this.organization.nSecondaryTimeout= this.organization.nSecondaryTimeout==''? 0 :this.organization.nSecondaryTimeout; 
+      var editOrganization = {
+        cOrganization : this.organization,
+        addedlocationIds : [],
+        removedlocationIds : []
+      }
       this.$http
         .post(
           "FacilityOrganizations/EditFacilityOrganization/" +
             this.organization.nFacilityOrgID,
-          this.organization
+          editOrganization
         )
         .then(
           response => {

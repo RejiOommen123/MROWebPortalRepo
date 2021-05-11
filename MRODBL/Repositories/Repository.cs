@@ -445,6 +445,18 @@ namespace MRODBL.Repositories
                 return nFacilityOrgID;
             }
         }
+        public async Task<int> ResetLocationOrgID(int[] ids)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblFacilityLocations SET nFacilityOrgID = NULL " +
+                        "WHERE " +
+                        "tblFacilityLocations.nFacilityLocationID In @ids";
+                await db.QueryAsync<T>(SqlString, new { @ids = ids });
+                return 1;
+            }
+        }
         public async Task<int> UpdateRequesterSupportDocs(int nRequesterID,string sRelativeFileArray,string sRelativeFileNameArray,string sWizardName)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
