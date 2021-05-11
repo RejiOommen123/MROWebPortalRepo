@@ -416,8 +416,12 @@ export default {
       this.organization.nnFacilityID = parseInt(this.organization.nFacilityID);
       this.organization.nPrimaryTimeout= this.organization.nPrimaryTimeout==''? 0 :this.organization.nPrimaryTimeout;
       this.organization.nSecondaryTimeout= this.organization.nSecondaryTimeout==''? 0 :this.organization.nSecondaryTimeout; 
+      var addOrganization = {
+        cOrganization : this.organization,
+        locationIds : []
+      }
       this.$http
-        .post("FacilityOrganizations/AddFacilityOrganization/", this.organization)
+        .post("FacilityOrganizations/AddFacilityOrganization/", addOrganization)
         .then(
           response => {
             if (response.ok == true) {

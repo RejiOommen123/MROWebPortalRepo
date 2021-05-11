@@ -209,6 +209,13 @@ namespace MRODBL.Repositories
         /// <returns></returns>
         Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
         /// <summary>
+        /// To update location with Proper Org ID
+        /// </summary>
+        /// <param name="nFacilityOrgID">Facility Organization ID</param>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids);
+        /// <summary>
         /// Update requester supporting docs
         /// </summary>
         /// <param name="nRequesterID">Requester Id</param>
