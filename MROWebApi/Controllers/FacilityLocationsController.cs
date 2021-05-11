@@ -126,14 +126,15 @@ namespace MROWebApi.Controllers
         [HttpGet("GetFacilityLocationByFacilityIDForOrg/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityIDForOrg(string sFacilityID, string sAdminUserID)
+        public async Task<IActionResult> GetFacilityLocationByFacilityIDForOrg(string sFacilityID, string sAdminUserID, string sFacilityOrgID)
         {
             try
             {
                 bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
                 bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
+                bool resultFacilityOrgID = int.TryParse(sFacilityOrgID, out int nFacilityOrgID);
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsListForOrg(nFacilityID);
+                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsListForOrg(nFacilityID,nFacilityOrgID);
                 return Ok(new { locations });
             }
             catch (Exception ex)

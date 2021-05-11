@@ -162,7 +162,22 @@
                   solo
                 ></v-text-field>
               </v-col>
-            </v-row>      
+            </v-row>  
+             <v-row> 
+            <v-col cols="6" md="6"> 
+              <v-btn :to="'/locations/'+this.organization.nFacilityID" type="submit" color="primary">View Location List</v-btn>
+            </v-col>
+            <v-col cols="6" md="6">
+              <v-select
+            v-model="value"
+            :items="items"
+            label="Please Select"
+            chips
+            multiple
+            solo
+          ></v-select>
+            </v-col>  
+            </v-row>     
           </v-col>          
         </v-row>
         <div class="submit">
@@ -349,7 +364,11 @@ export default {
         nSecondaryTimeout:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+      },
+      nFacilityID:0,
+      gridData_Loc: this.getGridData(),
+      items: [],
+      value: [],
     };
   },
   mounted() {
@@ -363,6 +382,7 @@ export default {
         response => {
           // get body data
           this.organization = JSON.parse(response.bodyText);
+          this.nFacilityID = this.organization.nFacilityID;
           this.dialogLoader =false;    
         },
         response => {
@@ -387,9 +407,50 @@ export default {
           }      
       }
     );  
+
+    //Get btn code for organization and guid
+    // this.$http
+    //     .get(
+    //       "FacilityLocations/GetFacilityLocationByFacilityIDForOrg/sFacilityID=" 
+    //         + this.organization.nFacilityID+"&sAdminUserID="+this.$store.state.adminUserId + "&sFacilityOrgID="+this.$route.params.id
+    //     )
+    //     .then(
+    //       response => {
+    //         this.gridData_Loc = JSON.parse(response.bodyText)["locations"];
+    //         this.dialogLoader = false;
+    //         // const result = words.filter(word => word.length > 6);
+    //         this.items = this.gridData_Loc.map(({ sLocationName }) => sLocationName);
+    //         //this.value = this.gridData.map(({ sFacilityLocationID }) => sFacilityLocationID); 
+    //       },
+    //       response => {
+    //         // error callback
+    //         this.gridData_Loc = response.body;
+    //       }
+    //     );
     
   },
   methods: {
+      getGridData() {
+      //this.dialogLoader = true;
+      // this.$http
+      //   .get(
+      //     "FacilityLocations/GetFacilityLocationByFacilityIDForOrg/sFacilityID=" 
+      //       + parseInt(this.organization.nFacilityID)+"&sAdminUserID="+this.$store.state.adminUserId + "&sFacilityOrgID="+this.$route.params.id
+      //   )
+      //   .then(
+      //     response => {
+      //       this.gridData_Loc = JSON.parse(response.bodyText)["locations"];
+      //       this.dialogLoader = false;
+      //       // const result = words.filter(word => word.length > 6);
+      //       this.items = this.gridData_Loc.map(({ sLocationName }) => sLocationName);
+      //       //this.value = this.gridData.map(({ sFacilityLocationID }) => sFacilityLocationID); 
+      //     },
+      //     response => {
+      //       // error callback
+      //       this.gridData_Loc = response.body;
+      //     }
+      //   );
+    },
     clearBGField() {
       this.BGClearer = false;
       this.organization.sConfigBackgroundName = "";

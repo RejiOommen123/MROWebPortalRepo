@@ -211,8 +211,11 @@ namespace MROWebApi.Controllers
                         #endregion
 
                         #region Updating Locations with New Org ID
-                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                        addedFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(addedFacilityOrganization.nFacilityOrgID, addOrganization.locationIds.ToArray());
+                        if (addOrganization.locationIds?.Count > 0)
+                        {
+                            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                            addedFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(addedFacilityOrganization.nFacilityOrgID, addOrganization.locationIds.ToArray());
+                        }
                         #endregion
                     }
                     else

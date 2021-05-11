@@ -206,7 +206,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID)
+        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int nFacilityOrgID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
@@ -228,8 +228,8 @@ namespace MRODBL.Repositories
                       "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
                         "WHERE " +
                         "tblFacilities.nFacilityID = @nFacilityID AND " +
-                        "tblFacilityLocations.nFacilityOrgID Is NULL";
-                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+                        "tblFacilityLocations.nFacilityOrgID Is NULL OR tblFacilityLocations.nFacilityOrgID = @nFacilityOrgID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID, @nFacilityOrgID = nFacilityOrgID });
             }
         }
 
