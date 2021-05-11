@@ -143,6 +143,7 @@ namespace MROWebApi.Controllers
                     int? addedOrgID = null;
                     string sValidationTextGlobal = "";
                     FacilityOrganizations facilityOrganization = addOrganization.cOrganization;
+                    facilityOrganization.sGUID = Guid.NewGuid().ToString().ToUpper();
                     facilityOrganization.dtCreated = DateTime.Now;
                     facilityOrganization.dtLastUpdate = DateTime.Now;
                     string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
