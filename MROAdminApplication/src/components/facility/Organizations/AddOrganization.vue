@@ -130,6 +130,21 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row> 
+            <v-col cols="6" md="6"> 
+              <v-btn :to="'/locations/'+this.organization.nFacilityID" type="submit" color="primary">View Location List</v-btn>
+            </v-col>
+            <v-col cols="6" md="6">
+              <v-select
+            v-model="value"
+            :items="items"
+            label="Please Select"
+            chips
+            multiple
+            solo
+          ></v-select>
+            </v-col>  
+            </v-row> 
           </v-col>
         </v-row>
         <div class="submit">
@@ -304,7 +319,10 @@ export default {
         sSupportEmail:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+      },
+      gridData: this.getGridData(),
+      items: [],
+      value: [],
     };
   },
   // mounted() {
@@ -318,6 +336,27 @@ export default {
   //     });
   // },
   methods: {
+    getGridData() {
+      this.dialogLoader = true;
+      this.$http
+        .get(
+          "FacilityLocations/GetFacilityLocationByFacilityIDForOrg/sFacilityID=" 
+            + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
+        )
+        .then(
+          response => {
+            this.gridData = JSON.parse(response.bodyText)["locations"];
+            this.dialogLoader = false;
+            // const result = words.filter(word => word.length > 6);
+            this.items = this.gridData.map(({ sLocationName }) => sLocationName);
+            //this.value = this.gridData.map(({ sFacilityLocationID }) => sFacilityLocationID); 
+          },
+          response => {
+            // error callback
+            this.gridData = response.body;
+          }
+        );
+    },
     clearBGField() {
       this.BGClearer = false;
       this.organization.sConfigBackgroundName = "";
@@ -413,7 +452,7 @@ export default {
 
 <style scoped>
 @media screen and (max-width: 500px) {
-  #AddLocationsPageBox {
+  #AddOrganizationsPageBox {
     margin: 0 0em;
   }
   h1 {

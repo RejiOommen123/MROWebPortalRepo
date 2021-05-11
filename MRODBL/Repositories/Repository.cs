@@ -206,6 +206,33 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityLocationID, " +
+                      "sLocationName, " +
+                      "sLocationAddress, " +
+                      "sLocationCode, " +
+                      "bLocationActiveStatus, " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
+                      "FROM " +
+                      "tblFacilityLocations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID AND " +
+                        "tblFacilityLocations.nFacilityOrgID Is NULL";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+        }
+
         public async Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))

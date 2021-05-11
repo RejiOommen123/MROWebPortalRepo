@@ -121,6 +121,26 @@ namespace MROWebApi.Controllers
                 throw ex;
             }
         }
+
+
+        [HttpGet("GetFacilityLocationByFacilityIDForOrg/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetFacilityLocationByFacilityIDForOrg(string sFacilityID, string sAdminUserID)
+        {
+            try
+            {
+                bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
+                bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
+                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsListForOrg(nFacilityID);
+                return Ok(new { locations });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region Add Facility Location
