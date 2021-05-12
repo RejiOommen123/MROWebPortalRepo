@@ -7,6 +7,8 @@ namespace MRODBL.BaseClasses
         #region Props
         public Facilities Facilities { get; set; }
         public int nFacLocCount { get; set; }
+
+        public int nFacOrgCount { get; set; }
         #endregion
     }
 }

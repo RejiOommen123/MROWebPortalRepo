@@ -136,6 +136,24 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<IEnumerable<T>> SelectOrganizationByOrganizationName(int nFacilityOrgID, string sOrgName)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                   "SELECT * FROM " +
+                     "tblFacilityOrganizations " +
+                     "INNER JOIN " +
+                     "tblFacilities " +
+                     "ON " +
+                     "tblFacilityOrganizations.nFacilityID = tblFacilities.nFacilityID " +
+                       "WHERE " +
+                       "tblFacilityOrganizations.nFacilityOrgID <> @nFacilityOrgID AND " +
+                        "tblFacilityOrganizations.sOrgName = @sOrgName";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityOrgID = nFacilityOrgID, @sOrgName = sOrgName });
+            }
+        }
+
         public async Task<IEnumerable<dynamic>> GetLocationByNormalizedName(int nFacilityID, int nFacilityLocationID, string sNormalizedLocationName)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -182,6 +200,55 @@ namespace MRODBL.Repositories
                       "tblFacilities " +
                       "ON " +
                       "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+        }
+
+        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int nFacilityOrgID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityLocationID, " +
+                      "sLocationName, " +
+                      "sLocationAddress, " +
+                      "sLocationCode, " +
+                      "bLocationActiveStatus, " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
+                      "FROM " +
+                      "tblFacilityLocations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID AND " +
+                        "tblFacilityLocations.nFacilityOrgID Is NULL OR tblFacilityLocations.nFacilityOrgID = @nFacilityOrgID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID, @nFacilityOrgID = nFacilityOrgID });
+            }
+        }
+
+        public async Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityOrgID, " +
+                      "sOrgName, " +
+                      "sLocationCode " +
+                      "FROM " +
+                      "tblFacilityOrganizations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityOrganizations.nFacilityID = tblFacilities.nFacilityID " +
                         "WHERE " +
                         "tblFacilities.nFacilityID = @nFacilityID";
                 return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
@@ -364,6 +431,30 @@ namespace MRODBL.Repositories
                         "tblRequesters.nRequesterID = @nRequesterID";
                 await db.QueryAsync<T>(SqlString, new { @nRequesterID = nRequesterID, @bRequestAnotherRecord = bRequestAnotherRecord, @nFeedbackRating = nFeedbackRating, @sFeedbackComment = sFeedbackComment, @sWizardName = sWizardName });
                 return nRequesterID;
+            }
+        }
+        public async Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblFacilityLocations SET nFacilityOrgID = @nFacilityOrgID " +
+                        "WHERE " +
+                        "tblFacilityLocations.nFacilityLocationID In @ids";
+                await db.QueryAsync<T>(SqlString, new { @nFacilityOrgID = nFacilityOrgID, @ids = ids });
+                return nFacilityOrgID;
+            }
+        }
+        public async Task<int> ResetLocationOrgID(int[] ids)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblFacilityLocations SET nFacilityOrgID = NULL " +
+                        "WHERE " +
+                        "tblFacilityLocations.nFacilityLocationID In @ids";
+                await db.QueryAsync<T>(SqlString, new { @ids = ids });
+                return 1;
             }
         }
         public async Task<int> UpdateRequesterSupportDocs(int nRequesterID,string sRelativeFileArray,string sRelativeFileNameArray,string sWizardName)

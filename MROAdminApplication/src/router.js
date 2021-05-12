@@ -33,6 +33,9 @@ import Waiver from './components/master/Waiver/Waiver.vue';
 import AddWaiver from './components/master/Waiver/AddWaiver.vue';
 import EditWaiver from './components/master/Waiver/EditWaiver.vue';
 import store from './store';
+import Organizations from './components/facility/Organizations/Organizations.vue';
+import AddOrganization from './components/facility/Organizations/AddOrganization.vue';
+import EditOrganization from './components/facility/Organizations/EditOrganization.vue';
 
 Vue.use(VueRouter);
 Vue.use(store);
@@ -78,6 +81,30 @@ const routes = [{
         component: EditLocation,
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Edit Location");
+            next()
+        }
+    },
+    {
+        path: '/Organizations/:id',
+        component: Organizations,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Manage Organizations");
+            next()
+        }
+    },
+    {
+        path: '/AddOrganization/:id',
+        component: AddOrganization,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Add Organization");
+            next()
+        }
+    },
+    {
+        path: '/EditOrganization/:id',
+        component: EditOrganization,
+        beforeEnter(to, from, next) {
+            store.commit("mutatepageHeader", "Edit Organization");
             next()
         }
     },

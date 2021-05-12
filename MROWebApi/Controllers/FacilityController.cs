@@ -40,13 +40,14 @@ namespace MROWebAPI.Controllers
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
                 IEnumerable<Facilities> facilities = await rpFac.GetAllASC(1000, "sFacilityName");
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
                 IList<FacilitiesList> facilitiesList = new List<FacilitiesList>();
                 foreach (Facilities fac in facilities)
                 {
                     FacilitiesList list = new FacilitiesList();
                     list.Facilities = fac;
                     list.nFacLocCount = await facilityLocationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
-
+                    list.nFacOrgCount = await facilityOrganizationsRepository.CountWhere("nFacilityID", fac.nFacilityID);
                     facilitiesList.Add(list);
                 }
                 return Ok(facilitiesList);

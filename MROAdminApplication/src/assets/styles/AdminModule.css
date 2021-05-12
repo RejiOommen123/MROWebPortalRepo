@@ -51,7 +51,7 @@ html {
     margin-top: 0.9375em
 }
 
-#facilityLocationCount {
+#facilityLocationCount , #facilityOrganizationCount {
     margin-right: 1.25em;
 }
 
@@ -59,7 +59,7 @@ html {
     margin-right: 0.25em;
 }
 
-#addFacBtn {
+#addFacBtn, #AddOrg {
     font-size: 1.5em;
 }
 
@@ -102,7 +102,7 @@ html {
 
 /* Locations.vue */
 
-#LocationsPageBox {
+#LocationsPageBox,#OrganizationsPageBox  {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;
@@ -124,7 +124,7 @@ html {
 
 /* EditLocation.vue */
 
-#EditLocationsPageBox {
+#EditLocationsPageBox, #EditOrganizationsPageBox {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;
@@ -133,7 +133,7 @@ html {
 
 /* AddLocation.vue */
 
-#AddLocationsPageBox {
+#AddLocationsPageBox,#AddOrganizationsPageBox {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;

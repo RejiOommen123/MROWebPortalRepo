@@ -44,6 +44,23 @@
         fixed-header
         height="60vh"
       >
+
+  <!-- Facility Location Count Template -->
+        <template v-slot:item.nFacOrgCount="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <router-link
+                class="mrorouterlink"
+                v-on="on"
+                id="facilityOrganizationCount"
+                :to="'/Organizations/'+item.facilities.nFacilityID"
+                color="rgb(0, 91, 168)"
+              >{{item.nFacOrgCount}}</router-link>
+            </template>
+            <span>Manage Organizations</span>
+          </v-tooltip>
+        </template>
+
         <!-- Facility Location Count Template -->
         <template v-slot:item.nFacLocCount="{ item }">
           <v-tooltip top>
@@ -160,6 +177,8 @@ export default {
           width: "20%" 
         },
         { text: "Description", value: "facilities.sDescription", width: "40%" },
+        // { text: "Organizations", value: "nFacOrgCount", align: "center", width: "10%"},
+            { text: "Organizations", value: "nFacOrgCount", align: "center", width: "10%"},
         { text: "Locations", value: "nFacLocCount", align: "center", width: "10%"},
         {
           text: "Edit Fields/Disclaimers",

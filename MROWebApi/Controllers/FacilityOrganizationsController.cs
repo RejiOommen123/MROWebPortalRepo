@@ -18,11 +18,11 @@ namespace MROWebApi.Controllers
     [ApiController]
     [EnableCors("AllowOrigin")]
     //[APIKeyAuth]
-    public class FacilityLocationsController : ControllerBase
+    public class FacilityOrganizationsController : ControllerBase
     {
-        #region Facility Locations Constructor
+        #region Facility Organizations Constructor
         private readonly DBConnectionInfo _info;
-        public FacilityLocationsController(DBConnectionInfo info)
+        public FacilityOrganizationsController(DBConnectionInfo info)
         {
             _info = info;
         }
@@ -31,38 +31,37 @@ namespace MROWebApi.Controllers
         #region Get Facility Location/Locations
         [HttpGet]
         [AllowAnonymous]
-        [Route("[action]/sFacilitylocationID={sFacilitylocationID}&sAdminUserID={sAdminUserID}")]
-        public async Task<FacilityLocations> GetFacilityLocationSingle(string sFacilitylocationID,string sAdminUserID)
+        [Route("[action]/sFacilityOrgID={sFacilityOrgID}&sAdminUserID={sAdminUserID}")]
+        public async Task<FacilityOrganizations> GetFacilityOrganizationSingle(string sFacilityOrgID,string sAdminUserID)
         {
-            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-            bool resultFacilityLocation = int.TryParse(sFacilitylocationID, out int nFacilitylocationID);
+            FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+            bool resultFacilityOrganization = int.TryParse(sFacilityOrgID, out int nFacilityOrgID);
             bool resultAdminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
 
-            FacilityLocations location =  await facilityLocationsRepository.Select(nFacilitylocationID);
+            FacilityOrganizations organization =  await facilityOrganizationsRepository.Select(nFacilityOrgID);
 
             #region Logging
             FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-            Facilities facility = await rpFac.Select(location.nFacilityID);
+            Facilities facility = await rpFac.Select(organization.nFacilityID);
             if (facility.bFacilityLogging) {
                 //MROLogger logger = new MROLogger(_info);
                 //string sDescription = "Get Location Method was called for Location ID: " + sFacilitylocationID;
                 //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Location By ID", "Manage Locations");
                 AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
-                string sDescription = "Get Location Method was called for Location ID: " + nFacilitylocationID;
+                string sDescription = "Get Organization Method was called for Organization ID: " + nFacilityOrgID;
                 AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                 {
                     nAdminUserID = nAdminUserID,
                     sDescription = sDescription,
-                    sModuleName = "Manage Locations",
-                    sEventName = "Get Location By ID",
-                    nFacilityID = location.nFacilityID,
-                    nFacilityLocationID = location.nFacilityLocationID,
+                    sModuleName = "Manage Organizations",
+                    sEventName = "Get Organization By ID",
+                    nFacilityID = organization.nFacilityID,
                     dtLogTime = DateTime.Now,
                 };
                 adminModuleLoggerRepository.Insert(adminModuleLogger);
             }
             #endregion
-            return location;
+            return organization;
         }
 
         [HttpGet("GetFacilityLocation/{id}")]
@@ -77,17 +76,17 @@ namespace MROWebApi.Controllers
             return facilityLocations;
         }
 
-        [HttpGet("GetFacilityLocationByFacilityID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
+        [HttpGet("GetFacilityOrganizationsByFacilityID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityID(string sFacilityID,string sAdminUserID)
+        public async Task<IActionResult> GetFacilityOrganizationsByFacilityID(string sFacilityID,string sAdminUserID)
         {
             try
             {
                 bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
                 bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsList(nFacilityID);
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                IEnumerable<dynamic> organizations = await facilityOrganizationsRepository.GetOrganizationsList(nFacilityID);
                 FacilitiesRepository facilityRepo = new FacilitiesRepository(_info);
                 Facilities facility = await facilityRepo.Select(nFacilityID);
                 if (facility == null)
@@ -101,41 +100,20 @@ namespace MROWebApi.Controllers
                     //string sDescription = "Get Facility Locations Method was called for Facility ID: " + sFacilityID;
                     //logger.LogAdminRecords(nAdminUserID, sDescription, "Get Facility Locations By Facility ID", "Manage Facilities");
                     AdminModuleLoggerRepository adminModuleLoggerRepository = new AdminModuleLoggerRepository(_info);
-                    string sDescription = "Get Facility Locations Method was called for Facility ID: " + nFacilityID;
+                    string sDescription = "Get Organizations Method was called for Facility ID: " + nFacilityID;
                     AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                     {
                         nAdminUserID = nAdminUserID,
                         sDescription = sDescription,
-                        sModuleName = "Manage Facilities",
-                        sEventName = "Get Facility Locations By Facility ID",
+                        sModuleName = "Manage Organizations",
+                        sEventName = "Get Facility Organizations By Facility ID",
                         nFacilityID = facility.nFacilityID,
                         dtLogTime = DateTime.Now,
                     };
                     adminModuleLoggerRepository.Insert(adminModuleLogger);
                 }
                 #endregion
-                return Ok(new { locations, faciName });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
-        [HttpGet("GetFacilityLocationByFacilityIDForOrg/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
-        [AllowAnonymous]
-        [Route("[action]")]
-        public async Task<IActionResult> GetFacilityLocationByFacilityIDForOrg(string sFacilityID, string sAdminUserID, string sFacilityOrgID)
-        {
-            try
-            {
-                bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
-                bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
-                bool resultFacilityOrgID = int.TryParse(sFacilityOrgID, out int nFacilityOrgID);
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsListForOrg(nFacilityID,nFacilityOrgID);
-                return Ok(new { locations });
+                return Ok(new { organizations, faciName });
             }
             catch (Exception ex)
             {
@@ -144,11 +122,11 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Add Facility Location
+        #region Add Facility Organization
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<FacilityLocations>> AddFacilityLocation(FacilityLocations facilityLocation)
+        public async Task<ActionResult<FacilityOrganizations>> AddFacilityOrganization(AddOrganization addOrganization)
         {
             if (ModelState.IsValid)
             {
@@ -162,14 +140,13 @@ namespace MROWebApi.Controllers
                     //}
 
                     #region Data ! From UI
-                    int? addedLocationID = null;
-                    bool checkPDF = false;
+                    int? addedOrgID = null;
                     string sValidationTextGlobal = "";
-                    facilityLocation.bLocationActiveStatus = false;
-                    facilityLocation.dtCreated = DateTime.Now;
-                    facilityLocation.dtLastUpdate = DateTime.Now;
-                    facilityLocation.bIncludeInFacilityLevel = true;
-                    string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
+                    FacilityOrganizations facilityOrganization = addOrganization.cOrganization;
+                    facilityOrganization.sGUID = Guid.NewGuid().ToString().ToUpper();
+                    facilityOrganization.dtCreated = DateTime.Now;
+                    facilityOrganization.dtLastUpdate = DateTime.Now;
+                    string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
                     string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
                     finalString = "MRO" + finalString;
                     ////Generate MROLocationOther Normalized Keyword for If the String Contain other
@@ -184,87 +161,65 @@ namespace MROWebApi.Controllers
                     //    }
 
                     //}
-                    facilityLocation.sNormalizedLocationName = finalString;
                     //Default value for uAuthExpirationMonths is 6
-                    facilityLocation.nAuthExpirationMonths = 6;
                     #endregion
 
-                    #region Server Validation for Duplication check and 'Other' Location check
-                    string sStatusMessage = await ValidationForFacilityLocation(facilityLocation);
+                    #region Server Validation for Duplication check and 'Other' Organization check
+                    string sStatusMessage = await ValidationForFacilityOrganization(facilityOrganization);
                     if (sStatusMessage != string.Empty)
                     {
                         return BadRequest(sStatusMessage);
                     }
                     #endregion
 
-                    if (string.IsNullOrEmpty(facilityLocation.sConfigLogoData)) {
-                        facilityLocation.sConfigLogoData = null;
-                        facilityLocation.sConfigLogoName = "";
+                    if (string.IsNullOrEmpty(facilityOrganization.sConfigLogoData)) {
+                        facilityOrganization.sConfigLogoData = null;
+                        facilityOrganization.sConfigLogoName = "";
                     }
 
-                    if (string.IsNullOrEmpty(facilityLocation.sConfigBackgroundData))
+                    if (string.IsNullOrEmpty(facilityOrganization.sConfigBackgroundData))
                     {
-                        facilityLocation.sConfigBackgroundData = null;
-                        facilityLocation.sConfigBackgroundName = "";
+                        facilityOrganization.sConfigBackgroundData = null;
+                        facilityOrganization.sConfigBackgroundName = "";
                     }
 
-                    //Validating Authorization Template
-                    if (!string.IsNullOrEmpty(facilityLocation.sAuthTemplate))
-                    {
-                        facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-                        byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
-                        ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
-                        IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                        LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
-                        checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
-                    }
+                    FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                    addedOrgID = facilityOrganizationsRepository.Insert(facilityOrganization);
 
-                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-
-                    if (checkPDF)
+                    if (addedOrgID != null)
                     {
-                        facilityLocation.bLocationActiveStatus = true;
-                        addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
-                    }
-                    else
-                    {
-                        facilityLocation.sAuthTemplateName = null;
-                        facilityLocation.sAuthTemplate = null;
-                        //Make Active Status False, then insert record & then call SP
-                        //In SP call,as location active status is false, hence facility won't be activated
-                        facilityLocation.bLocationActiveStatus = false;
-                        addedLocationID = facilityLocationsRepository.Insert(facilityLocation);
-                    }
-
-                    if (addedLocationID != null)
-                    {
-                        IEnumerable<FacilityLocations> addedFacilityLocationRepo = await facilityLocationsRepository.SelectWhere("nFacilityLocationID", addedLocationID);
-                        FacilityLocations addedFacilityLocation = addedFacilityLocationRepo.FirstOrDefault();
-                        //Call spAddDepedencyRecordsforFacilityLocation & Log
-                        facilityLocationsRepository.AddDependencyRecordsForFacilityLocation((int)addedLocationID, facilityLocation.nFacilityID);
+                        IEnumerable<FacilityOrganizations> addedFacilityOrganizationRepo = await facilityOrganizationsRepository.SelectWhere("nFacilityOrgID", addedOrgID);
+                        FacilityOrganizations addedFacilityOrganization = addedFacilityOrganizationRepo.FirstOrDefault();
 
                         #region Logging
                         FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                        Facilities facility = await rpFac.Select(facilityLocation.nFacilityID);
+                        Facilities facility = await rpFac.Select(facilityOrganization.nFacilityID);
                         if (facility.bFacilityLogging)
                         {
                             MROLogger logger = new MROLogger(_info);
-                            string sDescription = "Add Location Method was called & Created Location with ID: " + addedLocationID;
+                            string sDescription = "Add Organization Method was called & Created Organization with ID: " + addedOrgID;
                             AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
                             {
-                                nAdminUserID = facilityLocation.nCreatedAdminUserID,
+                                nAdminUserID = facilityOrganization.nCreatedAdminUserID,
                                 sDescription = sDescription,
-                                sModuleName = "Facility Location",
-                                sEventName = "Add Location",
-                                nFacilityID = addedFacilityLocation.nFacilityID,
-                                nFacilityLocationID = addedFacilityLocation.nFacilityLocationID
+                                sModuleName = "Facility Organization",
+                                sEventName = "Add Organization",
+                                nFacilityID = addedFacilityOrganization.nFacilityID
                             };
-                            logger.InsertAuditSingle(addedFacilityLocation, adminModuleLogger);
+                            logger.InsertAuditSingle(addedFacilityOrganization, adminModuleLogger);
+                        }
+                        #endregion
+
+                        #region Updating Locations with New Org ID
+                        if (addOrganization.locationIds?.Count > 0)
+                        {
+                            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                            addedFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(addedFacilityOrganization.nFacilityOrgID, addOrganization.locationIds.ToArray());
                         }
                         #endregion
                     }
                     else
-                        return Content("Error Adding location!");
+                        return Content("Error Adding organization!");
 
                     return Ok(sValidationTextGlobal);
 
@@ -284,107 +239,82 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Edit Facility Location
-        [HttpPost("EditFacilityLocation/{id}")]
+        [HttpPost("EditFacilityOrganization/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityLocation(int id, FacilityLocations facilityLocation)
+        public async Task<IActionResult> EditFacilityOrganization(int id, EditOrganization editOrganization)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
 
-                    #region Server Validation for Duplication check and 'Other' Location check
-                    string removedSpecialChar = Regex.Replace(facilityLocation.sLocationName, @"[^0-9a-zA-Z]+", "");
-                    string finalString = Regex.Replace(removedSpecialChar, @"\s+", "");
-                    facilityLocation.sNormalizedLocationName = "MRO" + finalString;
-                    string sStatusMessage = await ValidationForFacilityLocation(facilityLocation);
+                    #region Server Validation for Duplication check
+                    FacilityOrganizations facilityOrganization = editOrganization.cOrganization;
+                    string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
+                    string sStatusMessage = await ValidationForFacilityOrganization(facilityOrganization);
                     if (sStatusMessage != string.Empty)
                     {
                         return BadRequest(sStatusMessage);
                     }
                     #endregion
 
-                    if (id != facilityLocation.nFacilityLocationID)
+                    if (id != facilityOrganization.nFacilityOrgID)
                     {
-                        return BadRequest("Bad Request: ID Not Equals Location ID");
+                        return BadRequest("Bad Request: ID Not Equals Organization ID");
                     }
-                    bool checkPDF = false;
                     string sValidationTextGlobal = "";
 
-                    if (string.IsNullOrEmpty(facilityLocation.sConfigLogoData))
+                    if (string.IsNullOrEmpty(facilityOrganization.sConfigLogoData))
                     {
-                        facilityLocation.sConfigLogoData = null;
-                        facilityLocation.sConfigLogoName = "";
+                        facilityOrganization.sConfigLogoData = null;
+                        facilityOrganization.sConfigLogoName = "";
                     }
 
-                    if (string.IsNullOrEmpty(facilityLocation.sConfigBackgroundData))
+                    if (string.IsNullOrEmpty(facilityOrganization.sConfigBackgroundData))
                     {
-                        facilityLocation.sConfigBackgroundData = null;
-                        facilityLocation.sConfigBackgroundName = "";
+                        facilityOrganization.sConfigBackgroundData = null;
+                        facilityOrganization.sConfigBackgroundName = "";
                     }
 
-                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                    if (!string.IsNullOrEmpty(facilityLocation.sAuthTemplate))
-                    {
-                        facilityLocation.sAuthTemplate = facilityLocation.sAuthTemplate.Replace("data:application/pdf;base64,", string.Empty);
-                        byte[] pdfByteArray = Convert.FromBase64String(facilityLocation.sAuthTemplate);
-                        ValidateAuthorizationDocRepository validateDoc = new ValidateAuthorizationDocRepository(_info);
-                        IEnumerable<ValidateAuthorizationDoc> validationRules = await validateDoc.GetAllASC(1000, "nFieldID");
-                        LocationAuthorizationDocumentController locationAuthorizationDocumentCntrl = new LocationAuthorizationDocumentController();
-                        checkPDF = locationAuthorizationDocumentCntrl.ValidateAuthorizationDocument(pdfByteArray, validationRules, out sValidationTextGlobal);
-                    }
-                    facilityLocation.dtLastUpdate = DateTime.Now;
+                    FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                    facilityOrganization.dtLastUpdate = DateTime.Now;
 
-                    IEnumerable<FacilityLocations> dbOldFacilityLocation = await facilityLocationsRepository.SelectWhere("nFacilityLocationID", facilityLocation.nFacilityLocationID);
-                    FacilityLocations oldFacilityLocation = dbOldFacilityLocation.FirstOrDefault();
-                    if (checkPDF)
-                    {
-                        facilityLocation.bLocationActiveStatus = true;
-                        facilityLocationsRepository.Update(facilityLocation);
+                    IEnumerable<FacilityOrganizations> dbOldFacilityOrganization = await facilityOrganizationsRepository.SelectWhere("nFacilityOrgID", facilityOrganization.nFacilityOrgID);
+                    FacilityOrganizations oldFacilityOrganization = dbOldFacilityOrganization.FirstOrDefault();
 
-                        #region Logging
-                        FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                        Facilities facility = await rpFac.Select(facilityLocation.nFacilityID);
-                        if (facility.bFacilityLogging)
-                        {
-                            MROLogger logger = new MROLogger(_info);
-                            string sDescription = "Edit Location Method was called for Facility Location ID: " + facilityLocation.nFacilityLocationID;
-                            AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
-                            {
-                                nAdminUserID = facilityLocation.nUpdatedAdminUserID,
-                                sDescription = sDescription,
-                                sModuleName = "Facility Location",
-                                sEventName = "Edit Facility Location",
-                                nFacilityID = facilityLocation.nFacilityID,
-                                nFacilityLocationID = facilityLocation.nFacilityLocationID
-                            };
-                            logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
-                        }
-                        #endregion
-                        return Ok(sValidationTextGlobal);
+                    facilityOrganizationsRepository.Update(facilityOrganization);
+                    #region Logging
+                    MROLogger logger = new MROLogger(_info);
+                    string sDescription = "Edit Organization Method was called for Facility Organization ID: " + facilityOrganization.nFacilityOrgID;
+                    AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = facilityOrganization.nUpdatedAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Facility Organization",
+                        sEventName = "Edit Facility Organization",
+                        nFacilityID = facilityOrganization.nFacilityID
+                    };
+                    logger.UpdateAuditSingle(oldFacilityOrganization, facilityOrganization, adminModuleLogger);
+                    #endregion
+
+                    #region Updating Locations with New Org ID
+                    if (editOrganization.addedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(facilityOrganization.nFacilityOrgID, editOrganization.addedlocationIds.ToArray());
                     }
-                    else {
-                        facilityLocation.bLocationActiveStatus = false;
-                        facilityLocation.sAuthTemplate = null;
-                        facilityLocation.sAuthTemplateName = "";
-                        facilityLocationsRepository.Update(facilityLocation);
-                        #region Logging
-                        MROLogger logger = new MROLogger(_info);
-                        string sDescription = "Edit Location Method was called for Facility Location ID: " + facilityLocation.nFacilityLocationID;
-                        AdminModuleLogger adminModuleLogger = new AdminModuleLogger()
-                        {
-                            nAdminUserID = facilityLocation.nUpdatedAdminUserID,
-                            sDescription = sDescription,
-                            sModuleName = "Facility Location",
-                            sEventName = "Edit Facility Location",
-                            nFacilityID = facilityLocation.nFacilityID,
-                            nFacilityLocationID = facilityLocation.nFacilityLocationID
-                        };
-                        logger.UpdateAuditSingle(oldFacilityLocation, facilityLocation, adminModuleLogger);
-                        #endregion
-                        return Ok(sValidationTextGlobal);
+                    #endregion
+
+                    #region Updating Locations with Null Org ID
+                    if (editOrganization.removedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.ResetLocationOrgID(editOrganization.removedlocationIds.ToArray());
                     }
+                    #endregion
+                    return Ok(sValidationTextGlobal);
+
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -612,41 +542,41 @@ namespace MROWebApi.Controllers
         #endregion
 
         #region Get Location Button & GUID
-        [HttpGet("GetBtnCodeAndGUID/{sFacilitylocationID}")]
+        [HttpGet("GetBtnCodeAndGUID/{sFacilityOrgID}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> GetBtnCodeAndGUID(string sFacilitylocationID)
+        public async Task<IActionResult> GetBtnCodeAndGUID(string sFacilityOrgID)
         {
             try
             {
-                bool resultFacilityLocationID = int.TryParse(sFacilitylocationID, out int nFacilitylocationID);
-                FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                FacilityLocations facilityLocations = await facilityLocationsRepository.Select(nFacilitylocationID);
+                bool resultFacilityOrgID = int.TryParse(sFacilityOrgID, out int nFacilityOrgID);
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                FacilityOrganizations facilityOrganizations = await facilityOrganizationsRepository.Select(nFacilityOrgID);
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
-                Facilities dbFacility = await rpFac.Select(facilityLocations.nFacilityID);
+                Facilities dbFacility = await rpFac.Select(facilityOrganizations.nFacilityID);
                 FacilityConnectionsRepository connectionRepo = new FacilityConnectionsRepository(_info);
                 IEnumerable<FacilityConnections> connections = await connectionRepo.SelectWhere("nFacilityID", dbFacility.nFacilityID);
                 FacilityConnections connection = connections.FirstOrDefault();
 
-                if (!string.IsNullOrWhiteSpace(facilityLocations.sGUID))
+                if (!string.IsNullOrWhiteSpace(facilityOrganizations.sGUID))
                 {
                     MROHelperRepository helperRepo = new MROHelperRepository(_info);
                     MROHelper helper = await helperRepo.Select(1);
                     string patternFacGUID = @"\bMROFacilityGuid\b";
                     string replaceFacGUID = connection.sGUID;
-                    string patternLocGUID = @"\bMROFacilityLocationGuid\b";
-                    string replaceLocGUID = facilityLocations.sGUID;
+                    string patternOrgGUID = @"\bMROFacilityOrgGuid\b";
+                    string replaceOrgGUID = facilityOrganizations.sGUID;
                     
-                    helper.sFacilityLocationURL = Regex.Replace(helper.sFacilityLocationURL, patternFacGUID, replaceFacGUID);
-                    helper.sFacilityLocationURL = Regex.Replace(helper.sFacilityLocationURL, patternLocGUID, replaceLocGUID);
+                    helper.sFacilityOrgURL = Regex.Replace(helper.sFacilityOrgURL, patternFacGUID, replaceFacGUID);
+                    helper.sFacilityOrgURL = Regex.Replace(helper.sFacilityOrgURL, patternOrgGUID, replaceOrgGUID);
 
-                    helper.sFacilityLocationButtonHTMLCode = Regex.Replace(helper.sFacilityLocationButtonHTMLCode, patternFacGUID, replaceFacGUID);
-                    helper.sFacilityLocationButtonHTMLCode = Regex.Replace(helper.sFacilityLocationButtonHTMLCode, patternLocGUID, replaceLocGUID);
+                    helper.sFacilityOrgButtonHTMLCode = Regex.Replace(helper.sFacilityOrgButtonHTMLCode, patternFacGUID, replaceFacGUID);
+                    helper.sFacilityOrgButtonHTMLCode = Regex.Replace(helper.sFacilityOrgButtonHTMLCode, patternOrgGUID, replaceOrgGUID);
                     string patternFname = @"\bMROFacilityName\b";
                     string replaceFname = dbFacility.sFacilityName;
                     helper.sFacilityButtonHTMLCode = Regex.Replace(helper.sFacilityButtonHTMLCode, patternFname, replaceFname);
 
-                    return Ok(new{helper.sFacilityLocationURL, helper.sFacilityLocationButtonHTMLCode});
+                    return Ok(new{helper.sFacilityOrgURL, helper.sFacilityOrgButtonHTMLCode });
                 }
                 else
                     return BadRequest();
@@ -658,7 +588,19 @@ namespace MROWebApi.Controllers
         }
         #endregion
 
-        #region Server Validation for Duplicate Location names and check for only one 'Other' Location
+        #region Server Validation for Duplicate Organization names
+        private async Task<string> ValidationForFacilityOrganization(FacilityOrganizations facilityOrganization)
+        {
+            FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+            IEnumerable<FacilityOrganizations> dbOrganizations = await facilityOrganizationsRepository.SelectLocationByLocationName(facilityOrganization.nFacilityOrgID, facilityOrganization.sOrgName);
+            if (dbOrganizations.Count() != 0)
+            {
+                return "Cannot Add Organization with Same Name";
+            }
+
+            return string.Empty;
+        }
+
         private async Task<string> ValidationForFacilityLocation(FacilityLocations facilityLocation)
         {
             FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);

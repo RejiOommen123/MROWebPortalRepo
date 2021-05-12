@@ -87,6 +87,13 @@ namespace MRODBL.Repositories
         Task<IEnumerable<T>> GetLocationsList(int nFacilityID);
 
         /// <summary>
+        /// Get Locations for a Facility based on Facility ID and having nFacilityOrgID as null
+        /// </summary>
+        /// <param name="nFacilityID">Unique Facility ID</param>
+        /// <returns>List of Locations for Provided Facility ID</returns>
+        Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int nFacilityOrgID);
+
+        /// <summary>
         /// Performs Inner Join of 2 Tables
         /// </summary>
         /// <param name="cA">Common Column of Table A</param>
@@ -121,6 +128,13 @@ namespace MRODBL.Repositories
         /// <param name="PV4">column value 4</param>
         /// <returns></returns>
         Task<T> SelectFourWhereClause(dynamic PN1, dynamic PV1, dynamic PN2, dynamic PV2, dynamic PN3, dynamic PV3, dynamic PN4, dynamic PV4);
+
+        /// <summary>
+        /// Get Organizations for a Facility based on Facility ID
+        /// </summary>
+        /// <param name="nFacilityID">Unique Facility ID</param>
+        /// <returns>List of Organizations for Provided Facility ID</returns>
+        Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID);
 
         #endregion
 
@@ -194,6 +208,19 @@ namespace MRODBL.Repositories
         /// <param name="sWizardName">Name of the wizard</param>
         /// <returns></returns>
         Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
+        /// <summary>
+        /// To update location with Proper Org ID
+        /// </summary>
+        /// <param name="nFacilityOrgID">Facility Organization ID</param>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids);
+        /// <summary>
+        /// To reset location Org ID
+        /// </summary>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> ResetLocationOrgID(int[] ids);
         /// <summary>
         /// Update requester supporting docs
         /// </summary>
