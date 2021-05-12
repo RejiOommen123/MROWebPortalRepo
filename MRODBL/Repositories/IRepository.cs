@@ -229,7 +229,7 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityID">Facility ID</param>
         /// <param name="nFacilityLocationID">Location ID</param>
         /// <returns>Wizard Configuration Details</returns>
-        Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID);
+        Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID, string sOrgGUID);
 
         /// <summary>
         /// Get Logo & Background For Facility based on Facility ID (SP)

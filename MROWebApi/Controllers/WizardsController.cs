@@ -59,17 +59,17 @@ namespace MROWebApi.Controllers
         #endregion  
 
         #region Get Wizard Config
-        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&rID={nRequesterID:int}&sLocationGUID={sLocationGUID}")]
+        [HttpGet("GetWizardConfig/fID={nFacilityID:int}&lID={nFacilityLocationID:int}&rID={nRequesterID:int}&sLocationGUID={sLocationGUID}&sOrgGUID={sOrgGUID}")]
         [AllowAnonymous]
         [Route("[action]")]
         [SessionAuth]
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, int nRequesterID, string sLocationGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, int nRequesterID, string sLocationGUID, string sOrgGUID)
         {
             try
             {    
                 sLocationGUID = sLocationGUID == "null" ? null : sLocationGUID;
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID);
+                object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID, sOrgGUID);
                 return Wizard_Config;
             }
             catch (Exception ex)

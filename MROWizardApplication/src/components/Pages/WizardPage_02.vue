@@ -14,6 +14,7 @@
           :key="location.sNormalizedLocationName"
           style="width:100%"
         >
+        <div v-if="!isOrgURL">
           <v-col cols="12" offset-sm="2" sm="8">
             <button
               :class="{active: sActiveBtn === location.sNormalizedLocationName}"
@@ -40,8 +41,42 @@
                 class="next"
               >Next</v-btn>
             </v-col>
+          </div>  
+        </div> 
+        <div v-if="isOrgURL">
+          <v-col cols="12" offset-sm="2" sm="8">
+            <v-checkbox offset-sm="2" sm="8"
+              hide-details
+              dark
+              v-model="sLocalSelectedLocation"
+              class="checkboxBorder"
+              :label="location.sLocationName"
+              color="white"
+              :value="location.sNormalizedLocationName"
+              @change="checkOther()"
+              wrap
+            >
+            </v-checkbox>
+          </v-col>
+          <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
+            <v-col v-if="showOtherLoactionBox" offset="3" cols="6" offset-sm="3" sm="6">
+              <v-text-field
+                type="text"
+                v-model="sSelectedLocationName"
+                :error-messages="sSelectedLocationNameErrors"
+                label="OTHER LOCATION NAME"
+                required
+                maxlength="50"
+                @input="$v.sSelectedLocationName.$touch()"
+                @blur="$v.sSelectedLocationName.$touch()"
+              ></v-text-field>
+            </v-col>
+          </div>  
+          <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
+            <v-btn @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>
           </div>
-        </div>
+        </div>     
+        </div>      
       </div>
     </v-row>
     <!-- Loader dialog -->
@@ -71,8 +106,11 @@ export default {
       dialogLoader: false,
       sActiveBtn: this.$store.state.requestermodule.sSelectedLocation,
       showOtherLoactionBox: this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther",
-      sSelectedLocationName: "",
-       buttonKey:1,
+      sSelectedLocationName: this.$store.state.ConfigModule.otherLocationName,
+      buttonKey:1,
+      sLocalSelectedLocation: this.$store.state.requestermodule.sSelectedLocation!="" ? this.$store.state.requestermodule.sSelectedLocation.split(',') : [],
+      isOrgURL: this.$store.state.ConfigModule.sOrgGUID != null,
+      commaSeperatedNormalizedName: this.$store.state.requestermodule.sSelectedLocation,
     };
   },
   mixins: [validationMixin],
@@ -106,6 +144,7 @@ export default {
             "requestermodule/sSelectedLocationName",
             location.sLocationName
           );
+          this.commaSeperatedNormalizedName = location.sNormalizedLocationName;
           this.apiRequestByLocationId(location);
         }
       },
@@ -114,13 +153,48 @@ export default {
           this.$store.commit(
             "requestermodule/sSelectedLocationName",location.sLocationName+'-'+this.sSelectedLocationName
           );
+          this.$store.commit(
+            "ConfigModule/otherLocationName",
+            this.sSelectedLocationName
+          );
         }
         else{
           this.$store.commit(
             "requestermodule/sSelectedLocationName",location.sLocationName
           );
         }
+        this.commaSeperatedNormalizedName = location.sNormalizedLocationName;
         this.apiRequestByLocationId(location);
+      },
+      nextMultiCheck(){
+        if(this.sLocalSelectedLocation.length == 1)
+        {
+          var location1 = this.locationArray.find(x => x.sNormalizedLocationName == this.sLocalSelectedLocation[0]);
+          this.next(location1);          
+        }
+        else{
+          // Shallow copy array of objects
+          let multipleLoc = this.locationArray.map(a => ({...a}));
+          multipleLoc = multipleLoc.filter(item => this.sLocalSelectedLocation.includes(item.sNormalizedLocationName));
+          var foundIndex = multipleLoc.findIndex(x => x.sNormalizedLocationName == "MROLocationOther");
+          if(foundIndex != -1){                        
+            multipleLoc[foundIndex].sLocationName = multipleLoc[foundIndex].sLocationName +'-'+ this.sSelectedLocationName;
+            this.$store.commit(
+              "ConfigModule/otherLocationName",
+              this.sSelectedLocationName
+            );
+          }
+          this.commaSeperatedNormalizedName = this.sLocalSelectedLocation.join();
+          var commaSeperatedName = multipleLoc.map(item => item.sLocationName).join();
+          this.$store.commit(
+            "requestermodule/sSelectedLocationName",commaSeperatedName
+          );
+          var location2 = {            
+            nFacilityID: this.locationArray[0].nFacilityID,
+            nFacilityLocationID: 0,
+          };
+          this.apiRequestByLocationId(location2);
+        }
       },
       apiRequestByLocationId(location) {
         this.dialogLoader = true;
@@ -128,6 +202,7 @@ export default {
           location.sNormalizedLocationName !=
           this.$store.state.requestermodule.sSelectedLocation
         ) {
+          var sOrgGUID = this.sLocalSelectedLocation.length > 1 ? this.$store.state.ConfigModule.sOrgGUID : null;
           this.$http
             .get(
               "Wizards/GetWizardConfig/fID=" +
@@ -137,7 +212,9 @@ export default {
                 "&rID=" +
                 this.$store.state.requestermodule.nRequesterID +
                 "&sLocationGUID=" +
-                this.$store.state.ConfigModule.sLocationGUID
+                this.$store.state.ConfigModule.sLocationGUID +
+                "&sOrgGUID=" +
+                sOrgGUID
             )
             .then(response => {
               var apiLocationResponse = response.body;
@@ -172,19 +249,19 @@ export default {
                 );                
                 this.$store.commit(
                   "requestermodule/nFacilityID",
-                  location.nFacilityID
+                  apiLocationResponse.oLocations[0].nFacilityID
                 );
                 this.$store.commit(
                   "requestermodule/nLocationID",
-                  location.nFacilityLocationID
-                );
+                  apiLocationResponse.oLocations[0].nFacilityLocationID
+                );                
                 this.$store.commit(
                   "requestermodule/sSelectedLocation",
-                  location.sNormalizedLocationName
+                  this.commaSeperatedNormalizedName
                 );
                 this.$store.commit(
                   "ConfigModule/nAuthExpirationMonths",
-                  location.nAuthExpirationMonths
+                  apiLocationResponse.oLocations[0].nAuthExpirationMonths
                 );
                 this.$store.commit(
                   "ConfigModule/nPrimaryTimeout",
@@ -236,14 +313,19 @@ export default {
         //Reset shipment type
         this.$store.commit("requestermodule/sSelectedShipmentTypes", []);       
         this.$store.commit("requestermodule/sSelectedShipmentTypesName", '');     
-      }
+      },
+      checkOther(){
+          if (this.sLocalSelectedLocation.includes("MROLocationOther")) {
+          this.showOtherLoactionBox=true;
+          }
+          else{
+            this.showOtherLoactionBox=false;
+            this.sSelectedLocationName=''
+          }
+      },
     },
   mounted(){
-    if(this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther"){
-      var otherLocationName = this.locationArray.find(x => x.sNormalizedLocationName == "MROLocationOther").sLocationName;
-      var replaceString = otherLocationName + '-';
-      this.sSelectedLocationName = this.$store.state.requestermodule.sSelectedLocationName.replace(replaceString, "");
-    }
+      this.showOtherLoactionBox = this.sLocalSelectedLocation.includes("MROLocationOther");
   }
   
 };
