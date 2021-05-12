@@ -592,7 +592,7 @@ namespace MROWebApi.Controllers
         private async Task<string> ValidationForFacilityOrganization(FacilityOrganizations facilityOrganization)
         {
             FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
-            IEnumerable<FacilityOrganizations> dbOrganizations = await facilityOrganizationsRepository.SelectLocationByLocationName(facilityOrganization.nFacilityOrgID, facilityOrganization.sOrgName);
+            IEnumerable<FacilityOrganizations> dbOrganizations = await facilityOrganizationsRepository.SelectOrganizationByOrganizationName(facilityOrganization.nFacilityOrgID, facilityOrganization.sOrgName);
             if (dbOrganizations.Count() != 0)
             {
                 return "Cannot Add Organization with Same Name";
