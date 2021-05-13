@@ -208,6 +208,19 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>
+               <v-col cols="6" md="6">
+                  <v-select 
+                   v-model="selectOrganization" 
+                   :items="gridData"
+                   item-text="sOrgName"
+                   item-value="nFacilityOrgID"
+                    label="Select Organizations:"
+                   
+                     
+                  ></v-select>  
+                </v-col>
+</v-row>
           </v-col>
         </v-row>
         <div class="submit">
@@ -505,12 +518,42 @@ export default {
         nSecondaryTimeout:"",
         bForceCompliance:"null",
         sSupportEmail:"",
+        nFacilityOrgID:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
-        nUpdatedAdminUserID: this.$store.state.adminUserId
+        nUpdatedAdminUserID: this.$store.state.adminUserId,      
+    },
+   
+    selectOrganization: null,
+    gridData: [
+      {
+      sOrgName: "--No Selection--",
+      nFacilityOrgID: null,
       }
+    ],
     };
   },
-  // mounted() {
+   mounted() {  
+       this.dialogLoader =true;
+    this.$http
+      .get(
+        "FacilityLocations/GetFacilityOrgID/sFacilityID="
+            + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
+      )
+      .then(
+        response => {
+          // get body data
+          
+         // this.gridData.concat(JSON.parse(response.bodyText)["organizations"]);    
+          this.gridData= [...this.gridData, ...JSON.parse(response.bodyText)["organizations"]];
+             
+          this.dialogLoader = false;      
+        },
+        response => {
+          // error callback
+          this.gridData = response.body;          
+        }
+      ); 
+      },
   //   this.$http
   //     .get("FacilityLocations/GetROILocationID/" + this.$route.params.id)
   //     .then(resp => {
@@ -519,7 +562,7 @@ export default {
   //         this.location.nROILocationID++;
   //       }
   //     });
-  // },
+    
   methods: {
     clearBGField() {
       this.BGClearer = false;
@@ -642,8 +685,10 @@ export default {
       this.dialogLoader = true;
       this.location.nROILocationID = parseInt(this.location.nROILocationID);
       this.location.nnFacilityID = parseInt(this.location.nFacilityID);
+      this.location.nFacilityOrgID = parseInt(this.selectOrganization);
       this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
       this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
+       
        switch(this.location.bForceCompliance){
         case "true":
           this.location.bForceCompliance=true;

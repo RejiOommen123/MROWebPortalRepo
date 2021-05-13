@@ -79,6 +79,9 @@ namespace MRODBL.BaseClasses
         [MaxLength]
         [DisplayName("Support Email")]
         public string sSupportEmail { get; set; }
+        [DisplayName("Facility OrgID")]
+        public int nFacilityOrgID { get; set; }
         #endregion
+
     }
 }

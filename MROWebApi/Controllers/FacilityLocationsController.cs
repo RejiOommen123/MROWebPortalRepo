@@ -64,6 +64,24 @@ namespace MROWebApi.Controllers
             #endregion
             return location;
         }
+        [HttpGet ("GetFacilityOrgID/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> GetFacilityOrgID( string sFacilityID, string sAdminUserID)
+        {
+            try
+            {
+                bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
+                bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                IEnumerable<dynamic> organizations = await facilityOrganizationsRepository.GetOrganizationsList(nFacilityID);
+                return Ok(new { organizations });
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            }
 
         [HttpGet("GetFacilityLocation/{id}")]
         [AllowAnonymous]
@@ -531,7 +549,49 @@ namespace MROWebApi.Controllers
             }
         }
         #endregion
-        
+
+        [HttpPost("ToggleFacilityMasterLocation")]
+        [AllowAnonymous]
+        [Route("[action]")]
+        public async Task<IActionResult> ToggleFacilityMasterLocation(ToggleFaciltyMasterLocation toggleFacilityMasterLocation)
+        {
+            try
+            {
+                int nFacilityLocationID = toggleFacilityMasterLocation.nFacilityLocationID;
+                int nFacilityOrgID = toggleFacilityMasterLocation.nFacilityOrgID;
+                FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
+                FacilityOrganizations organization = await facilityOrganizationsRepository.Select(nFacilityOrgID);
+                if (nFacilityOrgID != organization.nFacilityOrgID)
+                {
+                    return BadRequest();
+                }
+
+                if (organization.nFacilityMasterLocationID == null)
+                {
+                    organization.nFacilityMasterLocationID = nFacilityLocationID;
+                }
+                else
+                {
+                    if (organization.nFacilityMasterLocationID == nFacilityLocationID)
+                    {
+                        organization.nFacilityMasterLocationID = null;
+                    }
+                    else
+                    {
+                        organization.nFacilityMasterLocationID = nFacilityLocationID;
+                    }
+
+                }
+                
+                facilityOrganizationsRepository.Update(organization);
+
+                return Ok("Success");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         #region Facility Location Exist
         private async Task<bool> FacilityLocationExists(int id)

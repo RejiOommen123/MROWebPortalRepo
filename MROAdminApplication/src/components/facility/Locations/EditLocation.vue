@@ -241,7 +241,18 @@
                   solo
                 ></v-text-field>
               </v-col>
-            </v-row>      
+            </v-row> 
+             <v-row>
+               <v-col cols="6" md="6">
+                  <v-select 
+                   v-model="selectOrganization" 
+                   :items="gridData"
+                   item-text="sOrgName"
+                   item-value="nFacilityOrgID"
+                    label="Select Organizations:"
+                 ></v-select>  
+                </v-col>
+</v-row>     
           </v-col>          
         </v-row>
         <div class="submit">
@@ -554,8 +565,16 @@ export default {
         nSecondaryTimeout:"",
         bForceCompliance:"null",
         nCreatedAdminUserID: this.$store.state.adminUserId,
-        nUpdatedAdminUserID: this.$store.state.adminUserId
+        nUpdatedAdminUserID: this.$store.state.adminUserId,
+        nFacilityOrgID: ""
+      },
+      selectOrganization: null,
+       gridData: [
+      {
+      sOrgName: "--No Selection--",
+      nFacilityOrgID: null,
       }
+    ],  
     };
   },
   mounted() {
@@ -569,6 +588,8 @@ export default {
         response => {
           // get body data
           this.location = JSON.parse(response.bodyText);
+          this.getGridData();
+          this.selectOrganization = this.location.nFacilityOrgID;
           this.dialogLoader =false;    
           switch(this.location.bForceCompliance){
           case true:
@@ -603,10 +624,29 @@ export default {
             this.errorAlert=true;   
           }      
       }
-    );  
-    
+    );      
   },
   methods: {
+    // Get Organization Detail
+    getGridData(){
+      this.$http
+      .get(
+        "FacilityLocations/GetFacilityOrgID/sFacilityID="
+            + this.location.nFacilityID+"&sAdminUserID="+this.$store.state.adminUserId
+      )
+      .then(
+        response => {
+          // get body data
+         // this.gridData = JSON.parse(response.bodyText)["organizations"];  
+           this.gridData= [...this.gridData, ...JSON.parse(response.bodyText)["organizations"]];      
+          this.dialogLoader = false;      
+        },
+        response => {
+          // error callback
+          this.gridData = response.body;          
+        }
+      );     
+    },
     clearBGField() {
       this.BGClearer = false;
       this.location.sConfigBackgroundName = "";
@@ -740,6 +780,7 @@ export default {
       this.location.nFacilityLocationID = parseInt(
         this.location.nFacilityLocationID
       );
+      this.location.nFacilityOrgID = this.selectOrganization;
       this.location.nPrimaryTimeout= this.location.nPrimaryTimeout==''? 0 :this.location.nPrimaryTimeout;
       this.location.nSecondaryTimeout= this.location.nSecondaryTimeout==''? 0 :this.location.nSecondaryTimeout; 
       switch(this.location.bForceCompliance){
