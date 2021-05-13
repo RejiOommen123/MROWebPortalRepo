@@ -123,7 +123,7 @@ namespace MROWebApi.Controllers
         }
 
 
-        [HttpGet("GetFacilityLocationByFacilityIDForOrg/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}")]
+        [HttpGet("GetFacilityLocationByFacilityIDForOrg/sFacilityID={sFacilityID}&sAdminUserID={sAdminUserID}&sFacilityOrgID={sFacilityOrgID}")]
         [AllowAnonymous]
         [Route("[action]")]
         public async Task<IActionResult> GetFacilityLocationByFacilityIDForOrg(string sFacilityID, string sAdminUserID, string sFacilityOrgID)
@@ -132,7 +132,11 @@ namespace MROWebApi.Controllers
             {
                 bool resultFacilityID = int.TryParse(sFacilityID, out int nFacilityID);
                 bool resultadminUserID = int.TryParse(sAdminUserID, out int nAdminUserID);
-                bool resultFacilityOrgID = int.TryParse(sFacilityOrgID, out int nFacilityOrgID);
+                int? nFacilityOrgID = Int32.Parse(sFacilityOrgID);
+                if (nFacilityOrgID == 0)
+                {
+                    nFacilityOrgID = null;
+                }          
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
                 IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocationsListForOrg(nFacilityID,nFacilityOrgID);
                 return Ok(new { locations });

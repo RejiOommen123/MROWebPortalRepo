@@ -85,7 +85,7 @@ export default {
           text: "Name",
           align: "start",
           value: "sOrgName",
-          width: "40%"
+          width: "50%"
         },
         { text: "Code", value: "sLocationCode", width: "40%" },
         { text: "Edit", value: "actions", sortable: false }

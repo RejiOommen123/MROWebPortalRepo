@@ -206,7 +206,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int nFacilityOrgID)
+        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int? nFacilityOrgID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {

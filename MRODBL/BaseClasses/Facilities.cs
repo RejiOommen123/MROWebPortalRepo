@@ -58,6 +58,18 @@ namespace MRODBL.BaseClasses
         [MaxLength]
         [DisplayName("Support Email")]
         public string sSupportEmail { get; set; }
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Logo Name Allowed")]
+        [DisplayName("Logo Name")]
+        public string sConfigLogoName { get; set; }
+        [IgnorePropertyCompare]
+        [MaxLength]
+        public string sConfigLogoData { get; set; }
+        [StringLength(500, ErrorMessage = "Maximum 500 characters Background Name Allowed")]
+        [DisplayName("Background Name")]
+        public string sConfigBackgroundName { get; set; }
+        [IgnorePropertyCompare]
+        [MaxLength]
+        public string sConfigBackgroundData { get; set; }
         #endregion
     }
 }
