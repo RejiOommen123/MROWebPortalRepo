@@ -176,11 +176,16 @@ export default {
     let urlParams = new URLSearchParams(window.location.search);
     let guid = urlParams.get("guid");
     let locationguid = urlParams.get("locationguid");
+    let orgguid = urlParams.get("orgguid");
     let stguid = urlParams.get("st");
     if(stguid==null){
     this.$store.commit(
       "ConfigModule/sLocationGUID",
       locationguid
+    );
+    this.$store.commit(
+      "ConfigModule/sOrgGUID",
+      orgguid
     );
      var guidParameters = {
         guid: guid,
@@ -266,7 +271,8 @@ export default {
                   "&rID=" +
                   this.$store.state.requestermodule.nRequesterID +
                   "&sLocationGUID=" +
-                  this.$store.state.ConfigModule.sLocationGUID
+                  this.$store.state.ConfigModule.sLocationGUID +
+                  "&sOrgGUID=null"
               )              
               .then(response => {
                 var apiLocationResponse = response.body;

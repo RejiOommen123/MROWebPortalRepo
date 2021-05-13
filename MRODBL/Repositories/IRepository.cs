@@ -87,6 +87,13 @@ namespace MRODBL.Repositories
         Task<IEnumerable<dynamic>> GetLocationsList(int nFacilityID);
 
         /// <summary>
+        /// Get Locations for a Facility based on Facility ID and having nFacilityOrgID as null
+        /// </summary>
+        /// <param name="nFacilityID">Unique Facility ID</param>
+        /// <returns>List of Locations for Provided Facility ID</returns>
+        Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int? nFacilityOrgID);
+
+        /// <summary>
         /// Performs Inner Join of 2 Tables
         /// </summary>
         /// <param name="cA">Common Column of Table A</param>
@@ -202,6 +209,19 @@ namespace MRODBL.Repositories
         /// <returns></returns>
         Task<int> UpdateRequesterFeedback(int nRequesterID, bool bRequestAnotherRecord, int nFeedbackRating, string sFeedbackComment,string sWizardName);
         /// <summary>
+        /// To update location with Proper Org ID
+        /// </summary>
+        /// <param name="nFacilityOrgID">Facility Organization ID</param>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids);
+        /// <summary>
+        /// To reset location Org ID
+        /// </summary>
+        /// <param name="ids">Ids which needs to be updated.</param>
+        /// <returns></returns>
+        Task<int> ResetLocationOrgID(int[] ids);
+        /// <summary>
         /// Update requester supporting docs
         /// </summary>
         /// <param name="nRequesterID">Requester Id</param>
@@ -236,7 +256,7 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityID">Facility ID</param>
         /// <param name="nFacilityLocationID">Location ID</param>
         /// <returns>Wizard Configuration Details</returns>
-        Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID);
+        Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID, string sOrgGUID);
 
         /// <summary>
         /// Get Logo & Background For Facility based on Facility ID (SP)

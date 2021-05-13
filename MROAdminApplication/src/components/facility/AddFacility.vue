@@ -141,6 +141,57 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="5">
+            <label for="sConfigFacilityLogo">Logo Image:</label>
+            <div v-if="facility.sConfigLogoData!=''">
+            <v-img v-if="facility.sConfigLogoData!=null" :src="facility.sConfigLogoData" width="20%"></v-img>
+            </div>
+            <br />
+            <v-file-input
+              ref="sLogoImage"
+              lazy-src
+              chips
+              show-size
+              dense
+              hint="Upload Logo Image"
+              rounded
+              label="Logo Image"
+              filled
+              prepend-icon="mdi-camera"
+              @change="onLogoFileChanged"
+              accept="image/png, image/jpeg, image/bmp"
+            >
+              <v-tooltip slot="append" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
+                </template>
+                <span>Please upload logo with height 50px/0.375em</span>
+              </v-tooltip>
+            </v-file-input>
+            <label for="sConfigBackgroundImg">Background Image:</label>
+            <div v-if="facility.sConfigBackgroundData!=''">
+            <v-img v-if="facility.sConfigBackgroundData!=null" :src="facility.sConfigBackgroundData" width="20%"></v-img>
+            </div>
+            <br />
+            <v-file-input
+              ref="sBGImage"
+              chips
+              show-size
+              dense
+              hint="Upload Background Image"
+              rounded
+              label="Background Image"
+              filled
+              prepend-icon="mdi-camera"
+              @change="onBackgroundFileChanged"
+              accept="image/png, image/jpeg, image/bmp"
+            >
+              <v-tooltip slot="append" top>
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" color="rgb(0, 91, 168)" top>mdi-information</v-icon>
+                </template>
+                <span>Please upload logo with height 50px/0.375em</span>
+              </v-tooltip>
+            </v-file-input>
             <label class="required" for="sFTPUsername">FTP Username:</label>
             <v-text-field
               type="text"
@@ -312,6 +363,28 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+    <!-- Logo Clearer -->
+    <v-dialog v-model="LogoClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearLogoField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Background Clearer -->
+    <v-dialog v-model="BGClearer" width="360px" max-width="350px">
+      <v-card>
+        <v-card-title class="headline">Info</v-card-title>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -520,6 +593,8 @@ export default {
   name: "AddFacility",
   data() {
     return {
+      BGClearer:false,
+      LogoClearer:false,
       connectionStrings:[],
       dialogLoader:false,
       sameNameAlert: false,
@@ -537,6 +612,10 @@ export default {
         sSMTPUsername: "",
         sSMTPPassword: "",
         sSMTPUrl: "",
+        sConfigLogoName: "",
+        sConfigLogoData: "",
+        sConfigBackgroundName: "",
+        sConfigBackgroundData: "",
         sFTPUsername: "",
         sFTPPassword: "",
         sFTPUrl: "",
@@ -564,6 +643,58 @@ export default {
       });
   },
   methods: {
+    clearBGField() {
+      this.BGClearer = false;
+      this.facility.sConfigBackgroundName = "";
+      this.facility.sConfigBackgroundData = "";
+      this.$refs.sBGImage.clearableCallback();
+    },
+    clearLogoField() {
+      this.LogoClearer = false;
+      this.facility.sConfigLogoName = "";
+      this.facility.sConfigLogoData = "";
+      this.$refs.sLogoImage.clearableCallback();
+    },
+    onLogoFileChanged(file) {
+      if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
+          const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          this.facility.sConfigLogoData = reader.result;
+        });
+        reader.readAsDataURL(file);
+        this.facility.sConfigLogoName = file.name;
+        }
+        else {
+          this.LogoClearer = true;
+        }
+      } else {
+        this.facility.sConfigLogoName = "";
+        this.facility.sConfigLogoData = "";
+      }
+    },
+    onBackgroundFileChanged(file) {
+      if (file) {
+        var file_name_array = file.name.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          this.facility.sConfigBackgroundData = reader.result;
+        });
+        reader.readAsDataURL(file);
+        this.facility.sConfigBackgroundName = file.name;
+        }
+        else{
+          this.BGClearer=true;
+        }
+      } else {
+        this.facility.sConfigBackgroundName = "";
+        this.facility.sConfigBackgroundData = "";
+      }
+    },
     // API Call to add facility
     goToLoc() {
       this.dialogLoader = true;

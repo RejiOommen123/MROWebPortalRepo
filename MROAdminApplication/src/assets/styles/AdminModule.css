@@ -133,7 +133,7 @@ html {
 
 /* AddLocation.vue */
 
-#AddLocationsPageBox {
+#AddLocationsPageBox,#AddOrganizationsPageBox {
     margin-right: 7em;
     margin-left: 7em;
     margin-top: 2em;

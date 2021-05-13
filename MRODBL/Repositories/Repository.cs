@@ -214,6 +214,33 @@ namespace MRODBL.Repositories
             }
         }
 
+        public async Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int? nFacilityOrgID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+
+                string SqlString =
+                    "SELECT " +
+                      "nFacilityLocationID, " +
+                      "sLocationName, " +
+                      "sLocationAddress, " +
+                      "sLocationCode, " +
+                      "bLocationActiveStatus, " +
+                      "sFacilityName, " +
+                      "bIncludeInFacilityLevel " +
+                      "FROM " +
+                      "tblFacilityLocations " +
+                      "INNER JOIN " +
+                      "tblFacilities " +
+                      "ON " +
+                      "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
+                        "WHERE " +
+                        "tblFacilities.nFacilityID = @nFacilityID AND " +
+                        "tblFacilityLocations.nFacilityOrgID Is NULL OR tblFacilityLocations.nFacilityOrgID = @nFacilityOrgID";
+                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID, @nFacilityOrgID = nFacilityOrgID });
+            }
+        }
+
         public async Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -414,6 +441,30 @@ namespace MRODBL.Repositories
                 return nRequesterID;
             }
         }
+        public async Task<int> UpdateLocationOrgID(int nFacilityOrgID, int[] ids)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblFacilityLocations SET nFacilityOrgID = @nFacilityOrgID " +
+                        "WHERE " +
+                        "tblFacilityLocations.nFacilityLocationID In @ids";
+                await db.QueryAsync<T>(SqlString, new { @nFacilityOrgID = nFacilityOrgID, @ids = ids });
+                return nFacilityOrgID;
+            }
+        }
+        public async Task<int> ResetLocationOrgID(int[] ids)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString =
+                    "UPDATE tblFacilityLocations SET nFacilityOrgID = NULL " +
+                        "WHERE " +
+                        "tblFacilityLocations.nFacilityLocationID In @ids";
+                await db.QueryAsync<T>(SqlString, new { @ids = ids });
+                return 1;
+            }
+        }
         public async Task<int> UpdateRequesterSupportDocs(int nRequesterID,string sRelativeFileArray,string sRelativeFileNameArray,string sWizardName)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -460,13 +511,13 @@ namespace MRODBL.Repositories
                 }
             }
         }
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID,string sOrgGUID)
         {
             string SqlString = "spGetWizardConfigBynFacilityIdAndnFacilityLocationId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sLocationGuid = sLocationGUID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sLocationGuid = sLocationGUID, @sOrgGUID = sOrgGUID }, commandType: CommandType.StoredProcedure);
                 var oFields = wizardConfig.Read().ToDictionary(row => (string)row.sNormalizedFieldName, row => (bool)row.bShow);
                 var oPrimaryReason = wizardConfig.Read().ToList();
                 var oRecordTypes = wizardConfig.Read().ToList();

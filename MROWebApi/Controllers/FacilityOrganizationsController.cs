@@ -126,7 +126,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<ActionResult<FacilityOrganizations>> AddFacilityOrganization(FacilityOrganizations facilityOrganization)
+        public async Task<ActionResult<FacilityOrganizations>> AddFacilityOrganization(AddOrganization addOrganization)
         {
             if (ModelState.IsValid)
             {
@@ -142,6 +142,8 @@ namespace MROWebApi.Controllers
                     #region Data ! From UI
                     int? addedOrgID = null;
                     string sValidationTextGlobal = "";
+                    FacilityOrganizations facilityOrganization = addOrganization.cOrganization;
+                    facilityOrganization.sGUID = Guid.NewGuid().ToString().ToUpper();
                     facilityOrganization.dtCreated = DateTime.Now;
                     facilityOrganization.dtLastUpdate = DateTime.Now;
                     string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
@@ -207,6 +209,14 @@ namespace MROWebApi.Controllers
                             logger.InsertAuditSingle(addedFacilityOrganization, adminModuleLogger);
                         }
                         #endregion
+
+                        #region Updating Locations with New Org ID
+                        if (addOrganization.locationIds?.Count > 0)
+                        {
+                            FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                            addedFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(addedFacilityOrganization.nFacilityOrgID, addOrganization.locationIds.ToArray());
+                        }
+                        #endregion
                     }
                     else
                         return Content("Error Adding organization!");
@@ -232,7 +242,7 @@ namespace MROWebApi.Controllers
         [HttpPost("EditFacilityOrganization/{id}")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditFacilityOrganization(int id, FacilityOrganizations facilityOrganization)
+        public async Task<IActionResult> EditFacilityOrganization(int id, EditOrganization editOrganization)
         {
             if (ModelState.IsValid)
             {
@@ -240,6 +250,7 @@ namespace MROWebApi.Controllers
                 {
 
                     #region Server Validation for Duplication check
+                    FacilityOrganizations facilityOrganization = editOrganization.cOrganization;
                     string removedSpecialChar = Regex.Replace(facilityOrganization.sOrgName, @"[^0-9a-zA-Z]+", "");
                     string sStatusMessage = await ValidationForFacilityOrganization(facilityOrganization);
                     if (sStatusMessage != string.Empty)
@@ -285,6 +296,22 @@ namespace MROWebApi.Controllers
                         nFacilityID = facilityOrganization.nFacilityID
                     };
                     logger.UpdateAuditSingle(oldFacilityOrganization, facilityOrganization, adminModuleLogger);
+                    #endregion
+
+                    #region Updating Locations with New Org ID
+                    if (editOrganization.addedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.UpdateLocationOrgID(facilityOrganization.nFacilityOrgID, editOrganization.addedlocationIds.ToArray());
+                    }
+                    #endregion
+
+                    #region Updating Locations with Null Org ID
+                    if (editOrganization.removedlocationIds?.Count > 0)
+                    {
+                        FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                        oldFacilityOrganization.nFacilityOrgID = await facilityLocationsRepository.ResetLocationOrgID(editOrganization.removedlocationIds.ToArray());
+                    }
                     #endregion
                     return Ok(sValidationTextGlobal);
 
@@ -565,7 +592,7 @@ namespace MROWebApi.Controllers
         private async Task<string> ValidationForFacilityOrganization(FacilityOrganizations facilityOrganization)
         {
             FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
-            IEnumerable<FacilityOrganizations> dbOrganizations = await facilityOrganizationsRepository.SelectLocationByLocationName(facilityOrganization.nFacilityOrgID, facilityOrganization.sOrgName);
+            IEnumerable<FacilityOrganizations> dbOrganizations = await facilityOrganizationsRepository.SelectOrganizationByOrganizationName(facilityOrganization.nFacilityOrgID, facilityOrganization.sOrgName);
             if (dbOrganizations.Count() != 0)
             {
                 return "Cannot Add Organization with Same Name";

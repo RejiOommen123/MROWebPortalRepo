@@ -52,8 +52,8 @@
           </v-col>
           <v-col cols="12" md="5">
             <label for="sConfigFacilityLogo">Logo Image:</label>
-            <div v-show="organization.sConfigLogoName!=''">
-              <v-img :src="organization.sConfigLogoData" width="20%"></v-img>
+            <div v-if="organization.sConfigLogoData!=''">
+            <v-img v-if="organization.sConfigLogoData!=null" :src="organization.sConfigLogoData" width="20%"></v-img>
             </div>
             <br />
             <v-file-input
@@ -78,8 +78,8 @@
               </v-tooltip>
             </v-file-input>
             <label for="sConfigBackgroundImg">Background Image:</label>
-            <div v-show="organization.sConfigBackgroundName!=''">
-              <v-img :src="organization.sConfigBackgroundData" width="20%"></v-img>
+            <div v-if="organization.sConfigBackgroundData!=''">
+            <v-img v-if="organization.sConfigBackgroundData!=null" :src="organization.sConfigBackgroundData" width="20%"></v-img>
             </div>
             <br />
             <v-file-input
@@ -130,6 +130,35 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-row>             
+            <v-col cols="6" md="8">
+              <label>Select Locations:</label>
+              <v-select
+                v-model="value"
+                :items="gridData"
+                item-text="sLocationName"
+                item-value="nFacilityLocationID"
+                label="Select Locations"
+                multiple
+                solo
+              >
+              <template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0">
+                  <span>{{ item.sLocationName }}</span>
+                </v-chip>
+                <span
+                  v-if="index === 1"
+                  class="grey--text caption"
+                >
+                  (+{{ value.length - 1 }} others)
+                </span>
+              </template>
+              </v-select>
+            </v-col>  
+            <v-col cols="6" md="4" class="d-flex align-center" > 
+              <v-btn :to="'/locations/'+this.organization.nFacilityID" type="submit" color="primary">View Location List</v-btn>
+            </v-col>
+            </v-row> 
           </v-col>
         </v-row>
         <div class="submit">
@@ -304,7 +333,10 @@ export default {
         sSupportEmail:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+      },
+      gridData: this.getGridData(),
+      items: [],
+      value: [],
     };
   },
   // mounted() {
@@ -318,6 +350,30 @@ export default {
   //     });
   // },
   methods: {
+    getGridData() {
+      this.dialogLoader = true;
+      this.$http
+        .get(
+          "FacilityLocations/GetFacilityLocationByFacilityIDForOrg/sFacilityID=" 
+            + this.$route.params.id+
+            "&sAdminUserID="+
+            this.$store.state.adminUserId+
+            "&sFacilityOrgID=0"
+        )
+        .then(
+          response => {
+            this.gridData = JSON.parse(response.bodyText)["locations"];
+            this.dialogLoader = false;
+            // const result = words.filter(word => word.length > 6);
+            //this.items = this.gridData.map(({ sLocationName }) => sLocationName);
+            //this.value = this.gridData.map(({ sFacilityLocationID }) => sFacilityLocationID); 
+          },
+          response => {
+            // error callback
+            this.gridData = response.body;
+          }
+        );
+    },
     clearBGField() {
       this.BGClearer = false;
       this.organization.sConfigBackgroundName = "";
@@ -377,8 +433,12 @@ export default {
       this.organization.nnFacilityID = parseInt(this.organization.nFacilityID);
       this.organization.nPrimaryTimeout= this.organization.nPrimaryTimeout==''? 0 :this.organization.nPrimaryTimeout;
       this.organization.nSecondaryTimeout= this.organization.nSecondaryTimeout==''? 0 :this.organization.nSecondaryTimeout; 
+      var addOrganization = {
+        cOrganization : this.organization,
+        locationIds : this.value
+      }
       this.$http
-        .post("FacilityOrganizations/AddFacilityOrganization/", this.organization)
+        .post("FacilityOrganizations/AddFacilityOrganization/", addOrganization)
         .then(
           response => {
             if (response.ok == true) {
@@ -413,7 +473,7 @@ export default {
 
 <style scoped>
 @media screen and (max-width: 500px) {
-  #AddLocationsPageBox {
+  #AddOrganizationsPageBox {
     margin: 0 0em;
   }
   h1 {
@@ -426,7 +486,7 @@ export default {
 button {
   margin-right: 1em;
 }
-.addlocation-form {
+.addOrganization-form {
   border: 0.1875em solid #eee;
   box-shadow: 0 0.25em 0.375em #ccc;
 }

@@ -86,7 +86,9 @@
           </v-col>
           <v-col cols="12" md="5">
             <label for="sConfigFacilityLogo">Logo Image:</label>
-            <v-img :src="organization.sConfigLogoData" width="20%"></v-img>
+            <div v-if="organization.sConfigLogoData!=''">
+            <v-img v-if="organization.sConfigLogoData!=null" :src="organization.sConfigLogoData" width="20%"></v-img>
+            </div>
             <br />
             <v-file-input
             ref="sLogoImage"
@@ -111,7 +113,9 @@
               </v-tooltip>
             </v-file-input>
             <label for="sConfigBackgroundImg">Background Image:</label>
-            <v-img :src="organization.sConfigBackgroundData" width="20%"></v-img>
+            <div v-if="organization.sConfigBackgroundData!=''">
+            <v-img v-if="organization.sConfigBackgroundData!=null" :src="organization.sConfigBackgroundData" width="20%"></v-img>
+            </div>
             <br />
             <v-file-input
             ref="sBGImage"
@@ -162,7 +166,36 @@
                   solo
                 ></v-text-field>
               </v-col>
-            </v-row>      
+            </v-row>  
+             <v-row>             
+            <v-col cols="6" md="8">
+            <label>Select Locations:</label>
+              <v-select
+                v-model="value"
+                :items="gridData_Loc"
+                item-text="sLocationName"
+                item-value="nFacilityLocationID"
+                label="Select Locations"
+                multiple
+                solo
+              >
+              <template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0">
+                  <span>{{ item.sLocationName }}</span>
+                </v-chip>
+                <span
+                  v-if="index === 1"
+                  class="grey--text caption"
+                >
+                  (+{{ value.length - 1 }} others)
+                </span>
+              </template>
+              </v-select>
+            </v-col>
+            <v-col cols="6" md="4" class="d-flex align-center" >
+              <v-btn :to="'/locations/'+this.organization.nFacilityID" type="submit" color="primary">View Location List</v-btn>
+            </v-col>
+            </v-row>     
           </v-col>          
         </v-row>
         <div class="submit">
@@ -349,7 +382,11 @@ export default {
         nSecondaryTimeout:"",
         nCreatedAdminUserID: this.$store.state.adminUserId,
         nUpdatedAdminUserID: this.$store.state.adminUserId
-      }
+      },
+      gridData_Loc: null,
+      items: [],
+      value: [],
+      fetchedSelectedLocation: []
     };
   },
   mounted() {
@@ -364,6 +401,7 @@ export default {
           // get body data
           this.organization = JSON.parse(response.bodyText);
           this.dialogLoader =false;    
+          this.gridData_Loc = this.getGridData();
         },
         response => {
           // error callback
@@ -386,10 +424,35 @@ export default {
             this.errorAlert=true;   
           }      
       }
-    );  
-    
+    );      
   },
   methods: {
+      getGridData() {
+      this.dialogLoader = true;
+      this.$http
+        .get(
+          "FacilityLocations/GetFacilityLocationByFacilityIDForOrg/sFacilityID=" 
+            + this.organization.nFacilityID +
+            "&sAdminUserID=" +
+            this.$store.state.adminUserId +
+            "&sFacilityOrgID="
+            +this.$route.params.id
+        )
+        .then(
+          response => {
+            this.gridData_Loc = JSON.parse(response.bodyText)["locations"];
+            this.dialogLoader = false;
+            //TODO- check with actual value
+            //this.value = this.gridData.filter(x => x.sFacilityLocationID == this.$route.params.id).map(x => x.sFacilityLocationID)
+            this.value = [95,123,124];
+            this.fetchedSelectedLocation = [95,123,124];
+          },
+          response => {
+            // error callback
+            this.gridData_Loc = response.body;
+          }
+        );
+    },
     clearBGField() {
       this.BGClearer = false;
       this.organization.sConfigBackgroundName = "";
@@ -461,11 +524,16 @@ export default {
       );
       this.organization.nPrimaryTimeout= this.organization.nPrimaryTimeout==''? 0 :this.organization.nPrimaryTimeout;
       this.organization.nSecondaryTimeout= this.organization.nSecondaryTimeout==''? 0 :this.organization.nSecondaryTimeout; 
+      var editOrganization = {
+        cOrganization : this.organization,
+        addedlocationIds : this.value.filter(x => !this.fetchedSelectedLocation.includes(x)),
+        removedlocationIds : this.fetchedSelectedLocation.filter(x => !this.value.includes(x))
+      }
       this.$http
         .post(
           "FacilityOrganizations/EditFacilityOrganization/" +
             this.organization.nFacilityOrgID,
-          this.organization
+          editOrganization
         )
         .then(
           response => {

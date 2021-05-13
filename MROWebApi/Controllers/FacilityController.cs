@@ -122,6 +122,8 @@ namespace MROWebAPI.Controllers
             if (ModelState.IsValid)
             {
                 Facilities facility = addFacility.cFacility;
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
                 //Check if there's a facility with same name 
                 FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
                 IEnumerable<Facilities> dbFacilitites = await fpRepo.SelectWhere("sFacilityName", facility.sFacilityName);
@@ -136,6 +138,18 @@ namespace MROWebAPI.Controllers
                     facility.bActiveStatus = false;
                     facility.dtCreated = DateTime.Now;
                     facility.dtLastUpdate = DateTime.Now;
+
+                    if (string.IsNullOrEmpty(facility.sConfigLogoData))
+                    {
+                        facility.sConfigLogoData = helper.sDefaultLogoData;
+                        facility.sConfigLogoName = helper.sDefaultLogoName;
+                    }
+
+                    if (string.IsNullOrEmpty(facility.sConfigBackgroundData))
+                    {
+                        facility.sConfigBackgroundData = helper.sDefaultBGData;
+                        facility.sConfigBackgroundName = helper.sDefaultBGName;
+                    }
                     #endregion
 
                     FacilitiesRepository rpFac = new FacilitiesRepository(_info);
@@ -191,6 +205,8 @@ namespace MROWebAPI.Controllers
         public async Task<ActionResult<Facilities>> EditFacility(int id, Facilities facility)
         {            
             if (ModelState.IsValid) {
+                MROHelperRepository helperRepo = new MROHelperRepository(_info);
+                MROHelper helper = await helperRepo.Select(1);
                 FacilitiesRepository fpRepo = new FacilitiesRepository(_info);
                 if (id != facility.nFacilityID)
                 {
@@ -210,6 +226,18 @@ namespace MROWebAPI.Controllers
                     }
                 }
                 FacilitiesRepository rpFac = new FacilitiesRepository(_info);
+
+                if (string.IsNullOrEmpty(facility.sConfigLogoData))
+                {
+                    facility.sConfigLogoData = helper.sDefaultLogoData;
+                    facility.sConfigLogoName = helper.sDefaultLogoName;
+                }
+
+                if (string.IsNullOrEmpty(facility.sConfigBackgroundData))
+                {
+                    facility.sConfigBackgroundData = helper.sDefaultBGData;
+                    facility.sConfigBackgroundName = helper.sDefaultBGName;
+                }
 
                 #region Encrypt Passwords
                 MROLogger password = new MROLogger(_info);
