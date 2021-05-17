@@ -180,7 +180,7 @@ namespace MRODBL.Repositories
                 return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
             }
         }
-        public async Task<IEnumerable<T>> GetLocationsList(int nFacilityID)
+        public async Task<IEnumerable<dynamic>> GetLocationsList(int nFacilityID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
@@ -190,19 +190,27 @@ namespace MRODBL.Repositories
                       "nFacilityLocationID, " +
                       "sLocationName, " +
                       "sLocationAddress, " +
-                      "sLocationCode, " +
+                      "tblFacilityLocations.sLocationCode, " +
                       "bLocationActiveStatus, " +
                       "sFacilityName, " +
-                      "bIncludeInFacilityLevel " +
+                      "bIncludeInFacilityLevel, " +
+                      "sOrgName, " +
+                      "tblFacilityLocations.nFacilityOrgID, " +
+                      "nFacilityMasterLocationID " +
                       "FROM " +
                       "tblFacilityLocations " +
                       "INNER JOIN " +
                       "tblFacilities " +
                       "ON " +
                       "tblFacilityLocations.nFacilityID = tblFacilities.nFacilityID " +
-                        "WHERE " +
-                        "tblFacilities.nFacilityID = @nFacilityID";
-                return await db.QueryAsync<T>(SqlString, new { @nFacilityID = nFacilityID });
+                      "LEFT JOIN " +
+                      "tblFacilityOrganizations " +
+                      "ON " +
+                      "tblFacilityLocations.nFacilityOrgID = tblFacilityOrganizations.nFacilityOrgID " +
+                      "WHERE " +
+                      "tblFacilities.nFacilityID = @nFacilityID";
+
+                return await db.QueryAsync<dynamic>(SqlString, new { @nFacilityID = nFacilityID });
             }
         }
 

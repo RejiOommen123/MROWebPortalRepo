@@ -46,7 +46,19 @@
         :items-per-page="5"
         fixed-header
         height="60vh"
+        group-by="sOrgName"
       >
+           <!--Org Unit Location in Collapsed form -->
+          <template v-slot:group.header="{ group, headers, toggle, isOpen }">
+
+            <td :colspan="headers.length" style = "padding-left: 6%">
+                <v-btn @click="toggle" small icon :ref="group" :data-open="isOpen">
+                    <v-icon v-if="isOpen">mdi-chevron-up</v-icon>
+                    <v-icon v-else>mdi-chevron-down</v-icon>
+                    {{ group }}
+                </v-btn>
+            </td>
+        </template>
         <!-- Location List Edit Location Template  -->
         <template v-slot:item.actions="{ item }">
           <v-tooltip top>
@@ -68,6 +80,16 @@
             </template>
             <span>Edit Form</span>
           </v-tooltip>
+        </template>
+           <!-- Location List Toggle Facility Master location Template  -->
+        <template v-slot:item.nFacilityMasterLocationID="{ item }">
+          <v-switch
+           
+            v-model="item.nFacilityMasterLocationID"
+            color="#1AA260"
+            @click="FacilityMasterLocation(item.nFacilityMasterLocationID, item.nFacilityOrgID, item.nFacilityLocationID)"
+            :disabled ="item.sOrgName== 'Unorganized'"
+          ></v-switch>
         </template>
 
         <!-- Location List Toggle location Active Status Template  -->
@@ -130,6 +152,26 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- Dialog box for Toggle Facility Master Location -->
+    <v-dialog v-model="dialogFacilityMasterLocation" max-width="360">
+      <v-card>
+        <v-card-title class="headline">
+          Are you sure you want to
+          <br />Change Master Location
+          <br /> Status?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="dialogFacilityMasterLocation = false">No</v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="toggleFacilityMasterLocation(nFacilityMasterLocationID, nFacilityOrgID, nFacilityLocationID)"
+          >Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <!-- Dialog box for Auth Doc (PDF) Validation  -->
     <v-dialog v-model="locationAlert" max-width="360px" width="350px">
       <v-card>
@@ -161,13 +203,17 @@ export default {
       dialog: false,
       locationAlert: false,
       search: "",
+      OrganizationName: "",
+      OrganizationID: 0,
       dialogIncludeInFacilityLevel: false,
+      dialogFacilityMasterLocation: false,
       headers: [
+
         {
           text: "Name",
           align: "start",
           value: "sLocationName",
-          width: "20%"
+          width: "20%",
         },
         { text: "Address", value: "sLocationAddress", width: "40%" },
         { text: "Code", value: "sLocationCode", width: "10%" },
@@ -177,30 +223,45 @@ export default {
           sortable: false,
           align: "center"
         },
+        {
+        text: "Master Location",
+        value: "nFacilityMasterLocationID",
+        sortable: false,
+        align:"center"
+
+        },
         { text: "Active", value: "bLocationActiveStatus", sortable: false },
         { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
         { text: "Edit", value: "actions", sortable: false }
       ],
       gridData: this.getGridData(),
       facilityName: "",
+      nFacilityMasterLocationID: 0,
+      nFacilityLocationID: 0,
+      nFacilityOrgID:0,
       editedItem: {
         nFacilityLocationID: 0,
-        sLocationName: ""
+        sLocationName: "",
       }
     };
   },
   methods: {
+  
     // API Call to Get all Locations
     getGridData() {
       this.dialogLoader = true;
       this.$http
         .get(
-          "FacilityLocations/GetFacilityLocationByFacilityID/sFacilityID=" 
+          "FacilityLocations/GetFacilityLocationByFacilityID/sFacilityID="
             + this.$route.params.id+"&sAdminUserID="+this.$store.state.adminUserId
         )
         .then(
           response => {
             this.gridData = JSON.parse(response.bodyText)["locations"];
+            this.gridData.forEach((element, index) => {
+                    this.gridData[index].nFacilityMasterLocationID = element.nFacilityMasterLocationID == element.nFacilityLocationID;
+                    this.gridData[index].sOrgName = element.sOrgName == null ? "Unorganized" : element.sOrgName;
+            });
             this.facilityName = JSON.parse(response.bodyText)["faciName"];
             this.dialogLoader = false;
           },
@@ -216,6 +277,15 @@ export default {
       this.editedItem.sLocationName = sLocationName;
       this.dialog = true;
     },
+    //Method to pass nFacilityMasterLocationID to dialogBox
+    FacilityMasterLocation(nFacilityMasterLocationID, nFacilityOrgID, nFacilityLocationID)
+    {
+     this.nFacilityMasterLocationID = nFacilityMasterLocationID;    
+     this.nFacilityLocationID = nFacilityLocationID;
+     this.nFacilityOrgID = nFacilityOrgID; 
+     this.dialogFacilityMasterLocation = true;
+    },
+   //Method to pass nFacilityLocationID & sLocationName to dialog box
     toggleIncludeInFacilityLevel(nFacilityLocationID, sLocationName)
     {
       //console.log("loc switch");
@@ -228,26 +298,47 @@ export default {
       this.dialogLoader =true;
       var combinedObj = {
         nfacilityLocationID: id,
-        nAdminUserID: this.$store.state.adminUserId 
+        nAdminUserID: this.$store.state.adminUserId
       };
       this.dialog = false;
       this.$http
         .post("FacilityLocations/ToggleFacilityLocation/",combinedObj )
         .then(response => {
-          if (response.ok == true) 
+          if (response.ok == true)
           {
             this.dialogLoader =false;
-            if (response.body == "Provide Valid Authorization PDF") 
+            if (response.body == "Provide Valid Authorization PDF")
             {
               this.dialogLoader =false;
               this.locationAlert = true;
-            } 
+            }
             else
-            { 
+            {
               this.dialogLoader =false;
               this.$router.go();
             }
           }
+        });
+    },
+ //On Agree in dialog box API call to Toggle Facility Master Location
+    toggleFacilityMasterLocation(){
+    this.dialogLoader = true;
+    var Obj = {
+        nAdminUserID: this.$store.state.adminUserId,
+        nFacilityLocationID: this.nFacilityLocationID,      
+        nFacilityOrgID: this.nFacilityOrgID,
+        //nFacilityMasterLocationID: nFacilityMasterLocationID
+        
+      };
+    this.dialog = false;
+      this.$http
+        .post("FacilityLocations/ToggleFacilityMasterLocation/",Obj )
+        .then(response => {
+          if (response.ok == true)
+          {
+            this.dialogLoader =false;
+            this.$router.go();
+            }         
         });
     },
     //On Agree in dialog box API call to Toggle Include in Facility status for Location
@@ -255,22 +346,22 @@ export default {
       this.dialogLoader =true;
       var combinedObj = {
         nfacilityLocationID: id,
-        nAdminUserID: this.$store.state.adminUserId 
+        nAdminUserID: this.$store.state.adminUserId
       };
       this.dialog = false;
       this.$http
         .post("FacilityLocations/ToggleFacilityLocationIncludeInFacility/",combinedObj )
         .then(response => {
-          if (response.ok == true) 
+          if (response.ok == true)
           {
             this.dialogLoader =false;
-            if (response.body == "Provide Valid Authorization PDF") 
+            if (response.body == "Provide Valid Authorization PDF")
             {
               this.dialogLoader =false;
               this.locationAlert = true;
-            } 
+            }
             else
-            { 
+            {
               this.dialogLoader =false;
               this.$router.go();
             }

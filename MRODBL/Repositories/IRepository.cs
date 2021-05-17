@@ -84,7 +84,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="nFacilityID">Unique Facility ID</param>
         /// <returns>List of Locations for Provided Facility ID</returns>
-        Task<IEnumerable<T>> GetLocationsList(int nFacilityID);
+        Task<IEnumerable<dynamic>> GetLocationsList(int nFacilityID);
 
         /// <summary>
         /// Get Locations for a Facility based on Facility ID and having nFacilityOrgID as null
