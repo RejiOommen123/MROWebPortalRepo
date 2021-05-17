@@ -442,10 +442,8 @@ export default {
           response => {
             this.gridData_Loc = JSON.parse(response.bodyText)["locations"];
             this.dialogLoader = false;
-            //TODO- check with actual value
-            //this.value = this.gridData.filter(x => x.sFacilityLocationID == this.$route.params.id).map(x => x.sFacilityLocationID)
-            this.value = [95,123,124];
-            this.fetchedSelectedLocation = [95,123,124];
+            this.value = this.gridData_Loc.filter(x => x.nFacilityOrgID == this.$route.params.id).map(x => x.nFacilityLocationID);
+            this.fetchedSelectedLocation = [...this.value];
           },
           response => {
             // error callback
@@ -515,7 +513,7 @@ export default {
        }
     },
     // API to Update organization
-    onSubmit() {
+    onSubmit() {     
       this.organization.nUpdatedAdminUserID=this.$store.state.adminUserId;
       this.dialogLoader =true;
       this.organization.nROILocationID = parseInt(this.organization.nROILocationID);
