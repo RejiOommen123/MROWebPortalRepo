@@ -8,6 +8,7 @@ namespace MRODBL.BaseClasses
     {
         public string guid { get; set; }
         public string locationguid { get; set; }
+        public string orgguid { get; set; }
     }
 }
 

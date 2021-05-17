@@ -89,7 +89,7 @@ namespace MROWebApi.Controllers
             try
             {
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
-                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityByGUIDAsync(guidParameters.guid, guidParameters.locationguid);
+                dynamic LogoAndBackgroundImageforFacility = await fieldsRepository.GetLogoBackGroundforFacilityByGUIDAsync(guidParameters.guid, guidParameters.locationguid, guidParameters.orgguid);
                 return LogoAndBackgroundImageforFacility;
             }
             catch (Exception ex)

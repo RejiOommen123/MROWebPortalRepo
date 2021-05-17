@@ -189,7 +189,8 @@ export default {
     );
      var guidParameters = {
         guid: guid,
-        locationguid: locationguid 
+        locationguid: locationguid,
+        orgguid: orgguid
       };
     //API Request get wizard config based on facility guid and locationguid.
     this.$http

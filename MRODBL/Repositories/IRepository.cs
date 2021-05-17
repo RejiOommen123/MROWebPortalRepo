@@ -263,7 +263,7 @@ namespace MRODBL.Repositories
         /// </summary>
         /// <param name="nFacilityID">Facility ID</param>
         /// <returns>Logo & Background Details for Facility based on Provided Facility ID</returns>
-        Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID, string sLocationGUID);
+        Task<dynamic> GetLogoBackGroundforFacilityByGUIDAsync(string sGUID, string sLocationGUID, string sOrgGUID);
 
         /// <summary>
         /// Get Logo & Background For Location based on Location ID (SP)

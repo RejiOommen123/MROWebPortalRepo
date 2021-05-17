@@ -14,7 +14,7 @@
           :key="location.sNormalizedLocationName"
           style="width:100%"
         >
-        <div v-if="!isOrgURL">
+        <div v-if="!isOrgURL || (isOrgURL && !bMasterLocationExist)">
           <v-col cols="12" offset-sm="2" sm="8">
             <button
               :class="{active: sActiveBtn === location.sNormalizedLocationName}"
@@ -43,7 +43,7 @@
             </v-col>
           </div>  
         </div> 
-        <div v-if="isOrgURL">
+        <div v-if="isOrgURL && bMasterLocationExist">
           <v-col cols="12" offset-sm="2" sm="8">
             <v-checkbox offset-sm="2" sm="8"
               hide-details
@@ -71,12 +71,10 @@
                 @blur="$v.sSelectedLocationName.$touch()"
               ></v-text-field>
             </v-col>
-          </div>  
-          <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
-            <v-btn @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>
-          </div>
-        </div>     
-        </div>      
+          </div>              
+        </div> 
+        </div> 
+        <v-btn @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>      
       </div>
     </v-row>
     <!-- Loader dialog -->
@@ -111,6 +109,7 @@ export default {
       sLocalSelectedLocation: this.$store.state.requestermodule.sSelectedLocation!="" ? this.$store.state.requestermodule.sSelectedLocation.split(',') : [],
       isOrgURL: this.$store.state.ConfigModule.sOrgGUID != null,
       commaSeperatedNormalizedName: this.$store.state.requestermodule.sSelectedLocation,
+      bMasterLocationExist: this.$store.state.ConfigModule.apiResponseDataByFacilityGUID.facilityLogoandBackground[0].bMasterLocationExist
     };
   },
   mixins: [validationMixin],
