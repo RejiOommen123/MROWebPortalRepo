@@ -201,7 +201,7 @@ export default {
           location.sNormalizedLocationName !=
           this.$store.state.requestermodule.sSelectedLocation
         ) {
-          var sOrgGUID = this.sLocalSelectedLocation.length > 1 ? this.$store.state.ConfigModule.sOrgGUID : null;
+          var bMultiSelected = this.sLocalSelectedLocation.length > 1;
           this.$http
             .get(
               "Wizards/GetWizardConfig/fID=" +
@@ -213,7 +213,9 @@ export default {
                 "&sLocationGUID=" +
                 this.$store.state.ConfigModule.sLocationGUID +
                 "&sOrgGUID=" +
-                sOrgGUID
+                this.$store.state.ConfigModule.sOrgGUID +
+                "&bMultiSelected=" +
+                bMultiSelected
             )
             .then(response => {
               var apiLocationResponse = response.body;

@@ -273,7 +273,9 @@ export default {
                   this.$store.state.requestermodule.nRequesterID +
                   "&sLocationGUID=" +
                   this.$store.state.ConfigModule.sLocationGUID +
-                  "&sOrgGUID=null"
+                  "&sOrgGUID="+
+                  this.$store.state.ConfigModule.sOrgGUID +
+                  "&bMultiSelected=false"
               )              
               .then(response => {
                 var apiLocationResponse = response.body;

@@ -512,13 +512,13 @@ namespace MRODBL.Repositories
                 }
             }
         }
-        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID,string sOrgGUID)
+        public async Task<object> GetWizardConfigurationAsync(int nFacilityID, int nFacilityLocationID, string sLocationGUID,string sOrgGUID, bool bMultiSelected)
         {
             string SqlString = "spGetWizardConfigBynFacilityIdAndnFacilityLocationId";
             using (SqlConnection db = new SqlConnection(sConnect))
             {
                 db.Open();
-                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sLocationGuid = sLocationGUID, @sOrgGUID = sOrgGUID }, commandType: CommandType.StoredProcedure);
+                SqlMapper.GridReader wizardConfig = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = nFacilityID, @nFacilityLocationID = nFacilityLocationID, @sLocationGuid = sLocationGUID, @sOrgGUID = sOrgGUID, @bMultiSelected = bMultiSelected }, commandType: CommandType.StoredProcedure);
                 var oFields = wizardConfig.Read().ToDictionary(row => (string)row.sNormalizedFieldName, row => (bool)row.bShow);
                 var oPrimaryReason = wizardConfig.Read().ToList();
                 var oRecordTypes = wizardConfig.Read().ToList();
