@@ -83,8 +83,7 @@
         </template>
            <!-- Location List Toggle Facility Master location Template  -->
         <template v-slot:item.nFacilityMasterLocationID="{ item }">
-          <v-switch
-           
+          <v-switch           
             v-model="item.nFacilityMasterLocationID"
             color="#1AA260"
             @click="FacilityMasterLocation(item.nFacilityMasterLocationID, item.nFacilityOrgID, item.nFacilityLocationID)"
@@ -224,11 +223,9 @@ export default {
           align: "center"
         },
         {
-        text: "Master Location",
-        value: "nFacilityMasterLocationID",
-        sortable: false,
-        align:"center"
-
+          text: "Master Location",
+          value: "nFacilityMasterLocationID",
+          sortable: false,
         },
         { text: "Active", value: "bLocationActiveStatus", sortable: false },
         { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
