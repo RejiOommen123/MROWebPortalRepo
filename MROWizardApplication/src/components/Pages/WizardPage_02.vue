@@ -74,7 +74,7 @@
           </div>              
         </div> 
         </div> 
-        <v-btn @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>      
+        <v-btn v-if="isOrgURL && bMasterLocationExist" @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>      
       </div>
     </v-row>
     <!-- Loader dialog -->

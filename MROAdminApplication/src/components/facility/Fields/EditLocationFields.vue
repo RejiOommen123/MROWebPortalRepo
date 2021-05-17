@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="EditFacilityDataBox">
     <form @submit.prevent="onSubmit">
       <v-row>
         <v-col cols="12">
@@ -7,7 +7,7 @@
             <v-card-title>
               <v-row>
                 <v-col cols="12" md="6">
-                  Edit Fields For Location - {{ titleName }}
+                  Location - {{ titleName }}
                 </v-col>
                 <v-col cols="12" md="2">
                   <v-select
@@ -39,7 +39,7 @@
               fixed-header
               height="55vh"
             >
-              <template v-slot:item.sFieldName="props">
+              <!-- <template v-slot:item.sFieldName="props">
                 <v-edit-dialog
                   v-if="props.item.sTableName != 'lnkFacilityFieldMaps'"
                   :return-value.sync="props.item.sFieldName"
@@ -51,7 +51,7 @@
                   </template>
                 </v-edit-dialog>
                 <label v-else>{{ props.item.sFieldName }}</label>
-              </template>
+              </template> -->
               <!-- Template for Field Order -->
               <template v-slot:item.nFieldOrder="props">
                 <v-edit-dialog
