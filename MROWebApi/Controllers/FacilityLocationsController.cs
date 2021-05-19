@@ -360,6 +360,20 @@ namespace MROWebApi.Controllers
 
                     IEnumerable<FacilityLocations> dbOldFacilityLocation = await facilityLocationsRepository.SelectWhere("nFacilityLocationID", facilityLocation.nFacilityLocationID);
                     FacilityLocations oldFacilityLocation = dbOldFacilityLocation.FirstOrDefault();
+
+                    //On organization change reset nFacilityMasterLocationID for that organization
+                    if (facilityLocation.nFacilityOrgID != oldFacilityLocation.nFacilityOrgID)
+                    { 
+                        FacilityOrganizationsRepository organizationsRepository = new FacilityOrganizationsRepository(_info);
+                        IEnumerable<FacilityOrganizations> listOrgnizations = await organizationsRepository.SelectWhere("nFacilityMasterLocationID", facilityLocation.nFacilityLocationID);
+                        FacilityOrganizations organization = listOrgnizations.FirstOrDefault();
+                        if (organization != null)
+                        {
+                            organization.nFacilityMasterLocationID = null;
+                            organizationsRepository.Update(organization);
+                        }
+                    }
+
                     if (checkPDF)
                     {
                         facilityLocation.bLocationActiveStatus = true;
