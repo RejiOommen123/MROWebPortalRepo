@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
+using MRODBL.Enum;
 using MROWebApi.Services;
 using System;
 using System.Collections.Generic;
@@ -214,7 +215,7 @@ namespace MROWebApi.Controllers
                             idList.Add(shipmentType.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var eShipmentlist = await shipmentTypeRepo.SelectListByInClause(idArray, "lnkFacilityShipmentTypes", "nShipmentTypeID", singleRecord.nFacilityID,editFields.nFacilityLocationID);
+                        IEnumerable<FacilityShipmentTypes> eShipmentlist = await shipmentTypeRepo.GetDynamicLinksData(TableName.lstShipmentTypes.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in eShipmentlist)
                         {
@@ -269,7 +270,7 @@ namespace MROWebApi.Controllers
                             idList.Add(primaryReason.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var ePrimarylist = await primaryReasonRepo.SelectListByInClause(idArray, "lnkFacilityPrimaryReasons", "nPrimaryReasonID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+                        IEnumerable<FacilityPrimaryReasons> ePrimarylist = await primaryReasonRepo.GetDynamicLinksData(TableName.lstPrimaryReasons.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in ePrimarylist)
                         {
@@ -325,7 +326,7 @@ namespace MROWebApi.Controllers
                             idList.Add(sensitiveInfo.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var eSensitivelist = await sensitiveInfoRepo.SelectListByInClause(idArray, "lnkFacilitySensitiveInfo", "nSensitiveInfoID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+                        IEnumerable<FacilitySensitiveInfo> eSensitivelist = await sensitiveInfoRepo.GetDynamicLinksData(TableName.lstSensitiveInfo.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in eSensitivelist)
                         {
@@ -381,7 +382,7 @@ namespace MROWebApi.Controllers
                             idList.Add(recordType.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var eRecordlist = await recordTypeRepo.SelectListByInClause(idArray, "lnkFacilityRecordTypes", "nRecordTypeID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+                        IEnumerable<FacilityRecordTypes> eRecordlist = await recordTypeRepo.GetDynamicLinksData(TableName.lstRecordTypes.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in eRecordlist)
                         {
@@ -488,7 +489,7 @@ namespace MROWebApi.Controllers
                             idList.Add(patientRepresentative.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var ePatientReplist = await patientRepresentativeRepo.SelectListByInClause(idArray, "lnkFacilityPatientRepresentatives", "nPatientRepresentativeID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+                        IEnumerable<FacilityPatientRepresentatives> ePatientReplist = await patientRepresentativeRepo.GetDynamicLinksData(TableName.lstPatientRepresentatives.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in ePatientReplist)
                         {
@@ -544,7 +545,7 @@ namespace MROWebApi.Controllers
                             idList.Add(waiver.nFieldID);
                         }
                         idArray = idList.ToArray();
-                        var eWaiverlist = await waiverRepo.SelectListByInClause(idArray, "lnkFacilityWaiver", "nWaiverID", singleRecord.nFacilityID, editFields.nFacilityLocationID);
+                        IEnumerable<FacilityWaiver> eWaiverlist = await waiverRepo.GetDynamicLinksData(TableName.lstWaiver.ToString(), singleRecord.nFacilityID, editFields.nFacilityLocationID, idArray);
 
                         foreach (var item in eWaiverlist)
                         {
@@ -929,6 +930,7 @@ namespace MROWebApi.Controllers
                 {
                     FacilitiesRepository facRepo = new FacilitiesRepository(_info);
                     Facilities facility = await facRepo.Select(facilitiesFieldMapTable.nFacilityID);
+                    int[] idArray = { facilitiesFieldMapTable.nFieldID };
                     bool deleteResult;
                     MROLogger logger = new MROLogger(_info);
                     AdminModuleLogger adminModuleLogger = null;
@@ -966,8 +968,10 @@ namespace MROWebApi.Controllers
                                 nUpdatedAdminUserID = facilitiesFieldMapTable.nUpdatedAdminUserID,
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID                                
-                            };
-                            FacilityPrimaryReasons newFacilityPrimaryReasons = await prFac.SelectThreeWhereClause("nPrimaryReasonID", facilitiesFieldMapTable.nFieldID,"nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+                            };                            
+                            IEnumerable<FacilityPrimaryReasons> FacilityPrimaryReasonsList = await prFac.GetDynamicLinksData(TableName.lstPrimaryReasons.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilityPrimaryReasons newFacilityPrimaryReasons = FacilityPrimaryReasonsList.FirstOrDefault();
+                            newFacilityPrimaryReasons.sPrimaryReasonName = oldFacilityPrimaryReasons.sPrimaryReasonName;
 
                             deleteResult = prFac.Delete(oldFacilityPrimaryReasons.nFacilityPrimaryReasonID);
                             if (deleteResult)
@@ -1014,7 +1018,10 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityRecordTypes newFacilityRecordTypes = await rtFac.SelectThreeWhereClause("nRecordTypeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            IEnumerable<FacilityRecordTypes> FacilityRecordTypesList = await rtFac.GetDynamicLinksData(TableName.lstRecordTypes.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilityRecordTypes newFacilityRecordTypes = FacilityRecordTypesList.FirstOrDefault();
+                            newFacilityRecordTypes.sRecordTypeName = oldFacilityRecordTypes.sRecordTypeName;
 
                             deleteResult = rtFac.Delete(oldFacilityRecordTypes.nFacilityRecordTypeID);
                             if (deleteResult)
@@ -1061,7 +1068,10 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilitySensitiveInfo newFacilitySensitiveInfo = await siFac.SelectThreeWhereClause("nSensitiveInfoID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            IEnumerable<FacilitySensitiveInfo> FacilitySensitiveInfoList = await siFac.GetDynamicLinksData(TableName.lstSensitiveInfo.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilitySensitiveInfo newFacilitySensitiveInfo = FacilitySensitiveInfoList.FirstOrDefault();
+                            newFacilitySensitiveInfo.sSensitiveInfoName = oldFacilitySensitiveInfo.sSensitiveInfoName;
 
                             deleteResult = siFac.Delete(oldFacilitySensitiveInfo.nFacilitySensitiveInfoID);
                             if (deleteResult)
@@ -1108,7 +1118,10 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityShipmentTypes newFacilityShipmentTypes = await stFac.SelectThreeWhereClause("nShipmentTypeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            IEnumerable<FacilityShipmentTypes> FacilityShipmentTypesList = await stFac.GetDynamicLinksData(TableName.lstShipmentTypes.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilityShipmentTypes newFacilityShipmentTypes = FacilityShipmentTypesList.FirstOrDefault();
+                            newFacilityShipmentTypes.sShipmentTypeName = oldFacilityShipmentTypes.sShipmentTypeName;
 
                             deleteResult = stFac.Delete(oldFacilityShipmentTypes.nFacilityShipmentTypeID);
                             if (deleteResult)
@@ -1155,7 +1168,10 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityPatientRepresentatives newFacilityPatientRepresentatives = await prepFac.SelectThreeWhereClause("nPatientRepresentativeID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            IEnumerable<FacilityPatientRepresentatives> FacilityPatientRepresentativesList = await prepFac.GetDynamicLinksData(TableName.lstPatientRepresentatives.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilityPatientRepresentatives newFacilityPatientRepresentatives = FacilityPatientRepresentativesList.FirstOrDefault();
+                            newFacilityPatientRepresentatives.sPatientRepresentativeName = oldFacilityPatientRepresentatives.sPatientRepresentativeName;
 
                             deleteResult = prepFac.Delete(oldFacilityPatientRepresentatives.nFacilityPatientRepresentativeID);
                             if (deleteResult)
@@ -1246,7 +1262,10 @@ namespace MROWebApi.Controllers
                                 dtCreated = facilitiesFieldMapTable.dtCreated,
                                 nCreatedAdminUserID = facilitiesFieldMapTable.nCreatedAdminUserID
                             };
-                            FacilityWaiver newFacilityWaiver = await wFac.SelectThreeWhereClause("nWaiverID", facilitiesFieldMapTable.nFieldID, "nFacilityId", facilitiesFieldMapTable.nFacilityID, "nFacilityLocationId", 0);
+
+                            IEnumerable<FacilityWaiver> FacilityWaiverList = await wFac.GetDynamicLinksData(TableName.lstWaiver.ToString(), facilitiesFieldMapTable.nFacilityID, 0, idArray);
+                            FacilityWaiver newFacilityWaiver = FacilityWaiverList.FirstOrDefault();
+                            newFacilityWaiver.sWaiverName = oldFacilityWaiver.sWaiverName;
 
                             deleteResult = wFac.Delete(oldFacilityWaiver.nFacilityWaiverID);
                             if (deleteResult)

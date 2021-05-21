@@ -767,6 +767,25 @@ namespace MRODBL.Repositories
                 }
             }
         }
+        public async Task<List<T>> GetDynamicLinksData(string sTableName, int nFacilityID, int nFacilityLocationId, int[] idArray)
+        {
+            string SqlString = "spGetDynamicLinksData";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    string sIdList = string.Join(", ", idArray);
+                    db.Open();
+                    SqlMapper.GridReader returnObject = await db.QueryMultipleAsync(SqlString, new { @sTableName = sTableName, @nFacilityID = nFacilityID, @nFacilityLocationId = nFacilityLocationId, @sIdList = sIdList }, commandType: CommandType.StoredProcedure);
+                    List<T> dynamicLinksrList = returnObject.Read<T>().ToList();
+                    return dynamicLinksrList;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         #endregion
     }
 }

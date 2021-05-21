@@ -339,6 +339,21 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityLocationID">Location Id</param>
         /// <returns></returns>
         Task<PDFAndXMLData> GetPDFAndXMLData(int nFacilityID, int nFacilityLocationID);
+        /// <summary>
+        /// Get master data all, get by id or get by name.
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="sName"></param>
+        /// <returns></returns>
+        Task<List<T>> GetMasterData(int? ID, string sName);
+        /// <summary>
+        /// Get dynamic link data by array of ids.
+        /// </summary>
+        /// <param name="nFacilityID"></param>
+        /// <param name="nFacilityLocationId"></param>
+        /// <param name="idArray"></param>
+        /// <returns></returns>
+        Task<List<T>> GetDynamicLinksData(string sTableName, int nFacilityID, int nFacilityLocationId, int[] idArray);
         #endregion
     }
 }

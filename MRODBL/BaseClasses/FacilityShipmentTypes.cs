@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -24,6 +25,7 @@ namespace MRODBL.BaseClasses
         public int nFacilityLocationID { get; set; }
         [StringLength(50, ErrorMessage = "Maximum 50 characters Shipment Type Allowed")]
         [DisplayName("Name")]
+        [Write(false)]
         public string sShipmentTypeName { get; set; }
         [DisplayName("Order")]
         public int? nFieldOrder { get; set; }
