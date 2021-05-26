@@ -1,21 +1,28 @@
 <template>
   <div>
-    <v-row  style="margin-left: 3%;margin-right: 3%;height: 100%;">
-      <v-col md="8" sm="8">
+    <v-row  style="margin-left: 1%;margin-right: 1%;height: 100%;">
+      <v-col md="9" sm="9">
         <v-card>
-          <v-row style="margin-left: 3%">
-            <v-col cols="2" sm="4" md="2" style="margin-left: 2%">
+          <v-card-title>
+            Filters
+          </v-card-title>
+          <v-card-text>
+          <v-row>
+            <v-col cols="2" sm="4" md="2">
               <v-select
+                class="manageTextDropDown"
                 v-model="selectFacility"
                 :items="facilityData"
                 item-text="sFacilityName"
                 item-value="nFacilityID"
                 label="Select Facility"
                 @change="getOrgNlocationData()"
+                dense
               ></v-select>
             </v-col>
             <v-col cols="2" sm="4" md="2">
               <v-select
+                class="manageTextDropDown"
                 :disabled="selectFacility == null"
                 v-model="selectOrganization"
                 :items="orgData"
@@ -23,36 +30,43 @@
                 item-value="nFacilityOrgID"
                 label="Select Organization"
                 @change="getLocationData()"
+                dense
               ></v-select>
             </v-col>
             <v-col cols="2" sm="4" md="2">
               <v-select
+                class="manageTextDropDown"
                 :disabled="selectFacility == null"
                 v-model="selectLocation"
                 :items="locationData"
                 item-text="sLocationName"
                 item-value="nFacilityLocationID"
                 label="Select Location"
+                dense
               ></v-select>
             </v-col>
           <!-- </v-row>
           <v-row  md="6" sm="6"> -->
             <v-col cols="2" md="2" sm="4" >
               <v-select
+                class="manageTextDropDown"
                 v-model="selectScreen"
                 :items="screenData"
                 item-text="sWizardDescription"
                 item-value="nWizardID"
                 label="Select Screen"
+                dense
               ></v-select>
             </v-col>
             <v-col cols="2" md="2" sm="4">
               <v-select
+                class="manageTextDropDown"
                 v-model="selectLanguage"
                 :items="languageData"
                 item-text="text"
                 item-value="value"
                 label="Select Language"
+                dense
               ></v-select>
             </v-col>
           </v-row>
@@ -69,6 +83,7 @@
                 fixed-header
                 height="60vh"
                 group-by="groupBy"
+                dense
               >
                 <template
                   v-slot:group.header="{ group, headers, toggle, isOpen }"
@@ -116,10 +131,11 @@
               </v-data-table>
             </v-col>
           </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
       <!-- <v-divider vertical style="margin-left: 5%"> </v-divider> -->
-      <v-col cols="4" md="4" sm="12" style="height: 100%;">
+      <v-col cols="3" md="3" sm="3" style="height: 100%;">
         <div v-if="selectScreen != null">
           <img :src="getImgUrl(selectScreen)" class="image" />
         </div>
@@ -358,7 +374,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .image {
   height: 100%;
   width: 100%;
@@ -366,6 +382,9 @@ export default {
 }
 .GroupHeader {
   text-align: center;
+}
+.manageTextDropDown{
+  font-size: 0.8125rem;
 }
 </style>
 
