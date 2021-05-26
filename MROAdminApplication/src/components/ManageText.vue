@@ -126,7 +126,7 @@
                   <label v-else>{{ props.item.stext }}</label>
                 </template>
                 <template v-slot:item.bReset="props" >
-                  <v-icon :disabled="props.item.sPlace=='G__'" style="color: red" @click= "Delete()"> mdi-close</v-icon>
+                  <v-icon :disabled="props.item.sPlace=='G__'" style="color: red" @click="ResetToPrevious(props.item)"> mdi-close</v-icon>
                 </template>
               </v-data-table>
             </v-col>
@@ -252,6 +252,17 @@ export default {
   },
 
   methods: {
+    GetManageTextFilterParam(){
+      var ManageTextFilterParam =
+      {
+          nFacilityID: this.selectFacility,
+          nFacilityOrgID: this.selectOrganization,
+          nFacilityLocationID: this.selectLocation,
+          nWizardID: this.selectScreen,
+          nLanguageID: this.selectLocation
+      };
+      return ManageTextFilterParam;
+    },
     GetgridData(){
       this.dialogLoader = true;
      var ManageTextFilterParam =
@@ -336,17 +347,19 @@ export default {
       this.onSubmit();
     },
 
-    Delete(){
-      //  this.dialogLoader = true;
-      //  this.$http
-      //     .post("ManageText/DeleteGridData", deletData)
-      //     .then((response) => {
-      //       if (response.ok == true) {
-      //         this.gridData = [];
-      //          this.GetgridData();
-      //         this.dialogLoader = false;
-      //       }
-      //     });
+    ResetToPrevious(item){
+      var resetManageText = {
+        manageText :,
+        manageTextFilterParam:
+      };
+       this.dialogLoader = true;
+       this.$http
+          .post("ManageText/ResetToPrevious",item)
+          .then((response) => {
+            if (response.ok == true) {
+              this.dialogLoader = false;
+            }
+          });
     },
 
     onSubmit() {
