@@ -73,6 +73,7 @@
           <v-row  md="12" sm="12">
             <v-col cols="12" md="12" sm="12">
               <v-data-table
+                v-if="gridData != null"
                 :headers="headers"
                 :items="gridData"
                 :footer-props="{
@@ -175,21 +176,21 @@ export default {
           width: "20%",
         },
       ],
-      selectFacility: null,
+      selectFacility: 0,
       facilityData: [
         {
           sFacilityName: "-Select-",
           nFacilityID: null,
         },
       ],
-      selectScreen: null,
+      selectScreen: 0,
       screenData: [
         {
           sWizardName: "-Select-",
           nWizardID: null,
         },
       ],
-      selectOrganization: null,
+      selectOrganization: 0,
       orgData: [
         {
           sOrgName: "-Select-",
@@ -198,17 +199,14 @@ export default {
           nFacilityLocationID: null,
         },
       ],
-      selectLocation: null,
+      selectLocation: 0,
       locationData: [
         {
           sLocationName: "-Select-",
           nFacilityLocationID: null,
         },
       ],
-      selectLanguage: {
-        text: "English",
-        value: 1,
-      },
+      selectLanguage: 1,
       languageData: [
         {
           text: "English",
@@ -216,7 +214,7 @@ export default {
         },
       ],
       updatedArray: [],
-      gridData: this.GetgridData(),
+      gridData: null,
       // gridData: [
       //   {
       //     gfol: "",
@@ -233,6 +231,7 @@ export default {
     this.dialogLoader = true;
     this.$http.get("ManageText/GetFacilityNWizardData").then(
       (response) => {
+        if (response.ok == true) {
         this.facilityData = [
           ...this.facilityData,
           ...JSON.parse(response.bodyText)["facilities"],
@@ -241,7 +240,9 @@ export default {
         if (this.screenData != null) {
           this.selectScreen = this.screenData[0].nWizardID;
         }
+        this.GetgridData();
         this.dialogLoader = false;
+        }
       },
 
       (response) => {
@@ -259,22 +260,14 @@ export default {
           nFacilityOrgID: this.selectOrganization,
           nFacilityLocationID: this.selectLocation,
           nWizardID: this.selectScreen,
-          nLanguageID: this.selectLocation
+          nLanguageID: this.selectLanguage
       };
       return ManageTextFilterParam;
     },
     GetgridData(){
       this.dialogLoader = true;
-     var ManageTextFilterParam =
-      {
-      nFacilityID: this.nFacilityID,
-      nFacilityOrgID: this.nFacilityOrgID,
-      nFacilityLocationID: this.nFacilityLocationID,
-      nWizardID: 3,
-      nLanguageID: 1
-   };
-
-    this.$http.post("ManageText/GetManageTextData/", ManageTextFilterParam ).then(
+     var ManageTextFilterParam = this.GetManageTextFilterParam();
+     this.$http.post("ManageText/GetManageTextData/", ManageTextFilterParam ).then(
       (response) => {
         this.gridData = JSON.parse(response.bodyText)["gridData"];      
         this.dialogLoader = false;
