@@ -349,12 +349,12 @@ export default {
 
     ResetToPrevious(item){
       var resetManageText = {
-        manageText :,
-        manageTextFilterParam:
+        manageText : item,
+        manageTextFilterParam: this.GetManageTextFilterParam
       };
        this.dialogLoader = true;
        this.$http
-          .post("ManageText/ResetToPrevious",item)
+          .post("ManageText/ResetToPrevious",resetManageText)
           .then((response) => {
             if (response.ok == true) {
               this.dialogLoader = false;
