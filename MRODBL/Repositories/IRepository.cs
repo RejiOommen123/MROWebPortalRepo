@@ -92,7 +92,30 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityID">Unique Facility ID</param>
         /// <returns>List of Locations for Provided Facility ID</returns>
         Task<IEnumerable<T>> GetLocationsListForOrg(int nFacilityID,int? nFacilityOrgID);
-
+        /// <summary>
+        /// Get list of all FacilityID and FacilityName 
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetFacilityData();
+        /// <summary>
+        /// Get list of all OrganizationID and OrganizationName for given facilityID
+        /// </summary>
+        /// <param name="nFacilityID"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetOrgData(int nFacilityID);
+        /// <summary>
+        /// /// Get list of all locationID and locationName for given facilityID
+        /// </summary>
+        /// <param name="nFacilityID"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetLocData(int nFacilityID);
+        /// <summary>
+        /// /// Get list of all locationID and locationName for given facilityID and OrgID
+        /// </summary>
+        /// <param name="nFacilityID"></param>
+        /// <param name="nFacilityOrgID"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetLocationData(int nFacilityID , int nFacilityOrgID);
         /// <summary>
         /// Performs Inner Join of 2 Tables
         /// </summary>

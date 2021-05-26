@@ -180,6 +180,73 @@ namespace MRODBL.Repositories
                 return await db.ExecuteScalarAsync<int>(SqlString, new { ID = paramValue });
             }
         }
+
+        public async Task<IEnumerable<dynamic>> GetFacilityData()
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT " +
+                    "nFacilityID, " +
+                    "sFacilityName " +
+                    "FROM " +
+                    "tblFacilities ";
+
+                return await db.QueryAsync<dynamic>(SqlString);
+            }
+
+        }
+
+        public async Task<IEnumerable<dynamic>> GetOrgData(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT " +
+                    "nFacilityOrgID, " +
+                    "sOrgName " +                
+                    "FROM " +
+                    "tblFacilityOrganizations "+
+                "WHERE " +
+                      "tblFacilityOrganizations.nFacilityID = @nFacilityID";
+                return await db.QueryAsync<dynamic>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+
+        }
+
+        public async Task<IEnumerable<dynamic>> GetLocData(int nFacilityID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT " +
+                    "nFacilityLocationID, " +
+                    "sLocationName " +
+                    "FROM " +
+                    "tblFacilityLocations " +
+                "WHERE " +
+                      "tblFacilityLocations.nFacilityID = @nFacilityID";
+                return await db.QueryAsync<dynamic>(SqlString, new { @nFacilityID = nFacilityID });
+            }
+
+        }
+
+        public async Task<IEnumerable<dynamic>> GetLocationData(int nFicilityID, int nFacilityOrgID)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string SqlString = "SELECT " +
+                    "nFacilityLocationID, " +
+                    "sLocationName " +
+                    "FROM " +
+                    "tblFacilityLocations "+
+                    "WHERE " +
+                      "tblFacilityLocations.nFacilityID = @nFacilityID " +
+                      "AND " +
+                      "tblFacilityLocations.nFacilityOrgID = @nFacilityOrgID ";
+
+                return await db.QueryAsync<dynamic>(SqlString, new { @nFacilityID = nFicilityID , @nFacilityOrgID = nFacilityOrgID });
+            }
+
+        }
+
         public async Task<IEnumerable<dynamic>> GetLocationsList(int nFacilityID)
         {
             using (SqlConnection db = new SqlConnection(sConnect))

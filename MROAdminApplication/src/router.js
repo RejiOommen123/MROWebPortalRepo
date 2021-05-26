@@ -36,6 +36,7 @@ import store from './store';
 import Organizations from './components/facility/Organizations/Organizations.vue';
 import AddOrganization from './components/facility/Organizations/AddOrganization.vue';
 import EditOrganization from './components/facility/Organizations/EditOrganization.vue';
+import ManageText from './components/ManageText.vue'; 
 
 Vue.use(VueRouter);
 Vue.use(store);
@@ -58,6 +59,14 @@ const routes = [{
         beforeEnter(to, from, next) {
             store.commit("mutatepageHeader", "Manage Facilities");
             next()
+        }
+    },
+    {
+        path: '/ManageText',
+        component: ManageText,
+        beforeEnter(to, from, next){
+        store.commit("mutatepageHeader", "Manage Text");
+        next()
         }
     },
     {

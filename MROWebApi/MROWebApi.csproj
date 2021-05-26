@@ -92,5 +92,9 @@
 	  <NativeLibs Remove="Controllers\FacilityOrganizationsController.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <NativeLibs Remove="Controllers\ManageTextController.cs" />
+	</ItemGroup>
+
 
 </Project>

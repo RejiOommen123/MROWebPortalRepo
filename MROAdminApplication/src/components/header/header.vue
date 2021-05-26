@@ -71,6 +71,13 @@
       <ul class="myUL">
         <li>
           <router-link
+            to="/manageText"
+            class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
+            >Manage Text</router-link
+          >
+        </li>
+        <li>
+          <router-link
             to="/facility"
             class="pageheaderLinksWhite hidden-xs-only hidden-sm-only"
             >Manage Facilities</router-link
