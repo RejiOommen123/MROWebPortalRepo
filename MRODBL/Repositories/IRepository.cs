@@ -377,6 +377,17 @@ namespace MRODBL.Repositories
         /// <param name="idArray"></param>
         /// <returns></returns>
         Task<List<T>> GetDynamicLinksData(string sTableName, int nFacilityID, int nFacilityLocationId, int[] idArray);
+        /// <summary>
+        /// GetManageText Data by array of Ids
+        /// </summary>
+        /// <param name="sTableName"></param>
+        /// <param name="nFacilityID"></param>
+        /// <param name="nFacilityOrgID"></param>
+        /// <param name="nFacilityLocationId"></param>
+        /// <param name="nWizardID"></param>
+        /// <param name="nLanguageID"></param>
+        /// <returns></returns>
+        Task<IEnumerable<dynamic>> GetManageTextData(ManageTextFilterParam manageTextFilterParam);
         #endregion
     }
 }

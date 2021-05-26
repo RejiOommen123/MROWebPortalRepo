@@ -46,73 +46,21 @@ namespace MROWebApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost("GetManageTextData")]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult>getGridData()
+        public async Task<IActionResult>GetManageTextData(ManageTextFilterParam manageTextFilterParam)
         {
             try
             {
-                List<ManageTextDataTable> gridData = new List<ManageTextDataTable>();
-
-                //ManageTextDataTable list = new ManageTextDataTable();
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[0].GFOL = "G";
-                gridData[0].Text = "Text";
-                gridData[0].Type = "Type";
-                gridData[0].Extra = "Extra";
-                gridData[0].Button = true;
-                gridData[0].GroupBy = "Static";
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[1].GFOL = "F";
-                gridData[1].Text = "Text1";
-                gridData[1].Type = "Type1";
-                gridData[1].Extra = "Extra1";
-                gridData[1].Button = true;
-                gridData[1].GroupBy = "Dynamic";
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[2].GFOL = "O";
-                gridData[2].Text = "Text2";
-                gridData[2].Type = "Type2";
-                gridData[2].Extra = "Extra2";
-                gridData[2].Button = true;
-                gridData[2].GroupBy = "Static";
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[3].GFOL = "G";
-                gridData[3].Text = "Text3";
-                gridData[3].Type = "Type3";
-                gridData[3].Extra = "Extra3";
-                gridData[3].Button = true;
-                gridData[3].GroupBy = "Dynamic";
-
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[4].GFOL = "G";
-                gridData[4].Text = "Text4";
-                gridData[4].Type = "Type4";
-                gridData[4].Extra = "Extra4";
-                gridData[4].Button = true;
-                gridData[4].GroupBy = "Common";
-
-                gridData.Add(new ManageTextDataTable());
-                gridData[5].GFOL = "G";
-                gridData[5].Text = "Text5";
-                gridData[5].Type = "Type5";
-                gridData[5].Extra = "Extra5";
-                gridData[5].Button = true;
-                gridData[5].GroupBy = "Common";
-
-                return Ok(gridData);
-                    
+                OverrideTextRepository overrideTextRepository = new OverrideTextRepository(_info);
+                IEnumerable<dynamic> gridData = await overrideTextRepository.GetManageTextData( manageTextFilterParam);
+                return Ok(new { gridData });
             }
             catch (Exception ex)
             {
-                throw ex;
-            }
+                return Content(ex.Message);
+            }             
         }
 
 
@@ -159,7 +107,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditGridData(ManageTextDataTable editGrid)
+        public async Task<IActionResult> EditGridData(ManageText editGrid)
         {
             try
             {
@@ -173,7 +121,7 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> DeleteGridData(ManageTextDataTable deleteData)
+        public async Task<IActionResult> DeleteGridData(ManageText deleteData)
         {
             try  
             {

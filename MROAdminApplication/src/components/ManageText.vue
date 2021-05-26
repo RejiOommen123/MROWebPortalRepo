@@ -82,7 +82,7 @@
                 class="body-1"
                 fixed-header
                 height="60vh"
-                group-by="groupBy"
+                group-by="sSort"
                 dense
               >
                 <template
@@ -107,26 +107,26 @@
                   </td>
                 </template>
 
-                <template v-slot:item.text="props">
+                <template v-slot:item.stext="props">
                   <v-edit-dialog
                     v-if="props.item.sTableName != 'gridData'"
-                    :return-value.sync="props.item.text"
+                    :return-value.sync="props.item.stext"
                     @save="pushToArray(props.item)"
                   >
-                    {{ props.item.text }}
+                    {{ props.item.stext }}
                     <template v-slot:input>
                       <v-text-field
-                        v-model="props.item.text"
+                        v-model="props.item.stext"
                         label="Edit"
                         counter
                         :maxlength="(props.item.gridData = 100)"
                       ></v-text-field>
                     </template>
                   </v-edit-dialog>
-                  <label v-else>{{ props.item.text }}</label>
+                  <label v-else>{{ props.item.stext }}</label>
                 </template>
-                <template v-slot:item.button="props" >
-                  <v-icon :disabled="props.item.gfol=='G'" style="color: red" @click= "Delete()"> mdi-close</v-icon>
+                <template v-slot:item.bReset="props" >
+                  <v-icon :disabled="props.item.sPlace=='G__'" style="color: red" @click= "Delete()"> mdi-close</v-icon>
                 </template>
               </v-data-table>
             </v-col>
@@ -151,33 +151,28 @@ export default {
       search: "",
       nFacilityID: "",
       nFacilityOrgID: "",
+      nWizardID: "",
       headers: [
         {
-          text: "GFOL",
+          text: "sPlace",
           align: "start",
-          value: "gfol",
+          value: "sPlace",
           width: "20%",
         },
         {
-          text: "Text",
-          value: "text",
+          text: "sTypeWithID",
+          value: "sTypeWithID",
           width: "20%",
         },
         {
-          text: "Type",
-          value: "type",
+          text: "sText",
+          value: "sText",
           width: "20%",
         },
         {
-          text: "Extra",
-          value: "extra",
+          text: "bReset",
+          value: "bReset",
           width: "20%",
-        },
-        {
-          text: "Action",
-          value: "button",
-          width: "20%",
-          sortable: true,
         },
       ],
       selectFacility: null,
@@ -259,13 +254,18 @@ export default {
   methods: {
     GetgridData(){
       this.dialogLoader = true;
-    this.$http.get("ManageText/getGridData").then(
+     var ManageTextFilterParam =
+      {
+      nFacilityID: this.nFacilityID,
+      nFacilityOrgID: this.nFacilityOrgID,
+      nFacilityLocationID: this.nFacilityLocationID,
+      nWizardID: 3,
+      nLanguageID: 1
+   };
+
+    this.$http.post("ManageText/GetManageTextData/", ManageTextFilterParam ).then(
       (response) => {
-        this.gridData = JSON.parse(response.bodyText);
-        this.gridData.forEach((element, index) => {
-          this.gridData[index].groupBy =
-            element.groupBy == null ? "NogroupBy" : element.groupBy;
-        });
+        this.gridData = JSON.parse(response.bodyText)["gridData"];      
         this.dialogLoader = false;
       },
 

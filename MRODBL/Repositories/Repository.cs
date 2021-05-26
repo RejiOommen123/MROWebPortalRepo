@@ -181,7 +181,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetFacilityData()
+                public async Task<IEnumerable<dynamic>> GetFacilityData()
         {
             using (SqlConnection db = new SqlConnection(sConnect))
             {
@@ -851,6 +851,27 @@ namespace MRODBL.Repositories
                 {
                     throw ex;
                 }
+            }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetManageTextData(ManageTextFilterParam manageTextFilterParam)
+        {
+            string SqlString = "spGetManageTextsData";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                   
+                    db.Open();
+                    SqlMapper.GridReader returnObject = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = manageTextFilterParam.nFacilityID, @nFacilityOrgID = manageTextFilterParam.nFacilityOrgID, @nFacilityLocationID = manageTextFilterParam.nFacilityLocationID, @WizardId = manageTextFilterParam.nWizardID, @nLanguageID = manageTextFilterParam.nLanguageID, @sTextType = manageTextFilterParam.sTextType, @ID = manageTextFilterParam.ID, @nCommonControlID = manageTextFilterParam.nCommonControlID }, commandType: CommandType.StoredProcedure);
+                    List<dynamic> ManageTextList = returnObject.Read<dynamic>().ToList();
+                    return ManageTextList;
+                }
+                catch (Exception ex)
+                {
+                    return (IEnumerable<dynamic>)ex;
+                }
+
             }
         }
         #endregion
