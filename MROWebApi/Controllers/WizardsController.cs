@@ -68,6 +68,7 @@ namespace MROWebApi.Controllers
             try
             {    
                 sLocationGUID = sLocationGUID == "null" ? null : sLocationGUID;
+                sOrgGUID = sOrgGUID == "null" ? null : sOrgGUID;
                 FieldsRepository fieldsRepository = new FieldsRepository(_info);
                 object Wizard_Config = await fieldsRepository.GetWizardConfigurationAsync(nFacilityID, nFacilityLocationID, sLocationGUID, sOrgGUID, bMultiSelected);
                 return Wizard_Config;

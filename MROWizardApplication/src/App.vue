@@ -301,6 +301,14 @@ export default {
                     apiLocationResponse
                   );
                   this.$store.commit(
+                  "ConfigModule/wizardLogo",
+                  apiLocationResponse.oLocations[0].sConfigLogoData
+                  );
+                  this.$store.commit(
+                    "ConfigModule/wizardBackground",
+                    apiLocationResponse.oLocations[0].sConfigBackgroundData
+                  );   
+                  this.$store.commit(
                     "requestermodule/nFacilityID",
                     singleLocation.nFacilityID
                   );

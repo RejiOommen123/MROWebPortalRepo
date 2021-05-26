@@ -4,8 +4,9 @@ import VueRouter from 'vue-router';
 import WelcomePage from './components/welcome/welcome.vue';
 import DashboardPage from './components/dashboard/dashboard.vue';
 import EditField from './components/facility/Fields/EditFields.vue';
-import EditFacilityData from './components/facility/Fields/EditFacilityData.vue';
-import EditLocationData from './components/facility/Fields/EditLocationData.vue';
+import EditLocationFields from './components/facility/Fields/EditLocationFields.vue';
+// import EditFacilityData from './components/facility/Fields/EditFacilityData.vue';
+// import EditLocationData from './components/facility/Fields/EditLocationData.vue';
 import AddFacility from './components/facility/AddFacility.vue';
 import EditFacility from './components/facility/EditFacility.vue';
 import Locations from './components/facility/Locations/Locations.vue';
@@ -13,25 +14,25 @@ import AddLocation from './components/facility/Locations/AddLocation.vue';
 import EditLocation from './components/facility/Locations/EditLocation.vue';
 import PrimaryReason from './components/master/PrimaryReason/PrimaryReason.vue';
 import AddPrimaryReason from './components/master/PrimaryReason/AddPrimaryReason.vue';
-import EditPrimaryReason from './components/master/PrimaryReason/EditPrimaryReason.vue';
+// import EditPrimaryReason from './components/master/PrimaryReason/EditPrimaryReason.vue';
 import RecordType from './components/master/RecordType/RecordType.vue';
 import AddRecordType from './components/master/RecordType/AddRecordType.vue';
-import EditRecordType from './components/master/RecordType/EditRecordType.vue';
+// import EditRecordType from './components/master/RecordType/EditRecordType.vue';
 import SensitiveInfo from './components/master/SensitiveInfo/SensitiveInfo.vue';
 import AddSensitiveInfo from './components/master/SensitiveInfo/AddSensitiveInfo.vue';
-import EditSensitiveInfo from './components/master/SensitiveInfo/EditSensitiveInfo.vue';
+// import EditSensitiveInfo from './components/master/SensitiveInfo/EditSensitiveInfo.vue';
 import ShipmentType from './components/master/ShipmentType/ShipmentType.vue';
 import AddShipmentType from './components/master/ShipmentType/AddShipmentType.vue';
-import EditShipmentType from './components/master/ShipmentType/EditShipmentType.vue';
+// import EditShipmentType from './components/master/ShipmentType/EditShipmentType.vue';
 import PatientRepresentative from './components/master/PatientRepresentative/PatientRepresentative.vue';
 import AddPatientRepresentative from './components/master/PatientRepresentative/AddPatientRepresentative.vue';
-import EditPatientRepresentative from './components/master/PatientRepresentative/EditPatientRepresentative.vue';
+// import EditPatientRepresentative from './components/master/PatientRepresentative/EditPatientRepresentative.vue';
 import AuditReport from './components/report/AuditReport.vue';
 import FacilityLocationReport from './components/report/FacilityLocationReport.vue';
 import FacilityConfigurationReport from './components/report/FacilityConfigurationReport.vue';
 import Waiver from './components/master/Waiver/Waiver.vue';
 import AddWaiver from './components/master/Waiver/AddWaiver.vue';
-import EditWaiver from './components/master/Waiver/EditWaiver.vue';
+// import EditWaiver from './components/master/Waiver/EditWaiver.vue';
 import store from './store';
 import Organizations from './components/facility/Organizations/Organizations.vue';
 import AddOrganization from './components/facility/Organizations/AddOrganization.vue';
@@ -121,26 +122,34 @@ const routes = [{
         path: '/EditFields/:id',
         component: EditField,
         beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Fields");
+            store.commit("mutatepageHeader", "Edit Facility Fields");
             next()
         }
     },
     {
-        path: '/EditLocationData/:nFacilityID/:nFacilityLocationID',
-        component: EditLocationData,
+        path: '/EditLocationFields/:nFacilityID/:nFacilityLocationID',
+        component: EditLocationFields,
         beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Location Data");
+            store.commit("mutatepageHeader", "Edit Location Fields");
             next()
         }
     },
-    {
-        path: '/EditFacilityData/:id',
-        component: EditFacilityData,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Facility Data");
-            next()
-        }
-    },
+    // {
+    //     path: '/EditLocationData/:nFacilityID/:nFacilityLocationID',
+    //     component: EditLocationData,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Location Data");
+    //         next()
+    //     }
+    // },
+    // {
+    //     path: '/EditFacilityData/:id',
+    //     component: EditFacilityData,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Facility Data");
+    //         next()
+    //     }
+    // },
     {
         path: '/AddFacility',
         component: AddFacility,
@@ -173,14 +182,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/PrimaryReason/EditPrimaryReason/:id',
-        component: EditPrimaryReason,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Primary Reason");
-            next()
-        }
-    },
+    // {
+    //     path: '/PrimaryReason/EditPrimaryReason/:id',
+    //     component: EditPrimaryReason,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Primary Reason");
+    //         next()
+    //     }
+    // },
     {
         path: '/Master/RecordType',
         component: RecordType,
@@ -197,14 +206,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/RecordType/EditRecordType/:id',
-        component: EditRecordType,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Record Type");
-            next()
-        }
-    },
+    // {
+    //     path: '/RecordType/EditRecordType/:id',
+    //     component: EditRecordType,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Record Type");
+    //         next()
+    //     }
+    // },
     {
         path: '/Master/SensitiveInfo',
         component: SensitiveInfo,
@@ -213,14 +222,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/SensitiveInfo/EditSensitiveInfo/:id',
-        component: EditSensitiveInfo,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Sensitive Info");
-            next()
-        }
-    },
+    // {
+    //     path: '/SensitiveInfo/EditSensitiveInfo/:id',
+    //     component: EditSensitiveInfo,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Sensitive Info");
+    //         next()
+    //     }
+    // },
     {
         path: '/SensitiveInfo/AddSensitiveInfo',
         component: AddSensitiveInfo,
@@ -237,14 +246,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/ShipmentType/EditShipmentType/:id',
-        component: EditShipmentType,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Shipment Type");
-            next()
-        }
-    },
+    // {
+    //     path: '/ShipmentType/EditShipmentType/:id',
+    //     component: EditShipmentType,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Shipment Type");
+    //         next()
+    //     }
+    // },
     {
         path: '/ShipmentType/AddShipmentType',
         component: AddShipmentType,
@@ -262,14 +271,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/PatientRepresentative/EditPatientRepresentative/:id',
-        component: EditPatientRepresentative,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Patient Representative");
-            next()
-        }
-    },
+    // {
+    //     path: '/PatientRepresentative/EditPatientRepresentative/:id',
+    //     component: EditPatientRepresentative,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Patient Representative");
+    //         next()
+    //     }
+    // },
     {
         path: '/PatientRepresentative/AddPatientRepresentative',
         component: AddPatientRepresentative,
@@ -312,14 +321,14 @@ const routes = [{
             next()
         }
     },
-    {
-        path: '/Waiver/EditWaiver/:id',
-        component: EditWaiver,
-        beforeEnter(to, from, next) {
-            store.commit("mutatepageHeader", "Edit Waiver");
-            next()
-        }
-    },
+    // {
+    //     path: '/Waiver/EditWaiver/:id',
+    //     component: EditWaiver,
+    //     beforeEnter(to, from, next) {
+    //         store.commit("mutatepageHeader", "Edit Waiver");
+    //         next()
+    //     }
+    // },
     {
         path: '/Waiver/AddWaiver',
         component: AddWaiver,

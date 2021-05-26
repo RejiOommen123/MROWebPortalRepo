@@ -45,7 +45,7 @@
       >
         <!-- Primary Reason List Actions (Edit Primary Reason, Delete Primary Reason)  -->
         <template v-slot:item.actions="{ item }">
-          <v-tooltip top>
+          <!-- <v-tooltip top>
             <template v-slot:activator="{ on }">
               <router-link
                 class="mrorouterlink"
@@ -55,7 +55,7 @@
               </router-link>
             </template>
             <span>Edit Primary Reason</span>
-          </v-tooltip>
+          </v-tooltip> -->
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn icon @click="deleteItem(item.nPrimaryReasonID, item.sPrimaryReasonName)">
@@ -130,7 +130,7 @@ export default {
           width: "30%",
         },
         {
-          text: "Edit/Delete",
+          text: "Delete",
           value: "actions",
           align: "center",
           sortable: false,

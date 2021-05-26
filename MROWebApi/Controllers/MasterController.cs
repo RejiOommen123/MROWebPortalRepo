@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRODBL.BaseClasses;
 using MRODBL.BaseClassRepositories;
 using MRODBL.Entities;
+using MRODBL.Enum;
 using MROWebApi.Services;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace MROWebApi.Controllers
             try
             {
                 RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                IEnumerable<RecordTypes> recordTypes = await rtFac.GetAllASC(1000, "sRecordTypeName");
+                IEnumerable<RecordTypes> recordTypes = await rtFac.GetMasterData(null, null);
                 return Ok(recordTypes);
             }
             catch (Exception exp)
@@ -81,7 +82,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's a record type with same name 
                 RecordTypesRepository rtFac = new RecordTypesRepository(_info);
-                IEnumerable<RecordTypes> dbRecordTypes = await rtFac.SelectWhere("sRecordTypeName", recordType.sRecordTypeName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<RecordTypes> dbRecordTypes = await rtFac.GetMasterData(null, recordType.sRecordTypeName);
                 if (dbRecordTypes.Count() != 0)
                 {
                     //Exit
@@ -99,8 +101,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(recordType);
-
+                    int GeneratedID = (int)rtFac.InsertContrib(recordType);
+                    if (GeneratedID != 0) 
+                    { 
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = recordType.nWizardID,
+                                sTableName = TableName.lstRecordTypes.ToString(),
+                                nControlID = recordType.nRecordTypeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = recordType.sRecordTypeName,
+                                nCommonControlID = null,
+                                dtCreated = recordType.dtCreated,
+                                nCreatedAdminUserID = recordType.nCreatedAdminUserID,
+                                dtLastUpdate = recordType.dtLastUpdate,
+                                nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = recordType.nWizardID,
+                                sTableName = TableName.lstRecordTypes.ToString(),
+                                nControlID = recordType.nRecordTypeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = recordType.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = recordType.dtCreated,
+                                nCreatedAdminUserID = recordType.nCreatedAdminUserID,
+                                dtLastUpdate = recordType.dtLastUpdate,
+                                nUpdatedAdminUserID = recordType.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Add Record Type Method was called & Created Record Type with ID: " + GeneratedID;
@@ -140,7 +180,7 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                    //Check if there's a facility with same name 
+                //Check if there's a facility with same name 
                 RecordTypesRepository rtFac = new RecordTypesRepository(_info);
                 IEnumerable<RecordTypes> dbRecordTypes = await rtFac.SelectWhere("sRecordTypeName", recordType.sRecordTypeName);
                 if (dbRecordTypes.Count() != 0)
@@ -176,7 +216,7 @@ namespace MROWebApi.Controllers
                     else
                     { return NotFound(); }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
                 }
@@ -203,7 +243,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
                 {
-                RecordTypes masterRecordType = await rtFac.Select(nRecordTypeID);
+                IEnumerable<RecordTypes> dbRecordTypes = await rtFac.GetMasterData(nRecordTypeID, null);
+                RecordTypes masterRecordType = dbRecordTypes.FirstOrDefault();
                 //IEnumerable<FacilityRecordTypes> facilityRecordTypeIEnum = await rtFacilityFac.SelectWhere("nRecordTypeID", nRecordTypeID);
                 //List<FacilityRecordTypes> facilityRecordTypeList = facilityRecordTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nRecordTypeID, "lnkFacilityRecordTypes"))
@@ -246,7 +287,7 @@ namespace MROWebApi.Controllers
             try
             {
                 PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
-                IEnumerable<PrimaryReasons> primaryReasons = await rtFac.GetAllASC(1000, "sPrimaryReasonName");
+                IEnumerable<PrimaryReasons> primaryReasons = await rtFac.GetMasterData(null, null);
                 return Ok(primaryReasons);
             }
             catch (Exception exp)
@@ -289,7 +330,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's a primary reason with same name 
                 PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
-                IEnumerable<PrimaryReasons> dbPrimaryReasons = await rtFac.SelectWhere("sPrimaryReasonName", primaryReason.sPrimaryReasonName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<PrimaryReasons> dbPrimaryReasons = await rtFac.GetMasterData(null, primaryReason.sPrimaryReasonName);
                 if (dbPrimaryReasons.Count() != 0)
                 {
                     //Exit
@@ -307,7 +349,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(primaryReason);
+                    int GeneratedID = (int)rtFac.InsertContrib(primaryReason);
+                    if (GeneratedID != 0)
+                    {
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = primaryReason.nWizardID,
+                                sTableName = TableName.lstPrimaryReasons.ToString(),
+                                nControlID = primaryReason.nPrimaryReasonID,
+                                nLanguageID = (int)Languages.en,
+                                sText = primaryReason.sPrimaryReasonName,
+                                nCommonControlID = null,
+                                dtCreated = primaryReason.dtCreated,
+                                nCreatedAdminUserID = primaryReason.nCreatedAdminUserID,
+                                dtLastUpdate = primaryReason.dtLastUpdate,
+                                nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = primaryReason.nWizardID,
+                                sTableName = TableName.lstPrimaryReasons.ToString(),
+                                nControlID = primaryReason.nPrimaryReasonID,
+                                nLanguageID = (int)Languages.en,
+                                sText = primaryReason.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = primaryReason.dtCreated,
+                                nCreatedAdminUserID = primaryReason.nCreatedAdminUserID,
+                                dtLastUpdate = primaryReason.dtLastUpdate,
+                                nUpdatedAdminUserID = primaryReason.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
 
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
@@ -348,7 +429,7 @@ namespace MROWebApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 //Check if there's a facility with same name 
                 PrimaryReasonsRepository rtFac = new PrimaryReasonsRepository(_info);
                 IEnumerable<PrimaryReasons> dbPrimaryReasons = await rtFac.SelectWhere("sPrimaryReasonName", primaryReason.sPrimaryReasonName);
@@ -360,7 +441,7 @@ namespace MROWebApi.Controllers
                         return BadRequest("Cannot edit Primary Reason - \"" + primaryReason.sPrimaryReasonName + "\". Primary reason with same name already exists.");
                     }
                 }
-                
+
                 try
                 {
                     primaryReason.dtLastUpdate = DateTime.Now;
@@ -413,7 +494,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
-                PrimaryReasons masterPrimaryReason = await rtFac.Select(nPrimaryReasonID);
+                IEnumerable<PrimaryReasons> dbPrimaryReasons = await rtFac.GetMasterData(nPrimaryReasonID, null);
+                PrimaryReasons masterPrimaryReason = dbPrimaryReasons.FirstOrDefault();
                 //IEnumerable<FacilityPrimaryReasons> facilityPrimaryReasonIEnum = await rtFacilityFac.SelectWhere("nPrimaryReasonID", nPrimaryReasonID);
                 //List<FacilityPrimaryReasons> facilityPrimaryReasonList = facilityPrimaryReasonIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nPrimaryReasonID, "lnkFacilityPrimaryReasons"))
@@ -456,7 +538,7 @@ namespace MROWebApi.Controllers
             try
             {
                 SensitiveInfoRepository rtFac = new SensitiveInfoRepository(_info);
-                IEnumerable<SensitiveInfo> sensitiveInfos = await rtFac.GetAllASC(1000, "sSensitiveInfoName");
+                IEnumerable<SensitiveInfo> sensitiveInfos = await rtFac.GetMasterData(null, null);
                 return Ok(sensitiveInfos);
             }
             catch (Exception exp)
@@ -499,7 +581,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's asensitive info with same name 
                 SensitiveInfoRepository rtFac = new SensitiveInfoRepository(_info);
-                IEnumerable<SensitiveInfo> dbSensitiveInfo = await rtFac.SelectWhere("sSensitiveInfoName", sensitiveInfo.sSensitiveInfoName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<SensitiveInfo> dbSensitiveInfo = await rtFac.GetMasterData(null, sensitiveInfo.sSensitiveInfoName);
                 if (dbSensitiveInfo.Count() != 0)
                 {
                     //Exit
@@ -517,8 +600,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(sensitiveInfo);
-
+                    int GeneratedID = (int)rtFac.InsertContrib(sensitiveInfo);
+                    if (GeneratedID != 0)
+                    {
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = sensitiveInfo.nWizardID,
+                                sTableName = TableName.lstSensitiveInfo.ToString(),
+                                nControlID = sensitiveInfo.nSensitiveInfoID,
+                                nLanguageID = (int)Languages.en,
+                                sText = sensitiveInfo.sSensitiveInfoName,
+                                nCommonControlID = null,
+                                dtCreated = sensitiveInfo.dtCreated,
+                                nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID,
+                                dtLastUpdate = sensitiveInfo.dtLastUpdate,
+                                nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = sensitiveInfo.nWizardID,
+                                sTableName = TableName.lstSensitiveInfo.ToString(),
+                                nControlID = sensitiveInfo.nSensitiveInfoID,
+                                nLanguageID = (int)Languages.en,
+                                sText = sensitiveInfo.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = sensitiveInfo.dtCreated,
+                                nCreatedAdminUserID = sensitiveInfo.nCreatedAdminUserID,
+                                dtLastUpdate = sensitiveInfo.dtLastUpdate,
+                                nUpdatedAdminUserID = sensitiveInfo.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Add Sensitive Info Method was called & Created Sensitive Info with ID: " + GeneratedID;
@@ -621,7 +742,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
-                SensitiveInfo masterSensitiveInfo = await rtFac.Select(nSensitiveInfoID);
+                IEnumerable<SensitiveInfo> dbSensitiveInfo = await rtFac.GetMasterData(nSensitiveInfoID, null);
+                SensitiveInfo masterSensitiveInfo = dbSensitiveInfo.FirstOrDefault();
                 //IEnumerable<FacilitySensitiveInfo> facilitySensitiveInfoIEnum = await rtFacilityFac.SelectWhere("nSensitiveInfoID", nSensitiveInfoID);
                 //List<FacilitySensitiveInfo> facilitySensitiveInfoList = facilitySensitiveInfoIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nSensitiveInfoID, "lnkFacilitySensitiveInfo"))
@@ -664,7 +786,7 @@ namespace MROWebApi.Controllers
             try
             {
                 ShipmentTypesRepository rtFac = new ShipmentTypesRepository(_info);
-                IEnumerable<ShipmentTypes> shipmentTypes = await rtFac.GetAllASC(1000, "sShipmentTypeName");
+                IEnumerable<ShipmentTypes> shipmentTypes = await rtFac.GetMasterData(null, null);
                 return Ok(shipmentTypes);
             }
             catch (Exception exp)
@@ -707,7 +829,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's a shipment type with same name 
                 ShipmentTypesRepository rtFac = new ShipmentTypesRepository(_info);
-                IEnumerable<ShipmentTypes> dbShipmentTypes = await rtFac.SelectWhere("sShipmentTypeName", shipmentType.sShipmentTypeName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<ShipmentTypes> dbShipmentTypes = await rtFac.GetMasterData(null, shipmentType.sShipmentTypeName);
                 if (dbShipmentTypes.Count() != 0)
                 {
                     //Exit
@@ -725,8 +848,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(shipmentType);
-
+                    int GeneratedID = (int)rtFac.InsertContrib(shipmentType);
+                    if (GeneratedID != 0)
+                    {
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = shipmentType.nWizardID,
+                                sTableName = TableName.lstShipmentTypes.ToString(),
+                                nControlID = shipmentType.nShipmentTypeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = shipmentType.sShipmentTypeName,
+                                nCommonControlID = null,
+                                dtCreated = shipmentType.dtCreated,
+                                nCreatedAdminUserID = shipmentType.nCreatedAdminUserID,
+                                dtLastUpdate = shipmentType.dtLastUpdate,
+                                nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = shipmentType.nWizardID,
+                                sTableName = TableName.lstShipmentTypes.ToString(),
+                                nControlID = shipmentType.nShipmentTypeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = shipmentType.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = shipmentType.dtCreated,
+                                nCreatedAdminUserID = shipmentType.nCreatedAdminUserID,
+                                dtLastUpdate = shipmentType.dtLastUpdate,
+                                nUpdatedAdminUserID = shipmentType.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Add Shipment Type Method was called & Created Shipment Type with ID: " + GeneratedID;
@@ -829,7 +990,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
-                ShipmentTypes masterShipmentType = await rtFac.Select(nShipmentTypeID);
+                IEnumerable<ShipmentTypes> dbShipmentTypes = await rtFac.GetMasterData(nShipmentTypeID, null);
+                ShipmentTypes masterShipmentType = dbShipmentTypes.FirstOrDefault();
                 //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
                 //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nShipmentTypeID, "lnkFacilityShipmentTypes"))
@@ -872,7 +1034,7 @@ namespace MROWebApi.Controllers
             try
             {
                 PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
-                IEnumerable<PatientRepresentatives> patientRepresentatives = await rtFac.GetAllASC(1000, "sPatientRepresentativeName");
+                IEnumerable<PatientRepresentatives> patientRepresentatives = await rtFac.GetMasterData(null, null);
                 return Ok(patientRepresentatives);
             }
             catch (Exception exp)
@@ -915,7 +1077,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's a Patient Representative with same name 
                 PatientRepresentativesRepository rtFac = new PatientRepresentativesRepository(_info);
-                IEnumerable<PatientRepresentatives> dbPatientRepresentatives = await rtFac.SelectWhere("sPatientRepresentativeName", patientRepresentatives.sPatientRepresentativeName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<PatientRepresentatives> dbPatientRepresentatives = await rtFac.GetMasterData(null, patientRepresentatives.sPatientRepresentativeName);
                 if (dbPatientRepresentatives.Count() != 0)
                 {
                     //Exit
@@ -933,8 +1096,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(patientRepresentatives);
-
+                    int GeneratedID = (int)rtFac.InsertContrib(patientRepresentatives);
+                    if (GeneratedID != 0)
+                    {
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = patientRepresentatives.nWizardID,
+                                sTableName = TableName.lstPatientRepresentatives.ToString(),
+                                nControlID = patientRepresentatives.nPatientRepresentativeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = patientRepresentatives.sPatientRepresentativeName,
+                                nCommonControlID = null,
+                                dtCreated = patientRepresentatives.dtCreated,
+                                nCreatedAdminUserID = patientRepresentatives.nCreatedAdminUserID,
+                                dtLastUpdate = patientRepresentatives.dtLastUpdate,
+                                nUpdatedAdminUserID = patientRepresentatives.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = patientRepresentatives.nWizardID,
+                                sTableName = TableName.lstPatientRepresentatives.ToString(),
+                                nControlID = patientRepresentatives.nPatientRepresentativeID,
+                                nLanguageID = (int)Languages.en,
+                                sText = patientRepresentatives.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = patientRepresentatives.dtCreated,
+                                nCreatedAdminUserID = patientRepresentatives.nCreatedAdminUserID,
+                                dtLastUpdate = patientRepresentatives.dtLastUpdate,
+                                nUpdatedAdminUserID = patientRepresentatives.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Admin with ID: " + patientRepresentatives.nCreatedAdminUserID + " called Add Patient Representative Method & Created Patient Representative with ID: " + GeneratedID;
@@ -1037,7 +1238,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
-                PatientRepresentatives masterPatientRepresentative = await rtFac.Select(nPatientRepresentativeID);
+                IEnumerable<PatientRepresentatives> dbPatientRepresentatives = await rtFac.GetMasterData(nPatientRepresentativeID, null);
+                PatientRepresentatives masterPatientRepresentative = dbPatientRepresentatives.FirstOrDefault();
                 //IEnumerable<FacilityShipmentTypes> facilityShipmentTypeIEnum = await rtFacilityFac.SelectWhere("nShipmentTypeID", nShipmentTypeID);
                 //List<FacilityShipmentTypes> facilityShipmentTypeList = facilityShipmentTypeIEnum.ToList();
                 if (rtFac.DeleteOneToMany(nPatientRepresentativeID, "lnkFacilityPatientRepresentatives"))
@@ -1080,7 +1282,7 @@ namespace MROWebApi.Controllers
             try
             {
                 WaiverRepository rtFac = new WaiverRepository(_info);
-                IEnumerable<Waiver> waiver = await rtFac.GetAllASC(1000, "sWaiverName");
+                IEnumerable<Waiver> waiver = await rtFac.GetMasterData(null, null);
                 return Ok(waiver);
             }
             catch (Exception exp)
@@ -1123,7 +1325,8 @@ namespace MROWebApi.Controllers
             {
                 //Check if there's a waiver with same name 
                 WaiverRepository rtFac = new WaiverRepository(_info);
-                IEnumerable<Waiver> dbWaiver = await rtFac.SelectWhere("sWaiverName", waiver.sWaiverName);
+                OverrideTextRepository orFac = new OverrideTextRepository(_info);
+                IEnumerable<Waiver> dbWaiver = await rtFac.GetMasterData(null, waiver.sWaiverName);
                 if (dbWaiver.Count() != 0)
                 {
                     //Exit
@@ -1141,8 +1344,46 @@ namespace MROWebApi.Controllers
 
                     #endregion
 
-                    int GeneratedID = (int)rtFac.Insert(waiver);
-
+                    int GeneratedID = (int)rtFac.InsertContrib(waiver);
+                    if (GeneratedID != 0)
+                    {
+                        List<OverrideText> overrideTexts = new List<OverrideText>
+                        {
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.D.ToString(),
+                                nWizardID = waiver.nWizardID,
+                                sTableName = TableName.lstWaiver.ToString(),
+                                nControlID = waiver.nWaiverID,
+                                nLanguageID = (int)Languages.en,
+                                sText = waiver.sWaiverName,
+                                nCommonControlID = null,
+                                dtCreated = waiver.dtCreated,
+                                nCreatedAdminUserID = waiver.nCreatedAdminUserID,
+                                dtLastUpdate = waiver.dtLastUpdate,
+                                nUpdatedAdminUserID = waiver.nUpdatedAdminUserID,
+                            },
+                            new OverrideText()
+                            {
+                                sPlace = Override_Text_Place.G.ToString(),
+                                nSubID = 0,
+                                sTextType = Override_Text_TextTypeID.T.ToString(),
+                                nWizardID = waiver.nWizardID,
+                                sTableName = TableName.lstWaiver.ToString(),
+                                nControlID = waiver.nWaiverID,
+                                nLanguageID = (int)Languages.en,
+                                sText = waiver.sFieldToolTip,
+                                nCommonControlID = null,
+                                dtCreated = waiver.dtCreated,
+                                nCreatedAdminUserID = waiver.nCreatedAdminUserID,
+                                dtLastUpdate = waiver.dtLastUpdate,
+                                nUpdatedAdminUserID = waiver.nUpdatedAdminUserID,
+                            }
+                        };
+                        orFac.InsertMany(overrideTexts);
+                    }
                     #region Logging
                     MROLogger logger = new MROLogger(_info);
                     string sDescription = "Add Waiver Method was called & Created Waiver with ID: " + GeneratedID;
@@ -1245,7 +1486,8 @@ namespace MROWebApi.Controllers
             bool resultAdminID = int.TryParse(sAdminUserID, out int nAdminUserID);
             try
             {
-                Waiver masterWaiver = await rtFac.Select(nWaiverID);
+                IEnumerable<Waiver> dbWaiver = await rtFac.GetMasterData(nWaiverID, null);
+                Waiver masterWaiver = dbWaiver.FirstOrDefault();
                 if (rtFac.DeleteOneToMany(nWaiverID, "lnkFacilityWaiver"))
                 {
                     #region Logging

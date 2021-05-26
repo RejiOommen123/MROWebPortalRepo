@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <div id="EditFacilityDataBox">
     <v-tabs v-model="tab" background-color="rgb(0, 91, 168)" dark>
       <v-tab>Edit Fields</v-tab>
@@ -41,4 +41,4 @@ export default {
 .v-tab {
   text-transform: none !important;
 }
-</style>
+</style> -->

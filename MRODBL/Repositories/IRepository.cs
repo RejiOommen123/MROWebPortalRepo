@@ -168,7 +168,13 @@ namespace MRODBL.Repositories
         /// <param name="ourModel">Record to be Inserted</param>
         /// <returns>Id of newly generated Record</returns>
         int? Insert(T ourModel);
-
+        /// <summary>
+        /// Insert single record in a table using dapper contrib insert method
+        /// </summary>
+        /// <typeparam name="T">Record to be Inserted</typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        int InsertContrib<T>(T item) where T : class;
         ///<summary>
         /// Insert Many Records in a Table
         /// </summary>
@@ -356,6 +362,21 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityLocationID">Location Id</param>
         /// <returns></returns>
         Task<PDFAndXMLData> GetPDFAndXMLData(int nFacilityID, int nFacilityLocationID);
+        /// <summary>
+        /// Get master data all, get by id or get by name.
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="sName"></param>
+        /// <returns></returns>
+        Task<List<T>> GetMasterData(int? ID, string sName);
+        /// <summary>
+        /// Get dynamic link data by array of ids.
+        /// </summary>
+        /// <param name="nFacilityID"></param>
+        /// <param name="nFacilityLocationId"></param>
+        /// <param name="idArray"></param>
+        /// <returns></returns>
+        Task<List<T>> GetDynamicLinksData(string sTableName, int nFacilityID, int nFacilityLocationId, int[] idArray);
         #endregion
     }
 }

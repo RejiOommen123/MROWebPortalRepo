@@ -371,6 +371,28 @@ namespace MRODBL.Repositories
             }
             return Id;
         }
+
+        public virtual int InsertContrib<T>(T item) where T : class
+        {
+            int Id ;
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    using (var trans = db.BeginTransaction())
+                    {
+                        Id = (int)db.Insert(item, trans);
+                        trans.Commit();
+                        return Id;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return 0;
+                }
+            }
+        }
         public async Task<bool> InsertMany(List<T> ourModels)
         {
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -435,11 +457,10 @@ namespace MRODBL.Repositories
                 {
                     try
                     {
+                        string sql = $"DELETE from lnkOverrideText WHERE nControlID =@ID AND sTableName = '{sTableName}' DELETE from {lnkTable} WHERE {sKeyName} = @ID DELETE from {sTableName} WHERE {sKeyName} = @ID";
+                                   
                         var rowsAffected = connection.Execute(
-                                         "DELETE " + lnkTable + @" 
-                                    WHERE " + sKeyName + @" =@ID " +
-                                         "DELETE " + sTableName + @" 
-                                    WHERE " + sKeyName + @" =@ID",
+                                         sql,
                                          new { ID = id }, transaction);
                     }
                     catch (Exception ex) {
@@ -787,6 +808,44 @@ namespace MRODBL.Repositories
                     pdfAndXMLData.fields = returnObject.Read<Fields>().ToList();
                     pdfAndXMLData.waiver = returnObject.Read<Waiver>().ToList();
                     return pdfAndXMLData;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public async Task<List<T>> GetMasterData(int? ID, string sName)
+        {
+            string SqlString = "spGetDynamicMastersData";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    SqlMapper.GridReader returnObject = await db.QueryMultipleAsync(SqlString, new { @sTableName = sTableName, @ID = ID, @sName = sName }, commandType: CommandType.StoredProcedure);
+                    List<T> masterList = returnObject.Read<T>().ToList();
+                    return masterList;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+        public async Task<List<T>> GetDynamicLinksData(string sTableName, int nFacilityID, int nFacilityLocationId, int[] idArray)
+        {
+            string SqlString = "spGetDynamicLinksData";
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    string sIdList = string.Join(", ", idArray);
+                    db.Open();
+                    SqlMapper.GridReader returnObject = await db.QueryMultipleAsync(SqlString, new { @sTableName = sTableName, @nFacilityID = nFacilityID, @nFacilityLocationId = nFacilityLocationId, @sIdList = sIdList }, commandType: CommandType.StoredProcedure);
+                    List<T> dynamicLinksrList = returnObject.Read<T>().ToList();
+                    return dynamicLinksrList;
                 }
                 catch (Exception ex)
                 {

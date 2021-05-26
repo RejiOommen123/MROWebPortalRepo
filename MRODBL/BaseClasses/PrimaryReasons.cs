@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MRODBL.BaseClasses
 {
+    [Table("lstPrimaryReasons")]
     public partial class PrimaryReasons : CommonModel
     {
         #region Props
@@ -14,11 +16,13 @@ namespace MRODBL.BaseClasses
         public int nPrimaryReasonID { get; set; }
         [StringLength(100, ErrorMessage = "Maximum 100 characters Primary Reason Allowed")]
         [DisplayName("Name")]
+        [Write(false)]
         public string sPrimaryReasonName { get; set; }
         [DisplayName("Normalized Name")]
         public string sNormalizedPrimaryReasonName { get; set; }
         [StringLength(500, ErrorMessage = "Maximum 500 characters Primary Reason Tool Tip Allowed")]
         [DisplayName("Tooltip")]
+        [Write(false)]
         public string sFieldToolTip { get; set; }
         [Range(0, int.MaxValue, ErrorMessage = "Zero & Only positive number allowed")]
         [DisplayName("eXpress Id")]

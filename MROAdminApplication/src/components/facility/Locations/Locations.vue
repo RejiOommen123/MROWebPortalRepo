@@ -74,7 +74,7 @@
         <template v-slot:item.Fields="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <router-link class="mrorouterlink" :to="'/EditLocationData/'+$route.params.id+'/'+item.nFacilityLocationID">
+              <router-link class="mrorouterlink" :to="'/EditLocationFields/'+$route.params.id+'/'+item.nFacilityLocationID">
                 <v-icon color="rgb(0, 91, 168)" v-on="on" medium>assignment</v-icon>
               </router-link>
             </template>
@@ -83,8 +83,7 @@
         </template>
            <!-- Location List Toggle Facility Master location Template  -->
         <template v-slot:item.nFacilityMasterLocationID="{ item }">
-          <v-switch
-           
+          <v-switch           
             v-model="item.nFacilityMasterLocationID"
             color="#1AA260"
             @click="FacilityMasterLocation(item.nFacilityMasterLocationID, item.nFacilityOrgID, item.nFacilityLocationID)"
@@ -218,17 +217,15 @@ export default {
         { text: "Address", value: "sLocationAddress", width: "40%" },
         { text: "Code", value: "sLocationCode", width: "10%" },
         {
-          text: "Edit Fields/Disclaimers",
+          text: "Edit Fields",
           value: "Fields",
           sortable: false,
           align: "center"
         },
         {
-        text: "Master Location",
-        value: "nFacilityMasterLocationID",
-        sortable: false,
-        align:"center"
-
+          text: "Master Location",
+          value: "nFacilityMasterLocationID",
+          sortable: false,
         },
         { text: "Active", value: "bLocationActiveStatus", sortable: false },
         { text: "Include In Facility Level", value: "bIncludeInFacilityLevel", sortable: false},
