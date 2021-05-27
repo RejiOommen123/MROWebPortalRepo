@@ -23,7 +23,7 @@
             <v-col cols="2" sm="4" md="2">
               <v-select
                 class="manageTextDropDown"
-                :disabled="selectFacility == null"
+                :disabled="selectFacility == 0"
                 v-model="selectOrganization"
                 :items="orgData"
                 item-text="sOrgName"
@@ -36,12 +36,13 @@
             <v-col cols="2" sm="4" md="2">
               <v-select
                 class="manageTextDropDown"
-                :disabled="selectFacility == null"
+                :disabled="selectFacility == 0"
                 v-model="selectLocation"
                 :items="locationData"
                 item-text="sLocationName"
                 item-value="nFacilityLocationID"
                 label="Select Location"
+                 @change="getGridData()"
                 dense
               ></v-select>
             </v-col>
@@ -108,26 +109,26 @@
                   </td>
                 </template>
 
-                <template v-slot:item.stext="props">
+                <template v-slot:item.sText="props">
                   <v-edit-dialog
                     v-if="props.item.sTableName != 'gridData'"
-                    :return-value.sync="props.item.stext"
+                    :return-value.sync="props.item.sText"
                     @save="pushToArray(props.item)"
                   >
-                    {{ props.item.stext }}
+                    {{ props.item.sText }}
                     <template v-slot:input>
                       <v-text-field
-                        v-model="props.item.stext"
+                        v-model="props.item.sText"
                         label="Edit"
                         counter
                         :maxlength="(props.item.gridData = 100)"
                       ></v-text-field>
                     </template>
                   </v-edit-dialog>
-                  <label v-else>{{ props.item.stext }}</label>
+                  <label v-else>{{ props.item.sText }}</label>
                 </template>
                 <template v-slot:item.bReset="props" >
-                  <v-icon :disabled="props.item.sPlace=='G__'" style="color: red" @click="ResetToPrevious(props.item)"> mdi-close</v-icon>
+                  <v-icon :disabled="props.item.sPlace=='G__'" style="color: red" @click="resetToPrevious(props.item)"> mdi-close</v-icon>
                 </template>
               </v-data-table>
             </v-col>
@@ -142,6 +143,14 @@
         </div>
       </v-col>
     </v-row>
+     <v-dialog v-model="dialogLoader" persistent width="300">
+          <v-card color="rgb(0, 91, 168)" dark>
+            <v-card-text>
+              Please stand by
+              <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
   </div>
 </template>
   <script>
@@ -240,7 +249,7 @@ export default {
         if (this.screenData != null) {
           this.selectScreen = this.screenData[0].nWizardID;
         }
-        this.GetgridData();
+        this.getGridData();
         this.dialogLoader = false;
         }
       },
@@ -253,7 +262,7 @@ export default {
   },
 
   methods: {
-    GetManageTextFilterParam(){
+    getManageTextFilterParam(){
       var ManageTextFilterParam =
       {
           nFacilityID: this.selectFacility,
@@ -264,9 +273,9 @@ export default {
       };
       return ManageTextFilterParam;
     },
-    GetgridData(){
+    getGridData(){
       this.dialogLoader = true;
-     var ManageTextFilterParam = this.GetManageTextFilterParam();
+     var ManageTextFilterParam = this.getManageTextFilterParam();
      this.$http.post("ManageText/GetManageTextData/", ManageTextFilterParam ).then(
       (response) => {
         this.gridData = JSON.parse(response.bodyText)["gridData"];      
@@ -281,6 +290,8 @@ export default {
     },
     getOrgNlocationData() {
       this.dialogLoader = true;
+      this.selectLocation = 0;
+      this.selectOrganization = 0;
       this.nFacilityID = parseInt(this.selectFacility);
       this.$http
         .get("ManageText/GetOrgNlocationData/sFacilityID=" + this.nFacilityID)
@@ -288,7 +299,8 @@ export default {
           (response) => {
             // get body data
             this.orgData = JSON.parse(response.bodyText)["orgData"];
-            this.locationData = JSON.parse(response.bodyText)["locations"];
+            this.locationData = JSON.parse(response.bodyText)["locationData"];
+            this.getGridData();
             this.dialogLoader = false;
           },
 
@@ -301,6 +313,7 @@ export default {
 
     getLocationData() {
       this.dialogLoader = true;
+      this.selectLocation = 0;
       this.nFacilityID = parseInt(this.selectFacility);
       this.nFacilityOrgID = parseInt(this.selectOrganization);
       this.$http
@@ -312,7 +325,8 @@ export default {
         )
         .then(
           (response) => {
-            this.locationData = JSON.parse(response.bodyText)["locations"];
+            this.locationData = JSON.parse(response.bodyText)["locations"];    
+            this.getGridData();
             this.dialogLoader = false;
           },
 
@@ -340,10 +354,10 @@ export default {
       this.onSubmit();
     },
 
-    ResetToPrevious(item){
+    resetToPrevious(item){
       var resetManageText = {
         manageText : item,
-        manageTextFilterParam: this.GetManageTextFilterParam
+        manageTextFilterParam: this.getManageTextFilterParam
       };
        this.dialogLoader = true;
        this.$http
@@ -370,7 +384,7 @@ export default {
           .then((response) => {
             if (response.ok == true) {
               this.gridData = [];
-               this.GetgridData();
+               this.getGridData();
               this.updatedArray = [];
               this.dialogLoader = false;
             }

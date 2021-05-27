@@ -76,9 +76,9 @@ namespace MROWebApi.Controllers
                 FacilityOrganizationsRepository facilityOrganizationsRepository = new FacilityOrganizationsRepository(_info);
                 IEnumerable<dynamic> orgData = await facilityOrganizationsRepository.GetOrgData(nFacilityID);
                 FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
-                IEnumerable<dynamic> locations = await facilityLocationsRepository.GetLocData(nFacilityID);
+                IEnumerable<dynamic> locationData = await facilityLocationsRepository.GetLocData(nFacilityID);
 
-                return Ok(new { orgData , locations});
+                return Ok(new { orgData , locationData});
             }
             catch (Exception ex)
             {
