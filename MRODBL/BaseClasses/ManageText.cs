@@ -12,9 +12,8 @@ namespace MRODBL.BaseClasses
         public bool bReset { get; set; }
         public string sTextType { get; set; }
         public int nControlID { get; set; }
-        public int nCommonControlID { get; set; }
+        public int? nCommonControlID { get; set; }
+        public string sLevel { get; set; }
         public int sSort { get; set; }
-
-
     }
 }

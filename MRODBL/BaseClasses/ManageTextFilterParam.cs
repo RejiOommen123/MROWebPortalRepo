@@ -13,7 +13,7 @@ namespace MRODBL.BaseClasses
         public int nWizardID { get; set; }
         public string sTextType { get; set; }
         public int ID { get; set; }
-        public int nCommonControlID { get; set; }
+        public int? nCommonControlID { get; set; }
       
     }
 }
