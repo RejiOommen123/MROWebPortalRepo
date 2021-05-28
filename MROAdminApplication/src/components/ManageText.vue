@@ -365,19 +365,32 @@ export default {
       }
     },
 
-    resetToPrevious(item) {
+    resetToPrevious(item){
+      const index = this.gridData.findIndex(
+        (element) => element.sTextType == item.sTextType && element.nControlID == item.nControlID && element.sLevel == item.sLevel
+      );
       var resetManageText = {
-        manageText: item,
-        manageTextFilterParam: this.getManageTextFilterParam,
+        manageText : item,
+        manageTextFilterParam: this.getManageTextFilterParam()
       };
-      this.dialogLoader = true;
-      this.$http
-        .post("ManageText/ResetToPrevious", resetManageText)
-        .then((response) => {
-          if (response.ok == true) {
-            this.dialogLoader = false;
-          }
-        });
+       this.dialogLoader = true;
+       this.$http
+          .post("ManageText/ResetToPrevious",resetManageText)
+          .then((response) => {
+            if (response.ok == true) {
+              var returnedManageText = JSON.parse(response.bodyText)["manageText"];
+              this.gridData[index].sPlace = returnedManageText.sPlace;
+              this.gridData[index].sTypeWithID = returnedManageText.sTypeWithID;
+              this.gridData[index].sText = returnedManageText.sText;
+              this.gridData[index].bReset = returnedManageText.bReset;
+              this.gridData[index].sTextType = returnedManageText.sTextType;
+              this.gridData[index].nControlID = returnedManageText.nControlID;
+              this.gridData[index].nCommonControlID = returnedManageText.nCommonControlID;
+              this.gridData[index].sLevel = returnedManageText.sLevel;
+              this.gridData[index].sSort = returnedManageText.sSort;
+              this.dialogLoader = false;
+            }
+          });
     },
 
     editText(item) {

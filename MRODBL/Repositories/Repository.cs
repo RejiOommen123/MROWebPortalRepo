@@ -349,7 +349,21 @@ namespace MRODBL.Repositories
                 return await db.QueryAsync<T>(SqlString, new { @ids = ids });
             }
         }
-
+        public async Task<T> GetSingleOverrideText(OverrideText overrideText)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                string equalOrIs = overrideText.nCommonControlID == null ? "is NULL" : "= " + overrideText.nCommonControlID;
+                try { 
+                    string sql = $"SELECT * FROM lnkOverrideText WHERE sPlace = @sPlace AND nSubID = @nSubID AND sTextType = @sTextType AND nWizardID = @nWizardID AND nControlID = @nControlID AND nLanguageID = @nLanguageID AND nCommonControlID {equalOrIs}";
+                    return await db.QueryFirstAsync<T>(sql, new { @sPlace = overrideText.sPlace, @nSubID = overrideText.nSubID, @sTextType = overrideText.sTextType, @nWizardID = overrideText.nWizardID, @nControlID = overrideText.nControlID, @nLanguageID = overrideText.nLanguageID, @nCommonControlID = overrideText.nCommonControlID });
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         #endregion
 
         #region INSERT Queries
@@ -471,6 +485,33 @@ namespace MRODBL.Repositories
                 }
             }
             return true;
+        }
+        public bool DeleteSingleOverrideText(OverrideText overrideText)
+        {
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                using (var connection = new SqlConnection(sConnect))
+                {
+                    string equalOrIs = overrideText.nCommonControlID == null ? "is NULL" : "= " + overrideText.nCommonControlID;
+                    try { 
+                        connection.Open();
+                        string sql = $"DELETE FROM lnkOverrideText WHERE sPlace = @sPlace AND nSubID = @nSubID AND sTextType = @sTextType AND nWizardID = @nWizardID AND nControlID = @nControlID AND nLanguageID = @nLanguageID AND nCommonControlID {equalOrIs}";
+                        var rowsAffected = connection.Execute(sql, new { @sPlace = overrideText.sPlace, @nSubID = overrideText.nSubID, @sTextType = overrideText.sTextType, @nWizardID = overrideText.nWizardID, @nControlID = overrideText.nControlID, @nLanguageID = overrideText.nLanguageID, @nCommonControlID = overrideText.nCommonControlID });
+                        if (rowsAffected > 0)
+                        {
+                            return true;
+                        }
+                        else 
+                        {
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
         #endregion
 
@@ -854,7 +895,7 @@ namespace MRODBL.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetManageTextData(ManageTextFilterParam manageTextFilterParam)
+        public async Task<IEnumerable<ManageText>> GetManageTextData(ManageTextFilterParam manageTextFilterParam)
         {
             string SqlString = "spGetManageTextsData";
             using (SqlConnection db = new SqlConnection(sConnect))
@@ -864,12 +905,12 @@ namespace MRODBL.Repositories
                    
                     db.Open();
                     SqlMapper.GridReader returnObject = await db.QueryMultipleAsync(SqlString, new { @nFacilityID = manageTextFilterParam.nFacilityID, @nFacilityOrgID = manageTextFilterParam.nFacilityOrgID, @nFacilityLocationID = manageTextFilterParam.nFacilityLocationID, @WizardId = manageTextFilterParam.nWizardID, @nLanguageID = manageTextFilterParam.nLanguageID, @sTextType = manageTextFilterParam.sTextType, @ID = manageTextFilterParam.ID, @nCommonControlID = manageTextFilterParam.nCommonControlID }, commandType: CommandType.StoredProcedure);
-                    List<dynamic> ManageTextList = returnObject.Read<dynamic>().ToList();
+                    List<ManageText> ManageTextList = returnObject.Read<ManageText>().ToList();
                     return ManageTextList;
                 }
                 catch (Exception ex)
                 {
-                    return (IEnumerable<dynamic>)ex;
+                    throw ex;
                 }
 
             }

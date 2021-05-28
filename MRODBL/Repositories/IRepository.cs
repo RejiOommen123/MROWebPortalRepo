@@ -158,6 +158,12 @@ namespace MRODBL.Repositories
         /// <param name="nFacilityID">Unique Facility ID</param>
         /// <returns>List of Organizations for Provided Facility ID</returns>
         Task<IEnumerable<T>> GetOrganizationsList(int nFacilityID);
+        /// <summary>
+        /// Get single record of override text
+        /// </summary>
+        /// <param name="overrideText">OverrideText type object</param>
+        /// <returns></returns>
+        Task<T> GetSingleOverrideText(OverrideText overrideText);
 
         #endregion
 
@@ -204,6 +210,12 @@ namespace MRODBL.Repositories
         /// <param name="nID">ID of Record which is to be deleted</param>
         /// <returns>Bool based on whether operation was successful or not</returns>
         bool Delete(int nID);
+        /// <summary>
+        /// Delete single override text record
+        /// </summary>
+        /// <param name="overrideText">OverrideText type object</param>
+        /// <returns></returns>
+        bool DeleteSingleOverrideText(OverrideText overrideText);
         #endregion
 
         #region Update Queries
@@ -387,7 +399,7 @@ namespace MRODBL.Repositories
         /// <param name="nWizardID"></param>
         /// <param name="nLanguageID"></param>
         /// <returns></returns>
-        Task<IEnumerable<dynamic>> GetManageTextData(ManageTextFilterParam manageTextFilterParam);
+        Task<IEnumerable<ManageText>> GetManageTextData(ManageTextFilterParam manageTextFilterParam);
         #endregion
     }
 }
