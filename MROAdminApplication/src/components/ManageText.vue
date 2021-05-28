@@ -57,12 +57,13 @@
                   @change="getGridData()"
                   dense
                 >
-                <!-- <template slot="selection" slot-scope="data">
+                  <!-- <template slot="selection" slot-scope="data">
                   {{ data.item.nWizardID }} - {{ data.item.sWizardDescription }}
                 </template> -->
-                <template slot="item" slot-scope="data">
-                  {{ data.item.nWizardID }} - {{ data.item.sWizardDescription }}
-                </template>
+                  <template slot="item" slot-scope="data">
+                    {{ data.item.nWizardID }} -
+                    {{ data.item.sWizardDescription }}
+                  </template>
                 </v-select>
               </v-col>
               <v-col cols="2" md="2" sm="4">
@@ -94,13 +95,13 @@
                   dense
                 >
                   <template
-                    v-slot:group.header="{ group, headers, toggle, isOpen}"
+                    v-slot:group.header="{ group, headers, toggle, isOpen }"
                   >
                     <td
                       :colspan="headers.length"
                       class="GroupHeader"
                       style="border: 1px solid black"
-                      :style="'background-color:'+ colorName(group)"
+                      :style="'background-color:' + colorName(group)"
                     >
                       <v-btn
                         @click="toggle"
@@ -111,7 +112,7 @@
                       >
                         <v-icon v-if="isOpen">mdi-chevron-up</v-icon>
                         <v-icon v-else>mdi-chevron-down</v-icon>
-                        {{ colorName(group) }}
+                        {{ groupName(group) }}
                       </v-btn>
                     </td>
                   </template>
@@ -136,7 +137,7 @@
                   </template>
                   <template v-slot:item.bReset="props">
                     <v-icon
-                      :disabled="props.item.sPlace == 'G__'"
+                      disabled="props.item.bReset"
                       style="color: red"
                       @click="resetToPrevious(props.item)"
                     >
@@ -247,7 +248,9 @@ export default {
     this.$http.get("ManageText/GetFacilityNWizardData").then(
       (response) => {
         if (response.ok == true) {
-          this.facilityData = [...this.facilityData,...JSON.parse(response.bodyText)["facilities"],
+          this.facilityData = [
+            ...this.facilityData,
+            ...JSON.parse(response.bodyText)["facilities"],
           ];
           this.screenData = JSON.parse(response.bodyText)["wizard"];
           if (this.screenData != null) {
@@ -302,9 +305,17 @@ export default {
         .then(
           (response) => {
             // get body data
-            this.orgData = [...this.orgData,...JSON.parse(response.bodyText)["orgData"],
-            ];
-            this.locationData = [...this.locationData,...JSON.parse(response.bodyText)["locationData"],
+            (this.orgData = [{ sOrgName: "-Select-", nFacilityOrgID: 0 }]),
+              (this.locationData = [
+                { sLocationName: "-Select-", nFacilityLocationID: 0 },
+              ]),
+              (this.orgData = [
+                ...this.orgData,
+                ...JSON.parse(response.bodyText)["orgData"],
+              ]);
+            this.locationData = [
+              ...this.locationData,
+              ...JSON.parse(response.bodyText)["locationData"],
             ];
             this.getGridData();
             this.dialogLoader = false;
@@ -330,7 +341,9 @@ export default {
         )
         .then(
           (response) => {
-            this.locationData = [...this.locationData,...JSON.parse(response.bodyText)["locations"],
+            this.locationData = [
+              ...this.locationData,
+              ...JSON.parse(response.bodyText)["locations"],
             ];
             this.getGridData();
             this.dialogLoader = false;
@@ -347,50 +360,67 @@ export default {
       return images("./" + selectScreen + ".png");
     },
 
-    colorName(sSort){
-      if(sSort == 1)
-      {
-        return 'red';
-      }
-      if(sSort == 2)
-      {
-        return 'green';
-      }
-       if(sSort == 3)
-      {
-        return 'green';
-      }
-      else{
-        return '#000000';
+    colorName(sSort) {
+      switch (sSort) {
+        case 1:
+          return "#CAD7B4";
+
+        case 2:
+          return "#DF9996";
+
+        case 3:
+          return "#FCF1AC";
+
+        case "null":
+          return "Others";
       }
     },
 
-    resetToPrevious(item){
+    groupName(sSort) {
+      switch (sSort) {
+        case 1:
+          return "STATIC";
+
+        case 2:
+          return "DYNAMIC";
+
+        case 3:
+          return "COMMON";
+      }
+    },
+
+    resetToPrevious(item) {
       const index = this.gridData.findIndex(
-        (element) => element.sTextType == item.sTextType && element.nControlID == item.nControlID && element.sLevel == item.sLevel
+        (element) =>
+          element.sTextType == item.sTextType &&
+          element.nControlID == item.nControlID &&
+          element.sLevel == item.sLevel
       );
       var resetManageText = {
-        manageText : item,
-        manageTextFilterParam: this.getManageTextFilterParam()
+        manageText: item,
+        manageTextFilterParam: this.getManageTextFilterParam(),
       };
-       this.dialogLoader = true;
-       this.$http
-          .post("ManageText/ResetToPrevious",resetManageText)
-          .then((response) => {
-            if (response.ok == true) {
-              var returnedManageText = JSON.parse(response.bodyText)["manageText"];
-              this.gridData[index].sPlace = returnedManageText.sPlace;
-              this.gridData[index].sTypeWithID = returnedManageText.sTypeWithID;
-              this.gridData[index].sText = returnedManageText.sText;
-              this.gridData[index].bReset = returnedManageText.bReset;
-              this.gridData[index].sTextType = returnedManageText.sTextType;
-              this.gridData[index].nControlID = returnedManageText.nControlID;
-              this.gridData[index].nCommonControlID = returnedManageText.nCommonControlID;
-              this.gridData[index].sLevel = returnedManageText.sLevel;
-              this.gridData[index].sSort = returnedManageText.sSort;
-              this.dialogLoader = false;
-            }
-          });
+      this.dialogLoader = true;
+      this.$http
+        .post("ManageText/ResetToPrevious", resetManageText)
+        .then((response) => {
+          if (response.ok == true) {
+            var returnedManageText = JSON.parse(response.bodyText)[
+              "manageText"
+            ];
+            this.gridData[index].sPlace = returnedManageText.sPlace;
+            this.gridData[index].sTypeWithID = returnedManageText.sTypeWithID;
+            this.gridData[index].sText = returnedManageText.sText;
+            this.gridData[index].bReset = returnedManageText.bReset;
+            this.gridData[index].sTextType = returnedManageText.sTextType;
+            this.gridData[index].nControlID = returnedManageText.nControlID;
+            this.gridData[index].nCommonControlID =
+              returnedManageText.nCommonControlID;
+            this.gridData[index].sLevel = returnedManageText.sLevel;
+            this.gridData[index].sSort = returnedManageText.sSort;
+            this.dialogLoader = false;
+          }
+        });
     },
 
     editText(item) {
