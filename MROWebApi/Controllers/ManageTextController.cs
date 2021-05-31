@@ -126,7 +126,10 @@ namespace MROWebApi.Controllers
             try  
             {
                 OverrideTextRepository overrideTextRepository = new OverrideTextRepository(_info);
-                int nSubID = 0;
+                int nSubID = 0,
+                    nControlID = combineManageText.manageText.nControlID,
+                    nWizardID = combineManageText.manageTextFilterParam.nWizardID;
+                int? nCommonControlID = combineManageText.manageText.nCommonControlID;
                 switch (combineManageText.manageText.sLevel)
                 {
                     case "F":
@@ -146,10 +149,10 @@ namespace MROWebApi.Controllers
                     sPlace = combineManageText.manageText.sLevel,
                     nSubID = nSubID,
                     sTextType = combineManageText.manageText.sTextType,
-                    nWizardID = combineManageText.manageTextFilterParam.nWizardID,
-                    nControlID = combineManageText.manageText.nControlID,
+                    nWizardID = combineManageText.manageText.nCommonControlID != null ? 500 : combineManageText.manageTextFilterParam.nWizardID,
+                    nControlID = combineManageText.manageText.nCommonControlID != null ? combineManageText.manageText.nCommonControlID ?? default(int) : combineManageText.manageText.nControlID,
                     nLanguageID = combineManageText.manageTextFilterParam.nLanguageID,
-                    nCommonControlID = combineManageText.manageText.nCommonControlID,
+                    nCommonControlID = combineManageText.manageText.nCommonControlID != null ? null : combineManageText.manageText.nCommonControlID,
                 };
                 OverrideText dbOldOverrideText = await overrideTextRepository.GetSingleOverrideText(overrideText);
                 bool isOTDeleted = overrideTextRepository.DeleteSingleOverrideText(dbOldOverrideText);
@@ -166,8 +169,17 @@ namespace MROWebApi.Controllers
 
                 #region Get single new OverrideText from DB 
                 overrideText.sPlace = manageText.sLevel;
+                if (manageText.sLevel == "O" && combineManageText.manageTextFilterParam.nFacilityOrgID == 0)
+                {
+                    FacilityLocationsRepository facilityLocationsRepository = new FacilityLocationsRepository(_info);
+                    FacilityLocations facilityLocation = await facilityLocationsRepository.Select(combineManageText.manageTextFilterParam.nFacilityLocationID);
+                    combineManageText.manageTextFilterParam.nFacilityOrgID = facilityLocation.nFacilityOrgID ?? default(int);
+                }
                 switch (manageText.sLevel)
                 {
+                    case "G":
+                        nSubID = 0;
+                        break;
                     case "F":
                         nSubID = combineManageText.manageTextFilterParam.nFacilityID;
                         break;
@@ -177,10 +189,20 @@ namespace MROWebApi.Controllers
                     case "L":
                         nSubID = combineManageText.manageTextFilterParam.nFacilityLocationID;
                         break;
-                }
+                }                
                 overrideText.nSubID = nSubID;
                 overrideText.sPlace = manageText.sLevel;
                 OverrideText dbNewOverrideText = await overrideTextRepository.GetSingleOverrideText(overrideText);
+                #endregion
+
+                #region Reset dbOldOverrideText & dbNewOverrideText
+                dbOldOverrideText.nControlID = nControlID;
+                dbOldOverrideText.nWizardID = nWizardID;
+                dbOldOverrideText.nCommonControlID = nCommonControlID;
+
+                dbNewOverrideText.nControlID = nControlID;
+                dbNewOverrideText.nWizardID = nWizardID;
+                dbNewOverrideText.nCommonControlID = nCommonControlID;
                 #endregion
 
                 #region Logging

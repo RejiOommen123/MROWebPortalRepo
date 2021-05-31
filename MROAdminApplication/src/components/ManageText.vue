@@ -85,7 +85,7 @@
                   :headers="headers"
                   :items="gridData"
                   :footer-props="{
-                    'items-per-page-options': [10, 25, 50, 100],
+                    'items-per-page-options': [100, 200, 500, 1000],
                   }"
                   :items-per-page="5"
                   class="body-1"
@@ -137,7 +137,7 @@
                   </template>
                   <template v-slot:item.bReset="props">
                     <v-icon
-                      disabled="props.item.bReset"
+                      :disabled="!props.item.bReset"
                       style="color: red"
                       @click="resetToPrevious(props.item)"
                     >
@@ -392,9 +392,10 @@ export default {
     resetToPrevious(item) {
       const index = this.gridData.findIndex(
         (element) =>
-          element.sTextType == item.sTextType &&
+          element.sTypeWithID == item.sTypeWithID &&
           element.nControlID == item.nControlID &&
-          element.sLevel == item.sLevel
+          element.sLevel == item.sLevel &&
+          element.nCommonControlID == item.nCommonControlID
       );
       var resetManageText = {
         manageText: item,
