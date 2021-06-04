@@ -199,6 +199,11 @@ export default {
       this.sSelectedShipmentTypes = [];
       this.sSelectedShipmentTypesName = '';
     }
+    this.sSTAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
+    this.sSTAddCity= this.$store.state.requestermodule.sRecipientAddCity;
+    this.sSTAddState =this.$store.state.requestermodule.sRecipientAddState;
+    this.sSTAddStreetAddress= this.$store.state.requestermodule.sRecipientAddStreetAddress;
+    this.sSTAddApartment=this.$store.state.requestermodule.sRecipientAddApartment;
   },
   computed: {
     //validations error message setter
@@ -304,6 +309,12 @@ export default {
             this.$store.commit("requestermodule/sSTAddCity", this.sSTAddCity);
             this.$store.commit("requestermodule/sSTAddState", this.sSTAddState);
             this.$store.commit("requestermodule/sSTAddStreetAddress",this.sSTAddStreetAddress);   
+            this.$store.commit("requestermodule/sRecipientAddZipCode", this.sSTAddZipCode);
+            this.$store.commit("requestermodule/sRecipientAddCity", this.sSTAddCity);
+            this.$store.commit("requestermodule/sRecipientAddState", this.sSTAddState);
+            this.$store.commit("requestermodule/sRecipientAddStreetAddress",this.sSTAddStreetAddress);
+            this.$store.commit("requestermodule/sRecipientAddApartment",this.sSTAddApartment);
+
           //}   
           break;
         case "MROSTFax":
@@ -336,25 +347,15 @@ export default {
     }
   },
   mounted(){
-    if (this.$store.state.requestermodule.sSTEmailAddress != "" || this.$store.state.requestermodule.sSTAddStreetAddress != "" || this.$store.state.requestermodule.sSTFaxNumber != ""){
+    if (this.$store.state.requestermodule.sSTEmailAddress != "" || this.$store.state.requestermodule.sSTFaxNumber != ""){
       this.sSTEmailAddress = this.$store.state.requestermodule.sSTEmailAddress;
       this.sSTConfirmEmailId =this.$store.state.requestermodule.sSTEmailAddress;
-      this.sSTAddZipCode = this.$store.state.requestermodule.sSTAddZipCode;
-      this.sSTAddCity= this.$store.state.requestermodule.sSTAddCity;
-      this.sSTAddState =this.$store.state.requestermodule.sSTAddState;
-      this.sSTAddStreetAddress= this.$store.state.requestermodule.sSTAddStreetAddress;
-      this.sSTAddApartment=this.$store.state.requestermodule.sSTAddApartment;
       this.sSTFaxNumber= this.$store.state.requestermodule.sSTFaxNumber;
       this.sSTConfirmFaxNumber=this.$store.state.requestermodule.sSTFaxNumber;
     }
     else{
       this.sSTEmailAddress = this.$store.state.requestermodule.sRequesterEmailId;
-      this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;
-      this.sSTAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
-      this.sSTAddCity= this.$store.state.requestermodule.sRecipientAddCity;
-      this.sSTAddState =this.$store.state.requestermodule.sRecipientAddState;
-      this.sSTAddStreetAddress= this.$store.state.requestermodule.sRecipientAddStreetAddress;
-      this.sSTAddApartment=this.$store.state.requestermodule.sRecipientAddApartment;
+      this.sSTConfirmEmailId =this.$store.state.requestermodule.sRequesterEmailId;      
     }
     
   },
