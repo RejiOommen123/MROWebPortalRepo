@@ -107,17 +107,132 @@ namespace MROWebApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
-        public async Task<IActionResult> EditGridData(ManageText editGrid)
+        public async Task<IActionResult> EditGridData(CombineManageText combineManageText)
         {
             try
             {
-                return Ok(0);
+                OverrideTextRepository overrideTextRepository = new OverrideTextRepository(_info);
+
+                int nOldSubID = 0;
+                int nNewSubID = 0;
+                string sOldLevel = combineManageText.manageText.sLevel;
+                string sNewLevel;
+                switch (combineManageText.manageText.sLevel)
+                {
+                    case "G":
+                        nOldSubID = 0;
+                        break;
+                    case "F":
+                        nOldSubID = combineManageText.manageTextFilterParam.nFacilityID;
+                        break;
+                    case "O":
+                        nOldSubID = combineManageText.manageTextFilterParam.nFacilityOrgID;
+                        break;
+                    case "L":
+                        nOldSubID = combineManageText.manageTextFilterParam.nFacilityLocationID;
+                        break;
+                }
+                if (combineManageText.manageTextFilterParam.nFacilityLocationID != 0)
+                {
+                    nNewSubID = combineManageText.manageTextFilterParam.nFacilityLocationID;
+                    sNewLevel = "L";
+                }
+
+                else if (combineManageText.manageTextFilterParam.nFacilityOrgID != 0)
+                {
+                    nNewSubID = combineManageText.manageTextFilterParam.nFacilityOrgID;
+                    sNewLevel = "O";
+                }
+
+                else if (combineManageText.manageTextFilterParam.nFacilityID != 0)
+                {
+                    nNewSubID = combineManageText.manageTextFilterParam.nFacilityID;
+                    sNewLevel = "F";
+                }
+              
+                else
+                {
+                    nNewSubID = 0;
+                    sNewLevel = "G";
+
+                }
+                OverrideText oldOverrideText = new OverrideText()
+                {
+                        sPlace = sOldLevel,
+                        nSubID = nOldSubID,
+                        sTextType = combineManageText.manageText.sTextType,
+                        nWizardID = combineManageText.manageText.nCommonControlID != null ? 500 : combineManageText.manageTextFilterParam.nWizardID,
+                        nControlID = combineManageText.manageText.nCommonControlID != null ? combineManageText.manageText.nCommonControlID ?? default(int) : combineManageText.manageText.nControlID,
+                        nLanguageID = combineManageText.manageTextFilterParam.nLanguageID,
+                        nCommonControlID = combineManageText.manageText.nCommonControlID != null ? null : combineManageText.manageText.nCommonControlID
+                };
+                OverrideText oldDbOverrideText = await overrideTextRepository.GetSingleOverrideText(oldOverrideText);
+
+
+                OverrideText newOverrideText = new OverrideText()
+                {
+                        sPlace = sNewLevel,
+                        nSubID = nNewSubID,
+                        sTextType = combineManageText.manageText.sTextType,
+                        nWizardID = combineManageText.manageText.nCommonControlID != null ? 500 : combineManageText.manageTextFilterParam.nWizardID,
+                        nControlID = combineManageText.manageText.nCommonControlID != null ? combineManageText.manageText.nCommonControlID ?? default(int) : combineManageText.manageText.nControlID,
+                        nLanguageID = combineManageText.manageTextFilterParam.nLanguageID,      
+                        nCommonControlID = combineManageText.manageText.nCommonControlID != null ? null : combineManageText.manageText.nCommonControlID,
+                        sText = combineManageText.manageText.sText,
+                        sTableName = oldDbOverrideText.sTableName,
+                        nCreatedAdminUserID = oldDbOverrideText.nCreatedAdminUserID,
+                        dtCreated = oldDbOverrideText.dtCreated,
+                        nUpdatedAdminUserID = combineManageText.nAdminUserID,
+                        dtLastUpdate = oldDbOverrideText.dtCreated
+                };
+
+                    OverrideText newDbOverrideText = await overrideTextRepository.GetSingleOverrideText(newOverrideText);
+
+                if(newDbOverrideText == null)
+                {
+                     int? id = overrideTextRepository.InsertContrib(newOverrideText);
+                }
+                else
+                {
+                    bool status = overrideTextRepository.UpdateContrib(newOverrideText);
+                }
+
+                #region Set filter param to get single db manage text
+                combineManageText.manageTextFilterParam.ID = combineManageText.manageText.nControlID;
+                combineManageText.manageTextFilterParam.sTextType = combineManageText.manageText.sTextType;
+                combineManageText.manageTextFilterParam.nCommonControlID = combineManageText.manageText.nCommonControlID;
+
+                IEnumerable<ManageText> manageTexts = await overrideTextRepository.GetManageTextData(combineManageText.manageTextFilterParam);
+                ManageText manageText = manageTexts.FirstOrDefault();
+                #endregion
+                #region Logging
+              
+                MROLogger logger = new MROLogger(_info);
+                AdminModuleLogger adminModuleLogger = null;
+                
+                    string sDescription = $"Edit Text: {oldDbOverrideText.sTextType}, ControlID: {oldDbOverrideText.nControlID}, WizardID: {oldDbOverrideText.nWizardID} ";
+                    adminModuleLogger = new AdminModuleLogger()
+                    {
+                        nAdminUserID = combineManageText.nAdminUserID,
+                        sDescription = sDescription,
+                        sModuleName = "Manage Text",
+                        sEventName = "Edit Text",
+                        nFacilityID = combineManageText.manageTextFilterParam.nFacilityID
+                    };
+                    logger.UpdateAuditSingle(oldDbOverrideText, newOverrideText, adminModuleLogger);
+                
+                #endregion
+
+                return Ok(new { manageText });
             }
+             
             catch (Exception ex)
             {
                 throw ex;
             }
+              
         }
+        
         [HttpPost]
         [AllowAnonymous]
         [Route("[action]")]
@@ -232,6 +347,5 @@ namespace MROWebApi.Controllers
                 throw ex;
             }
         }
-
     }
 }

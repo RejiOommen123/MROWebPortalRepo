@@ -118,9 +118,8 @@
                   </template>
 
                   <template v-slot:item.sText="props">
-                    <v-edit-dialog
-                      v-if="props.item.sTableName != 'gridData'"
-                      :return-value.sync="props.item.sText"
+                    <v-edit-dialog                    
+                  :return-value.sync="props.item.sText"                 
                       @save="editText(props.item)"
                     >
                       {{ props.item.sText }}
@@ -133,10 +132,11 @@
                         ></v-text-field>
                       </template>
                     </v-edit-dialog>
-                    <label v-else>{{ props.item.sText }}</label>
+                  
                   </template>
                   <template v-slot:item.bReset="props">
                     <v-icon
+                      
                       :disabled="!props.item.bReset"
                       style="color: red"
                       @click="resetToPrevious(props.item)"
@@ -151,8 +151,9 @@
         </v-card>
       </v-col>
       <v-col cols="3" md="3" sm="3" style="height: 100%">
-        <div v-if="selectScreen != null">
-          <img :src="getImgUrl(selectScreen)" class="image" />
+        <div v-if="selectScreen != null" >
+          <img :src=getImgUrl(selectScreen) class= image alt="Image Not Found" />
+          
         </div>
       </v-col>
     </v-row>
@@ -240,7 +241,7 @@ export default {
         },
       ],
       updatedArray: [],
-      gridData: null,
+      gridData: null
     };
   },
   mounted() {
@@ -355,11 +356,18 @@ export default {
         );
     },
 
-    getImgUrl(selectScreen) {
-      var images = require.context("../assets/images/", false, /\.png$/);
-      return images("./" + selectScreen + ".png");
+    getImgUrl(selectScreen)
+    {
+     let defaultImage = null // just set default
+     let path =require.context("../assets/images/", false, /\.png$/);
+      try {
+        return path("./" + selectScreen + ".png");
+      } 
+      catch (e) {
+        return defaultImage
+      }
     },
-
+    
     colorName(sSort) {
       switch (sSort) {
         case 1:
@@ -425,13 +433,33 @@ export default {
     },
 
     editText(item) {
+        const index = this.gridData.findIndex(
+        (element) =>
+          element.sTypeWithID == item.sTypeWithID &&
+          element.nControlID == item.nControlID &&
+          element.sLevel == item.sLevel &&
+          element.nCommonControlID == item.nCommonControlID
+      );
       var editText = {
         manageText: item,
         manageTextFilterParam: this.getManageTextFilterParam(),
+        nAdminUserID: this.$store.state.adminUserId
       };
       this.dialogLoader = true;
       this.$http.post("ManageText/EditGridData/", editText).then((response) => {
         if (response.ok == true) {
+           var returnedManageText = JSON.parse(response.bodyText)[
+              "manageText"
+            ];
+            this.gridData[index].sPlace = returnedManageText.sPlace;
+            this.gridData[index].sTypeWithID = returnedManageText.sTypeWithID;
+            this.gridData[index].sText = returnedManageText.sText;
+            this.gridData[index].bReset = returnedManageText.bReset;
+            this.gridData[index].sTextType = returnedManageText.sTextType;
+            this.gridData[index].nControlID = returnedManageText.nControlID;
+            this.gridData[index].nCommonControlID = returnedManageText.nCommonControlID;
+            this.gridData[index].sLevel = returnedManageText.sLevel;
+            this.gridData[index].sSort = returnedManageText.sSort;
           this.dialogLoader = false;
         }
       });

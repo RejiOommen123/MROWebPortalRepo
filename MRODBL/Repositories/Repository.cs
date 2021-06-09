@@ -356,7 +356,8 @@ namespace MRODBL.Repositories
                 string equalOrIs = overrideText.nCommonControlID == null ? "is NULL" : "= " + overrideText.nCommonControlID;
                 try { 
                     string sql = $"SELECT * FROM lnkOverrideText WHERE sPlace = @sPlace AND nSubID = @nSubID AND sTextType = @sTextType AND nWizardID = @nWizardID AND nControlID = @nControlID AND nLanguageID = @nLanguageID AND nCommonControlID {equalOrIs}";
-                    return await db.QueryFirstAsync<T>(sql, new { @sPlace = overrideText.sPlace, @nSubID = overrideText.nSubID, @sTextType = overrideText.sTextType, @nWizardID = overrideText.nWizardID, @nControlID = overrideText.nControlID, @nLanguageID = overrideText.nLanguageID, @nCommonControlID = overrideText.nCommonControlID });
+                    return await db.QueryFirstOrDefaultAsync<T>(sql, new { @sPlace = overrideText.sPlace, @nSubID = overrideText.nSubID, @sTextType = overrideText.sTextType, @nWizardID = overrideText.nWizardID, @nControlID = overrideText.nControlID, @nLanguageID = overrideText.nLanguageID, @nCommonControlID = overrideText.nCommonControlID});
+                    
                 }
                 catch (Exception ex)
                 {
@@ -530,7 +531,30 @@ namespace MRODBL.Repositories
             }
             return rowsAffected > 0;
         }
-        public bool UpdateSingleRequestor<T>(T ourModel) where T : class
+
+        public bool UpdateContrib<T>(T ourModel) where T : class
+        {
+            bool rowsAffected;
+            using (SqlConnection db = new SqlConnection(sConnect))
+            {
+                try
+                {
+                    db.Open();
+                    using (var trans = db.BeginTransaction())
+                    {
+                        rowsAffected = (bool)db.Update(ourModel, trans);
+                        trans.Commit();
+                        return rowsAffected;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+        }
+
+            public bool UpdateSingleRequestor<T>(T ourModel) where T : class
         {
             //int rowsAffected = 0;
             using (IDbConnection cn = new SqlConnection(sConnect))

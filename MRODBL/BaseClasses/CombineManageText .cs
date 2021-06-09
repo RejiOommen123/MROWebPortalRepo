@@ -8,5 +8,6 @@ namespace MRODBL.BaseClasses
     {
         public ManageText manageText { get; set; }
         public ManageTextFilterParam manageTextFilterParam { get; set; }
+        public int nAdminUserID { get; set; }
     }
 }
