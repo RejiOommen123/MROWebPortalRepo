@@ -111,6 +111,38 @@ export default {
   name: "WizardPage_15",
    activated(){
     this.buttonKey++;
+    if (this.$store.state.requestermodule.sRecipientFirstName != "" || this.$store.state.requestermodule.sRecipientAddStreetAddress != "") 
+    {
+      this.sRecipientFirstName = this.$store.state.requestermodule.sRecipientFirstName;
+      this.sRecipientLastName = this.$store.state.requestermodule.sRecipientLastName;
+      this.sRecipientOrganizationName = this.$store.state.requestermodule.sRecipientOrganizationName;
+      this.sRecipientAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
+      this.sRecipientAddCity = this.$store.state.requestermodule.sRecipientAddCity;
+      this.sRecipientAddState = this.$store.state.requestermodule.sRecipientAddState;
+      this.sRecipientAddStreetAddress = this.$store.state.requestermodule.sRecipientAddStreetAddress;
+      this.sRecipientAddApartment = this.$store.state.requestermodule.sRecipientAddApartment;
+    } 
+    else 
+    {
+      if (this.$store.state.requestermodule.sReleaseTo == "MROReleaseToMyself") 
+      {
+        if (this.$store.state.requestermodule.bAreYouPatient) 
+        {
+          this.sRecipientFirstName = this.$store.state.requestermodule.sPatientFirstName;
+          this.sRecipientLastName = this.$store.state.requestermodule.sPatientLastName;
+        } 
+        else 
+        {
+          this.sRecipientFirstName = this.$store.state.requestermodule.sRelativeFirstName;
+          this.sRecipientLastName = this.$store.state.requestermodule.sRelativeLastName;
+        }
+        this.sRecipientAddZipCode = this.$store.state.requestermodule.sAddZipCode,
+        this.sRecipientAddCity = this.$store.state.requestermodule.sAddCity,
+        this.sRecipientAddState = this.$store.state.requestermodule.sAddState,
+        this.sRecipientAddStreetAddress = this.$store.state.requestermodule.sAddStreetAddress,
+        this.sRecipientAddApartment = this.$store.state.requestermodule.sAddApartment;
+      }
+    }
     },
   computed: {
     sRecipientFirstNameError() {
@@ -201,40 +233,6 @@ export default {
       this.$store.commit("ConfigModule/mutateNextIndex");
     }
   },
-  mounted() {
-    if (this.$store.state.requestermodule.sRecipientFirstName != "" || this.$store.state.requestermodule.sRecipientAddStreetAddress != "") 
-    {
-      this.sRecipientFirstName = this.$store.state.requestermodule.sRecipientFirstName;
-      this.sRecipientLastName = this.$store.state.requestermodule.sRecipientLastName;
-      this.sRecipientOrganizationName = this.$store.state.requestermodule.sRecipientOrganizationName;
-      this.sRecipientAddZipCode = this.$store.state.requestermodule.sRecipientAddZipCode;
-      this.sRecipientAddCity = this.$store.state.requestermodule.sRecipientAddCity;
-      this.sRecipientAddState = this.$store.state.requestermodule.sRecipientAddState;
-      this.sRecipientAddStreetAddress = this.$store.state.requestermodule.sRecipientAddStreetAddress;
-      this.sRecipientAddApartment = this.$store.state.requestermodule.sRecipientAddApartment;
-    } 
-    else 
-    {
-      if (this.$store.state.requestermodule.sReleaseTo == "MROReleaseToMyself") 
-      {
-        if (this.$store.state.requestermodule.bAreYouPatient) 
-        {
-          this.sRecipientFirstName = this.$store.state.requestermodule.sPatientFirstName;
-          this.sRecipientLastName = this.$store.state.requestermodule.sPatientLastName;
-        } 
-        else 
-        {
-          this.sRecipientFirstName = this.$store.state.requestermodule.sRelativeFirstName;
-          this.sRecipientLastName = this.$store.state.requestermodule.sRelativeLastName;
-        }
-        this.sRecipientAddZipCode = this.$store.state.requestermodule.sAddZipCode,
-        this.sRecipientAddCity = this.$store.state.requestermodule.sAddCity,
-        this.sRecipientAddState = this.$store.state.requestermodule.sAddState,
-        this.sRecipientAddStreetAddress = this.$store.state.requestermodule.sAddStreetAddress,
-        this.sRecipientAddApartment = this.$store.state.requestermodule.sAddApartment;
-      }
-    }
-  }, 
   //Requester address validations
   mixins: [validationMixin],
   validations: {
