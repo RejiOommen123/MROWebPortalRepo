@@ -4,9 +4,6 @@
 
     <template>
       <form>
-        <v-radio-group
-        v-model="sSelectedPrimaryReasons"
-        >
         <!-- Get all Shipment Type associated to facility and displayed as checkbox for selection-->
         <v-layout
           v-for="shipmentType in oShipmentTypeArray"
@@ -14,32 +11,7 @@
           row
           wrap
         >
-        <v-col cols="12" offset-sm="2" sm="8">
-         <v-radio
-          class="checkboxBorder"
-          color="black"
-          :label="shipmentType.sShipmentTypeName"
-          :value="shipmentType.sNormalizedShipmentTypeName"
-           @change="check(shipmentType)"
-          >
-          <template v-slot:label>
-            <v-col cols="11" sm="11" style="padding:0px">
-              {{shipmentType.sShipmentTypeName}}
-            </v-col>
-            <v-col cols="1" sm="1" style="padding:0px">
-            <v-tooltip v-if="shipmentType.sFieldToolTip" slot="append" left>
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" color="black" top>mdi-information</v-icon>
-              </template>
-              <v-col cols="12" sm="12">
-                <p style="width:200px; background-color:black;color:white">{{shipmentType.sFieldToolTip}}</p>
-              </v-col>
-            </v-tooltip>
-              </v-col>
-          </template>
-          </v-radio>
-          
-          <!-- <v-col cols="12" offset-sm="2" sm="8">
+          <v-col cols="12" offset-sm="2" sm="8">
             <v-checkbox
               hide-details
               dark
@@ -58,7 +30,7 @@
                   <p style="width:200px; background-color:white;color:black">{{shipmentType.sFieldToolTip}}</p>
                 </v-col>
               </v-tooltip>
-            </v-checkbox> -->
+            </v-checkbox>
 
             <!-- MROSTEmail Block -->
             <div v-if="shipmentType.sNormalizedShipmentTypeName=='MROSTEmail'">
@@ -193,9 +165,8 @@
                 ></v-text-field>
               </v-col>
             </div>
-        </v-col>
-        </v-layout>   
-        </v-radio-group>   
+          </v-col>
+        </v-layout>      
         <div v-if="sSelectedShipmentTypes[0]=='MROSTEmail'">
           <v-btn :disabled="($v.sSTEmailAddress.$invalid || $v.sSTConfirmEmailId.$invalid)" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
         </div>

@@ -1350,13 +1350,7 @@ namespace MROWebApi.Controllers
                 //Subject
                 message.Subject = helpInfo.sName + " - Needs Help with an eXpress Request";
                 BodyBuilder bodyBuilder = new BodyBuilder();
-
-                location.sConfigLogoData = Regex.Replace(location.sConfigLogoData, @"^data:image\/[a-zA-Z+]+;base64,", string.Empty);
-                byte[] locationLogo = Convert.FromBase64String(location.sConfigLogoData);
-                var image = bodyBuilder.LinkedResources.Add("locationlogo", locationLogo);
-                image.ContentId = MimeUtils.GenerateMessageId();
-                string bodyText = string.Format(@"<div style='border:1px solid black;padding: 25px;'>
-                <img src=""cid:{0}""><br/><br/>Please see the requester contact information and issue detail below :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
+                string bodyText = "<br/><b>Please see the requester contact information and issue detail below :</b><br/><br/>" + "<table border = '1'><tr><td><b>Name</b></td><td>" + helpInfo.sName
                     + "</td></tr><tr><td><b>PhoneNo</b></td><td>" + helpInfo.sPhoneNo
                     + "</td></tr><tr><td><b>Email</b></td><td>" + helpInfo.sEmail
                     + "</td></tr><tr><td><b>Message</b></td><td>" + helpInfo.sMessage
@@ -1365,7 +1359,7 @@ namespace MROWebApi.Controllers
                     + "</td></tr><tr><td><b>Screen/Page</b></td><td>" + Utilities.ReplaceWizardWitheXpress(helpInfo.sWizardName)
                     + "</td></tr><tr><td><b>OS</b></td><td>" + helpInfo.sOS
                     + "</td></tr><tr><td><b>Browser</b></td><td>" + helpInfo.sBrowser
-                    + "</td></tr></table></div>", image.ContentId);
+                    + "</td></tr></table>";
                 bodyBuilder.HtmlBody = bodyText;
                 message.Body = bodyBuilder.ToMessageBody();
                 //GET Port number

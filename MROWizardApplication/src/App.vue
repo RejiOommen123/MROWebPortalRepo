@@ -1,7 +1,6 @@
 
 <template>
-  <v-app 
-  :style="{backgroundImage:`url(${this.backgroundImg})`}  ">
+  <v-app style="backgroundColor:transparent">
     <v-content>
       <v-row justify="center">
         <!-- Pop up wizard screen -->
@@ -18,7 +17,7 @@
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card
             id="bgImg"
-            :style = "{backgroundColor:'white'}"
+            :style="selectedWizard=='Wizard_24'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
           >
             <!-- Wizard top progress bar -->
             <v-progress-linear  color="#e84700"  height="5" :value="nProgressBar"></v-progress-linear>

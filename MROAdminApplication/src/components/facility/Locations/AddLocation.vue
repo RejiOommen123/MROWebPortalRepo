@@ -146,7 +146,7 @@
               filled
               prepend-icon="mdi-camera"
               @change="onLogoFileChanged"
-              accept="image/png, image/jpeg, image/bmp, image/svg"
+              accept="image/png, image/jpeg, image/bmp"
             >
               <v-tooltip slot="append" top>
                 <template v-slot:activator="{ on }">
@@ -171,7 +171,7 @@
               filled
               prepend-icon="mdi-camera"
               @change="onBackgroundFileChanged"
-              accept="image/png, image/jpeg, image/bmp, image/svg"
+              accept="image/png, image/jpeg, image/bmp"
             >
               <v-tooltip slot="append" top>
                 <template v-slot:activator="{ on }">
@@ -278,7 +278,7 @@
     <v-dialog v-model="LogoClearer" width="360px" max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Select JPG/JPEG/BMP/PNG/SVG File Only</v-card-text>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="clearLogoField()">Ok</v-btn>
@@ -289,7 +289,7 @@
     <v-dialog v-model="BGClearer" width="360px" max-width="350px">
       <v-card>
         <v-card-title class="headline">Info</v-card-title>
-        <v-card-text>Select JPG/JPEG/BMP/PNG/SVG File Only</v-card-text>
+        <v-card-text>Select JPG/JPEG/BMP/PNG File Only</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="clearBGField()">Ok</v-btn>
@@ -590,7 +590,7 @@ export default {
       if (file) {
         var file_name_array = file.name.split(".");
         var file_extension = file_name_array[file_name_array.length - 1];
-        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"||file_extension == "svg"){
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
           const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigLogoData = reader.result;
@@ -629,7 +629,7 @@ export default {
       if (file) {
         var file_name_array = file.name.split(".");
         var file_extension = file_name_array[file_name_array.length - 1];
-        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"||file_extension == "svg"){
+        if(file_extension == "jpg"||file_extension == "png"||file_extension == "jpeg"||file_extension == "bmp"){
         const reader = new FileReader();
         reader.addEventListener("load", () => {
           this.location.sConfigBackgroundData = reader.result;
