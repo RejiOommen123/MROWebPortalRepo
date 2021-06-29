@@ -2,9 +2,12 @@
   <div class="center">
     <h1>What is the primary reason for requesting records?</h1>
     <!-- TODO:Check for subheading -->
-    <h6 id="subHeading" v-if="disclaimer!=''">{{disclaimer}}</h6>
+   
 
     <template>
+      <v-radio-group
+      v-model="sSelectedPrimaryReasons"
+      >
       <!-- Get all Primary Reasons associated to facility and displayed as checkbox for selection-->
       <v-layout
         v-for="primaryReason in oPrimaryReasonArray"
@@ -13,7 +16,31 @@
         wrap
       >
         <v-col cols="12" offset-sm="1" sm="10">
-          <v-checkbox
+          <v-radio
+          class="checkboxBorder"
+          color="black"
+          :label="primaryReason.sPrimaryReasonName"
+          :value="primaryReason.sNormalizedPrimaryReasonName"
+           @change="check(primaryReason)"
+          >
+          <template v-slot:label>
+            <v-col cols="11" sm="11" style="padding:0px">
+              {{primaryReason.sPrimaryReasonName}}
+            </v-col>
+            <v-col cols="1" sm="1" style="padding:0px">
+            <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" left>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" color="black" top>mdi-information</v-icon>
+              </template>
+              <v-col cols="12" sm="12">
+                <p style="width:200px; background-color:black;color:white">{{primaryReason.sFieldToolTip}}</p>
+              </v-col>
+            </v-tooltip>
+            </v-col>
+          </template>
+          </v-radio>
+
+           <!-- <v-checkbox
             hide-details
             dark
             class="checkboxBorder"
@@ -22,9 +49,9 @@
             :value="primaryReason.sNormalizedPrimaryReasonName"
             v-model="sSelectedPrimaryReasons"
             @change="check(primaryReason)"
-          >
+          > -->
           <!-- This for 'i' button to give disclaimers/info about option -->
-            <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" left>
+           <!-- <v-tooltip v-if="primaryReason.sFieldToolTip" slot="append" left>
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on" color="white" top>mdi-information</v-icon>
               </template>
@@ -32,9 +59,11 @@
                 <p style="width:200px; background-color:white;color:black">{{primaryReason.sFieldToolTip}}</p>
               </v-col>
             </v-tooltip>
-          </v-checkbox>
-        </v-col>
+          </v-checkbox>  -->
+
+        </v-col> 
       </v-layout>
+      </v-radio-group>
       <!-- If requester selects other reason then free text box will appear to enter data -->
       <v-col cols="12" offset-sm="3" sm="6">
         <div v-if="this.bOther==true">
@@ -42,6 +71,7 @@
         </div>
       </v-col>
     </template>
+     <h6 id="subHeading" v-if="disclaimer!=''">{{disclaimer}}</h6>
     <v-row>
     <v-col cols="6" offset-sm="4" sm="2">
       <v-btn :disabled="sSelectedPrimaryReasons[0]==null" @click.once="nextPage" :key="buttonKey" class="next">Next</v-btn>
