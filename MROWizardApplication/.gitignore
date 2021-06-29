@@ -2,6 +2,11 @@
 node_modules
 /dist
 
+# But not these files...
+!/node_modules
+/node_modules/*
+!/node_modules/signature_pad
+
 # local env files
 .env.local
 .env.*.local
