@@ -1,169 +1,4 @@
-.v-application {
-  font-family: 'Lato', sans-serif !important;
-  color: white;
-}
-
-.v-input {
-  font-size: 18px;
-}
-.v-input input {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.TextAreaBg .v-input__slot{
-background-color: rgba(0,0,0,0.5);
-} 
-
-#phoneExt{
-  background-color: transparent;
-}
-.v-messages {
-  font-size: 14px;
-}
-
-.wizardClose {
-  position: absolute;
-  right: 3%;
-  top: 1%;
-}
-
 /*Styling suggested by MRO*/
-
-#logoImg {
-  display: block;
-  margin-top: -20px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 5px;
-  height: 70px;
-  width: auto;
-}
-
-#bgImg {
-  background-color: #003764;
-  background-repeat: no-repeat;
-  background-size: cover;
-  /* opacity: 0.75; */
-}
-
-h1 {
-  color: white;
-  font-size: 18pt;
-  font-weight: bold;
-  margin-bottom: 5%;
-}
-
-.subHeadings {
-  font-size: 16pt;
-  font-weight: bold;
-  line-height: 18pt;
-  margin-bottom: 20px !important;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-  color: white;
-}
-
-.disclaimer {
-  background-color: #30c4b0;
-  font-size: 16px;
-  text-align: center;
-  color: #ffffff;
-  white-space: normal !important;
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-bottom: 20px;
-  padding: 10px;
-}
-
-.next {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  background-color: #e84700 !important;
-}
-
-#footer {
-  font-size: 14px;
-}
-
-/*Styles for Texts*/
-
-/* For main heading/question using <h1> tag*/
-
-.center {
-  text-align: center;
-}
-
-/* Pages contains Checkbox List */
-
-.checkboxBorder {
-  height: auto;
-  line-height: 40px;
-  padding-left: 10px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  font-size: 14px;
-  background-color: rgba(0,0,0,0.18);
-  white-space: normal;
-  text-overflow: ellipsis;
-  overflow: visible;
-  border: 1px solid #f6efef;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  margin-top: -10px;
-  position: relative;
-  word-wrap: break-word;
-}
-.theme--dark.v-label{
-  color: white;
-}
-label{
-  color: white;
-}
-
-.checkboxBorder:hover {
-  background-color: #e84700;
-}
-
-.checkboxBorder:checked {
-  background-color: #e84700;
-}
-
-.wizardSelectionButton {
-  width: 100%;
-  height: 15%;
-  font-size: 22px;
-  /* line-height: 89px; */
-  color: white;
-  text-align: center;
-  margin-bottom: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: rgba(0,0,0,0.18);
-  border: 1px solid #e7e7e7;
-  border-radius: 8px;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-
-}
-
-button.wizardSelectionButton:hover {
-  border-color: transparent;
-  background-color: #e84700;
-}
-
-.active {
-  border-color: transparent;
-  background-color: #e84700;
-}
-/* .emailVerified{
-  background-image: url('/src/assets/images/MRO-Web.png');  
-	background-size: 24px;
-	background-position: right center;
-	background-repeat: no-repeat;
-} */
-
 #pdfFormLink {
   color: #ffffff;
   cursor: pointer;
@@ -174,37 +9,6 @@ button.wizardSelectionButton:hover {
   margin-left: 0px;
   margin-right: 0px;
   margin-bottom: 20px;
-}
-
-#contact {
-  position: absolute;
-  bottom: 15px;
-  left: 32%;
-  right: 30%;
-}
-
-#poweredby {
-  position: absolute;
-  left: 37%;
-  right: 35%;
-  bottom: 10px;
-}
-
-#letsGoBtn {
-  /* color:"#e84700" !important; */
-  color: white;
-  font-weight: bold;
-  width: auto;
-  height: 54px;
-  line-height: 54px;
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-bottom: 20px;
-}
-
-.selected {
-  border-color: transparent;
-  background-color: #e84700;
 }
 
 .identityUpload {
@@ -267,10 +71,6 @@ button.wizardSelectionButton:hover {
   margin-right: 15px;
 }
 
-.page-title {
-  color: black;
-  text-align: center;
-}
 .camBorder{
   height: 33vh;
 }
@@ -292,20 +92,9 @@ button.wizardSelectionButton:hover {
 .needHelp .v-input input {
   background-color: white !important;
 }
-#helpBtnDiv{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: none !important;
-}
-#helpBtn{
-  text-transform: none !important;
-  text-decoration: underline;
-  color: white;
-}
 .required:after {
   content: " *";
-  color:#30c4b0;
+  color: #000000;
 }
 /* signature page css end */
 
@@ -372,21 +161,6 @@ button.wizardSelectionButton:hover {
     height: 100% !important;
   }
 }
-.input-group-addon {
-  margin-top: 20px;
-  padding: 6px 8px;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1;
-  color: #555;
-  text-align: center;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  width: 1%;
-  white-space: nowrap;
-  vertical-align: middle;
-  display: table-cell;
-}
 
 .withOverflow{
   max-height: 100%  !important;
@@ -396,13 +170,13 @@ button.wizardSelectionButton:hover {
   max-height: 100%  !important;
   overflow: hidden !important;
 }
-.v-text-field .v-label {
+/* .v-text-field .v-label {
   margin-top: -5px !important; 
 }
 .v-file-input input[type=file] {
   position: fixed;
   width: 100%;
-}
+} */
 .sessionTransfer{
   width: 550px;
   height: 60%;
@@ -420,7 +194,209 @@ button.wizardSelectionButton:hover {
 }
 #SessionTransferLinkBtn
 {
-    text-transform: none !important;
+  text-transform: none !important;
   text-decoration: underline;
   color: white;
+}
+
+
+/* 
+Vuetify internal classes */
+.v-application {
+  font-family: 'Lato', sans-serif !important;
+}
+.v-btn{
+  text-transform: none !important;
+}
+.v-text-field--placeholder{
+  font-size: 14px;
+  color: #334150;
+}
+
+/* Custom css */
+/* wizard content align center */
+.center {
+  text-align: center;
+}
+/* eXpress main logo */
+#logoImg {
+  /* display: block;
+  margin-top: -20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 5px; */
+  height: 50px;
+  /* width: auto; */
+}
+/* close button postion */
+.wizardClose {
+  position: absolute;
+  right: 3%;
+  top: 1%;
+}
+/* landing page title message */
+.subHeadings {
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: #334150;
+}
+/* disclaimer with background */
+.disclaimer {
+  background: #EBEEF358 0% 0% no-repeat padding-box;
+  border: 1px solid #EBEEF3;
+  font-size: 14px;
+  text-align: center;
+  color: #000000;
+  white-space: normal !important;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 20px;
+  padding: 5px 10px;
+}
+/* footer text */
+#poweredby {
+  font-size:14px;
+  margin-right:5px;
+  font-weight: 600;
+}
+#footer {
+  font-size: 12px;
+}
+/* Each wizard title question */
+.titleQuestion{
+  font-size: 16px;
+  font-weight: bold;
+  color: #334150;
+}
+
+/* NeedHelp button link */
+/* #helpBtnDiv{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: none !important;
+} */
+#helpBtn{
+  text-transform: none !important;
+  text-decoration: underline;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0132D3 !important;
+}
+/* Popup title and body styling */
+.popupTitle{
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #334150;
+}
+.popupBody{
+  font-size: 18px;
+  color: #334150;
+}
+.inputLabel{
+  text-align: left !important;
+  font-size: 14px;
+  color: #000000;
+}
+.titleSubQuestion{
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  color: #334150;
+}
+.smallBlackBtn {
+  background-color: #000000 !important;
+  font-size: 14px !important;
+  font-weight: 600;
+  color: #FFFFFF !important;
+}
+.smallWhiteBtn{
+  background-color: #FFFFFF !important;
+  font-size: 14px !important;
+  font-weight: 600;
+  color: #000000 !important;
+}
+.bigWhiteBtn{
+  background-color: #FFFFFF !important;
+  font-size: 20px !important;
+  font-weight: 600;
+  color: #000000 !important;
+}
+.checkboxBorder {
+  height: auto;
+  line-height: 40px;
+  padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  font-size: 20px !important;
+  white-space: normal;
+  text-overflow: ellipsis;
+  overflow: visible;
+  border: 1px solid #334150;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  margin-top: -10px;
+  position: relative;
+  word-wrap: break-word;
+}
+.checkboxBorder:hover {
+  background-color: #EBEEF3;
+}
+.checkboxBorder:checked {
+  background-color: #EBEEF3;
+}
+.checkboxLabel{
+  font-size: 20px !important;
+}
+#waiverLabel{
+  font-size: 14px;
+  font-weight: 600;
+}
+.smallCheckboxWithBg{
+  background-color: #EBEEF3;
+  border-radius: 5px;
+}
+.smallCheckboxLabel{
+  font-size: 14px;
+}
+.backAndClose{
+  text-align: left;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 14px;
+  color: #000000 !important;
+}
+@media only screen and (max-width: 600px) {
+  #helpBtn{
+    font-size: 12px;
+  }
+  .subHeadings {
+    font-size: 18px;
+  }
+  .titleQuestion{
+    font-size: 14px;
+  }
+  .popupTitle{
+    font-size: 18px;
+  }
+  .popupBody{
+    font-size: 14px;
+  }
+  .titleSubQuestion{
+    font-size: 18px;
+  }
+  .bigWhiteBtn{
+    font-size: 14px !important;
+  }
+  .checkboxBorder {
+    font-size: 18px !important;
+  }
+  .checkboxLabel{
+    font-size: 18px !important;
+  }
 }
