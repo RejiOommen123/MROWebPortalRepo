@@ -3,7 +3,7 @@ const state = {
 
     dialogMaxWidth: '600px',
     dialogMinWidth: '600px',
-    dialogMaxHeight: '620px',
+    dialogMaxHeight: '500px',
     
     wizardLogo:'',
     wizardBackground:'',

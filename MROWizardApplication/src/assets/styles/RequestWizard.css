@@ -234,6 +234,55 @@ Vuetify internal classes */
   right: 3%;
   top: 1%;
 }
+.pageBody{
+  position:relative; 
+  min-height:100%;
+  padding: 8px;
+}
+.pageContent{
+  padding-bottom:140px;
+}
+.buttonBlock{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom:70px;
+  height:70px; 
+  background-color: white;
+  width: 100%;
+}
+.footerBlock{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom:0px;
+  height:70px; 
+  background-color: white;
+  width: 100%;
+}
+.footerBlockMobile{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height:70px; 
+  bottom: 20px;
+  padding-bottom:70px;
+}
+.buttonBlockMobile{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom:0px;
+  height:70px; 
+  background-color: white;
+  width: 100%;
+  z-index: 1;
+  box-shadow: 0px -3px 6px #EBEEF3;
+}
 /* landing page title message */
 .subHeadings {
   font-size: 22px;
@@ -371,7 +420,10 @@ Vuetify internal classes */
   font-size: 14px;
   color: #000000 !important;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 600px) { 
+  #eXpressHeader{
+    box-shadow: 0px 3px 6px #EBEEF3;
+  }
   #helpBtn{
     font-size: 12px;
   }

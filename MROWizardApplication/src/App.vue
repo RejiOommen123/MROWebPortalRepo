@@ -1,6 +1,6 @@
 
 <template>
-  <v-app style="backgroundColor:transparent">
+  <v-app :style="selectedWizard=='Wizard_24'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  ">
     <v-content>
       <v-row justify="center">
         <!-- Pop up wizard screen -->
@@ -15,56 +15,59 @@
           :content-class="selectedWizard=='Wizard_24'?  'withOverflow' :  'withoutOverflow'"
         >
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
-          <v-card
-            id="bgImg"
-            :style="selectedWizard=='Wizard_24'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  "
-          >
-            <!-- Wizard top progress bar -->
-            <v-progress-linear  color="#e84700"  height="5" :value="nProgressBar"></v-progress-linear>
-            <!-- Wizard top close button -->
-           
-
-            <v-card-text :style="{ height: dialogMaxHeight}">
-              <div>
-                <div>
-                  <div  v-if="showBackBtn">
-                    <button type="button" @click.prevent="previousPage" style="color:#e0e0e0;">
-                      <i style="font-size:36px" class="fa fa-angle-left"></i>
-                    </button>                    
-                  </div>
-                  <div v-else>
-                    <br/>
-                    <br/>
-                    </div>
-                    <v-btn style="font-size:36px"  class="wizardClose" icon dark @click="dialogConfirm=true" :style="selectedWizard=='Wizard_24'?  {color:'black'} : {color:`white`}">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>      
-                  <!-- Wizard logo image set here -->
-                  <div v-if="selectedWizard!='Wizard_24'">
-                    <img
-                      :src="this.logoImg"
-                      alt="Vue JS"
-                      style="vertical-align:middle"
-                      id="logoImg"
-                    />
-                  </div>
-                  <div id="helpBtnDiv">                    
+          <v-card>           
+           <v-card-title id="eXpressHeader">
+              <v-row fill-height fluid>
+                <v-col cols="2" align="start" justify="center">
+                  <v-btn
+                      icon
+                      v-if="showBackBtn"
+                      @click.prevent="previousPage" 
+                    >
+                      <v-icon>mdi-chevron-left</v-icon> Back
+                    </v-btn> 
+                </v-col>
+                <v-col cols="8" align="center" justify="center" v-if="selectedWizard!='Wizard_24'">
+                  <img
+                    :src="this.logoImg"
+                    alt="Facility Logo"
+                    id="logoImg"
+                  />
+                </v-col>
+                <v-col cols="2" align="end" justify="center">
+                  <v-btn
+                      icon
+                      @click="dialogConfirm=true"
+                    >
+                      Close <v-icon>mdi-close</v-icon>
+                    </v-btn>    
+                </v-col>
+                <v-col class="py-0" cols="12">
+                  <v-progress-linear rounded  color="customLightGrey"  height="20" :value="nProgressBar"><strong>{{ Math.ceil(nProgressBar) }}%</strong></v-progress-linear>
+                </v-col>
+                <v-col cols="9" align="left" justify="center" class="titleQuestion">
+                  Are you requesting records for yourself?
+                </v-col>
+                <v-col class="px-0" cols="3" align="right" justify="center">
                     <a href="#"
                       id="helpBtn"
                       @click="showNeedHelp()"
-                      :style="selectedWizard=='Wizard_24'?  {color:'black'} : {color:`white`}"
                     >
                       Need Help?
                     </a>
                     <v-tooltip slot="append" bottom>
                       <template v-slot:activator="{ on }">
-                        <v-icon v-on="on" size="18" style="margin-left:5px"  :style="selectedWizard=='Wizard_24'?  {color:'black'} : {color:`white`}" top>mdi-information</v-icon>
+                        <v-icon v-on="on" color="customDarkBlue" top>mdi-information</v-icon>
                       </template>
                       <v-col cols="12" sm="12">
                         <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
                       </v-col>
                     </v-tooltip>
-                  </div>
+                </v-col>
+              </v-row>
+            </v-card-title>
+
+            <v-card-text :style="{ height: dialogMaxHeight } " class="d-flex pa-0">
                   <ModalIdle/>
                   <ModalUnauthorized/>
                   <ModalNeedHelp/>
@@ -77,23 +80,10 @@
                   >
                     <!-- Dynamically loading wizard pages -->
                     <keep-alive>
-                      <component :is="selectedWizard"></component>
+                      <component class="center" :is="selectedWizard"></component>
                     </keep-alive>
                   </transition>
-                </div>
-              </div>
-            </v-card-text>
-            <!-- Wizard Footer -->
-            <v-footer padless id="footer" style="background-color:transparent">
-              <v-col class="text-center" cols="12">
-                 <span style="font-size:12px;margin-right:5px;">Powered by </span>
-                <a href="https://mrocorp.com/" target="_blank">
-                  <img alt="Qries" src="./assets/images/MRO-Web.png" height="30px">
-                </a>
-                 <br />
-                <span>{{phoneNo}}</span>              
-              </v-col>
-            </v-footer>
+            </v-card-text>            
           </v-card>
         </v-dialog>
         <ErrorDialog/>
