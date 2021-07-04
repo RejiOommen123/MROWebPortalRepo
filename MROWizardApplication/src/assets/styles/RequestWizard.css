@@ -1,3 +1,9 @@
+/* Extra Styling */
+#bgImg {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 /*Styling suggested by MRO*/
 #pdfFormLink {
   color: #ffffff;

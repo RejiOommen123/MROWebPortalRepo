@@ -1,6 +1,6 @@
 
 <template>
-  <v-app :style="selectedWizard=='Wizard_24'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`}  ">
+  <v-app :style="selectedWizard=='Wizard_24'?  {backgroundColor:'white'} : {backgroundImage:`url(${this.backgroundImg})`} " id="bgImg">
     <v-content>
       <v-row justify="center">
         <!-- Pop up wizard screen -->
