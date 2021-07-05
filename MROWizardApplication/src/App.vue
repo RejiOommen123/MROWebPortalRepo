@@ -16,15 +16,16 @@
         >
           <!-- Setting background color white if wizard screen is pdf else fetched background -->
           <v-card>           
-           <v-card-title id="eXpressHeader">
-              <v-row fill-height fluid>
+           <v-card-title class="pa-4">
+              <v-row  id="eXpressMobileHeader">
                 <v-col cols="2" align="start" justify="center">
                   <v-btn
                       icon
                       v-if="showBackBtn"
-                      @click.prevent="previousPage" 
+                      @click.prevent="previousPage"
+                      class="backAndClose"
                     >
-                      <v-icon>mdi-chevron-left</v-icon> Back
+                      <v-icon>mdi-chevron-left</v-icon> <span style="text-decoration: underline;">Back</span>
                     </v-btn> 
                 </v-col>
                 <v-col cols="8" align="center" justify="center" v-if="selectedWizard!='Wizard_24'">
@@ -38,17 +39,36 @@
                   <v-btn
                       icon
                       @click="dialogConfirm=true"
+                      class="backAndClose"
                     >
-                      Close <v-icon>mdi-close</v-icon>
+                      <span style="text-decoration: underline;">Close</span> <v-icon>mdi-close</v-icon>
                     </v-btn>    
+                </v-col>
+              </v-row>
+              <v-row style="width:100%">
+                <v-col v-if="$vuetify.breakpoint.xs" class="pa-0" cols="12" align="end" justify="center">
+                    <a href="#"
+                      id="helpBtn"
+                      @click="showNeedHelp()"
+                    >
+                      Need Help?
+                    </a>
+                    <v-tooltip slot="append" bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on" color="customDarkBlue" top>mdi-information</v-icon>
+                      </template>
+                      <v-col cols="12" sm="12">
+                        <p style="width:250px; background-color:transparent">{{disclaimer03}}</p>
+                      </v-col>
+                    </v-tooltip>
                 </v-col>
                 <v-col class="py-0" cols="12">
                   <v-progress-linear rounded  color="customLightGrey"  height="20" :value="nProgressBar"><strong>{{ Math.ceil(nProgressBar) }}%</strong></v-progress-linear>
                 </v-col>
-                <v-col cols="9" align="left" justify="center" class="titleQuestion">
-                  Are you requesting records for yourself?
+                <v-col cols="12" md="9" align="left" justify="center" class="titleQuestion">
+                  {{titleQuestion}}
                 </v-col>
-                <v-col class="px-0" cols="3" align="right" justify="center">
+                <v-col v-if="!$vuetify.breakpoint.xs" class="px-0" cols="3" align="right" justify="center">
                     <a href="#"
                       id="helpBtn"
                       @click="showNeedHelp()"
@@ -426,7 +446,10 @@ export default {
     },
     bShowSessionTransfer() {    
       return this.$store.state.ConfigModule.bShowSessionTransfer;
-   }
+    },
+    titleQuestion(){
+      return this.$store.state.ConfigModule.titleQuestion;
+    }
   },
   methods: {
     previousPage() {

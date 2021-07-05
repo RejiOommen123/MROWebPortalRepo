@@ -74,7 +74,8 @@ const state = {
         sMessage : '',
     },
     localPhoneExt:'+1',
-    otherLocationName:''
+    otherLocationName:'',
+    titleQuestion:''
     // oShipmentTypes:[{"sNormalizedShipmentTypeName":"MROPatientPortal","sShipmentTypeName":"Patient Portal","sFieldToolTip":"Please contact your healthcare provider to setup a patient portal if you do not have one already setup for guidance on how to do so."},{"sNormalizedShipmentTypeName":"MROEmail","sShipmentTypeName":"Email","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROMailShipment","sShipmentTypeName":"Mail","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROIn-Person","sShipmentTypeName":"In-Person","sFieldToolTip":null},{"sNormalizedShipmentTypeName":"MROFax","sShipmentTypeName":"Fax","sFieldToolTip":"Over certain number of pages will be sent by mail – paper or CD or specify only fax to providers, etc."}]
  
 }
@@ -228,6 +229,9 @@ const mutations = {
     },
     otherLocationName(state, payload) {
         state.otherLocationName = payload;
+    },
+    titleQuestion(state, payload) {
+        state.titleQuestion = payload;
     },
 }
 const actions = {}
