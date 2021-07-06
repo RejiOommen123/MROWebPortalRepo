@@ -1,70 +1,69 @@
 <template>
-  <div class="center">
-    <div>
-      <h1>
-        Great! Which location
-        <br />are you requesting records from?
-      </h1>
-    </div>
-    <v-row>
+  <div>
       <!-- Get all location associated to facility and displayed as button for selection-->
-      <div class="form-group" style="width:100%">
+      <div class="pageBody">
+        <div class="pageContent">
         <div
           v-for="location in locationArray"
           :key="location.sNormalizedLocationName"
-          style="width:100%"
         >
         <div v-if="!isOrgURL || (isOrgURL && !bMasterLocationExist)">
-          <v-col cols="12" offset-sm="2" sm="8">
-            <button
-              :class="{active: sActiveBtn === location.sNormalizedLocationName}"
-              @click.once="locationRequest(location)" :key="buttonKey"
-              class="wizardSelectionButton"
+          <v-col cols="12">
+            <v-btn
+              :class="{activeBtn: sActiveBtn === location.sNormalizedLocationName}"
+              block
+              outlined
+              @click="locationSelect(location)" :key="buttonKey"
+              class="smallWhiteBtn"
               :value="location.sNormalizedLocationName"
-            >{{location.sLocationName}}</button>
+            >{{location.sLocationName}}</v-btn>
           </v-col>
           <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
             <v-col v-if="showOtherLoactionBox" offset="3" cols="6" offset-sm="3" sm="6">
+              <label class="inputLabel required" for="otherLocation">OTHER LOCATION NAME:</label>
               <v-text-field
+                id="otherLocation"
+                placeholder="Other location name"
+                solo
+                dense
                 type="text"
                 v-model="sSelectedLocationName"
                 :error-messages="sSelectedLocationNameErrors"
-                label="OTHER LOCATION NAME"
                 required
                 maxlength="50"
                 @input="$v.sSelectedLocationName.$touch()"
                 @blur="$v.sSelectedLocationName.$touch()"
-              ></v-text-field>
-              <v-btn
-                :disabled="$v.sSelectedLocationName.$invalid"
-                @click.once="next(location)" :key="buttonKey"
-                class="next"
-              >Next</v-btn>
+              ></v-text-field>           
             </v-col>
           </div>  
         </div> 
         <div v-if="isOrgURL && bMasterLocationExist">
-          <v-col cols="12" offset-sm="2" sm="8">
-            <v-checkbox offset-sm="2" sm="8"
+          <v-col cols="12">
+            <v-checkbox
+              color="customText"
               hide-details
-              dark
-              v-model="sLocalSelectedLocation"
               class="checkboxBorder"
-              :label="location.sLocationName"
-              color="white"
               :value="location.sNormalizedLocationName"
+              v-model="sLocalSelectedLocation"
               @change="checkOther()"
-              wrap
             >
+            <template v-slot:label>
+              <span class="checkboxLabel">{{location.sLocationName}}</span>
+            </template>
             </v-checkbox>
+
           </v-col>
           <div v-if="location.sNormalizedLocationName=='MROLocationOther'">
-            <v-col v-if="showOtherLoactionBox" offset="3" cols="6" offset-sm="3" sm="6">
+            <v-col v-if="showOtherLoactionBox" offset="2" cols="8" >
+              <label class="inputLabel required" for="otherLocation">OTHER LOCATION NAME:</label>
               <v-text-field
+                id="otherLocation"
+                placeholder="Other location name"
+                solo
+                dense
                 type="text"
                 v-model="sSelectedLocationName"
                 :error-messages="sSelectedLocationNameErrors"
-                label="OTHER LOCATION NAME"
                 required
                 maxlength="50"
                 @input="$v.sSelectedLocationName.$touch()"
@@ -73,35 +72,43 @@
             </v-col>
           </div>              
         </div> 
-        </div> 
-        <v-btn v-if="isOrgURL && bMasterLocationExist" @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="next"  :key="buttonKey">Next</v-btn>      
+        </div>
+        <Footer  v-if="$vuetify.breakpoint.xs"/>
+        </div>
       </div>
-    </v-row>
-    <!-- Loader dialog -->
-    <v-dialog v-model="dialogLoader" persistent width="300">
-      <v-card color="primary" dark>
-        <v-card-text>
-          Please stand by
-          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+      <div :class="$vuetify.breakpoint.xs ? 'buttonBlockMobile' : 'buttonBlock'">
+        <v-btn
+          v-if="!isOrgURL || (isOrgURL && !bMasterLocationExist)"
+            :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || (showOtherLoactionBox==false && sActiveBtn=='')"
+            @click.once="next()" :key="buttonKey"
+            class="smallBlackBtn"
+        >Next</v-btn>
+        <v-btn v-if="isOrgURL && bMasterLocationExist" @click.once="nextMultiCheck()" :disabled="(showOtherLoactionBox==true && $v.sSelectedLocationName.$invalid) || sLocalSelectedLocation.length == 0" class="smallBlackBtn"  :key="buttonKey">Next</v-btn>
+      </div>
+      <Footer v-if="!$vuetify.breakpoint.xs"/>
   </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import Footer from '../Footer.vue';
 export default {
   name: "WizardPage_02",
    activated(){
     this.buttonKey++;
+    this.$store.commit(
+            "ConfigModule/titleQuestion",
+            "Which location(s) are you requesting records from? Please select all that apply."
+          );
    },
+    components:{
+      Footer
+    },
    data() {
     return {
       locationArray: this.$store.state.ConfigModule
         .apiResponseDataByFacilityGUID.locationDetails,
-      dialogLoader: false,
       sActiveBtn: this.$store.state.requestermodule.sSelectedLocation,
       showOtherLoactionBox: this.$store.state.requestermodule.sSelectedLocation == "MROLocationOther",
       sSelectedLocationName: this.$store.state.ConfigModule.otherLocationName,
@@ -129,7 +136,7 @@ export default {
       }
     },
     methods: {
-      locationRequest(location) {
+      locationSelect(location) {
         // Using sActiveBtn variable to set background color to show button selection
         this.sActiveBtn = location.sNormalizedLocationName;
 
@@ -137,17 +144,18 @@ export default {
         //will not fetch wizard data based on location id as it already fetch previously
         if (location.sNormalizedLocationName == "MROLocationOther") {
           this.showOtherLoactionBox = true;
-        } else {
+        } 
+        else {
           this.showOtherLoactionBox = false;
-          this.$store.commit(
-            "requestermodule/sSelectedLocationName",
-            location.sLocationName
-          );
-          this.commaSeperatedNormalizedName = location.sNormalizedLocationName;
-          this.apiRequestByLocationId(location);
         }
+        this.$store.commit(
+          "requestermodule/sSelectedLocationName",
+          location.sLocationName
+        );
+        this.commaSeperatedNormalizedName = location.sNormalizedLocationName;
       },
-      next(location) {
+      next() {
+        var location = this.locationArray.find(x => x.sNormalizedLocationName == this.commaSeperatedNormalizedName);
         if (location.sNormalizedLocationName == "MROLocationOther") {
           this.$store.commit(
             "requestermodule/sSelectedLocationName",location.sLocationName+'-'+this.sSelectedLocationName
@@ -196,7 +204,11 @@ export default {
         }
       },
       apiRequestByLocationId(location) {
-        this.dialogLoader = true;
+        var LoaderDialog = {
+          visible : true,
+          title : 'Please stand by'
+        };
+        this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
         if (
           location.sNormalizedLocationName !=
           this.$store.state.requestermodule.sSelectedLocation
@@ -277,7 +289,11 @@ export default {
                   apiLocationResponse.oLocations[0].bForceCompliance
                 );
                 this.resetStateOnLocationChange();
-                this.dialogLoader = false;
+                LoaderDialog = {
+                  visible : false,
+                  title : 'Please stand by'
+                };
+                this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
                 
                 //Partial Requester Data Save Start
                 this.$store.dispatch('requestermodule/partialAddReq');
@@ -285,7 +301,11 @@ export default {
               }
             });
         } else {
-          this.dialogLoader = false;
+          LoaderDialog = {
+            visible : false,
+            title : 'Please stand by'
+          };
+          this.$store.commit("ConfigModule/LoaderDialog",LoaderDialog);
           //Partial Requester Data Save Start
           this.$store.dispatch('requestermodule/partialAddReq');
           this.$store.commit("ConfigModule/mutateNextIndex");

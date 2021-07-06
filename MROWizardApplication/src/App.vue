@@ -65,7 +65,7 @@
                 <v-col class="py-0" cols="12">
                   <v-progress-linear rounded  color="customLightGrey"  height="20" :value="nProgressBar"><strong>{{ Math.ceil(nProgressBar) }}%</strong></v-progress-linear>
                 </v-col>
-                <v-col cols="12" md="9" align="left" justify="center" class="titleQuestion">
+                <v-col cols="12" md="9" align="left" justify="center" class="titleQuestion wordBreakNormal">
                   {{titleQuestion}}
                 </v-col>
                 <v-col v-if="!$vuetify.breakpoint.xs" class="px-0" cols="3" align="right" justify="center">
@@ -100,7 +100,7 @@
                   >
                     <!-- Dynamically loading wizard pages -->
                     <keep-alive>
-                      <component class="center" :is="selectedWizard"></component>
+                      <component class="center" :is="selectedWizard" style="width:100%"></component>
                     </keep-alive>
                   </transition>
             </v-card-text>            

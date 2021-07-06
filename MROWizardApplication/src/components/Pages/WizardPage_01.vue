@@ -35,6 +35,10 @@ export default {
   },
 activated(){
     this.buttonKey++;
+    this.$store.commit(
+            "ConfigModule/titleQuestion",
+            ""
+          );
 },
   methods: {
     nextPage() {
