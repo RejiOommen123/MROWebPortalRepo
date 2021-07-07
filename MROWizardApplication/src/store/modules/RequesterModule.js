@@ -45,7 +45,7 @@ const state = {
     sSelectedPrimaryReasonsName: '',
     sReleaseTo: '',
     sReleaseToName:'',
-    sSelectedShipmentTypes: [],
+    sSelectedShipmentTypes:'',
     sSelectedShipmentTypesName:'',
     sSTFaxNumber:'',
     sSTFaxCompAdd:'',

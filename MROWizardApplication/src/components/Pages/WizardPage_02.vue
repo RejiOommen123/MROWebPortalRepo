@@ -332,7 +332,7 @@ export default {
         this.$store.commit("requestermodule/sSelectedPrimaryReasonsName", '');
 
         //Reset shipment type
-        this.$store.commit("requestermodule/sSelectedShipmentTypes", []);       
+        this.$store.commit("requestermodule/sSelectedShipmentTypes", '');       
         this.$store.commit("requestermodule/sSelectedShipmentTypesName", '');     
       },
       checkOther(){

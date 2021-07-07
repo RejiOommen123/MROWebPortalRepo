@@ -15,11 +15,11 @@ const state = {
     apiResponseDataByFacilityGUID: '',
     apiResponseDataByLocation: '',
     oReleaseRequestTo: [{
-            "sReleaseTo": "Myself",
-            "sNormalizedReleaseTo": "MROReleaseToMyself"
+        "sReleaseTo": "Myself",
+        "sNormalizedReleaseTo": "MROReleaseToMyself"
         },
         {
-            "sReleaseTo": "A family member/caregiver",
+            "sReleaseTo": "Family Member/Caregiver",
             "sNormalizedReleaseTo": "MROReleaseToFamilyCaregiver"
         },
         {
@@ -27,7 +27,7 @@ const state = {
             "sNormalizedReleaseTo": "MROReleaseToDoctor"
         },
         {
-            "sReleaseTo": "A third party (Attorney, Insurance Co., Payer, etc.)",
+            "sReleaseTo": "A Third Party (Attorney, Insurance Co.)",
             "sNormalizedReleaseTo": "MROReleaseToThirdParty"
         }
     ],

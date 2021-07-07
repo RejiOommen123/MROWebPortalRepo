@@ -110,7 +110,7 @@ namespace MRODBL.BaseClasses
         public string sPDF { get; set; }
 
 
-        public string[] sSelectedShipmentTypes { get; set; }
+        public string sSelectedShipmentTypes { get; set; }
         public string sSelectedShipmentTypesName { get; set; }
 
         public string sSTEmailAddress { get; set; }

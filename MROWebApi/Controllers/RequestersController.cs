@@ -101,13 +101,13 @@ namespace MROWebApi.Controllers
                     #region Array Processing
                     var PRArray = requester.sSelectedPrimaryReasons.Length != 0 ? string.Join(",", requester.sSelectedPrimaryReasons) : "";
                     var SRArray = requester.sSelectedRecordTypes.Length != 0 ? string.Join(",", requester.sSelectedRecordTypes) : "";
-                    var STArray = requester.sSelectedShipmentTypes.Length != 0 ? string.Join(",", requester.sSelectedShipmentTypes) : "";
+                    //var STArray = requester.sSelectedShipmentTypes.Length != 0 ? string.Join(",", requester.sSelectedShipmentTypes) : "";
                     var SIArray = requester.sSelectedSensitiveInfo.Length != 0 ? string.Join(",", requester.sSelectedSensitiveInfo) : "";
                     var relativeFileArray = requester.sRelativeFileArray.Length != 0 ? string.Join("_", requester.sRelativeFileArray) : "";
                     var relativeFileNameArray = requester.sRelativeFileNameArray.Length != 0 ? string.Join("/", requester.sRelativeFileNameArray) : "";
                     requester.sSelectedPrimaryReasons = new string[] { PRArray };
                     requester.sSelectedRecordTypes = new string[] { SRArray };
-                    requester.sSelectedShipmentTypes = new string[] { STArray };
+                    //requester.sSelectedShipmentTypes = new string[] { STArray };
                     requester.sSelectedSensitiveInfo = new string[] { SIArray };
                     requester.sRelativeFileArray = new string[] { relativeFileArray };
                     requester.sRelativeFileNameArray = new string[] { relativeFileNameArray };

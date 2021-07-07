@@ -386,7 +386,8 @@ namespace MROWebApi.Controllers
                         writer.WriteEndElement();
                         writer.WriteStartElement("shipment");
                         writer.WriteStartElement("types");
-                        writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
+                        writer.WriteElementString("code", !String.IsNullOrEmpty(requester.sSelectedShipmentTypes) ? requester.sSelectedShipmentTypes : "");
+                        //writer.WriteElementString("code", requester.sSelectedShipmentTypes.Count() > 0 ? requester.sSelectedShipmentTypes[0].ToString() : "");
                         writer.WriteElementString("name", requester.sSelectedShipmentTypesName);
                         writer.WriteEndElement();
                         writer.WriteElementString("email", requester.sSTEmailAddress);
@@ -982,14 +983,14 @@ namespace MROWebApi.Controllers
                 }
 
                 //Shipment Types 
-                for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
-                {
-                    if (requester.sSelectedShipmentTypes[counter] != "")
-                    {
-                        allFields.Add(requester.sSelectedShipmentTypes[counter] + "=1", "On");
+                //for (int counter = 0; counter < requester.sSelectedShipmentTypes.Length; counter++)
+                //{
+                //    if (requester.sSelectedShipmentTypes[counter] != "")
+                //    {
+                        allFields.Add(requester.sSelectedShipmentTypes + "=1", "On");
                         allFields.Add("MROSelectedShipmentTypeText", requester.sSelectedShipmentTypesName);
-                    }
-                }
+                //    }
+                //}
 
                 //Shipment Type Related Fields
                 allFields.Add("MROSTAddZipCode", requester.sSTAddZipCode);
