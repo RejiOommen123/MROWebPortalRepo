@@ -11,7 +11,7 @@
               row
               wrap
             >
-              <v-col cols="12" offset-sm="2" sm="8"> 
+              <v-col cols="12"> 
                 <v-radio
                   class="checkboxBorder"
                   color="black"
@@ -50,27 +50,6 @@
                   </template>
                 </v-radio>
 
-                <!-- <v-col cols="12" offset-sm="2" sm="8">
-            <v-checkbox
-              hide-details
-              dark
-              class="checkboxBorder"
-              :label="shipmentType.sShipmentTypeName"
-              color="white"
-              :value="shipmentType.sNormalizedShipmentTypeName"
-              v-model="sSelectedShipmentTypes"
-              @change="check(shipmentType)"
-            >
-              <v-tooltip v-if="shipmentType.sFieldToolTip" slot="append" top>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" color="white" top>mdi-information</v-icon>
-                </template>
-                <v-col cols="12" sm="12">
-                  <p style="width:200px; background-color:white;color:black">{{shipmentType.sFieldToolTip}}</p>
-                </v-col>
-              </v-tooltip>
-            </v-checkbox> -->
-
                 <!-- MROSTEmail Block -->
                 <div
                   v-if="
@@ -87,20 +66,28 @@
                     cols="12"
                     sm="12"
                   >
+                  <label class="inputLabel required" for="id_sSTEmailAddress">Email</label>
                     <v-text-field
+                      placeholder="Email"
+                      solo
+                      dense
+                      id="id_sSTEmailAddress"
                       v-model="sSTEmailAddress"
                       :error-messages="sSTEmailAddressErrors"
-                      label="EMAIL"
                       required
                       maxlength="70"
                       @input="$v.sSTEmailAddress.$touch()"
                       @blur="$v.sSTEmailAddress.$touch()"
                     ></v-text-field>
+                    <label class="inputLabel required" for="id_sSTConfirmEmailId">Confirm Email</label>
                     <v-text-field
+                      placeholder="Confirm Email"
+                      id="id_sSTConfirmEmailId"
+                      solo
+                      dense
                       @paste.prevent
                       v-model="sSTConfirmEmailId"
                       :error-messages="sSTConfirmEmailIdErrors"
-                      label="CONFIRM EMAIL"
                       required
                       maxlength="70"
                       @input="$v.sSTConfirmEmailId.$touch()"
@@ -126,52 +113,72 @@
                     sm="12"
                   >
                     <v-row>
-                      <v-col cols="12" offset-sm="2" sm="8">
+                      <v-col cols="12">
+                        <label class="inputLabel required" for="id_sSTAddStreetAddress">Address</label>
                         <v-text-field
+                          placeholder="Address"
+                          solo
+                          dense
+                          id="id_sSTAddStreetAddress"
                           v-model="sSTAddStreetAddress"
                           :error-messages="streetErrors"
-                          label="STREET"
                           required
                           maxlength="50"
                           @input="$v.sSTAddStreetAddress.$touch()"
                           @blur="$v.sSTAddStreetAddress.$touch()"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" offset-sm="2" sm="8">
+                      <v-col cols="6">
+                        <label class="inputLabel" for="id_sSTAddApartment">Address 2</label>
                         <v-text-field
+                          placeholder="Address 2"
+                          solo
+                          dense
+                          id="id_sSTAddApartment"
                           v-model="sSTAddApartment"
-                          label="Apartment/Building"
                           maxlength="50"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="5" sm="5">
+                      <v-col cols="6">
+                         <label class="inputLabel required" for="id_sSTAddCity">City</label>
                         <v-text-field
+                          placeholder="City"
+                          solo
+                          dense
+                          id="id_sSTAddCity"
                           v-model="sSTAddCity"
                           :error-messages="cityErrors"
-                          label="CITY"
                           required
                           maxlength="20"
                           @input="$v.sSTAddCity.$touch()"
                           @blur="$v.sSTAddCity.$touch()"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="3" sm="3">
+                      <v-col cols="8">
+                        <label class="inputLabel required" for="id_sSTAddState">State</label>
                         <v-text-field
+                          placeholder="State"
+                          solo
+                          dense
+                          id="id_sSTAddState"
                           v-model="sSTAddState"
                           :error-messages="stateErrors"
-                          label="STATE"
                           required
                           maxlength="2"
                           @input="sSTAddStateToUpper"
                           @blur="$v.sSTAddState.$touch()"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="4" sm="4">
+                      <v-col cols="4">
+                         <label class="inputLabel required" for="id_sSTAddZipCode">Zip Code</label>
                         <v-text-field
+                          placeholder="Zip Code"
+                          solo
+                          dense
+                          id="id_sSTAddZipCode"
                           type="tel"
                           v-model="sSTAddZipCode"
                           :error-messages="sSTAddZipCodeErrors"
-                          label="ZIP CODE"
                           required
                           @input="$v.sSTAddZipCode.$touch()"
                           @blur="$v.sSTAddZipCode.$touch()"
@@ -221,21 +228,29 @@
                     cols="12"
                     sm="12"
                   >
+                    <label class="inputLabel required" for="id_sSTFaxNumber">Fax No</label>
                     <v-text-field
+                      solo
+                      dense
+                      id="id_sSTFaxNumber"
+                      placeholder="Fax No"
                       type="tel"
                       v-model="sSTFaxNumber"
                       :error-messages="sSTFaxNumberErrors"
-                      label="FAX NO"
                       required
                       maxlength="10"
                       @input="$v.sSTFaxNumber.$touch()"
                       @blur="$v.sSTFaxNumber.$touch()"
                     ></v-text-field>
+                    <label class="inputLabel required" for="id_sSTConfirmFaxNumber">Confirm Fax No</label>
                     <v-text-field
+                      placeholder="Confirm Fax No"
+                      solo
+                      dense
+                      id="id_sSTConfirmFaxNumber"
                       type="tel"
                       v-model="sSTConfirmFaxNumber"
                       :error-messages="sSTConfirmFaxNumberErrors"
-                      label="CONFIRM FAX NO"
                       required
                       maxlength="10"
                       @input="$v.sSTConfirmFaxNumber.$touch()"
@@ -249,32 +264,49 @@
           <!-------------------- Non-Mobile View --------------------------------->
           <!-- MROSTEmail Block -->
           <div v-if="!$vuetify.breakpoint.xs">
+            <v-row>
             <v-col
               v-if="sSelectedShipmentTypes == 'MROSTEmail'"
               slot="MROSTEmail"
               cols="12"
-              sm="12"
+              sm="6"
             >
+            <label class="inputLabel required" for="id_sSTEmailAddress">Email</label>
               <v-text-field
+                solo
+                dense
+                placeholder="Email"
+                id="id_sSTEmailAddress"
                 v-model="sSTEmailAddress"
                 :error-messages="sSTEmailAddressErrors"
-                label="EMAIL"
                 required
                 maxlength="70"
                 @input="$v.sSTEmailAddress.$touch()"
                 @blur="$v.sSTEmailAddress.$touch()"
               ></v-text-field>
+               </v-col>
+              <v-col
+              v-if="sSelectedShipmentTypes == 'MROSTEmail'"
+              slot="MROSTEmail"
+              cols="12"
+              sm="6"
+            >
+             <label class="inputLabel required" for="id_sSTConfirmEmailId">Confirm Email</label>
               <v-text-field
+                solo
+                dense
+                placeholder="Confirm Email"
+                id="id_sSTConfirmEmailId"
                 @paste.prevent
                 v-model="sSTConfirmEmailId"
                 :error-messages="sSTConfirmEmailIdErrors"
-                label="CONFIRM EMAIL"
                 required
                 maxlength="70"
                 @input="$v.sSTConfirmEmailId.$touch()"
                 @blur="$v.sSTConfirmEmailId.$touch()"
               ></v-text-field>
-            </v-col>
+           </v-col>
+            </v-row>
           </div>
 
           <!-- MROSTMail Block -->
@@ -286,40 +318,56 @@
               sm="12"
             >
               <v-row>
-                <v-col cols="12" offset-sm="2" sm="8">
+                <v-col cols="12" sm="6">
+                   <label class="inputLabel required" for="id_sSTAddStreetAddress">Address</label>
                   <v-text-field
+                    placeholder="Address"
+                    solo
+                    dense
+                    id="id_sSTAddStreetAddress"
                     v-model="sSTAddStreetAddress"
                     :error-messages="streetErrors"
-                    label="STREET"
                     required
                     maxlength="50"
                     @input="$v.sSTAddStreetAddress.$touch()"
                     @blur="$v.sSTAddStreetAddress.$touch()"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" offset-sm="2" sm="8">
+                <v-col cols="12" sm="6">
+                  <label class="inputLabel" for="id_sSTAddApartment">Address 2</label>
                   <v-text-field
+                    placeholder="Address 2"
+                    solo
+                    dense
+                    id="id_sSTAddApartment"
                     v-model="sSTAddApartment"
-                    label="Apartment/Building"
                     maxlength="50"
-                  ></v-text-field>
+                  ></v-text-field>  
                 </v-col>
-                <v-col cols="5" sm="5">
+                <v-col cols="4" sm="4">
+                  <label class="inputLabel required" for="id_sSTAddCity">City</label>
                   <v-text-field
+                    placeholder="City"
+                    solo
+                    dense
+                    id="id_sSTAddCity"
                     v-model="sSTAddCity"
                     :error-messages="cityErrors"
-                    label="CITY"
                     required
                     maxlength="20"
                     @input="$v.sSTAddCity.$touch()"
                     @blur="$v.sSTAddCity.$touch()"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="3" sm="3">
+                <v-col cols="4" sm="4">
+                  <label class="inputLabel required" for="id_sSTAddState">State</label>
                   <v-text-field
+                    placeholder="State"
+                    solo
+                    dense
+                    id="id_sSTAddState"
                     v-model="sSTAddState"
                     :error-messages="stateErrors"
-                    label="STATE"
                     required
                     maxlength="2"
                     @input="sSTAddStateToUpper"
@@ -327,11 +375,15 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="4" sm="4">
+                  <label class="inputLabel required" for="id_sSTAddZipCode">Zip Code</label>
                   <v-text-field
+                    placeholder="Zip Code"
+                    solo
+                    dense
+                    id="id_sSTAddZipCode"
                     type="tel"
                     v-model="sSTAddZipCode"
                     :error-messages="sSTAddZipCodeErrors"
-                    label="ZIP CODE"
                     required
                     @input="$v.sSTAddZipCode.$touch()"
                     @blur="$v.sSTAddZipCode.$touch()"
@@ -359,33 +411,50 @@
 
           <!-- MROSTFax Block -->
           <div v-if="!$vuetify.breakpoint.xs">
+            <v-row>
             <v-col
               v-if="sSelectedShipmentTypes == 'MROSTFax'"
               slot="MROSTFax"
               cols="12"
-              sm="12"
+              sm="6"
             >
+            <label class="inputLabel required" for="id_sSTFaxNumber">Fax No</label>
               <v-text-field
+                placeholder="Fax No"
+                solo
+                dense
+                id="id_sSTFaxNumber"
                 type="tel"
                 v-model="sSTFaxNumber"
                 :error-messages="sSTFaxNumberErrors"
-                label="FAX NO"
                 required
                 maxlength="10"
                 @input="$v.sSTFaxNumber.$touch()"
                 @blur="$v.sSTFaxNumber.$touch()"
               ></v-text-field>
+            </v-col>
+             <v-col
+              v-if="sSelectedShipmentTypes == 'MROSTFax'"
+              slot="MROSTFax"
+              cols="12"
+              sm="6"
+            >
+            <label class="inputLabel required" for="id_sSTConfirmFaxNumber">Confirm Fax No</label>
               <v-text-field
+                placeholder="Confirm Fax No"
+                solo
+                dense
+                id="id_sSTConfirmFaxNumber"
                 type="tel"
                 v-model="sSTConfirmFaxNumber"
                 :error-messages="sSTConfirmFaxNumberErrors"
-                label="CONFIRM FAX NO"
                 required
                 maxlength="10"
                 @input="$v.sSTConfirmFaxNumber.$touch()"
                 @blur="$v.sSTConfirmFaxNumber.$touch()"
               ></v-text-field>
             </v-col>
+            </v-row>
           </div>
           <!--------------------- Non-Mobile View End ------------------------------->
         </form>
