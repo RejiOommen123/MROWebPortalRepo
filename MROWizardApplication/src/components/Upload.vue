@@ -93,9 +93,12 @@ export default {
       this.handleFileValidationsAndEmit(e.target.files);
     },
     handleFileValidationsAndEmit(listOfFiles) {
+      let bValidFiles = true;
       this.dragover = false;
       // If there are already uploaded files remove them
-      if (this.uploadedFiles.length > 0) this.uploadedFiles = [];
+      if (this.uploadedFiles.length > 0) {
+        this.uploadedFiles = [];
+      }
       // If user has uploaded multiple files but the component is not multiple throw error
       // No of Files LOgic
       if (listOfFiles.length > this.noOfFilesLimit) {
@@ -105,18 +108,34 @@ export default {
           body: "You can upload only " + this.noOfFilesLimit + " files",
         };
         this.$store.commit("ConfigModule/ErrorDialog", ErrorDialogForFileLimit);
-        return;
+        let oUploadEmitForFileLimit = {
+          files: [],
+          bRemoved: false,
+        };
+        this.$emit("filesUploaded", oUploadEmitForFileLimit);
+        bValidFiles = false;
+        // return;
       }
+
       // Size Logic
       listOfFiles.forEach((singleFile) => {
-        if (singleFile.size / (1024 * 1024) > this.fileSizeLimit) {
+        if (singleFile.size / (1000 * 1000) > this.fileSizeLimit) {
           let ErrorDialogForFileSizeLimit = {
             visible: true,
             title: "Error",
             body: "File size cannot exceed " + this.fileSizeLimit + " MB.",
           };
-          this.$store.commit("ConfigModule/ErrorDialog", ErrorDialogForFileSizeLimit);
-          return;
+          this.$store.commit(
+            "ConfigModule/ErrorDialog",
+            ErrorDialogForFileSizeLimit
+          );
+          let oUploadEmitForFileSizeLimit = {
+            files: [],
+            bRemoved: false,
+          };
+          this.$emit("filesUploaded", oUploadEmitForFileSizeLimit);
+          bValidFiles = false;
+          // return;
         }
       });
       if (!this.multiple && listOfFiles.length > 1) {
@@ -125,11 +144,20 @@ export default {
           title: "Error",
           body: "Only one file can be uploaded.",
         };
-        this.$store.commit("ConfigModule/ErrorDialog", ErrorDialogForSingleFile);
-        return;
+        this.$store.commit(
+          "ConfigModule/ErrorDialog",
+          ErrorDialogForSingleFile
+        );
+        let oUploadEmitForSingleFile = {
+          files: [],
+          bRemoved: false,
+        };
+        this.$emit("filesUploaded", oUploadEmitForSingleFile);
+        bValidFiles = false;
+        // return;
       }
-      // Add each file to the array of uploaded files
-      else {
+      // Add each file to the array of uploaded files, if all validatioons pass
+      if (bValidFiles) {
         listOfFiles.forEach((element) => this.uploadedFiles.push(element));
         let oUploadEmit = {
           files: this.uploadedFiles,
@@ -140,7 +168,9 @@ export default {
     },
     removeFile(fileName) {
       // Find the index of the
-      const index = this.uploadedFiles.findIndex((file) => file.name === fileName);
+      const index = this.uploadedFiles.findIndex(
+        (file) => file.name === fileName
+      );
       // If file is in uploaded files remove it
       if (index > -1) this.uploadedFiles.splice(index, 1);
       let oUploadEmit = {

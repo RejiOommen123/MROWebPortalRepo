@@ -143,7 +143,6 @@
                 :noOfFilesLimit="3"
                 :fileSizeLimit="10"
                 message="Drag & drop or <a href='#'>Browse</a>"
-                :dialog.sync="uploadDialog"
                 :multiple="true"
                 @filesUploaded="filesChange"
               />
@@ -306,7 +305,6 @@ export default {
     return {
       sDFMMDDYYYY: oGlobalConstants.sDateFormatMMDDYYYY,
       sDFYYYYMMDD: oGlobalConstants.sDateFormatYYYYMMDD,
-      uploadDialog: false,
       dragging: false,
       dateTextInput: "",
       sPatientFirstName: this.$store.state.requestermodule.sPatientFirstName,
