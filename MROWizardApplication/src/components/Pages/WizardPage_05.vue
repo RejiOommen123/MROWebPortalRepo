@@ -16,7 +16,7 @@
             row
             wrap
           >
-      <v-col cols="12" offset-sm="2" sm="8">
+      <v-col cols="12">
          <v-radio
           class="checkboxBorder"
           color="customText"
