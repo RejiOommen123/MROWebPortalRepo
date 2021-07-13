@@ -6,17 +6,17 @@
   
 
      
-     
+ 
         <v-radio-group
           v-model="sSelectedReleaseTo"
         >
-          <v-layout
+            <v-row>
+          <!-- <v-layout
             v-for="releaseTo in oReleaseToArray"
             :key="releaseTo.sNormalizedReleaseTo"
-            row
-            wrap
-          >
-      <v-col cols="12">
+          > -->
+      <v-col cols="12" sm="6" v-for="releaseTo in oReleaseToArray"
+            :key="releaseTo.sNormalizedReleaseTo">
          <v-radio
           class="checkboxBorder"
           color="customText"
@@ -24,11 +24,21 @@
           :value="releaseTo.sNormalizedReleaseTo" 
           @change="check(releaseTo)"
           >
+          <template v-slot:label>
+            <v-col cols="11" sm="11" style="padding:0px">
+              {{releaseTo.sReleaseTo}}
+            </v-col>
+            <v-col cols="1" sm="1" style="padding:0px">
+              <template>
+                <v-icon color="black" top>mdi-doctor</v-icon>
+              </template>
+            </v-col>
+          </template>
           </v-radio>
 
           <!-------------------- Mobile View ---------------------------->
                
-        <div v-if="sSelectedReleaseTo==releaseTo.sNormalizedReleaseTo && $vuetify.breakpoint.xs">
+        <div v-if="sSelectedReleaseTo==releaseTo.sNormalizedReleaseTo && $vuetify.breakpoint.xs" style="margin-top:5px">
           <v-row>
          <v-col style="padding-bottom:0px;padding-top:0px" cols="6">
           <label class="inputLabel required" for="id_sRecipientFirstName">First Name</label>
@@ -155,9 +165,10 @@
 
         <!-------------------- End of Mobile View ---------------------------->
           </v-col> 
-       </v-layout>  
-         
+       <!-- </v-layout>   -->
+           </v-row>  
 		</v-radio-group> 
+ 
     
     
     <!------------------------ Non Mobile View ---------------------------->
@@ -577,3 +588,15 @@ export default {
   },
 };
 </script>
+<style scoped>
+.checkboxBorder
+{
+  min-height:100px !important;
+}
+@media only screen and (max-width: 600px) {
+.checkboxBorder
+{
+  min-height:50px !important;
+}
+}
+</style>
