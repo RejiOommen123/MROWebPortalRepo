@@ -417,6 +417,8 @@ Vuetify internal classes */
 }
 .checkboxLabel{
   font-size: 20px !important;
+  color: #334150;
+  opacity: 1;
 }
 #waiverLabel{
   font-size: 14px;
