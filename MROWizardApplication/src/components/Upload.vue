@@ -17,7 +17,7 @@
         <v-virtual-scroll
           v-if="uploadedFiles.length > 0"
           :items="uploadedFiles"
-          height="150"
+          :height="scrollHeight"
           item-height="50"
         >
           <template v-slot:default="{ item }">
@@ -42,13 +42,13 @@
       </v-card-text>
 
       <input
-        multiple
         accept="image/*, application/pdf"
         @change="handleSelectEvent"
         type="file"
         ref="myFile"
         id="fileUploadInputId"
         hidden
+        :multiple="multiple"
       />
     </v-card>
   </div>
@@ -58,6 +58,10 @@
 export default {
   name: "Upload",
   props: {
+    scrollHeight: {
+      type: Number,
+      default: 70,
+    },
     multiple: {
       type: Boolean,
       default: false,
@@ -82,15 +86,30 @@ export default {
     };
   },
   methods: {
+    clearAll() {
+      this.uploadedFiles = [];
+      let clearAllFiles = {
+        files: [],
+        bRemoved: false,
+      };
+      this.$emit("filesUploaded", clearAllFiles);
+    },
+
     openFileDialog() {
       let fileInputElement = this.$refs.myFile;
       fileInputElement.click();
     },
     handleDropEvent(e) {
-      this.handleFileValidationsAndEmit(e.dataTransfer.files);
+      if (e.dataTransfer.files > 0) {
+        this.handleFileValidationsAndEmit(e.dataTransfer.files);
+      }
     },
     handleSelectEvent(e) {
-      this.handleFileValidationsAndEmit(e.target.files);
+      if (e.target.files.length > 0) {
+        this.handleFileValidationsAndEmit(e.target.files);
+        // clearing target value so same file can be accessed again on second & ahead onchanges
+        e.target.value = "";
+      }
     },
     handleFileValidationsAndEmit(listOfFiles) {
       let bValidFiles = true;
