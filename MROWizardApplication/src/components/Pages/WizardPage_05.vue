@@ -1,11 +1,12 @@
 <template>
-  <div style="width:100%">
+  <div>
+    <div class="pageBody">
+      <div class="pageContent">
     <form> 
-    <div>
-      <h1>To whom should we release these medical records to?</h1>
-    </div>
-    <v-row>
-      <div class="form-group">
+  
+
+     
+     
         <v-radio-group
           v-model="sSelectedReleaseTo"
         >
@@ -15,20 +16,27 @@
             row
             wrap
           >
-        <v-col cols="12" offset-sm="2" sm="8">
+      <v-col cols="12">
          <v-radio
           class="checkboxBorder"
-          color="black"
+          color="customText"
           :label="releaseTo.sReleaseTo"
-          :value="releaseTo.sNormalizedReleaseTo"
+          :value="releaseTo.sNormalizedReleaseTo" 
           @change="check(releaseTo)"
           >
           </v-radio>
+
+          <!-------------------- Mobile View ---------------------------->
                
         <div v-if="sSelectedReleaseTo==releaseTo.sNormalizedReleaseTo && $vuetify.breakpoint.xs">
-         <v-col style="padding-bottom:0px;padding-top:0px" cols="6" offset-sm="2" sm="4">
+          <v-row>
+         <v-col style="padding-bottom:0px;padding-top:0px" cols="6">
+          <label class="inputLabel required" for="id_sRecipientFirstName">First Name</label>
           <v-text-field
-            label="FIRST NAME"
+           solo
+            dense
+            placeholder="First Name"
+            id="id_sRecipientFirstName"
             v-model="sRecipientFirstName"
             :error-messages="sRecipientFirstNameError"
             required
@@ -39,9 +47,13 @@
           
         </v-col>
 
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="6" sm="4">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="6">
+          <label class="inputLabel required" for="id_sRecipientLastName">Last Name</label>
           <v-text-field
-            label="LAST NAME"
+            solo
+            dense
+            placeholder="Last Name"
+            id="id_sRecipientLastName"
             v-model="sRecipientLastName"
             :error-messages="sRecipientLastNameError"
             required
@@ -50,61 +62,85 @@
             @blur="$v.sRecipientLastName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="3" sm="6">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12">
+          <label class="inputLabel" for="id_sRecipientOrganizationName">Organization Name</label>
           <v-text-field
-            label="ORGANIZATION NAME"
+            solo
+            dense
+            placeholder="Organization Name"
+            id="id_sRecipientOrganizationName"
             v-model="sRecipientOrganizationName"
             maxlength="50"
           ></v-text-field>
         </v-col>
         <!-- TODO: v-if="MROAddApartment" -->
         
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="2" sm="8">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="12">
+          <label class="inputLabel required" for="id_sRecipientAddStreetAddress">Address</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Address"
+            id="id_sRecipientOrganizationName"
             v-model="sRecipientAddStreetAddress"
             :error-messages="streetErrors"
-            label="STREET"
             required
             maxlength="50"
             @input="$v.sRecipientAddStreetAddress.$touch()"
             @blur="$v.sRecipientAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" offset-sm="2" sm="8">
+         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="6">
+           <label class="inputLabel" for="id_sRecipientAddApartment">Address 2</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Address 2"
+            id="id_sRecipientAddApartment"
             v-model="sRecipientAddApartment"
-            label="APARTMENT/BUILDING"
             maxlength="50"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="6">
+           <label class="inputLabel required" for="id_sRecipientAddCity">City</label>
           <v-text-field
+            solo
+            dense
+            placeholder="City"
+            id="id_sRecipientAddCity"
             v-model="sRecipientAddCity"
             :error-messages="cityErrors"
-            label="CITY"
             required
             maxlength="20"
             @input="$v.sRecipientAddCity.$touch()"
             @blur="$v.sRecipientAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px"  offset-sm="1" cols="12"  sm="2">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="8">
+          <label class="inputLabel required" for="id_sRecipientAddState">State</label>
           <v-text-field
+            solo
+            dense
+            placeholder="State"
+            id="id_sRecipientAddState"
             v-model="sRecipientAddState"
             :error-messages="stateErrors"
-            label="STATE"
             required
             maxlength="2"
             @input="sRecipientAddStateToUpper"
             @blur="$v.sRecipientAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+        <v-col style="padding-bottom:0px;padding-top:0px" cols="4">
+          <label class="inputLabel required" for="id_sRecipientAddZipCode">Zip Code</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Zip Code"
+            id="id_sRecipientAddZipCode"
             type="tel"
             v-model="sRecipientAddZipCode"
             :error-messages="sRecipientAddZipCodeErrors"
-            label="ZIP CODE"
             required
             @input="$v.sRecipientAddZipCode.$touch()"
             @blur="$v.sRecipientAddZipCode.$touch()"
@@ -114,14 +150,26 @@
         <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
           <div class="disclaimer">{{disclaimer}}</div>
         </v-col>
+          </v-row>
         </div>
-        </v-col>
-       </v-layout>      
+
+        <!-------------------- End of Mobile View ---------------------------->
+          </v-col> 
+       </v-layout>  
+         
 		</v-radio-group> 
+    
+    
+    <!------------------------ Non Mobile View ---------------------------->
     <div v-if="sSelectedReleaseTo!= '' && !$vuetify.breakpoint.xs">
-         <v-col style="padding-bottom:0px;padding-top:0px" cols="6" offset-sm="2" sm="4">
+      <v-row>
+         <v-col sm="4">
+          <label class="inputLabel required" for="id_sRecipientFirstName">First Name</label>
           <v-text-field
-            label="FIRST NAME"
+            solo
+            dense
+            placeholder="First Name"
+            id="id_sRecipientFirstName"
             v-model="sRecipientFirstName"
             :error-messages="sRecipientFirstNameError"
             required
@@ -132,9 +180,13 @@
           
         </v-col>
 
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="6" sm="4">
+        <v-col sm="4">
+          <label class="inputLabel required" for="id_sRecipientLastName">Last Name</label>
           <v-text-field
-            label="LAST NAME"
+            solo
+            dense
+            placeholder="Last Name"
+            id="id_sRecipientLastName"
             v-model="sRecipientLastName"
             :error-messages="sRecipientLastNameError"
             required
@@ -143,87 +195,125 @@
             @blur="$v.sRecipientLastName.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="3" sm="6">
+        <v-col sm="4">
+          <label class="inputLabel" for="id_sRecipientOrganizationName">Organization Name</label>
           <v-text-field
-            label="ORGANIZATION NAME"
+            solo
+            dense
+            placeholder="Organization Name"
+            id="id_sRecipientOrganizationName"
             v-model="sRecipientOrganizationName"
             maxlength="50"
           ></v-text-field>
         </v-col>
         <!-- TODO: v-if="MROAddApartment" -->
         
-        <v-col style="padding-bottom:0px;padding-top:0px" cols="12" offset-sm="2" sm="8">
+        <v-col sm="6">
+          <label class="inputLabel required" for="id_sRecipientAddStreetAddress">Address</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Address"
+            id="id_sRecipientOrganizationName"
             v-model="sRecipientAddStreetAddress"
             :error-messages="streetErrors"
-            label="STREET"
             required
             maxlength="50"
             @input="$v.sRecipientAddStreetAddress.$touch()"
             @blur="$v.sRecipientAddStreetAddress.$touch()"
           ></v-text-field>
         </v-col>
-         <v-col style="padding-bottom:0px;padding-top:0px" v-if="MRORecipientAddApartment" cols="12" offset-sm="2" sm="8">
+         <v-col v-if="MRORecipientAddApartment" sm="6">
+           <label class="inputLabel" for="id_sRecipientAddApartment">Address 2</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Address 2"
+            id="id_sRecipientAddApartment"
             v-model="sRecipientAddApartment"
-            label="APARTMENT/BUILDING"
             maxlength="50"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+        <v-col sm="4">
+          <label class="inputLabel required" for="id_sRecipientAddCity">City</label>
           <v-text-field
+            solo
+            dense
+            placeholder="City"
+            id="id_sRecipientAddCity"
             v-model="sRecipientAddCity"
             :error-messages="cityErrors"
-            label="CITY"
             required
             maxlength="20"
             @input="$v.sRecipientAddCity.$touch()"
             @blur="$v.sRecipientAddCity.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px"  offset-sm="1" cols="12"  sm="2">
+        <v-col sm="4">
+          <label class="inputLabel required" for="id_sRecipientAddState">State</label>
           <v-text-field
+            solo
+            dense
+            placeholder="State"
+            id="id_sRecipientAddState"
             v-model="sRecipientAddState"
             :error-messages="stateErrors"
-            label="STATE"
             required
             maxlength="2"
             @input="sRecipientAddStateToUpper"
             @blur="$v.sRecipientAddState.$touch()"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px;padding-top:0px" offset-sm="1" cols="12" sm="3">
+        <v-col sm="4">
+          <label class="inputLabel required" for="id_sRecipientAddZipCode">Zip Code</label>
           <v-text-field
+            solo
+            dense
+            placeholder="Zip Code"
+            id="id_sRecipientAddZipCode"
             type="tel"
             v-model="sRecipientAddZipCode"
             :error-messages="sRecipientAddZipCodeErrors"
-            label="ZIP CODE"
             required
             @input="$v.sRecipientAddZipCode.$touch()"
             @blur="$v.sRecipientAddZipCode.$touch()"
             maxlength="10"
           ></v-text-field>
         </v-col>
-        <v-col style="padding-bottom:0px" cols="12" offset-sm="2" sm="8">
+        <v-col sm="12">
           <div class="disclaimer">{{disclaimer}}</div>
         </v-col>
-        </div>
-        <v-col  style="padding-top:0px" cols="12" offset-sm="3" sm="6">
-          <v-btn  @click.once="nextPage" :key="buttonKey" :disabled="$v.$invalid" class="next">Continue</v-btn>
-        </v-col>
-    </div>
       </v-row>
+        </div>
+        <!------------------------ End of Non Mobile View ---------------------------->
+    
      </form> 
+      
+      </div>
+        <Footer v-if="$vuetify.breakpoint.xs" />
+    </div>
+    <div :class="$vuetify.breakpoint.xs ? 'buttonBlockMobile' : 'buttonBlock'">
+      <v-btn  @click.once="nextPage" :key="buttonKey" :disabled="$v.$invalid" class="smallBlackBtn">Continue</v-btn>
+    </div>
+     <Footer v-if="!$vuetify.breakpoint.xs" />
   </div>
 </template>
 <script>
 import { mapState } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required, numeric, maxLength } from "vuelidate/lib/validators";
+import Footer from '../Footer.vue';
 export default {
   name: "WizardPage_05",
+  components:{
+    Footer
+  },
   activated() {
     this.buttonKey++;
+    this.$store.commit(
+      "ConfigModule/titleQuestion",
+      "To whom should we release these medical records to?"
+    );
     if (
       this.$store.state.requestermodule.sRecipientFirstName != "" ||
       this.$store.state.requestermodule.sRecipientAddStreetAddress != ""
